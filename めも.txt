@@ -1,0 +1,54 @@
+my-visual-novel/
+├── index.html
+├── style.css
+├── script.js
+├── assets/
+│   ├── images/
+│   │   ├── akari.png
+│   │   ├── mysterious.png
+│   │   └── ...
+│   ├── bgm/
+│   │   ├── forest_theme.mp3
+│   │   └── ...
+│   └── sfx/
+│       └── type_sound.mp3
+└── scenario/
+    ├── prologue.json
+    ├── forest.json
+    └── ruins.json
+
+
+
+キャラ表示＆左右切り替え
+
+セリフの速度＆フォントサイズ変更
+
+ピポピポ音付きセリフ表示
+
+BGMの切り替え
+
+選択肢による分岐（別シナリオJSONにジャンプ）
+
+ローカルセーブ＆ロード機能（ボタン付き）
+
+シナリオJSONをエリア（シーン）別に分割管理
+
+itch.io: HTML5ゲームをアップロードする際、index.htmlを含むZIPファイルをアップロードすることで、ブラウザ上で直接プレイ可能になります。
+
+GitHub Pages: リポジトリにファイルを配置し、GitHub Pagesを有効にすることで、ブラウザ上でゲームを公開できます。
+
+
+
+
+効果音（type_sound.mp3）とBGM
+
+type_sound.mp3：1文字ごとに再生するピポピポ音（短いSEが理想）
+
+forest_theme.mp3, mystery_theme.mp3：BGMをループで再生
+
+音素材は↓のようなサイトから取ると安心：
+
+効果音ラボ
+
+DOVA-SYNDROME（BGM）
+
