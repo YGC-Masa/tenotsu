@@ -5,12 +5,7 @@ let currentScene = "prologue";
 let bgmPlayer = new Audio();
 let sfx = new Audio("assets/sfx/type_sound.mp3");
 
-const characterColors = {
-  "アカリ": "#ff66cc",
-  "？？？": "#00ffff",
-  "ユウト": "#ffa500"
-};
-
+// characterColors.js から読み込み
 function loadScenario(name, startIndex = 0) {
   currentScene = name;
   fetch(`scenario/${name}.json`)
@@ -77,6 +72,7 @@ function showScene() {
   }
 
   nameBox.textContent = scene.name || "";
+  dialogueBox.textContent = ""; // セリフを毎回リセット
   dialogueBox.style.fontSize = scene.fontSize || "20px";
   const charColor = scene.color || characterColors[scene.name] || "white";
   dialogueBox.style.color = charColor;
