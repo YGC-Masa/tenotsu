@@ -23,6 +23,11 @@
     "choices": [
       { "text": "森へ進む", "jump": { "scene": "forest", "index": 0 } },
       { "text": "遺跡に向かう", "jump": { "scene": "ruins", "index": 0 } }
+
+      { "text": "遺跡に向かう", "jump": { "scene": "ruins", "index": 0 } }
+
+      { "text": "遺跡に向かう", "jump": { "scene": "ruins", "index": 0 } }
+
     ]
   }
 ]
