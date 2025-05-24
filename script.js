@@ -5,7 +5,8 @@ let currentScene = "prologue";
 let bgmPlayer = new Audio();
 let sfx = new Audio("assets/sfx/type_sound.mp3");
 
-// characterColors.js から読み込み
+// characterColors.js で定義済み
+
 function loadScenario(name, startIndex = 0) {
   currentScene = name;
   fetch(`scenario/${name}.json`)
@@ -72,9 +73,9 @@ function showScene() {
   }
 
   nameBox.textContent = scene.name || "";
-  dialogueBox.textContent = ""; // セリフを毎回リセット
+  dialogueBox.textContent = "";
   dialogueBox.style.fontSize = scene.fontSize || "20px";
-  const charColor = scene.color || characterColors[scene.name] || "white";
+  const charColor = scene.color || (characterColors && characterColors[scene.name]) || "white";
   dialogueBox.style.color = charColor;
   typeText(scene.text || "", scene.speed || 30);
 }
@@ -108,20 +109,4 @@ document.getElementById("ui").addEventListener("click", () => {
   }
 });
 
-function saveProgress() {
-  localStorage.setItem("vn_save", JSON.stringify({
-    scene: currentScene,
-    index: index
-  }));
-}
-
-function loadProgress() {
-  const saveData = JSON.parse(localStorage.getItem("vn_save"));
-  if (saveData) {
-    loadScenario(saveData.scene, saveData.index);
-  } else {
-    loadScenario("prologue", 0);
-  }
-}
-
-window.onload = () => loadProgress();
+window.onload = () => loadScenario("prologue", 0);
