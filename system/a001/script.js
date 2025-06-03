@@ -1,6 +1,6 @@
 let script = [];
 let index = 0;
-let currentScene = "a001";
+let currentScene = "prologue";
 let bgmPlayer = new Audio();
 
 function loadScenario(name, startIndex = 0) {
@@ -96,10 +96,10 @@ document.getElementById("ui").addEventListener("click", () => {
   if (index < script.length) {
     showScene();
   } else {
-    document.getElementById("dialogue").textContent = "（日常は続く……）";
+    document.getElementById("dialogue").textContent = "（物語は続く……）";
     document.getElementById("name").textContent = "";
     bgmPlayer.pause();
   }
 });
 
-window.onload = () => loadScenario("a001", 0);
+window.onload = () => loadScenario("prologue", 0);
