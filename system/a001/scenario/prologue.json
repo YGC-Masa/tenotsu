@@ -2,10 +2,14 @@
   {
     "name": "緋奈",
     "text": "ようこそ、ビジュアルノベルの世界へ。",
-    "character": "assets/char/001_001.png",
+    "character": "assets/char/a01001.png",
     "background": "assets/bg/bg001.png",
     "side": "left",
     "bgm": "assets/bgm/main.mp3"
+  },
+  {
+    "name": "緋奈",
+    "text":"あの。。。あのですね？",
   },
   {
     "name": "アカリ",
