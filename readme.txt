@@ -1,5 +1,9 @@
+ver.250605
 my-visual-novel/
-├── index.html
+├── asset/
+│    └──bgev
+│    └──bgm
+│    └──char
 └── system/
     └──v001
 
