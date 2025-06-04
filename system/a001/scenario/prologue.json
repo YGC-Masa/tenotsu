@@ -1,7 +1,7 @@
 [
   {
     "name": "店長",
-    "text": "（うーん、今月も売り上げ厳しいな。。。)",
+    "text": "（2うーん、今月も売り上げ厳しいな。。。)",
     "background": "./../../assets/bg/bg001.png",
     "bgm": "./../../assets/bgm/main.mp3"
   },
@@ -12,7 +12,7 @@
   {
     "name": "緋奈",
     "text": "おはようございまーす。",
-    "character": "../../assets/char/a01002.png",
+    "character": "./../../assets/char/a01002.png",
     "side": "right"
   },
   {
