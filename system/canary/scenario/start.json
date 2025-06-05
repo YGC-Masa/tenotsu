@@ -35,13 +35,13 @@
   },
   {
     "name": "幹人",
-    "text": "（でも資料は来週の月曜日必要なんだよなー)",
-    "character": "./../../assets/char/a01032.png"
+    "text": "（でも資料は来週の月曜日必要なんだよなー)"
   },
   {
     "name": "緋奈",
     "text": "み・き・と・さーーーーん？",
-    "speed": "10"
+    "speed": "10",
+    "character": "./../../assets/char/a01032.png"
   },
   {
     "name": "幹人",
