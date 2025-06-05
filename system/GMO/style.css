@@ -8,17 +8,21 @@ body {
 }
 #background {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 100vw;
   height: 100vh;
-  background-size: cover;
+  background-size: cover;      /* 縦横比を保ちつつ埋める */
   background-position: center;
-  z-index: 0;
+  background-repeat: no-repeat;
 }
 #character {
   position: absolute;
   bottom: 0;
-  max-height: 90vh;
-  z-index: 1;
+  max-height: 80vh; /* 画面高の80%まで縮小 */
+  height: auto;
+  width: auto;
+  object-fit: contain;
 }
 #character.left {
   left: 5%;
