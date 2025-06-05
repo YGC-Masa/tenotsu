@@ -101,6 +101,6 @@ document.getElementById("text-area").addEventListener("click", () => {
 
 window.onload = async () => {
   await loadCharacterColors("./characterColors.json");
-  await loadScenario("scenario/start.json");
+  await loadScenario("./scenario/start.json");
   showScene(currentIndex);
 };
