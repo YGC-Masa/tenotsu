@@ -1,6 +1,6 @@
 let script = [];
 let index = 0;
-let currentScene = "a001";
+let currentScene = "prologue";
 let bgmPlayer = new Audio();
 
 function loadScenario(name, startIndex = 0) {
