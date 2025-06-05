@@ -64,6 +64,8 @@
   {
     "name": "緋奈",
     "text": "最後にミス出力したサービスカットのメイド服でサヨナラっ！",
+    "character": "./../../assets/char/000.png",
+    "side": "right",
     "background": "./../../assets/bgev/ev001.png"
   }
 ]
