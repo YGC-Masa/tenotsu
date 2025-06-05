@@ -11,9 +11,7 @@
   },
   {
     "name": "緋奈",
-    "text": "おはようございまーす。",
-    "character": "./../../assets/char/a01001.png",
-    "side": "center"
+    "text": "おはようございまーす。"
   },
   {
     "name": "幹人",
@@ -40,8 +38,7 @@
   {
     "name": "緋奈",
     "text": "み・き・と・さーーーーん？",
-    "speed": "10",
-    "character": "./../../assets/char/a01032.png"
+    "speed": "10"
   },
   {
     "name": "幹人",
@@ -51,8 +48,7 @@
   {
     "name": "緋奈",
     "text": "みきとさん！！！！",
-    "fontSize": "30",
-    "character": "./../../assets/char/a01020.png",
+    "fontSize": "30"
     "speed": "50"
   },
   {
