@@ -102,4 +102,4 @@ document.getElementById("ui").addEventListener("click", () => {
   }
 });
 
-window.onload = () => loadScenario("a001", 0);
+window.onload = () => loadScenario("prologue", 0);
