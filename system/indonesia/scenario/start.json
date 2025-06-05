@@ -12,8 +12,8 @@
   {
     "name": "緋奈",
     "text": "おはようございまーす。",
-    "src": "./../../assets/char/a01002.png",
-    "side": "left"
+    "character": "./../../assets/char/a01002.png",
+    "side": "right"
   },
   {
     "name": "ダンテ",
@@ -38,7 +38,7 @@
   {
     "name": "緋奈",
     "text": "インドネシアの事、いっぱい教えてくださいね（ニコ）",
-    "src": "./../../assets/char/a01012.png",
+    "character": "./../../assets/char/a01012.png",
     "side": "right"
   },
   {
@@ -48,7 +48,7 @@
   {
     "name": "緋奈",
     "text": "あたしもー、インドネシアの事。知りたいっていうかー",
-    "src": "./../../assets/char/000.png",
+    "character": "./../../assets/char/000.png",
     "side": "right",
     "background": "./../../assets/bgev/ev002.png"
   },
@@ -59,7 +59,7 @@
   {
     "name": "緋奈",
     "text": "えー。意外とシャイなんですね。",
-    "src": "./../../assets/char/a01012.png",
+    "character": "./../../assets/char/a01012.png",
     "side": "right"
   },
   {
@@ -77,7 +77,7 @@
   {
     "name": "緋奈",
     "text": "最後なのでサービスカットのメイド服でサヨナラっ！",
-    "src": "./../../assets/char/000.png",
+    "character": "./../../assets/char/000.png",
     "side": "right",
     "background": "./../../assets/bgev/ev001.png"
   },
