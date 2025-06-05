@@ -12,7 +12,7 @@
   {
     "name": "緋奈",
     "text": "おはようございまーす。",
-    "character": "./../../assets/char/a01002.png",
+    "character": "./../../assets/char/a01001.png",
     "side": "center"
   },
   {
@@ -22,21 +22,21 @@
   {
     "name": "緋奈",
     "text": "幹人さーん。",
-    "character": "./../../assets/char/びっくり"
+    "character": "./../../assets/char/a01002.png"
   },
   {
     "name": "幹人",
-    "text": "（Tiktokはアドエビス計測できないしな・・)",
-    "character": "./../../assets/char/しおらしい"
+    "text": "（Tiktokはアドエビス計測できないしな・・)"
   },
   {
     "name": "緋奈",
-    "text": "幹人さん？"
+    "text": "幹人さん？",
+    "character": "./../../assets/char/a01012.png"
   },
   {
     "name": "幹人",
     "text": "（でも資料は来週の月曜日必要なんだよなー)",
-    "character": "./../../assets/char/てれる"
+    "character": "./../../assets/char/a01032.png"
   },
   {
     "name": "緋奈",
@@ -46,25 +46,25 @@
   {
     "name": "幹人",
     "text": "（あー・・・困ったな・・・)",
-    "speed": "20",
-    "character": "./../../assets/char/赤面"
+    "speed": "20"
   },
   {
     "name": "緋奈",
     "text": "みきとさん！！！！",
     "fontSize": "30",
+    "character": "./../../assets/char/a01020.png",
     "speed": "50"
   },
   {
     "name": "幹人",
     "text": "わぁっ！・・あ、緋奈。おはよう。",
     "fontSize": "20",
-    "speed": "30",
-    "character": "./../../assets/char/てれあわて"
+    "speed": "30"
   },
   {
     "name": "緋奈",
-    "text": "えへへ、やっと気づいてくれた。"
+    "text": "えへへ、やっと気づいてくれた。",
+    "character": "./../../assets/char/a01002.png"
   },
   {
     "name": "幹人",
@@ -73,7 +73,7 @@
   {
     "name": "緋奈",
     "text": "広告効果のお仕事ですか？",
-    "character": "./../../assets/char/うつむく"
+    "character": "./../../assets/char/a01012.png"
   },
   {
     "name": "幹人",
@@ -119,6 +119,22 @@
   },
   {
     "name": "緋奈",
-    "text": "わたし・・！"
+    "text": "あたし・・！いいこと思いつきました！"
+  },
+    {
+    "name": "幹人",
+    "text": "???"
+  },
+  {
+    "name": "緋奈",
+    "text": "じつは・・今度これを自動再生と録画で動画作るんですよね。"
+  },
+      {
+    "name": "幹人",
+    "text": "？！"
+  },
+  {
+    "name": "緋奈",
+    "text": "ワンチャンtiktokとかで使えるかも。なんて"
   }
 ]
