@@ -29,7 +29,9 @@
   },
   {
     "name": "緋奈",
-    "text": "今日からよろしくお願いしまーす。あ、原さんにもいってありますよー？"
+    "text": "今日からよろしくお願いしまーす。あ、原さんにもいってありますよー？",
+    "character": "./../../assets/char/a01012.png",
+    "side": "right"
   },
   {
     "name": "ダンテ",
@@ -38,8 +40,9 @@
   {
     "name": "緋奈",
     "text": "インドネシアの事、いっぱい教えてくださいね（ニコ）",
-    "character": "./../../assets/char/a01012.png",
-    "side": "right"
+    "character": "./../../assets/char/000.png",
+    "side": "right",
+    "background": "./../../assets/bgev/ev002.png"
   },
   {
     "name": "ダンテ",
@@ -47,14 +50,12 @@
   },
   {
     "name": "緋奈",
-    "text": "あたしもー、インドネシアの事。知りたいっていうかー",
-    "character": "./../../assets/char/000.png",
-    "side": "right",
-    "background": "./../../assets/bgev/ev002.png"
+    "text": "あたしもー、インドネシアの事。知りたいっていうかー"
   },
   {
     "name": "ダンテ",
-    "text": "ふぉーー！離れて！インドネシアにはそんな積極的な女性いないヨー！"
+    "text": "ふぉーー！離れて！インドネシアにはそんな積極的な女性いないヨー！",
+    "background": "./../../assets/bgev/bg011.jpg"
   },
   {
     "name": "緋奈",
