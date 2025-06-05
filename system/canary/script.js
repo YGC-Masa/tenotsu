@@ -1,6 +1,6 @@
 let script = [];
 let index = 0;
-let currentScene = "a001";
+let currentScene = "start";
 let bgmPlayer = new Audio();
 
 function loadScenario(name, startIndex = 0) {
@@ -102,4 +102,4 @@ document.getElementById("ui").addEventListener("click", () => {
   }
 });
 
-window.onload = () => loadScenario("a001", 0);
+window.onload = () => loadScenario("start", 0);
