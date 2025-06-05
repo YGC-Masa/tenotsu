@@ -1,0 +1,71 @@
+[
+  {
+    "name": "東",
+    "text": "（うーん、今月も売り上げ厳しいな。。。)",
+    "background": "./../../assets/bgev/bg001.png",
+    "bgm": "./../../assets/bgm/main.mp3"
+  },
+  {
+    "name": "",
+    "text": "ガチャ。"
+  },
+  {
+    "name": "緋奈",
+    "text": "おはようございまーす。",
+    "Characters": [
+    {"side": "center", "src": "./../../assets/char/a01002.png" }
+  },
+  {
+    "name": "東",
+    "text": "おっ。おはよう緋奈。"
+  },
+  {
+    "name": "緋奈",
+    "text": "んふっふっふ。東さーん",
+    "Characters": [
+    {"side": "right", "src": "./../../assets/char/a01012.png" }
+  },
+  {
+    "name": "東",
+    "text": "お、おう。どうしたの？"
+  },
+  {
+    "name": "緋奈",
+    "text": "お父さ・・星野さんがこんな別の遊びしてるから"
+  },
+  {
+    "name": "東",
+    "text": "うん？",
+    "Characters": [
+    {"side": "center", "src": "./../../assets/char/a01032.png" }
+  },
+  {
+    "name": "緋奈",
+    "text": "スイッチ２では遊べてないっていってました・・"
+  },
+  {
+    "name": "東",
+    "text": "おいー！当たったのにあそんでないのかよぉうーー！"
+  },
+  {
+    "name": "緋奈",
+    "text": "のりまゆちゃんの作成先も紹介しますよって言ってました",
+    "Characters": [
+    {"side": "right", "src": "./../../assets/char/a01012.png" }
+  },
+  {
+    "name": "東",
+    "text": "ありがてーーー！１１！！１！"
+  },
+  {
+    "name": "緋奈",
+    "text": "というわけでまたLINEしますねっ"
+  },
+  {
+    "name": "緋奈",
+    "text": "最後にミス出力したサービスカットのメイド服でサヨナラっ！",
+    "Characters": [
+    {"side": "right", "src": "./../../assets/char/000.png" },
+    "background": "./../../assets/bgev/ev001.png"
+  }
+]

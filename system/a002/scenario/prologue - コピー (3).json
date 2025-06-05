@@ -1,0 +1,42 @@
+[
+  {
+    "name": "緋奈",
+    "text": "ようこそ、ビジュアルノベルの世界へ。3",
+    "character": "assets/char/a01001.png",
+    "background": "assets/bg/bg001.png",
+    "side": "left",
+    "bgm": "assets/bgm/main.mp3"
+  },
+  {
+    "name": "緋奈",
+    "text": "ここからあなたの物語が始まります。",
+    "side": "left"
+  },
+  {
+    "name": "緋奈",
+    "text": "おはようございまーす。",
+    "character": "assets/char/a01002.png",
+    "side": "right"
+  },
+  {
+    "name": "店長",
+    "text": "おっ。おはよう緋奈。"
+  },
+  {
+    "choices": [
+      {
+        "text": "進む",
+        "next": 3
+      },
+      {
+        "text": "引き返す",
+        "jump": { "scene": "ending", "index": 0 }
+      }
+    ]
+  },
+  {
+    "name": "アカリ",
+    "text": "では、行きましょう！",
+    "side": "left"
+  }
+]
