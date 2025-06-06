@@ -7,13 +7,11 @@
   },
   {
     "name": "緋奈",
-    "text": "しかも、今回は期間限定のお得なセール。実施中なんだって。"
+    "text": "しかも、今回は期間限定のお得なセールを実施中なんだって。"
   },
   {
     "name": "緋奈",
     "text": "それがこれ、、じゃーん！とってもお買い得なipad Airをご紹介。",
-    "character": "./../../assets/char/chibi01.png",
-    "side": "left",
     "background": "./../../assets/bgev/960×1200.jpg"
   },
   {
@@ -22,7 +20,9 @@
   },
   {
     "name": "緋奈",
-    "text": "発売日は2024年の5月。昨年の機種だけど全然現役性能ですよ！"
+    "text": "発売日は2024年の5月。昨年の機種だけど全然現役性能ですよ！",
+    "character": "./../../assets/char/chibi02.png",
+    "side": "right"
   },
   {
     "name": "緋奈",
@@ -30,9 +30,7 @@
   },
   {
     "name": "緋奈",
-    "text": "「反射防止スクリーンコーティング」「True Toneテクノロジー」高い輝度！",
-    "character": "./../../assets/char/chibi02.png",
-    "side": "right"
+    "text": "「反射防止スクリーンコーティング」「True Toneテクノロジー」高い輝度！"
   },
   {
     "name": "緋奈",
@@ -40,13 +38,13 @@
   },
   {
     "name": "緋奈",
-    "text": "これはもう買うしかないね・・"
+    "text": "これはもう買うしかないね・・",
+    "character": "./../../assets/char/chibi03.png",
+    "side": "right"
   },
   {
     "name": "緋奈",
-    "text": "しかも、いまだけ！在庫限りでお得なキーボードセットもあるんだって！",
-    "character": "./../../assets/char/chibi03.png",
-    "side": "right"
+    "text": "しかも、いまだけ！在庫限りでお得なキーボードセットもあるんだって！"
   },
   {
     "name": "緋奈",
@@ -54,17 +52,19 @@
   },
   {
     "name": "緋奈",
-    "text": "むしろノートパソコンより、iPadでいーんじゃない？"
+    "text": "むしろノートパソコンより、iPadでいーんじゃない？",
+    "character": "./../../assets/char/chibi01.png",
+    "side": "left"
   },
   {
     "name": "緋奈",
-    "text": "お得なセットは今だけ！在庫限り！なくなり次第終了！",
-    "character": "./../../assets/char/a01012.png",
-    "side": "right"
+    "text": "お得なセットは今だけ！在庫限り！なくなり次第終了！"
   },
   {
     "name": "緋奈",
     "text": "これを機会にiPadをぜひ使ってみてはいかがですか？",
+    "character": "./../../assets/char/a01012.png",
+    "side": "right",
     "background": "./../../assets/bgev/STORE_non.png"
   }
 ]
