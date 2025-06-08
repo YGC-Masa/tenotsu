@@ -33,7 +33,8 @@
       { "side": "center", "src": "./../../assets/char/a03002.png", "name": "あかり" },
       { "side": "right2", "src": "./../../assets/char/a04002.png", "name": "ゆうと" },
       { "side": "left2", "src": "./../../assets/char/a05002.png", "name": "かな" }
-    ],
+    ], 
+   {
     "name": "翠",
     "text": "こんなところに来たのね。ふふ、面白くなってきたわ。",
     "speed": 35,
