@@ -25,8 +25,8 @@
     "bgm": "assets/bgm/adventure.mp3",
     "characters": [
       { "side": "center", "src": "./../../assets/char/a03002.png", "name": "あかり" },
-      { "side": "sub1", "src": "./../../assets/char/a04002.png", "name": "ゆうと" },
-      { "side": "sub2", "src": "./../../assets/char/a05002.png", "name": "かな" }
+      { "side": "right2", "src": "./../../assets/char/a04002.png", "name": "ゆうと" },
+      { "side": "left2", "src": "./../../assets/char/a05002.png", "name": "かな" }
     ],
     "name": "かな",
     "text": "こんなところに来たのね。ふふ、面白くなってきたわ。",
