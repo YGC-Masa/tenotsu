@@ -1,47 +1,66 @@
 [
   {
-    "bg": "./../../assets/bgev/STORE_NON.png",
-    "bgm": "./../../assets/bgm/main.mp3",
+    "bg": "assets/bg/classroom.jpg",
+    "bgm": "assets/bgm/morning.mp3",
     "characters": [
-      {
-        "side": "left",
-        "src": "./../../assets/char/a01002.png"
-      }
+      { "side": "left", "src": "assets/char/akari.png", "name": "あかり" },
+      { "side": "right", "src": "assets/char/yuto.png", "name": "ゆうと" }
     ],
     "name": "あかり",
-    "text": "おはよう！今日も一日がんばろうね。",
-    "transition": "dissolve"
+    "text": "おはよう、ゆうと！今日も一日、がんばろうね！",
+    "speed": 40,
+    "fontSize": 20
   },
   {
     "characters": [
-      {
-        "side": "right",
-        "src": "assets/char/yuto.png",
-        "name": "ゆうと",
-        "color": "#2196f3"
-      }
+      { "side": "right", "src": "assets/char/yuto.png", "name": "ゆうと" }
     ],
     "name": "ゆうと",
-    "text": "おはよう、あかり！今日はテストがあるから緊張するよ…",
-    "transition": "dissolve"
-  },
-  {
-    "characters": [
+    "text": "うん！放課後には秘密の場所に行ってみない？",
+    "speed": 50,
+    "fontSize": 18,
+    "choices": [
       {
-        "side": "left",
-        "src": "assets/char/akari.png",
-        "name": "あかり",
-        "color": "#e91e63"
+        "text": "行ってみる！",
+        "next": 2
       },
       {
-        "side": "right",
-        "src": "assets/char/yuto.png",
-        "name": "ゆうと",
-        "color": "#2196f3"
+        "text": "やめておこうかな…",
+        "next": 3
       }
+    ]
+  },
+  {
+    "bg": "assets/bg/park.jpg",
+    "bgm": "assets/bgm/adventure.mp3",
+    "characters": [
+      { "side": "center", "src": "assets/char/akari.png", "name": "あかり" },
+      { "side": "sub1", "src": "assets/char/yuto.png", "name": "ゆうと" },
+      { "side": "sub2", "src": "assets/char/kana.png", "name": "かな" }
     ],
-    "name": "あかり",
-    "text": "大丈夫、ゆうと！私がついてるよ！",
-    "transition": "dissolve"
+    "name": "かな",
+    "text": "こんなところに来たのね。ふふ、面白くなってきたわ。",
+    "speed": 35,
+    "fontSize": 22
+  },
+  {
+    "name": "システム",
+    "text": "今回は残念だったね。また次の機会に！",
+    "speed": 60,
+    "fontSize": 16
+  },
+  {
+    "name": "ナビゲーター",
+    "text": "この先のストーリーを読みたい方は特設ページへ！",
+    "choices": [
+      {
+        "text": "特設ページを見る",
+        "jumpToUrl": "https://example.com/special"
+      },
+      {
+        "text": "ゲームを終了する",
+        "jumpToUrl": "https://example.com/bye"
+      }
+    ]
   }
 ]
