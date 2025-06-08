@@ -45,7 +45,7 @@
     "choices": [
       {
         "text": "次のシナリオファイルへ",
-        "jumpToScenario": "scenario_chapter1.json"
+        "jumpToScenario": "./scenario_chapter1.json"
       },
       {
         "text": "ゲームを終了しyahooへ",
