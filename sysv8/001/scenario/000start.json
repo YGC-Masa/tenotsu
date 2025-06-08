@@ -1,7 +1,7 @@
 [
   {
     "name": "システム",
-    "text": "テイク4",
+    "text": "テイク5",
     "speed": 60,
     "fontSize": 16
   },
@@ -10,10 +10,10 @@
     "bgm": "./../../assets/bgm/main.mp3",
     "characters": [
       { "side": "left", "src": "./../../assets/char/a01002.png"},
-      { "side": "right", "src": "./../../assets/char/a02002.png", "name": "ゆうと" }
+      { "side": "right", "src": "./../../assets/char/a02002.png"},
     ],
     "name": "あかり",
-    "text": "4おはよう、ゆうと！今日も一日、がんばろうね！",
+    "text": "おはよう、ゆうと！今日も一日、がんばろうね！",
     "speed": 40,
     "fontSize": 20
   },
@@ -34,16 +34,28 @@
       { "side": "right2", "src": "./../../assets/char/a04002.png", "name": "ゆうと" },
       { "side": "left2", "src": "./../../assets/char/a05002.png", "name": "かな" }
     ],
-    "name": "かな",
+    "name": "翠",
     "text": "こんなところに来たのね。ふふ、面白くなってきたわ。",
     "speed": 35,
     "fontSize": 22
   },
-  {
-    "name": "システム",
-    "text": "今回は残念だったね。また次の機会に！",
-    "speed": 60,
+   {
+    "name": "こがね",
+    "text": "私たちが待っているとも知らずに・・",
+    "speed": 10,
     "fontSize": 16
+  },
+  {
+    "name": "琥珀",
+    "text": "ふふふっ。思い知らせてやるんだぞっ",
+    "speed": 60,
+    "fontSize": 30
+  },
+  {
+    "name": "翠",
+    "text": "どうなちゃうのかしらあぁあああ！",
+    "speed": 60,
+    "fontSize": 50
   },
   {
     "name": "ナビゲーター",
