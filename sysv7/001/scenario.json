@@ -1,7 +1,7 @@
 [
   {
-    "bg": "assets/bg/classroom.jpg",
-    "bgm": "assets/bgm/morning.mp3",
+    "bg": "./../../assets/bgev/bg001.jpg",
+    "bgm": "./../../assets/bgm/main.mp3",
     "characters": [
       { "side": "left", "src": "assets/char/akari.png", "name": "あかり" }
     ],
@@ -22,7 +22,7 @@
   },
   {
     "characters": [
-      { "side": "right", "src": "assets/char/yuto.png", "name": "ゆうと" }
+      { "side": "right", "src": "./../../assets/char/yuto.png", "name": "ゆうと" }
     ],
     "name": "ゆうと",
     "text": "そうだね、今はまだここでやるべきことがあるよ。",
