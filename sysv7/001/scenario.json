@@ -1,0 +1,32 @@
+[
+  {
+    "bg": "assets/bg/classroom.jpg",
+    "bgm": "assets/bgm/morning.mp3",
+    "characters": [
+      { "side": "left", "src": "assets/char/akari.png", "name": "あかり" }
+    ],
+    "name": "あかり",
+    "text": "どうする？外の世界に出てみる？",
+    "speed": 40,
+    "fontSize": 18,
+    "choices": [
+      {
+        "text": "はい、出てみる！",
+        "jumpToUrl": "https://example.com/ending1"
+      },
+      {
+        "text": "まだここに残る。",
+        "next": 1
+      }
+    ]
+  },
+  {
+    "characters": [
+      { "side": "right", "src": "assets/char/yuto.png", "name": "ゆうと" }
+    ],
+    "name": "ゆうと",
+    "text": "そうだね、今はまだここでやるべきことがあるよ。",
+    "speed": 60,
+    "fontSize": 18
+  }
+]
