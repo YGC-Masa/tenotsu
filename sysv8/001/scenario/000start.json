@@ -3,11 +3,11 @@
     "bg": "./../../assets/bgev/STORE_NON.png",
     "bgm": "./../../assets/bgm/main.mp3",
     "characters": [
-      { "side": "left", "src": "./../../assets/char/a01002.png", "name": "あかり" },
+      { "side": "left", "src": "./../../assets/char/a01002.png"},
       { "side": "right", "src": "./../../assets/char/a02002.png", "name": "ゆうと" }
     ],
     "name": "あかり",
-    "text": "おはよう、ゆうと！今日も一日、がんばろうね！",
+    "text": "おはよう2、ゆうと！今日も一日、がんばろうね！",
     "speed": 40,
     "fontSize": 20
   },
