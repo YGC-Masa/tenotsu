@@ -1,0 +1,42 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  background: black;
+  color: white;
+  font-family: sans-serif;
+}
+#game {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+#background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  transition: opacity 1s;
+}
+#characters img {
+  position: absolute;
+  max-height: 90%;
+  bottom: 0;
+  transition: all 1s ease;
+}
+#textbox {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.7);
+  padding: 1em;
+}
+#nameBox {
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+#choices button {
+  display: block;
+  margin: 0.2em 0;
+}

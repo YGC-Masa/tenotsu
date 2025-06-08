@@ -1,0 +1,17 @@
+[
+  {
+    "bg": "assets/bg/room.jpg",
+    "characters": [{ "side": "left", "src": "assets/char/akari.png" }],
+    "name": "あかり",
+    "text": "こんにちは！冒険を始める？",
+    "choices": [
+      {
+        "text": "うん、始めよう！",
+        "jumpToScenario": "scenario_chapter1.json"
+      },
+      {
+        "text": "やめておく"
+      }
+    ]
+  }
+]

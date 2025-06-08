@@ -1,0 +1,16 @@
+[
+  {
+    "bg": "assets/bg/forest.jpg",
+    "characters": [
+      { "side": "left", "src": "assets/char/akari.png" },
+      { "side": "right", "src": "assets/char/yuto.png" }
+    ],
+    "name": "ゆうと",
+    "text": "ここが冒険の始まりか。",
+    "bgm": "assets/bgm/forest.mp3"
+  },
+  {
+    "name": "あかり",
+    "text": "頑張ろうね！"
+  }
+]
