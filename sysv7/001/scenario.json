@@ -1,12 +1,32 @@
 [
   {
-    "bg": "assets/bg/ending.jpg",
-    "name": "ナレーション",
-    "text": "物語は、こうして幕を閉じた。",
-    "transition": "black-out"
+    "bg": "./../../assets/bgev/STORE_NON.png",
+    "bgm": "./../../assets/bgm/main.mp3",
+    "characters": [
+      { "side": "left", "src": "./../../assets/char/a01002.png"}
+    ],
+    "name": "緋奈",
+    "text": "どうする？外の世界に出てみる？",
+    "speed": 40,
+    "fontSize": 18,
+    "choices": [
+      {
+        "text": "はい、出てみる！",
+        "jumpToUrl": "https://example.com/ending1"
+      },
+      {
+        "text": "まだここに残る。",
+        "next": 1
+      }
+    ]
   },
   {
-    "command": "jump",
-    "url": "https://example.com/next"
+    "characters": [
+      { "side": "right", "src": "./../../assets/char/yuto.png", "name": "ゆうと" }
+    ],
+    "name": "ゆうと",
+    "text": "そうだね、今はまだここでやるべきことがあるよ。",
+    "speed": 60,
+    "fontSize": 18
   }
 ]
