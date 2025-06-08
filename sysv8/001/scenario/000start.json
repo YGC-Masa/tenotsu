@@ -18,9 +18,7 @@
     "fontSize": 20
   },
   {
-    "characters": [
-      { "side": "right", "src": "./../../assets/char/a02002.png"}
-    ],
+    "characters": [{ "side": "right", "src": "./../../assets/char/a02002.png"} ],
     "name": "藍",
     "text": "うん！放課後には秘密の場所に行ってみない？",
     "speed": 50,
