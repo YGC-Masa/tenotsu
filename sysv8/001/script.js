@@ -44,12 +44,12 @@ function showLine() {
       const img = document.createElement("img");
       img.src = char.src;
 img.style.left =
-  char.side === "left" ? "5%" :
-  char.side === "left2" ? "20%" :
-  char.side === "center" ? "40%" :
+  char.side === "left" ? "15%" :
+  char.side === "left2" ? "30%" :
+  char.side === "center" ? "45%" :
   char.side === "right2" ? "60%" :
-  char.side === "right" ? "80%" :
-  "40%"; // デフォルトは中央
+  char.side === "right" ? "75%" :
+  "45%"; // デフォルトは中央
       characters.appendChild(img);
     });
   }
