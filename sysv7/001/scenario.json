@@ -3,30 +3,64 @@
     "bg": "./../../assets/bgev/STORE_NON.png",
     "bgm": "./../../assets/bgm/main.mp3",
     "characters": [
-      { "side": "left", "src": "./../../assets/char/a01002.png"}
+      { "side": "left", "src": "./../../assets/char/a01002.png", "name": "あかり" },
+      { "side": "right", "src": "./../../assets/char/a02002.png", "name": "ゆうと" }
     ],
-    "name": "緋奈",
-    "text": "どうする？外の世界に出てみる？",
+    "name": "あかり",
+    "text": "おはよう、ゆうと！今日も一日、がんばろうね！",
     "speed": 40,
+    "fontSize": 20
+  },
+  {
+    "characters": [
+      { "side": "right", "src": "./../../assets/char/a02002.png", "name": "ゆうと" }
+    ],
+    "name": "ゆうと",
+    "text": "うん！放課後には秘密の場所に行ってみない？",
+    "speed": 50,
     "fontSize": 18,
     "choices": [
       {
-        "text": "はい、出てみる！",
-        "jumpToUrl": "https://example.com/ending1"
+        "text": "行ってみる！",
+        "next": 2
       },
       {
-        "text": "まだここに残る。",
-        "next": 1
+        "text": "やめておこうかな…",
+        "next": 3
       }
     ]
   },
   {
+    "bg": "assets/bg/park.jpg",
+    "bgm": "assets/bgm/adventure.mp3",
     "characters": [
-      { "side": "right", "src": "./../../assets/char/yuto.png", "name": "ゆうと" }
+      { "side": "center", "src": "./../../assets/char/a01002.pn", "name": "あかり" },
+      { "side": "sub1", "src": "./../../assets/char/a02002.pn", "name": "ゆうと" },
+      { "side": "sub2", "src": "./../../assets/char/a03002.png", "name": "かな" }
     ],
-    "name": "ゆうと",
-    "text": "そうだね、今はまだここでやるべきことがあるよ。",
+    "name": "かな",
+    "text": "こんなところに来たのね。ふふ、面白くなってきたわ。",
+    "speed": 35,
+    "fontSize": 22
+  },
+  {
+    "name": "システム",
+    "text": "今回は残念だったね。また次の機会に！",
     "speed": 60,
-    "fontSize": 18
+    "fontSize": 16
+  },
+  {
+    "name": "ナビゲーター",
+    "text": "この先のストーリーを読みたい方は特設ページへ！",
+    "choices": [
+      {
+        "text": "特設ページgoogleを見る",
+        "jumpToUrl": "https://google.com/"
+      },
+      {
+        "text": "ゲームを終了しyahooへ",
+        "jumpToUrl": "https://www.yahoo.co.jp/"
+      }
+    ]
   }
 ]
