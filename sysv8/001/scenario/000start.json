@@ -1,5 +1,11 @@
 [
   {
+    "name": "システム",
+    "text": "テイク4",
+    "speed": 60,
+    "fontSize": 16
+  },
+  {
     "bg": "./../../assets/bgev/STORE_NON.png",
     "bgm": "./../../assets/bgm/main.mp3",
     "characters": [
