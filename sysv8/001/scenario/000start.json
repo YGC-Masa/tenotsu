@@ -1,7 +1,7 @@
 [
   {
     "name": "システム",
-    "text": "テイク5",
+    "text": "テイク6",
     "speed": 60,
     "fontSize": 16
   },
@@ -12,16 +12,16 @@
       { "side": "left", "src": "./../../assets/char/a01002.png"},
       { "side": "right", "src": "./../../assets/char/a02002.png"}
     ],
-    "name": "あかり",
-    "text": "おはよう、ゆうと！今日も一日、がんばろうね！",
+    "name": "緋奈",
+    "text": "おはよう、藍！今日も一日、がんばろうね！",
     "speed": 40,
     "fontSize": 20
   },
   {
     "characters": [
-      { "side": "right", "src": "./../../assets/char/a02002.png", "name": "ゆうと" }
+      { "side": "right", "src": "./../../assets/char/a02002.png"}
     ],
-    "name": "ゆうと",
+    "name": "藍",
     "text": "うん！放課後には秘密の場所に行ってみない？",
     "speed": 50,
     "fontSize": 18
@@ -30,9 +30,9 @@
     "bg": "assets/bg/park.jpg",
     "bgm": "assets/bgm/adventure.mp3",
     "characters": [
-      { "side": "center", "src": "./../../assets/char/a03002.png", "name": "あかり" },
-      { "side": "right2", "src": "./../../assets/char/a04002.png", "name": "ゆうと" },
-      { "side": "left2", "src": "./../../assets/char/a05002.png", "name": "かな" }
+      { "side": "center", "src": "./../../assets/char/a03002.png"},
+      { "side": "right2", "src": "./../../assets/char/a04002.png"},
+      { "side": "left2", "src": "./../../assets/char/a05002.png"}
     ], 
     "name": "翠",
     "text": "こんなところまで来たのね。ふふ、面白くなってきたわ。",
