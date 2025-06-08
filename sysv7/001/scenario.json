@@ -1,66 +1,12 @@
 [
   {
-    "bg": "assets/bg/classroom.jpg",
-    "bgm": "assets/bgm/morning.mp3",
-    "characters": [
-      { "side": "left", "src": "assets/char/akari.png", "name": "あかり" },
-      { "side": "right", "src": "assets/char/yuto.png", "name": "ゆうと" }
-    ],
-    "name": "あかり",
-    "text": "おはよう、ゆうと！今日も一日、がんばろうね！",
-    "speed": 40,
-    "fontSize": 20
+    "bg": "assets/bg/ending.jpg",
+    "name": "ナレーション",
+    "text": "物語は、こうして幕を閉じた。",
+    "transition": "black-out"
   },
   {
-    "characters": [
-      { "side": "right", "src": "assets/char/yuto.png", "name": "ゆうと" }
-    ],
-    "name": "ゆうと",
-    "text": "うん！放課後には秘密の場所に行ってみない？",
-    "speed": 50,
-    "fontSize": 18,
-    "choices": [
-      {
-        "text": "行ってみる！",
-        "next": 2
-      },
-      {
-        "text": "やめておこうかな…",
-        "next": 3
-      }
-    ]
-  },
-  {
-    "bg": "assets/bg/park.jpg",
-    "bgm": "assets/bgm/adventure.mp3",
-    "characters": [
-      { "side": "center", "src": "assets/char/akari.png", "name": "あかり" },
-      { "side": "sub1", "src": "assets/char/yuto.png", "name": "ゆうと" },
-      { "side": "sub2", "src": "assets/char/kana.png", "name": "かな" }
-    ],
-    "name": "かな",
-    "text": "こんなところに来たのね。ふふ、面白くなってきたわ。",
-    "speed": 35,
-    "fontSize": 22
-  },
-  {
-    "name": "システム",
-    "text": "今回は残念だったね。また次の機会に！",
-    "speed": 60,
-    "fontSize": 16
-  },
-  {
-    "name": "ナビゲーター",
-    "text": "この先のストーリーを読みたい方は特設ページへ！",
-    "choices": [
-      {
-        "text": "特設ページを見る",
-        "jumpToUrl": "https://example.com/special"
-      },
-      {
-        "text": "ゲームを終了する",
-        "jumpToUrl": "https://example.com/bye"
-      }
-    ]
+    "command": "jump",
+    "url": "https://example.com/next"
   }
 ]
