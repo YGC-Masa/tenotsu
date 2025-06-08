@@ -43,8 +43,13 @@ function showLine() {
     line.characters.forEach(char => {
       const img = document.createElement("img");
       img.src = char.src;
-      img.style.left = char.side === "left" ? "10%" :
-                       char.side === "center" ? "40%" : "70%";
+img.style.left =
+  char.side === "left" ? "5%" :
+  char.side === "left2" ? "20%" :
+  char.side === "center" ? "40%" :
+  char.side === "right2" ? "60%" :
+  char.side === "right" ? "75%" :
+  "40%"; // デフォルトは中央
       characters.appendChild(img);
     });
   }
