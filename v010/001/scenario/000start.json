@@ -1,4 +1,5 @@
 {
+    "scene" : [
     {
       "text": "ようこそ、冒険の世界へ！",
       "background": "./../../assets/bgev/bg001.png",
@@ -28,4 +29,5 @@
       "effect": "black-out",
       "fontSize": "20px"
     }
+ ]
 }
