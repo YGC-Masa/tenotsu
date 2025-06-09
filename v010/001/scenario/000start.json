@@ -1,7 +1,7 @@
 {
     {
       "text": "ようこそ、冒険の世界へ！",
-      "background": "./../../assets/bg/forest.jpg",
+      "background": "./../../assets/bgev/bg001.png.jpg",
       "characters": [
         { "side": "center", "src": "./../../assets/char/a01002.png", "effect": "fade-in" }
       ],
