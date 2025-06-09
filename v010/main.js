@@ -8,7 +8,7 @@ const charactersContainer = document.getElementById("characters");
 
 async function loadScenario() {
   scenarioData = await fetch("scenario/000start.json").then(res => res.json());
-  characterColors = await fetch("./../../characterColors.json").then(res => res.json());
+  characterColors = await fetch("./../characterColors.json").then(res => res.json());
   showScene();
 }
 
