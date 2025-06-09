@@ -1,89 +1,89 @@
 [
   {
-    "name": "ダンテ",
-    "text": "ECの売上上げろったって、どうすればいいんだよ・・",
+    "name": "Dante",
+    "text": "Duh, disuruh naikin penjualan EC, tapi caranya gimana, sih…",
     "background": "./../../assets/bgev/bg011.jpg",
     "bgm": "./../../assets/bgm/main.mp3"
   },
   {
     "name": "",
-    "text": "ガチャ。"
+    "text": "*(Suara pintu terbuka: klek!)"
   },
   {
-    "name": "緋奈",
-    "text": "おはようございまーす。",
+    "name": "Hina",
+    "text": "Selamat pagiii!",
     "character": "./../../assets/char/a01002.png",
     "side": "right"
   },
   {
-    "name": "ダンテ",
-    "text": "わぁっ！ってか、だ、だ、誰だ君は？"
+    "name": "Dante",
+    "text": "Wuaah! Eh, tunggu, kamu siapa?!"
   },
   {
-    "name": "緋奈",
-    "text": "あたしですか？”ひな”っていいます。岡井さんに言われてやってきました！"
+    "name": "Hina",
+    "text": "Aku? Namaku Hina! Aku dikirim sama Bos Okai buat bantu di sini!"
   },
   {
-    "name": "ダンテ",
-    "text": "・・・岡井社長に・・・？！"
+    "name": "Dante",
+    "text": "・・・Bos Okai? Maksudnya apa?!"
   },
   {
-    "name": "緋奈",
-    "text": "今日からよろしくお願いしまーす。あ、原さんにもいってありますよー？",
+    "name": "Hina",
+    "text": "Mulai hari ini, kita bakal kerja bareng, ya! Oh iya, aku udah lapor ke Pak Hara juga, kok!",
     "character": "./../../assets/char/a01012.png",
     "side": "right"
   },
   {
-    "name": "ダンテ",
-    "text": "原さんにも・・・！私が東京に行っている間に何が・・！"
+    "name": "Dante",
+    "text": "Pak Hara juga tahu?! Ada apa ini, kelewatan apa aku ini pas aku di Tokyo?!"
   },
   {
-    "name": "緋奈",
-    "text": "インドネシアの事、いっぱい教えてくださいね（ニコ）",
+    "name": "Hina",
+    "text": "Ajarin aku banyak-banyak soal Indonesia, ya! (tersenyum lebar)",
     "character": "./../../assets/char/000.png",
     "side": "right",
     "background": "./../../assets/bgev/ev002.png"
   },
   {
-    "name": "ダンテ",
-    "text": "（ち、近いぃ・・・・！触れそう・・・・）"
+    "name": "Dante",
+    "text": "(Duh, deket banget...! Deg-deg an, nih...!)"
   },
   {
-    "name": "緋奈",
-    "text": "あたしもー、インドネシアの事。知りたいっていうかー"
+    "name": "Hina",
+    "text": "Aku tuh penasaran banget sama Indonesia, pengen tahu lebih banyak!"
   },
   {
-    "name": "ダンテ",
-    "text": "ふぉーー！離れて！インドネシアにはそんな積極的な女性いないヨー！",
+    "name": "Dante",
+    "text": "Eeeh, mundur dikit dong! Di Indonesia nggak ada cewek se-agresif kamu!",
     "background": "./../../assets/bgev/bg011.jpg"
   },
   {
-    "name": "緋奈",
-    "text": "えー。意外とシャイなんですね。",
+    "name": "Hina",
+    "text": "Hihihi, ternyata kamu gampang malu, ya?",
     "character": "./../../assets/char/a01012.png",
     "side": "right"
   },
   {
-    "name": "ダンテ",
-    "text": "私が！これからインドネシアの全てを！みっちり教えますのですます！"
+    "name": "Dante",
+    "text": "Malu apaan! Mulai sekarang, aku bakal ngajarin kamu semua tentang Indonesia, sampe mumet!"
   },
   {
-    "name": "緋奈",
-    "text": "はい、岡井さんにも薄着はダメ！と言われていますので今回のみです！"
+    "name": "Hina",
+    "text": "Oke, tapi kata Bos Okai, aku nggak boleh pakai baju yang kebuka-buka gini lagi, jadi special kali ini aja lho!"
   },
   {
-    "name": "ダンテ",
-    "text": "インドネシアの力になれるようがんばろー！"
+    "name": "Dante",
+    "text": "Yuk, kita semangat bantu Indonesia biar makin maju!"
   },
   {
-    "name": "緋奈",
-    "text": "最後なのでサービスカットのメイド服でサヨナラっ！",
+    "name": "Hina",
+    "text": "Dan sebagai penutup, aku kasih bonus spesial: kostum maid untuk perpisahan!",
     "character": "./../../assets/char/000.png",
     "side": "right",
     "background": "./../../assets/bgev/ev001.png"
   },
   {
-    "name": "ダンテ",
-    "text": "神の使いの猫はいいけど！女性の露出高いのはダメヨーーー！"
+    "name": "Dante",
+    "text": "Outfit maid sih oke, tapi pakaian buka-bukaan? Ngga bole!!"
   }
 ]
