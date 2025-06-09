@@ -1,4 +1,5 @@
 {
+  "scenes": [
     {
       "text": "ようこそ、冒険の世界へ！",
       "background": "./../../assets/bg/forest.jpg",
@@ -28,4 +29,5 @@
       "effect": "black-out",
       "fontSize": "20px"
     }
+  ]
 }
