@@ -1,5 +1,5 @@
 {
-    "scene" : [
+    "scenario" : [
     {
       "text": "ようこそ、冒険の世界へ！",
       "background": "./../../assets/bgev/bg001.png",
