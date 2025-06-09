@@ -1,7 +1,6 @@
 const characterColors = {
-  "ダンテ": "#00ffff",
-  "緋奈": "#d3381c",
-  "": "#333132",
-  "ユウト": "#ffa500"
+  "Dante": "#00ffff",
+  "Hina": "#d3381c",
+  "": "#ffa500"
 
 };
