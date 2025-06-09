@@ -1,33 +1,7 @@
 {
-   "scene": [
-    {
-      "text": "ようこそ、冒険の世界へ！",
-      "background": "./../../assets/bgev/bg001.png",
-      "characters": [
-        { "side": "center", "src": "./../../assets/char/a01002.png", "effect": "fade-in" }
-      ],
-      "fontSize": "22px",
-      "speed": 30
-    },
-    {
-      "text": "藍が現れた！",
-      "characters": [
-        { "side": "right", "src": "./../../assets/char/a02002.png", "effect": "slide-right-in" }
-      ],
-      "fontSize": "18px",
-      "speed": 10
-    },
-    {
-      "text": "緋奈が退場する。",
-      "characters": [
-        { "side": "center", "src": null }
-      ],
-      "speed": 40
-    },
     {
       "text": "シーン終了。",
       "effect": "black-out",
       "fontSize": "20px"
     }
- ],
 }
