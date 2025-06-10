@@ -14,7 +14,7 @@ const bgm = document.getElementById("bgm");
 const loadedCharacters = {}; // sideごとの表示状態保持
 
 function loadCharacterColors() {
-  return fetch("../../characterColors.json")
+  return fetch("../characterColors.json")
     .then((res) => res.json())
     .then((data) => {
       charColors = data;
