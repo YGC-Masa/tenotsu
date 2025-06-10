@@ -1,14 +1,31 @@
-{
+[
   {
-    "name": "緋奈",
-    "text": "皆さん。おはようございます！",
-    "size": "30",
-    "speed": "10",
-    "characters": [{ "side": "center" , "src": "./../../assets/char/a01002.png" , "effect": "dissolve"}],
-    "background": "./../../assets/bgev/STORE_NON.png"
+    "text": "ようこそ、冒険の世界へ！",
+    "background": "assets/bg/forest.jpg",
+    "characters": [
+      { "side": "center", "src": "assets/char/akari.png", "effect": "fade-in" }
+    ],
+    "fontSize": "22px",
+    "speed": 30
   },
   {
-    "name": "緋奈",
-    "text": "新バージョンｖ010の機能説明です"
+    "text": "ゆうとが現れた！",
+    "characters": [
+      { "side": "right", "src": "assets/char/yuto.png", "effect": "slide-right-in" }
+    ],
+    "fontSize": "18px",
+    "speed": 10
+  },
+  {
+    "text": "あかりが退場する。",
+    "characters": [
+      { "side": "center", "src": null }
+    ],
+    "speed": 40
+  },
+  {
+    "text": "シーン終了。",
+    "effect": "black-out",
+    "fontSize": "20px"
   }
-}
+]
