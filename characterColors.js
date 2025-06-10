@@ -1,4 +1,5 @@
-var characterColors = {
+// system/characterColors.js
+const characterColors = {
   "": "#C0C0C0",
   "緋奈": "#d3381c",
   "藍": "#0067C0",
@@ -8,3 +9,5 @@ var characterColors = {
   "あかり": "#e91e63",
   "ゆうと": "#2196f3"
 };
+
+export default characterColors;
