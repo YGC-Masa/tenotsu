@@ -1,7 +1,16 @@
 {
-    {
-      "text": "シーン終了。",
-      "effect": "black-out",
-      "fontSize": "20px"
-    }
+"scenes" : [
+  {
+    "name": "緋奈",
+    "text": "皆さん。おはようございます！",
+    "fontSize": "30",
+    "speed": "10",
+    "Characters": [{ "side": "center" , "src": "./../../assets/char/a01002.png" , "effect": "dissolve"}],
+    "background": "./../../assets/bgev/STORE_NON.png"
+  },
+  {
+    "name": "緋奈",
+    "text": "新バージョンｖ010の機能説明です"
+  }
+ ]
 }
