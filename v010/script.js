@@ -1,5 +1,5 @@
 const scenarioPath = "scenario/000start.json";
-const colorPath = "../../characterColors.json";
+const colorPath = "./../characterColors.json";
 
 let scenarioData;
 let currentIndex = 0;
