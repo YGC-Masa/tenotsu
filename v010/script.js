@@ -1,143 +1,177 @@
-// v010 script.js
+const scenarioPath = "scenario/000start.json";
+const colorPath = "../../characterColors.json";
 
-let currentScene = 0;
-let scenario = null;
-let charColors = {};
-const bg = document.getElementById("background");
-const charArea = document.getElementById("characters");
-const textBox = document.getElementById("text-box");
+let scenarioData;
+let currentIndex = 0;
+let currentCharacters = {};
+let characterColors = {};
+let isSkipping = false;
+let autoPlay = false;
+let textSpeed = 30;
+let fontSize = "20px";
+let bgmPlayer = new Audio();
+
+const textBox = document.getElementById("text");
 const nameBox = document.getElementById("name");
-const messageBox = document.getElementById("message");
-const choiceBox = document.getElementById("choices");
-const bgm = document.getElementById("bgm");
+const characterArea = document.getElementById("characters");
+const choicesArea = document.getElementById("choices");
+const background = document.getElementById("background");
 
-const loadedCharacters = {}; // sideごとの表示状態保持
-
-function loadCharacterColors() {
-  return fetch("./../characterColors.json")
-    .then((res) => res.json())
-    .then((data) => {
-      charColors = data;
-    });
+async function loadJSON(path) {
+  const res = await fetch(path);
+  return res.json();
 }
 
-function getColor(name, jsonColor) {
-  return jsonColor || charColors[name] || "white";
+function applyEffect(effect) {
+  return new Promise(resolve => {
+    const overlay = document.createElement("div");
+    overlay.className = `overlay ${effect}`;
+    document.body.appendChild(overlay);
+    setTimeout(() => {
+      overlay.remove();
+      resolve();
+    }, 800);
+  });
 }
 
-function setBackground(src, effect = "dissolve") {
-  bg.style.opacity = 0;
-  setTimeout(() => {
-    bg.style.backgroundImage = `url(${src})`;
-    bg.style.opacity = 1;
-  }, 500);
-}
-
-function createCharacterElement(side, src, effect) {
-  const img = document.createElement("img");
-  img.dataset.side = side;
-  img.src = src;
-  img.classList.add(effect || "dissolve");
-  setCharacterPosition(img, side);
-  return img;
-}
-
-function setCharacterPosition(img, side) {
-  const vw = window.innerWidth;
-  const sidePos = {
-    left: vw * 0.2,
-    center: vw * 0.5,
-    right: vw * 0.8,
-  };
-  img.style.left = `${sidePos[side] || sidePos.center}px`;
-}
-
-function clearCharacters() {
-  charArea.innerHTML = "";
-  for (const key in loadedCharacters) delete loadedCharacters[key];
-}
-
-function updateCharacters(characters) {
-  characters.forEach(({ side, src, effect }) => {
-    const existing = loadedCharacters[side];
-    if (src === null) {
-      if (existing) {
-        existing.classList.add(effect || "fade-out");
-        setTimeout(() => existing.remove(), 800);
-        delete loadedCharacters[side];
+function applyTextEffect(text, speed) {
+  return new Promise(resolve => {
+    textBox.innerHTML = "";
+    let i = 0;
+    const interval = setInterval(() => {
+      if (isSkipping || i >= text.length) {
+        textBox.innerText = text;
+        clearInterval(interval);
+        resolve();
+        return;
       }
-    } else if (!existing || existing.src !== location.origin + "/" + src) {
-      const img = createCharacterElement(side, src, effect);
-      loadedCharacters[side] = img;
-      charArea.appendChild(img);
-    }
+      textBox.innerHTML += text[i++];
+    }, speed);
   });
 }
 
-function typeText(text, speed, callback) {
-  messageBox.innerHTML = "";
-  let i = 0;
-  const interval = setInterval(() => {
-    messageBox.innerHTML += text[i++];
-    if (i >= text.length) {
-      clearInterval(interval);
-      if (callback) callback();
-    }
-  }, speed);
-  messageBox.onclick = () => {
-    clearInterval(interval);
-    messageBox.innerHTML = text;
-    messageBox.onclick = null;
-    if (callback) callback();
-  };
+function getColor(name) {
+  return (
+    (scenarioData.colors && scenarioData.colors[name]) ||
+    characterColors[name] ||
+    "#ffffff"
+  );
 }
 
-function showScene(scene) {
-  choiceBox.innerHTML = "";
-  if (scene.bg) setBackground(scene.bg, scene.effect);
-  if (scene.characters) updateCharacters(scene.characters);
-  if (scene.bgm) {
-    bgm.src = scene.bgm;
-    bgm.play();
-  }
-  if (scene.name || scene.text) {
-    nameBox.innerHTML = scene.name || "";
-    nameBox.style.color = getColor(scene.name, scene.color);
-    typeText(scene.text || "", scenario.speed || 30);
-  }
-  if (scene.choices) {
-    scene.choices.forEach((choice) => {
-      const btn = document.createElement("button");
-      btn.textContent = choice.text;
-      btn.onclick = () => {
-        if (choice.jumpToUrl) {
-          window.location.href = choice.jumpToUrl;
-        } else if (choice.jumpToScenario) {
-          loadScenario(`scenario/${choice.jumpToScenario}`);
-        } else if (typeof choice.next !== "undefined") {
-          currentScene = choice.next;
-          showScene(scenario.scenes[currentScene]);
+function updateCharacters(newCharacters = []) {
+  newCharacters.forEach(char => {
+    const { side, src, effect = "dissolve" } = char;
+    if (!src) {
+      const old = currentCharacters[side];
+      if (old) {
+        const el = document.getElementById(`char-${side}`);
+        if (el) {
+          el.classList.add(effect);
+          setTimeout(() => el.remove(), 800);
         }
-      };
-      choiceBox.appendChild(btn);
-    });
+        delete currentCharacters[side];
+      }
+    } else {
+      const img = document.createElement("img");
+      img.src = src;
+      img.className = `char ${side} ${effect}`;
+      img.id = `char-${side}`;
+      const old = document.getElementById(`char-${side}`);
+      if (old) old.remove();
+      characterArea.appendChild(img);
+      currentCharacters[side] = src;
+    }
+  });
+}
+
+function showChoices(choices) {
+  choicesArea.innerHTML = "";
+  choices.forEach(choice => {
+    const btn = document.createElement("button");
+    btn.textContent = choice.text;
+    btn.onclick = () => {
+      if (choice.jumpToUrl) {
+        location.href = choice.jumpToUrl;
+      } else if (choice.jumpToScenario) {
+        loadScenario(`scenario/${choice.jumpToScenario}`);
+      }
+    };
+    choicesArea.appendChild(btn);
+  });
+}
+
+async function playScene(scene) {
+  const {
+    background: bg,
+    bgm,
+    characters,
+    name,
+    text,
+    effect,
+    fontSize: size,
+    speed,
+    choices
+  } = scene;
+
+  if (bg) background.style.backgroundImage = `url(${bg})`;
+  if (bgm) {
+    bgmPlayer.src = bgm;
+    bgmPlayer.loop = true;
+    bgmPlayer.play();
+  }
+  if (effect) await applyEffect(effect);
+  if (characters) updateCharacters(characters);
+  if (size) fontSize = size;
+  if (speed !== undefined) textSpeed = speed;
+  if (text) {
+    nameBox.innerText = name || "";
+    nameBox.style.color = getColor(name || "");
+    textBox.innerText = "";
+    await applyTextEffect(text, textSpeed);
+  }
+  if (choices) {
+    showChoices(choices);
+    return;
   }
 }
 
-function loadScenario(file) {
-  fetch(file)
-    .then((res) => res.json())
-    .then((data) => {
-      scenario = data;
-      currentScene = 0;
-      clearCharacters();
-      showScene(scenario.scenes[currentScene]);
-      if (scenario.fontSize) textBox.style.fontSize = scenario.fontSize;
-    });
+async function next() {
+  if (currentIndex >= scenarioData.scripts.length) return;
+  const scene = scenarioData.scripts[currentIndex++];
+  await playScene(scene);
+  if (autoPlay) setTimeout(next, 500);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadCharacterColors().then(() => {
-    loadScenario("scenario/000start.json");
-  });
-});
+async function loadScenario(path) {
+  scenarioData = await loadJSON(path);
+  currentIndex = 0;
+  currentCharacters = {};
+  choicesArea.innerHTML = "";
+  background.style.backgroundImage = "";
+  textBox.innerText = "";
+  nameBox.innerText = "";
+  await next();
+}
+
+async function start() {
+  characterColors = await loadJSON(colorPath);
+  await loadScenario(scenarioPath);
+}
+
+document.getElementById("next").onclick = () => {
+  if (textBox.innerText !== "") {
+    isSkipping = true;
+    textBox.innerText = "";
+  } else {
+    isSkipping = false;
+    next();
+  }
+};
+
+document.getElementById("auto").onclick = () => {
+  autoPlay = !autoPlay;
+  document.getElementById("auto").innerText = autoPlay ? "停止" : "自動";
+  if (autoPlay) next();
+};
+
+start();

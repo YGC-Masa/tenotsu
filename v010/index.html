@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>物語ゲーム v010</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>v010 サンプル</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="game">
-    <div id="background"></div>
-    <div id="characters"></div>
-    <div id="text-box">
-      <div id="name"></div>
-      <div id="message"></div>
-    </div>
+  <div id="background"></div>
+  <div id="characters"></div>
+  <div id="textbox">
+    <div id="name"></div>
+    <div id="text"></div>
     <div id="choices"></div>
+    <div id="controls">
+      <button id="next">次へ</button>
+      <button id="auto">自動</button>
+    </div>
   </div>
-  <audio id="bgm" loop></audio>
   <script src="script.js"></script>
 </body>
 </html>

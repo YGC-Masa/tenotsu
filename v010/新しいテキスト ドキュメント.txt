@@ -1,0 +1,70 @@
+{
+  "fontSize": "22px",
+  "speed": 25,
+  "scripts": [
+    {
+      "background": "../assets/bgev/bg011.jpg",
+      "bgm": "../assets/bgm/main.mp3",
+      "effect": "white-in"
+    },
+    {
+      "characters": [
+        {
+          "side": "left",
+          "src": "../assets/char/a01002.png",
+          "effect": "slide-left-in"
+        }
+      ],
+      "name": "緋奈",
+      "text": "こんにちは！私は緋奈。v010の機能を紹介するね。"
+    },
+    {
+      "characters": [
+        {
+          "side": "right",
+          "src": "../assets/char/a02002.png",
+          "effect": "slide-right-in"
+        }
+      ],
+      "name": "藍",
+      "text": "ぼくは藍。エフェクトやキャラ表示位置、すごく柔軟なんだよ！"
+    },
+    {
+      "name": "緋奈",
+      "text": "キャラは left, center, right の3分割で表示されるの。"
+    },
+    {
+      "name": "藍",
+      "text": "それに effect を使えば出入りも自在！ slide-in や fade-out もできるんだ。"
+    },
+    {
+      "characters": [
+        {
+          "side": "left",
+          "src": null,
+          "effect": "slide-left-out"
+        }
+      ],
+      "name": "緋奈",
+      "text": "私ちょっと退場するね〜！"
+    },
+    {
+      "name": "藍",
+      "text": "キャラが退場しても、残りのキャラは表示されたままだよ！"
+    },
+    {
+      "name": "藍",
+      "text": "それじゃあ最後に、選択肢を紹介するね！",
+      "choices": [
+        {
+          "text": "もう一度見る",
+          "jumpToScenario": "000start.json"
+        },
+        {
+          "text": "外部リンクへ",
+          "jumpToUrl": "https://example.com"
+        }
+      ]
+    }
+  ]
+}

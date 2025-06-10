@@ -1,48 +1,142 @@
-body, html {
+body {
   margin: 0;
-  padding: 0;
-  background: #000;
+  font-family: sans-serif;
+  background: black;
+  color: white;
   overflow: hidden;
 }
 
-#game {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-}
-
 #background {
-  position: absolute;
+  position: fixed;
   width: 100%;
   height: 100%;
   background-size: cover;
   background-position: center;
-  transition: opacity 1s;
+  z-index: -2;
 }
 
-#characters img {
+#characters {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.char {
   position: absolute;
   bottom: 0;
-  max-height: 90%;
-  transform: translateX(-50%);
+  max-height: 100%;
   transition: all 0.8s ease;
 }
 
-#text-box {
+.left {
+  left: 0;
+}
+.center {
+  left: 50%;
+  transform: translateX(-50%);
+}
+.right {
+  right: 0;
+}
+
+#textbox {
   position: absolute;
   bottom: 0;
   width: 100%;
-  background: rgba(0,0,0,0.7);
-  color: white;
+  background: rgba(0, 0, 0, 0.6);
   padding: 1em;
-  font-size: 1.2em;
 }
 
 #name {
   font-weight: bold;
+  font-size: 1.2em;
   margin-bottom: 0.5em;
 }
 
 #choices {
-  margin-top: 1em;
+  display: flex;
+  gap: 1em;
+  padding: 1em;
+}
+
+#choices button {
+  padding: 0.5em 1em;
+  font-size: 1em;
+}
+
+.overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+}
+
+.white-in {
+  background: white;
+  animation: fadeOut 0.8s forwards;
+}
+.white-out {
+  background: white;
+  animation: fadeIn 0.8s forwards;
+}
+.black-in {
+  background: black;
+  animation: fadeOut 0.8s forwards;
+}
+.black-out {
+  background: black;
+  animation: fadeIn 0.8s forwards;
+}
+.dissolve {
+  animation: dissolve 0.8s forwards;
+}
+.fade-in {
+  animation: fadeIn 0.8s forwards;
+}
+.fade-out {
+  animation: fadeOut 0.8s forwards;
+}
+.slide-left-in {
+  animation: slideLeftIn 0.8s forwards;
+}
+.slide-right-in {
+  animation: slideRightIn 0.8s forwards;
+}
+.slide-left-out {
+  animation: slideLeftOut 0.8s forwards;
+}
+.slide-right-out {
+  animation: slideRightOut 0.8s forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes dissolve {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideLeftIn {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideRightIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideLeftOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-100%); opacity: 0; }
+}
+@keyframes slideRightOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
 }
