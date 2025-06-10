@@ -2,14 +2,14 @@
   {
     "fontSize": "24px",
     "speed": 30,
-    "bg": "./../../assets/bgev/bg011.jpg",
-    "bgm": "./../../assets/bgm/main.mp3",
+    "bg": "./../assets/bgev/bg011.jpg",
+    "bgm": "./../assets/bgm/main.mp3",
     "effect": "white-in",
     "characters": [
       {
         "side": "left",
         "effect": "slide-left-in",
-        "src": "./../../assets/char/a01002.png"
+        "src": "./../assets/char/a01002.png"
       }
     ],
     "text": "こんにちは、私は緋奈。この物語型ゲームの案内役よ。"
@@ -19,7 +19,7 @@
       {
         "side": "right",
         "effect": "slide-right-in",
-        "src": "./../../assets/char/a02002.png"
+        "src": "./../assets/char/a02002.png"
       }
     ],
     "text": "やあ、緋奈。僕は藍。ここではキャラが順に追加されて表示されるんだよね？"
@@ -40,7 +40,7 @@
       {
         "side": "center",
         "effect": "fade-in",
-        "src": "./../../assets/char/a01002.png"
+        "src": "./../assets/char/a01002.png"
       }
     ],
     "effect": "white-out",
