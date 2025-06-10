@@ -1,0 +1,68 @@
+{
+  "fontSize": "20px",
+  "speed": 30,
+  "bgm": "./../assets/bgm/main.mp3",
+  "background": "./../assets/bgev/bg011.jpg",
+  "scripts": [
+    {
+      "effect": "white-in"
+    },
+    {
+      "text": "このサンプルでは、v010の機能を紹介します。",
+      "effect": "dissolve"
+    },
+    {
+      "characters": [
+        { "side": "left", "src": "./../assets/char/a01002.png", "effect": "slide-left-in" }
+      ],
+      "text": "こんにちは、緋奈です。"
+    },
+    {
+      "characters": [
+        { "side": "right", "src": "./../assets/char/a02002.png", "effect": "slide-right-in" }
+      ],
+      "text": "藍も登場するよ。"
+    },
+    {
+      "text": "キャラ表示位置は left / center / right の3種類が使えます。"
+    },
+    {
+      "characters": [
+        { "side": "center", "src": "./../assets/char/a01002.png", "effect": "slide-left-in" }
+      ],
+      "text": "真ん中に表示もできます。"
+    },
+    {
+      "characters": [
+        { "side": "left", "src": null, "effect": "slide-left-out" }
+      ],
+      "text": "左のキャラを退場しました。"
+    },
+    {
+      "text": "文字サイズや表示速度も指定できます。",
+      "fontSize": "24px",
+      "speed": 15
+    },
+    {
+      "text": "このセリフは速く大きく表示されます。"
+    },
+    {
+      "text": "外部ファイルで定義されたキャラカラーも反映されます。"
+    },
+    {
+      "choices": [
+        {
+          "text": "外部サイトへ移動",
+          "jumpToUrl": "https://example.com"
+        },
+        {
+          "text": "次のシナリオへ進む",
+          "jumpToScenario": "nextScenario.json"
+        }
+      ]
+    },
+    {
+      "effect": "black-out"
+    }
+  ]
+}

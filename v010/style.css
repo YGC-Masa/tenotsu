@@ -1,142 +1,89 @@
-body {
-  margin: 0;
-  font-family: sans-serif;
-  background: black;
+/* 基本スタイル省略、一例 */
+
+body, html {
+  margin: 0; padding: 0; height: 100%;
+  background: #000;
+  font-family: 'Meiryo', sans-serif;
   color: white;
   overflow: hidden;
 }
 
+#game {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
 #background {
-  position: fixed;
+  position: absolute;
   width: 100%;
   height: 100%;
   background-size: cover;
   background-position: center;
-  z-index: -2;
+  z-index: 0;
 }
 
 #characters {
   position: absolute;
   width: 100%;
-  height: 100%;
-  top: 0;
-  pointer-events: none;
-  z-index: -1;
+  height: 70%;
+  bottom: 30%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 2%;
+  z-index: 1;
 }
 
-.char {
-  position: absolute;
-  bottom: 0;
+.character {
   max-height: 100%;
-  transition: all 0.8s ease;
+  max-width: 18%;
+  object-fit: contain;
+  transition: all 0.6s ease;
 }
 
-.left {
-  left: 0;
-}
-.center {
-  left: 50%;
-  transform: translateX(-50%);
-}
-.right {
-  right: 0;
-}
-
-#textbox {
+#text-area {
   position: absolute;
   bottom: 0;
   width: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  padding: 1em;
+  background: rgba(0,0,0,0.7);
+  padding: 1rem;
+  box-sizing: border-box;
+  z-index: 2;
 }
 
 #name {
   font-weight: bold;
-  font-size: 1.2em;
-  margin-bottom: 0.5em;
+  font-size: 1.2rem;
+  margin-bottom: 0.4rem;
+}
+
+#text {
+  font-size: 1rem;
+  line-height: 1.5;
+  min-height: 3rem;
 }
 
 #choices {
-  display: flex;
-  gap: 1em;
-  padding: 1em;
-}
-
-#choices button {
-  padding: 0.5em 1em;
-  font-size: 1em;
-}
-
-.overlay {
-  position: fixed;
+  position: absolute;
+  bottom: 100px;
   width: 100%;
-  height: 100%;
-  z-index: 999;
+  text-align: center;
+  z-index: 3;
 }
 
-.white-in {
-  background: white;
-  animation: fadeOut 0.8s forwards;
-}
-.white-out {
-  background: white;
-  animation: fadeIn 0.8s forwards;
-}
-.black-in {
-  background: black;
-  animation: fadeOut 0.8s forwards;
-}
-.black-out {
-  background: black;
-  animation: fadeIn 0.8s forwards;
-}
-.dissolve {
-  animation: dissolve 0.8s forwards;
-}
-.fade-in {
-  animation: fadeIn 0.8s forwards;
-}
-.fade-out {
-  animation: fadeOut 0.8s forwards;
-}
-.slide-left-in {
-  animation: slideLeftIn 0.8s forwards;
-}
-.slide-right-in {
-  animation: slideRightIn 0.8s forwards;
-}
-.slide-left-out {
-  animation: slideLeftOut 0.8s forwards;
-}
-.slide-right-out {
-  animation: slideRightOut 0.8s forwards;
+.choice-btn {
+  background: #444;
+  border: none;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  margin: 0 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 4px;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
-@keyframes dissolve {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@keyframes slideLeftIn {
-  from { transform: translateX(-100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-@keyframes slideRightIn {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-@keyframes slideLeftOut {
-  from { transform: translateX(0); opacity: 1; }
-  to { transform: translateX(-100%); opacity: 0; }
-}
-@keyframes slideRightOut {
-  from { transform: translateX(0); opacity: 1; }
-  to { transform: translateX(100%); opacity: 0; }
+.choice-btn:hover {
+  background: #666;
 }

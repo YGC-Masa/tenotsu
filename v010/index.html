@@ -2,22 +2,25 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>v010 サンプル</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>v010 Sample Visual Novel</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="background"></div>
-  <div id="characters"></div>
-  <div id="textbox">
-    <div id="name"></div>
-    <div id="text"></div>
-    <div id="choices"></div>
-    <div id="controls">
-      <button id="next">次へ</button>
-      <button id="auto">自動</button>
+  <div id="game">
+    <div id="background"></div>
+    <div id="characters"></div>
+    <div id="text-area">
+      <div id="name"></div>
+      <div id="text"></div>
     </div>
+    <div id="choices"></div>
   </div>
+
+  <audio id="bgm" loop></audio>
+  <audio id="se"></audio>
+
+  <script src="../characterColors.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
