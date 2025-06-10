@@ -1,0 +1,59 @@
+[
+  {
+    "fontSize": "24px",
+    "speed": 30,
+    "bg": "./../../assets/bgev/bg011.jpg",
+    "bgm": "./../../assets/bgm/main.mp3",
+    "effect": "white-in",
+    "characters": [
+      {
+        "side": "left",
+        "effect": "slide-left-in",
+        "src": "./../../assets/char/a01002.png"
+      }
+    ],
+    "text": "こんにちは、私は緋奈。この物語型ゲームの案内役よ。"
+  },
+  {
+    "characters": [
+      {
+        "side": "right",
+        "effect": "slide-right-in",
+        "src": "./../../assets/char/a02002.png"
+      }
+    ],
+    "text": "やあ、緋奈。僕は藍。ここではキャラが順に追加されて表示されるんだよね？"
+  },
+  {
+    "effect": "dissolve",
+    "characters": [],
+    "text": "その通りよ、藍。このシステムではシナリオはJSONファイルで管理されてるの。"
+  },
+  {
+    "characters": [
+      { "side": "left", "src": null }
+    ],
+    "text": "背景やBGMもJSON内で切り替えられるよ。"
+  },
+  {
+    "characters": [
+      {
+        "side": "center",
+        "effect": "fade-in",
+        "src": "./../../assets/char/a01002.png"
+      }
+    ],
+    "effect": "white-out",
+    "text": "キャラの表示効果や、個別の位置設定、外部キャラカラー設定もできるのよ。"
+  },
+  {
+    "characters": [
+      { "side": "center", "src": null }
+    ],
+    "effect": "fade-out",
+    "text": "これがv010の機能全部よ。さあ、あなたの物語を始めてみて。"
+  },
+  {
+    "text": "【リロードで最初から】"
+  }
+]
