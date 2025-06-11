@@ -1,38 +1,50 @@
-[
-  {
-    "effect": "dissolve",
-    "bg": "./../assets/bgev/bg011.jpg",
-    "bgm": "./../assets/bgm/main.mp3",
-    "fontSize": 18,
-    "speed": 50,
+{
+  "fontSize": "20px",
+  "speed": 30,
+  "start": "scene1",
+
+  "scene1": {
+    "bg": "system/assets/bgev/bg011.png",
+    "bgm": "system/assets/bgm/main.mp3",
     "characters": [
-      { "side": "left", "effect": "slide-left-in", "src": "./../assets/char/a01002.png" }
+      { "side": "left", "src": "system/assets/char/a01002.png", "effect": "slide-left-in" }
     ],
     "name": "緋奈",
-    "text": "こんにちは、藍。今日はいい天気ですね。"
+    "text": "こんにちは、私は緋奈。ようこそv010のサンプルへ！",
+    "next": "scene2"
   },
-  {
+
+  "scene2": {
     "characters": [
-      { "side": "right", "effect": "slide-right-in", "src": "./../assets/char/a02002.png" }
+      { "side": "right", "src": "system/assets/char/a02002.png", "effect": "slide-right-in" }
     ],
     "name": "藍",
-    "text": "こんにちは、緋奈。そうですね、気持ちいいです。"
+    "text": "こんにちは、緋奈。わたしは藍。v010の機能を説明するよ！",
+    "next": "scene3"
   },
-  {
+
+  "scene3": {
+    "text": "このバージョンでは、キャラを一人ずつ表示して、表示済みキャラを保持するんだ。",
+    "next": "scene4"
+  },
+
+  "scene4": {
+    "text": "キャラの退場もできるよ。試してみて！",
     "characters": [
-      { "side": "left", "effect": null, "src": null }
+      { "side": "left", "src": null }
     ],
-    "name": "藍",
-    "text": "緋奈は、最近忙しそうですね。"
+    "next": "scene5"
   },
-  {
-    "name": "緋奈",
-    "text": "ええ、でも頑張っています。"
+
+  "scene5": {
+    "text": "背景やBGM、エフェクトも簡単に指定できるんだ。",
+    "next": "scene6"
   },
-  {
+
+  "scene6": {
     "choices": [
-      { "text": "もっと話そう", "next": "scenario/000start.json" },
-      { "text": "さようなら", "jumpToUrl": "https://example.com" }
+      { "text": "もっと詳しく", "jumpToUrl": "https://example.com/details" },
+      { "text": "終了", "jumpToUrl": "https://example.com/bye" }
     ]
   }
-]
+}
