@@ -1,9 +1,7 @@
 {
   "fontSize": "20px",
   "speed": 30,
-  "start": "scene1",
-
-  "scene1": {
+  {
     "bg": "../../assets/bgev/bg011.png",
     "bgm": "../assets/bgm/main.mp3",
     "characters": [
@@ -14,7 +12,7 @@
     "next": "scene2"
   },
 
-  "scene2": {
+ {
     "characters": [
       { "side": "right", "src": "../assets/char/a02002.png", "effect": "slide-right-in" }
     ],
@@ -23,12 +21,12 @@
     "next": "scene3"
   },
 
-  "scene3": {
+  {
     "text": "このバージョンでは、キャラを一人ずつ表示して、表示済みキャラを保持するんだ。",
     "next": "scene4"
   },
 
-  "scene4": {
+  {
     "text": "キャラの退場もできるよ。試してみて！",
     "characters": [
       { "side": "left", "src": null }
@@ -36,12 +34,12 @@
     "next": "scene5"
   },
 
-  "scene5": {
+  {
     "text": "背景やBGM、エフェクトも簡単に指定できるんだ。",
     "next": "scene6"
   },
 
-  "scene6": {
+   {
     "choices": [
       { "text": "もっと詳しく", "jumpToUrl": "https://example.com/details" },
       { "text": "終了", "jumpToUrl": "https://example.com/bye" }
