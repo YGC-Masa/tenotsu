@@ -1,48 +1,51 @@
 {
   "fontSize": "20px",
   "speed": 30,
-  {
-    "bg": "../../assets/bgev/bg011.png",
-    "bgm": "../assets/bgm/main.mp3",
-    "characters": [
-      { "side": "left", "src": "../assets/char/a01002.png", "effect": "slide-left-in" }
-    ],
-    "name": "緋奈",
-    "text": "こんにちは、私は緋奈。ようこそv010のサンプルへ！",
-    "next": "scene2"
-  },
-
- {
-    "characters": [
-      { "side": "right", "src": "../assets/char/a02002.png", "effect": "slide-right-in" }
-    ],
-    "name": "藍",
-    "text": "こんにちは、緋奈。わたしは藍。v010の機能を説明するよ！",
-    "next": "scene3"
-  },
-
-  {
-    "text": "このバージョンでは、キャラを一人ずつ表示して、表示済みキャラを保持するんだ。",
-    "next": "scene4"
-  },
-
-  {
-    "text": "キャラの退場もできるよ。試してみて！",
-    "characters": [
-      { "side": "left", "src": null }
-    ],
-    "next": "scene5"
-  },
-
-  {
-    "text": "背景やBGM、エフェクトも簡単に指定できるんだ。",
-    "next": "scene6"
-  },
-
-   {
-    "choices": [
-      { "text": "もっと詳しく", "jumpToUrl": "https://example.com/details" },
-      { "text": "終了", "jumpToUrl": "https://example.com/bye" }
-    ]
-  }
+  "start": [
+    {
+      "bg": "assets/bgev/bg011.png",
+      "bgm": "assets/bgm/main.mp3",
+      "effect": "fade-in"
+    },
+    {
+      "text": "ようこそ、物語へ。",
+      "effect": "dissolve"
+    },
+    {
+      "characters": [
+        { "side": "left", "src": "assets/char/a01002.png", "effect": "slide-left-in" }
+      ]
+    },
+    {
+      "text": "緋奈「こんにちは、私は緋奈。物語のガイドをするよ。」"
+    },
+    {
+      "characters": [
+        { "side": "right", "src": "assets/char/a02002.png", "effect": "slide-right-in" }
+      ]
+    },
+    {
+      "text": "藍「そして私は藍。システムのことを説明するわ。」"
+    },
+    {
+      "text": "緋奈「このゲームでは文字サイズや表示速度も調整できるの。」"
+    },
+    {
+      "text": "藍「画像はスライドイン・アウト、フェード、ディゾルブなど多彩な演出が可能よ。」"
+    },
+    {
+      "characters": [
+        { "side": "left", "src": null, "effect": "slide-left-out" }
+      ]
+    },
+    {
+      "text": "藍「キャラの退場は『src: null』でできるの。便利ね。」"
+    },
+    {
+      "choices": [
+        { "text": "外部リンクへ", "jumpToUrl": "https://example.com" },
+        { "text": "別シナリオへ", "jumpToScenario": "nextScene.json" }
+      ]
+    }
+  ]
 }
