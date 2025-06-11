@@ -8,14 +8,14 @@
   },
   "1": {
     "characters": [
-      { "side": "left", "effect": "slide-left-in", "src": "../system/assets/char/a01002.png" }
+      { "side": "left", "effect": "slide-left-in", "src": "../assets/char/a01002.png" }
     ],
     "name": "緋奈",
     "text": "こんにちは、藍。今日はいい天気ですね。"
   },
   "2": {
     "characters": [
-      { "side": "right", "effect": "slide-right-in", "src": "../system/assets/char/a02002.png" }
+      { "side": "right", "effect": "slide-right-in", "src": "../assets/char/a02002.png" }
     ],
     "name": "藍",
     "text": "こんにちは、緋奈。そうですね、気持ちいいです。"
