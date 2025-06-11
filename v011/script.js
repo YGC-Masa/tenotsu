@@ -1,4 +1,4 @@
-const scenarioFile = './scenario/000start.json';
+let scenarioFile = './scenario/000start.json'; // let に変更
 const characterColorsPath = './../characterColors.js';
 let scenarioData = null;
 let currentIndex = 0;
@@ -24,23 +24,29 @@ function loadScenario(callback) {
     .then(response => response.json())
     .then(data => {
       scenarioData = data;
-      fontSize = data.fontSize || fontSize;
-      textSpeed = data.speed || textSpeed;
+      fontSize = data.fontSize === "small" ? "14px" :
+                 data.fontSize === "medium" ? "20px" :
+                 data.fontSize === "large" ? "26px" : "20px";
+      textSpeed = data.speed || 40;
       callback();
+    })
+    .catch(e => {
+      console.error('Failed to load scenario:', e);
     });
 }
 
 function applyBackground(src, effect) {
   const bg = document.getElementById('background');
+  const fullSrc = `../assets/bgev/${src}`;
   if (effect === 'black-out') {
     bg.classList.add('fade-out');
     setTimeout(() => {
-      bg.src = src;
+      bg.src = fullSrc;
       bg.classList.remove('fade-out');
       bg.classList.add('fade-in');
     }, 500);
   } else {
-    bg.src = src;
+    bg.src = fullSrc;
   }
 }
 
@@ -54,7 +60,7 @@ function applyCharacters(characters) {
     } else {
       if (!currentCharacters[side] || currentCharacters[side].src !== src) {
         const img = document.createElement('img');
-        img.src = src;
+        img.src = `../assets/char/${src}`;
         img.className = 'char-image';
         if (effect) {
           img.classList.add(effect);
@@ -67,17 +73,23 @@ function applyCharacters(characters) {
   });
 }
 
-function applyDialogue(dialogue, callback) {
-  const name = dialogue.name || '';
-  const text = dialogue.text || '';
-  const color = (name in dialogue.color ? dialogue.color[name] : null)
-             || characterColors[name]
-             || '#FFFFFF';
+function applyDialogue(scene, callback) {
+  // JSONの仕様に合わせてnameとtextを取得
+  let name = '';
+  let text = '';
+  if (scene.characters && scene.characters.length === 1 && scene.text) {
+    // 名前はJSONのスクリプトで直接テキスト内にある場合も多いので
+    name = ''; 
+    text = scene.text;
+  } else if (scene.text) {
+    text = scene.text;
+  }
+  // キャラ名が明記されている場合は抜き出してもいいがここでは省略
 
   const nameElem = document.getElementById('name');
   const textElem = document.getElementById('text');
   nameElem.textContent = name;
-  nameElem.style.color = color;
+  nameElem.style.color = name && characterColors[name] ? characterColors[name] : '#fff';
   textElem.innerHTML = '';
   textElem.style.fontSize = fontSize;
 
@@ -98,55 +110,61 @@ function showChoices(choices) {
   choiceBox.innerHTML = '';
   choices.forEach(choice => {
     const button = document.createElement('button');
-    button.textContent = choice.text;
+    button.textContent = choice.label || choice.text || '選択肢';
     button.onclick = () => {
       if (choice.jumpToUrl) {
         window.location.href = choice.jumpToUrl;
       } else if (choice.jumpToScenario) {
-        scenarioFile = choice.jumpToScenario;
+        scenarioFile = `./scenario/${choice.jumpToScenario}`;
         currentIndex = 0;
         loadScenario(startScene);
-      } else {
+      } else if (typeof choice.next === 'number') {
         currentIndex = choice.next;
         playScene();
       }
+      choiceBox.innerHTML = '';
     };
     choiceBox.appendChild(button);
   });
 }
 
 function playScene() {
-  const scene = scenarioData[currentIndex];
+  if (!scenarioData) return;
+  const scene = scenarioData.scripts[currentIndex];
   if (!scene) return;
 
-  const {
-    background,
-    effect = 'dissolve',
-    characters = [],
-    dialogue,
-    choices,
-    next
-  } = scene;
-
-  if (background) {
-    applyBackground(background, effect);
+  // 背景
+  if (scene.bg) {
+    applyBackground(scene.bg, scene.effect);
   }
 
-  if (characters.length > 0) {
-    applyCharacters(characters);
+  // キャラ
+  if (scene.characters) {
+    applyCharacters(scene.characters);
   }
 
-  if (dialogue) {
-    applyDialogue(dialogue, () => {
-      if (choices) {
-        showChoices(choices);
-      } else if (typeof next === 'number') {
-        currentIndex = next;
+  // テキスト
+  if (scene.text) {
+    applyDialogue(scene, () => {
+      if (scene.choices) {
+        showChoices(scene.choices);
+      } else if (typeof scene.next === 'number') {
+        currentIndex = scene.next;
         if (isAutoMode) {
           autoModeTimeout = setTimeout(playScene, 3000);
         }
       }
     });
+  } else {
+    // テキストなしでも次へ進む
+    if (scene.choices) {
+      showChoices(scene.choices);
+    } else if (typeof scene.next === 'number') {
+      currentIndex = scene.next;
+      if (isAutoMode) {
+        autoModeTimeout = setTimeout(playScene, 3000);
+      }
+    }
   }
 }
 
@@ -165,8 +183,9 @@ function toggleAutoMode() {
 
 function handleDoubleTapBackground() {
   let lastTap = 0;
-  document.getElementById('background').addEventListener('touchend', function (e) {
-    const now = new Date().getTime();
+  const bg = document.getElementById('background');
+  bg.addEventListener('touchend', function (e) {
+    const now = Date.now();
     if (now - lastTap < 300) {
       toggleAutoMode();
     }
