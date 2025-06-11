@@ -1,90 +1,63 @@
 {
+  "fontSize": "20px",
   "speed": 40,
-  "fontSize": "medium",
-  "scripts": [
-    {
-      "bg": "bg011.jpg",
-      "text": "ようこそ！この物語型ブラウザゲームは最新のv011仕様で動いています。"
+  "0": {
+    "background": "../assets/bgev/bg011.png",
+    "effect": "fade-in",
+    "characters": [
+      {
+        "side": "left",
+        "src": "../assets/char/a01002.png",
+        "effect": "slide-left-in"
+      }
+    ],
+    "dialogue": {
+      "name": "緋奈",
+      "text": "おはよう、今日もがんばろう！"
     },
-    {
-      "characters": [
-        {
-          "side": "left",
-          "src": "a01002.png",
-          "effect": "fade-in"
-        },
-        {
-          "side": "right",
-          "src": "a02002.png",
-          "effect": "fade-in"
-        }
-      ],
-      "text": "緋奈「こんにちは、緋奈です。今日はこのゲームの機能を紹介するよ。」"
+    "next": 1
+  },
+  "1": {
+    "characters": [
+      {
+        "side": "right",
+        "src": "../assets/char/a02002.png",
+        "effect": "slide-right-in"
+      }
+    ],
+    "dialogue": {
+      "name": "藍",
+      "text": "うん、天気もいいし、気分も最高だね。"
     },
-    {
-      "text": "藍「藍だよ。よろしくね！」"
+    "choices": [
+      {
+        "text": "一緒に行こう！",
+        "next": 2
+      },
+      {
+        "text": "もう少し休んでから……",
+        "next": 3
+      }
+    ]
+  },
+  "2": {
+    "dialogue": {
+      "name": "緋奈",
+      "text": "うん、じゃあ一緒に出かけよう！"
     },
-    {
-      "text": "緋奈「まず、キャラクターは最大3人まで同時に表示可能で、1人ずつ段階的に登場します。」"
+    "next": 4
+  },
+  "3": {
+    "dialogue": {
+      "name": "藍",
+      "text": "わかった、じゃあ待ってるよ。"
     },
-    {
-      "text": "藍「表示位置は5つあって、left, left2, center, right2, rightでコントロールされてるよ。」"
-    },
-    {
-      "characters": [
-        {
-          "side": "left2",
-          "src": "a01002.png",
-          "effect": "slide-left-in"
-        },
-        {
-          "side": "right2",
-          "src": "a02002.png",
-          "effect": "slide-right-in"
-        }
-      ],
-      "text": "緋奈「このように位置も変えられるし、エフェクトもキャラごとに指定できるんだ。」"
-    },
-    {
-      "text": "藍「退場はsrcにnullを指定すれば、その位置のキャラが消えるよ。」"
-    },
-    {
-      "characters": [
-        {
-          "side": "left2",
-          "src": null,
-          "effect": "fade-out"
-        }
-      ],
-      "text": "緋奈「ほら、左中央のキャラがフェードアウトで退場したね。」"
-    },
-    {
-      "text": "藍「背景やBGMもシナリオ内で自由に切り替えられるよ。」"
-    },
-    {
-      "bgm": "main.mp3",
-      "text": "緋奈「BGM再生中！雰囲気バッチリだね。」"
-    },
-    {
-      "text": "藍「テキストは文字サイズと表示速度をシナリオごとに調整可能。」"
-    },
-    {
-      "text": "緋奈「速さや大きさを変えて読みやすくしたり、雰囲気を変えられるんだ。」"
-    },
-    {
-      "text": "藍「選択肢で分岐もできるし、URLジャンプも実装済みだよ。」"
-    },
-    {
-      "choices": [
-        {
-          "label": "オートモード説明へ",
-          "jumpToScenario": "auto.json"
-        },
-        {
-          "label": "次のシナリオへ",
-          "jumpToScenario": "next.json"
-        }
-      ]
+    "next": 4
+  },
+  "4": {
+    "dialogue": {
+      "name": "",
+      "text": "こうして、ふたりの一日が始まった。"
     }
-  ]
+  }
 }
