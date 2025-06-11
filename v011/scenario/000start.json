@@ -1,63 +1,44 @@
-{
-  "fontSize": "20px",
-  "speed": 40,
-  "0": {
-    "background": "../assets/bgev/bg011.png",
+[
+  {
+    "background": "assets/bgev/bg011.png",
     "effect": "fade-in",
+    "fontSize": "1.2em",
+    "speed": 30,
     "characters": [
       {
         "side": "left",
-        "src": "../assets/char/a01002.png",
-        "effect": "slide-left-in"
-      }
-    ],
-    "dialogue": {
-      "name": "緋奈",
-      "text": "おはよう、今日もがんばろう！"
-    },
-    "next": 1
-  },
-  "1": {
-    "characters": [
-      {
-        "side": "right",
-        "src": "../assets/char/a02002.png",
-        "effect": "slide-right-in"
-      }
-    ],
-    "dialogue": {
-      "name": "藍",
-      "text": "うん、天気もいいし、気分も最高だね。"
-    },
-    "choices": [
-      {
-        "text": "一緒に行こう！",
-        "next": 2
+        "src": "assets/char/a01002.png",
+        "effect": "slide-left-in",
+        "scale": 1
       },
       {
-        "text": "もう少し休んでから……",
-        "next": 3
+        "side": "right",
+        "src": "assets/char/a02002.png",
+        "effect": "slide-right-in",
+        "scale": 1
+      }
+    ],
+    "name": "緋奈",
+    "text": "ここから物語が始まるわ。"
+  },
+  {
+    "name": "藍",
+    "text": "準備はいい？進めてみようか。"
+  },
+  {
+    "choices": [
+      {
+        "text": "先に進む",
+        "jumpToLine": 3
+      },
+      {
+        "text": "別の物語へ",
+        "jumpToScenario": "otherStory.json"
       }
     ]
   },
-  "2": {
-    "dialogue": {
-      "name": "緋奈",
-      "text": "うん、じゃあ一緒に出かけよう！"
-    },
-    "next": 4
-  },
-  "3": {
-    "dialogue": {
-      "name": "藍",
-      "text": "わかった、じゃあ待ってるよ。"
-    },
-    "next": 4
-  },
-  "4": {
-    "dialogue": {
-      "name": "",
-      "text": "こうして、ふたりの一日が始まった。"
-    }
+  {
+    "name": "緋奈",
+    "text": "よし、次に進みましょう。"
   }
-}
+]
