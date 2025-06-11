@@ -4,7 +4,7 @@
   "bgm": "../assets/bgm/main.mp3",
   "0": {
     "effect": "white-in",
-    "background": "../assets/bgev/bg011.jpg"
+    "background": "./../assets/bgev/bg011.jpg"
   },
   "1": {
     "characters": [
