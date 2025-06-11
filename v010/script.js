@@ -1,177 +1,143 @@
-const scenarioPath = "scenario/000start.json";
-const colorPath = "./../characterColors.json";
-
 let scenarioData;
-let currentIndex = 0;
-let currentCharacters = {};
-let characterColors = {};
-let isSkipping = false;
-let autoPlay = false;
-let textSpeed = 30;
+let currentSceneId;
+let speed = 30;
 let fontSize = "20px";
-let bgmPlayer = new Audio();
+let charactersState = {};
+let bgmPlayer = document.getElementById("bgm");
+let sePlayer = document.getElementById("se");
 
-const textBox = document.getElementById("text");
-const nameBox = document.getElementById("name");
-const characterArea = document.getElementById("characters");
-const choicesArea = document.getElementById("choices");
-const background = document.getElementById("background");
-
-async function loadJSON(path) {
-  const res = await fetch(path);
-  return res.json();
+function loadScenario(path) {
+  fetch(path)
+    .then(response => response.json())
+    .then(data => {
+      scenarioData = data;
+      speed = data.speed || 30;
+      fontSize = data.fontSize || "20px";
+      currentSceneId = data.start;
+      showScene(currentSceneId);
+    });
 }
 
-function applyEffect(effect) {
-  return new Promise(resolve => {
-    const overlay = document.createElement("div");
-    overlay.className = `overlay ${effect}`;
-    document.body.appendChild(overlay);
-    setTimeout(() => {
-      overlay.remove();
-      resolve();
-    }, 800);
-  });
-}
+function showScene(sceneId) {
+  const scene = scenarioData[sceneId];
+  if (!scene) return;
 
-function applyTextEffect(text, speed) {
-  return new Promise(resolve => {
-    textBox.innerHTML = "";
-    let i = 0;
-    const interval = setInterval(() => {
-      if (isSkipping || i >= text.length) {
-        textBox.innerText = text;
-        clearInterval(interval);
-        resolve();
-        return;
-      }
-      textBox.innerHTML += text[i++];
-    }, speed);
-  });
-}
+  currentSceneId = sceneId;
+  const dialogue = document.getElementById("dialogue");
+  const textBox = document.getElementById("text-box");
+  const choicesBox = document.getElementById("choices");
 
-function getColor(name) {
-  return (
-    (scenarioData.colors && scenarioData.colors[name]) ||
-    characterColors[name] ||
-    "#ffffff"
-  );
-}
+  textBox.style.fontSize = fontSize;
+  choicesBox.innerHTML = "";
 
-function updateCharacters(newCharacters = []) {
-  newCharacters.forEach(char => {
-    const { side, src, effect = "dissolve" } = char;
-    if (!src) {
-      const old = currentCharacters[side];
-      if (old) {
-        const el = document.getElementById(`char-${side}`);
-        if (el) {
-          el.classList.add(effect);
-          setTimeout(() => el.remove(), 800);
-        }
-        delete currentCharacters[side];
-      }
-    } else {
-      const img = document.createElement("img");
-      img.src = src;
-      img.className = `char ${side} ${effect}`;
-      img.id = `char-${side}`;
-      const old = document.getElementById(`char-${side}`);
-      if (old) old.remove();
-      characterArea.appendChild(img);
-      currentCharacters[side] = src;
+  // 背景画像
+  if (scene.bg) {
+    document.getElementById("background").style.backgroundImage = `url('${scene.bg}')`;
+  }
+
+  // BGM
+  if (scene.bgm) {
+    if (bgmPlayer.src !== scene.bgm) {
+      bgmPlayer.src = scene.bgm;
+      bgmPlayer.play();
     }
-  });
-}
+  }
 
-function showChoices(choices) {
-  choicesArea.innerHTML = "";
-  choices.forEach(choice => {
-    const btn = document.createElement("button");
-    btn.textContent = choice.text;
-    btn.onclick = () => {
-      if (choice.jumpToUrl) {
-        location.href = choice.jumpToUrl;
-      } else if (choice.jumpToScenario) {
-        loadScenario(`scenario/${choice.jumpToScenario}`);
+  // キャラクター表示処理
+  if (scene.characters) {
+    updateCharacters(scene.characters);
+  }
+
+  // 名前・セリフ処理
+  if (scene.text) {
+    const name = scene.name || "";
+    dialogue.innerHTML = "";
+    const color = characterColors[name] || characterColors[""] || "#C0C0C0";
+    textBox.style.color = color;
+    showText(dialogue, scene.text, () => {
+      if (scene.next) {
+        setTimeout(() => showScene(scene.next), 500);
       }
-    };
-    choicesArea.appendChild(btn);
+    });
+  } else if (scene.choices) {
+    scene.choices.forEach(choice => {
+      const button = document.createElement("button");
+      button.className = "choice";
+      button.textContent = choice.text;
+      button.onclick = () => {
+        if (choice.jumpToUrl) {
+          location.href = choice.jumpToUrl;
+        } else if (choice.jumpToScenario) {
+          loadScenario(choice.jumpToScenario);
+        } else if (choice.jumpToScene) {
+          showScene(choice.jumpToScene);
+        }
+      };
+      choicesBox.appendChild(button);
+    });
+  }
+}
+
+function showText(element, text, callback) {
+  let i = 0;
+  const timer = setInterval(() => {
+    element.innerHTML += text.charAt(i++);
+    if (i >= text.length) {
+      clearInterval(timer);
+      if (callback) callback();
+    }
+  }, speed);
+}
+
+function updateCharacters(characters) {
+  const container = document.getElementById("characters");
+
+  characters.forEach(char => {
+    const side = char.side;
+    const id = `char-${side}`;
+    const existing = document.getElementById(id);
+
+    if (char.src === null) {
+      if (existing) {
+        existing.classList.add("fade-out");
+        setTimeout(() => existing.remove(), 500);
+        delete charactersState[side];
+      }
+      return;
+    }
+
+    const img = document.createElement("img");
+    img.src = char.src;
+    img.className = "character";
+    img.id = id;
+
+    if (char.effect) img.classList.add(char.effect);
+    else img.classList.add("dissolve");
+
+    switch (side) {
+      case "left":
+        img.style.left = "0%";
+        break;
+      case "center":
+        img.style.left = "35%";
+        break;
+      case "right":
+        img.style.right = "0%";
+        img.style.left = "auto";
+        break;
+    }
+
+    if (existing) {
+      existing.replaceWith(img);
+    } else {
+      container.appendChild(img);
+    }
+
+    charactersState[side] = char.src;
   });
 }
 
-async function playScene(scene) {
-  const {
-    background: bg,
-    bgm,
-    characters,
-    name,
-    text,
-    effect,
-    fontSize: size,
-    speed,
-    choices
-  } = scene;
-
-  if (bg) background.style.backgroundImage = `url(${bg})`;
-  if (bgm) {
-    bgmPlayer.src = bgm;
-    bgmPlayer.loop = true;
-    bgmPlayer.play();
-  }
-  if (effect) await applyEffect(effect);
-  if (characters) updateCharacters(characters);
-  if (size) fontSize = size;
-  if (speed !== undefined) textSpeed = speed;
-  if (text) {
-    nameBox.innerText = name || "";
-    nameBox.style.color = getColor(name || "");
-    textBox.innerText = "";
-    await applyTextEffect(text, textSpeed);
-  }
-  if (choices) {
-    showChoices(choices);
-    return;
-  }
-}
-
-async function next() {
-  if (currentIndex >= scenarioData.scripts.length) return;
-  const scene = scenarioData.scripts[currentIndex++];
-  await playScene(scene);
-  if (autoPlay) setTimeout(next, 500);
-}
-
-async function loadScenario(path) {
-  scenarioData = await loadJSON(path);
-  currentIndex = 0;
-  currentCharacters = {};
-  choicesArea.innerHTML = "";
-  background.style.backgroundImage = "";
-  textBox.innerText = "";
-  nameBox.innerText = "";
-  await next();
-}
-
-async function start() {
-  characterColors = await loadJSON(colorPath);
-  await loadScenario(scenarioPath);
-}
-
-document.getElementById("next").onclick = () => {
-  if (textBox.innerText !== "") {
-    isSkipping = true;
-    textBox.innerText = "";
-  } else {
-    isSkipping = false;
-    next();
-  }
+// 開始
+window.onload = () => {
+  loadScenario("scenario/000start.json");
 };
-
-document.getElementById("auto").onclick = () => {
-  autoPlay = !autoPlay;
-  document.getElementById("auto").innerText = autoPlay ? "停止" : "自動";
-  if (autoPlay) next();
-};
-
-start();
