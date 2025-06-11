@@ -1,206 +1,142 @@
-const scenarioFile = './scenario/000start.json';
-let scenarioData = null;
-let currentIndex = 0;
-let isAutoMode = false;
-let autoModeTimeout = null;
-let currentCharacters = {};
-let characterColors = {};
-let fontSize = '20px';
-let textSpeed = 40;
+let scenario = [];
+let currentLine = 0;
 let isTyping = false;
+let typingSpeed = 30;
+let fontSize = "1.2em";
+let autoMode = false;
+let autoTimer = null;
 
-function loadCharacterColors(callback) {
-  const script = document.createElement('script');
-  script.src = './../characterColors.js';
-  script.onload = () => {
-    characterColors = window.characterColors || {};
-    callback();
-  };
-  document.head.appendChild(script);
+const bg = document.getElementById("background");
+const nameBox = document.getElementById("name");
+const textBox = document.getElementById("text");
+const dialogueBox = document.getElementById("dialogue-box");
+const choicesBox = document.getElementById("choices");
+const charSlots = {
+  left: document.getElementById("char-left"),
+  center: document.getElementById("char-center"),
+  right: document.getElementById("char-right")
+};
+
+function applyEffect(element, effect) {
+  if (!effect) effect = "dissolve";
+  element.classList.remove(...element.classList);
+  void element.offsetWidth;
+  element.classList.add(effect);
 }
 
-function loadScenario(callback) {
-  fetch(scenarioFile)
-    .then(response => response.json())
-    .then(data => {
-      scenarioData = data;
-      fontSize = data.fontSize || fontSize;
-      textSpeed = data.speed || textSpeed;
-      callback();
-    });
+function setCharacter({ side, src, effect, scale = 1.0 }) {
+  const container = charSlots[side];
+  container.innerHTML = "";
+  if (!src) return;
+
+  const img = document.createElement("img");
+  img.src = src;
+  img.className = "char-image";
+  img.style.transform = `scale(${scale})`;
+
+  applyEffect(img, effect);
+  container.appendChild(img);
 }
 
-function applyBackground(src, effect) {
-  const bg = document.getElementById('background');
-  if (effect === 'black-out') {
-    bg.classList.add('fade-out');
-    setTimeout(() => {
-      bg.src = src;
-      bg.classList.remove('fade-out');
-      bg.classList.add('fade-in');
-    }, 500);
+function setBackground(src, effect) {
+  if (effect) applyEffect(bg, effect);
+  bg.src = src;
+}
+
+function showDialogue({ name, text, speed, fontSize: size }) {
+  if (nameBox && characterColors[name]) {
+    nameBox.style.color = characterColors[name];
   } else {
-    bg.src = src;
+    nameBox.style.color = "#C0C0C0";
   }
+  nameBox.textContent = name || "";
+  textBox.style.fontSize = size || fontSize;
+  typingSpeed = speed || 30;
+  typeText(text);
 }
 
-function applyCharacters(characters) {
-  characters.forEach(character => {
-    const { side, src, effect } = character;
-    const container = document.getElementById(`char-${side}`);
-    if (src === null) {
-      container.innerHTML = '';
-      delete currentCharacters[side];
+function typeText(text) {
+  isTyping = true;
+  textBox.textContent = "";
+  let i = 0;
+  function type() {
+    if (!isTyping) {
+      textBox.textContent = text;
+      return;
+    }
+    if (i < text.length) {
+      textBox.textContent += text[i++];
+      setTimeout(type, typingSpeed);
     } else {
-      if (!currentCharacters[side] || currentCharacters[side].src !== src) {
-        const img = document.createElement('img');
-        img.src = src;
-        img.className = 'char-image';
-        if (effect) img.classList.add(effect);
-        container.innerHTML = '';
-        container.appendChild(img);
-        currentCharacters[side] = { src };
+      isTyping = false;
+      if (autoMode) {
+        autoTimer = setTimeout(nextLine, 1500);
       }
     }
-  });
-}
-
-function applyDialogue(dialogue, callback) {
-  const name = dialogue.name || '';
-  const text = dialogue.text || '';
-  const color = characterColors[name] || '#FFFFFF';
-
-  const nameElem = document.getElementById('name');
-  const textElem = document.getElementById('text');
-  nameElem.textContent = name;
-  nameElem.style.color = color;
-  textElem.innerHTML = '';
-  textElem.style.fontSize = fontSize;
-
-  let i = 0;
-  isTyping = true;
-
-  function typeText() {
-    if (i < text.length) {
-      textElem.innerHTML += text[i++];
-      setTimeout(typeText, textSpeed);
-    } else {
-      isTyping = false;
-      if (callback) callback();
-    }
   }
-
-  typeText();
-
-  // テキストエリアをクリックで即表示
-  textElem.onclick = () => {
-    if (isTyping) {
-      isTyping = false;
-      textElem.innerHTML = text;
-    } else if (!isAutoMode && !document.getElementById('choices').hasChildNodes()) {
-      currentIndex++;
-      playScene();
-    }
-  };
+  type();
 }
 
 function showChoices(choices) {
-  const choiceBox = document.getElementById('choices');
-  choiceBox.innerHTML = '';
+  choicesBox.innerHTML = "";
   choices.forEach(choice => {
-    const button = document.createElement('button');
-    button.textContent = choice.text;
-    button.onclick = () => {
-      if (choice.jumpToUrl) {
-        window.location.href = choice.jumpToUrl;
-      } else if (choice.jumpToScenario) {
-        scenarioFile = choice.jumpToScenario;
-        currentIndex = 0;
-        loadScenario(startScene);
-      } else {
-        currentIndex = choice.next;
-        playScene();
+    const btn = document.createElement("button");
+    btn.textContent = choice.text;
+    btn.onclick = () => {
+      if (choice.jumpToUrl) location.href = choice.jumpToUrl;
+      if (choice.jumpToScenario) loadScenario(choice.jumpToScenario);
+      if (typeof choice.jumpToLine === "number") {
+        currentLine = choice.jumpToLine;
+        playLine();
       }
     };
-    choiceBox.appendChild(button);
+    choicesBox.appendChild(btn);
   });
 }
 
-function playScene() {
-  const scene = scenarioData[currentIndex];
-  if (!scene) return;
+function playLine() {
+  const line = scenario[currentLine];
+  if (!line) return;
 
-  const {
-    background,
-    effect = 'dissolve',
-    characters = [],
-    dialogue,
-    choices,
-    next
-  } = scene;
-
-  if (background) applyBackground(background, effect);
-  if (characters.length > 0) applyCharacters(characters);
-
-  if (dialogue) {
-    applyDialogue(dialogue, () => {
-      if (choices) {
-        showChoices(choices);
-      } else if (typeof next === 'number') {
-        if (isAutoMode) {
-          currentIndex = next;
-          autoModeTimeout = setTimeout(playScene, 3000);
-        }
-      }
-    });
+  if (line.effect && line.effect.startsWith("bg-")) {
+    setBackground(line.effect.replace("bg-", ""), line.effect);
   }
-}
 
-function startScene() {
-  playScene();
-}
+  if (line.background) setBackground(line.background, line.effect);
 
-function toggleAutoMode() {
-  isAutoMode = !isAutoMode;
-  if (isAutoMode) {
-    playScene();
+  (line.characters || []).forEach(c => setCharacter(c));
+
+  if (line.choices) {
+    showChoices(line.choices);
   } else {
-    clearTimeout(autoModeTimeout);
+    showDialogue(line);
   }
 }
 
-function handleDoubleTapOrClick() {
-  let lastTap = 0;
-  const bg = document.getElementById('background');
-
-  bg.addEventListener('touchend', e => {
-    const now = new Date().getTime();
-    if (now - lastTap < 300) toggleAutoMode();
-    lastTap = now;
-  });
-
-  bg.addEventListener('dblclick', () => {
-    toggleAutoMode();
-  });
+function nextLine() {
+  if (isTyping) {
+    isTyping = false;
+    return;
+  }
+  currentLine++;
+  playLine();
 }
 
-function init() {
-  loadCharacterColors(() => {
-    loadScenario(() => {
-      document.getElementById('next').onclick = () => {
-        if (isTyping) {
-          const textElem = document.getElementById('text');
-          textElem.click();
-        } else {
-          if (isAutoMode) toggleAutoMode();
-          currentIndex++;
-          playScene();
-        }
-      };
-      handleDoubleTapOrClick();
-      startScene();
+dialogueBox.addEventListener("click", nextLine);
+document.body.addEventListener("dblclick", () => {
+  autoMode = !autoMode;
+  if (autoMode) nextLine();
+  else clearTimeout(autoTimer);
+});
+
+function loadScenario(filename) {
+  fetch(`scenario/${filename}`)
+    .then(res => res.json())
+    .then(data => {
+      scenario = data;
+      currentLine = 0;
+      playLine();
     });
-  });
 }
 
-window.onload = init;
+loadScenario("000start.json");
