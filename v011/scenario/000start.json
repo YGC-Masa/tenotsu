@@ -1,6 +1,6 @@
 [
   {
-    "background": "../assets/bgev/bg011.png",
+    "background": "../assets/bgev/bg011.jpg",
     "effect": "fade-in",
     "fontSize": "1.2em",
     "speed": 30,
@@ -19,7 +19,7 @@
       }
     ],
     "name": "緋奈",
-    "text": "2ここから物語が始まるわ。"
+    "text": "3ここから物語が始まるわ。"
   },
   {
     "name": "藍",
