@@ -1,4 +1,4 @@
-/* ベース設定 */
+/* ベーススタイル */
 body {
   margin: 0;
   overflow: hidden;
@@ -14,7 +14,6 @@ body {
   overflow: hidden;
 }
 
-/* 背景画像 */
 #background {
   position: absolute;
   width: 100%;
@@ -24,7 +23,7 @@ body {
   z-index: 0;
 }
 
-/* キャラクター表示位置コンテナ */
+/* キャラクター表示エリア */
 .char-container {
   position: absolute;
   bottom: 0;
@@ -75,10 +74,9 @@ body {
 #text {
   font-size: 1.2em;
   line-height: 1.5;
-  cursor: pointer;
 }
 
-/* 選択肢ボタン */
+/* 選択肢 */
 #choices {
   position: absolute;
   bottom: 120px;
@@ -97,11 +95,10 @@ body {
   color: #000;
   cursor: pointer;
   border-radius: 8px;
+  white-space: nowrap;
 }
 
-
-
-/* アニメーション効果 */
+/* --- 各種エフェクト --- */
 .fade-in {
   animation: fadeIn 0.5s ease forwards;
 }
@@ -126,7 +123,27 @@ body {
   animation: slideRightOut 0.5s ease forwards;
 }
 
-/* キーフレーム定義 */
+.black-in {
+  animation: blackIn 0.5s ease forwards;
+  background-color: black;
+}
+
+.black-out {
+  animation: blackOut 0.5s ease forwards;
+  background-color: black;
+}
+
+.white-in {
+  animation: whiteIn 0.5s ease forwards;
+  background-color: white;
+}
+
+.white-out {
+  animation: whiteOut 0.5s ease forwards;
+  background-color: white;
+}
+
+/* アニメーション定義 */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -157,22 +174,39 @@ body {
   to { transform: translateX(100%); opacity: 0; }
 }
 
-/* v008 対応：画面回転・アスペクト調整対応 */
-@media screen and (orientation: landscape) {
-  #game {
-    width: 100vw;
-    height: 100vh;
+@keyframes blackIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes blackOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes whiteIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes whiteOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* 画面回転対応：縦・横切り替えも可 */
+@media screen and (orientation: portrait) {
+  #char-left,
+  #char-center,
+  #char-right {
+    width: 33.33%;
   }
 }
 
-@media screen and (orientation: portrait) {
-  #game {
-    width: 100vh;
-    height: 100vw;
-    transform: rotate(90deg);
-    transform-origin: left top;
-    position: absolute;
-    top: 0;
-    left: 0;
+@media screen and (orientation: landscape) {
+  #char-left,
+  #char-center,
+  #char-right {
+    width: 33.33%;
   }
 }
