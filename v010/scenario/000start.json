@@ -3,7 +3,7 @@
   "speed": 30,
   "start": [
     {
-      "bg": "assets/bgev/bg011.png",
+      "bg": "assets/bgev/bg011.jpg",
       "bgm": "assets/bgm/main.mp3",
       "effect": "fade-in"
     },
