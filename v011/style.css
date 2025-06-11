@@ -5,13 +5,27 @@ body {
   font-family: sans-serif;
 }
 
+#container {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 #game {
   position: relative;
   width: 100vw;
-  height: 100vh;
+  height: 56.25vw; /* 16:9 aspect ratio (100 / 16 * 9) */
+  max-height: 100vh;
+  max-width: 177.78vh; /* 16:9 aspect ratio (100 / 9 * 16) */
+  background-color: black;
   overflow: hidden;
 }
 
+/* 背景画像 */
 #background {
   position: absolute;
   width: 100%;
@@ -20,6 +34,7 @@ body {
   transition: opacity 0.5s;
 }
 
+/* キャラクター配置 */
 .char-container {
   position: absolute;
   bottom: 0;
@@ -42,6 +57,7 @@ body {
   transition: all 0.5s ease;
 }
 
+/* セリフウィンドウ */
 #dialogue-box {
   position: absolute;
   bottom: 0;
@@ -62,6 +78,7 @@ body {
   line-height: 1.5;
 }
 
+/* 選択肢ボタン */
 #choices {
   position: absolute;
   bottom: 120px;
@@ -82,6 +99,7 @@ body {
   border-radius: 8px;
 }
 
+/* 次へボタン */
 #next {
   position: absolute;
   bottom: 10px;
@@ -94,7 +112,7 @@ body {
   cursor: pointer;
 }
 
-/* Effects */
+/* エフェクトアニメーション */
 .fade-in {
   animation: fadeIn 0.5s ease forwards;
 }
@@ -106,12 +124,15 @@ body {
 .slide-left-in {
   animation: slideLeftIn 0.5s ease forwards;
 }
+
 .slide-right-in {
   animation: slideRightIn 0.5s ease forwards;
 }
+
 .slide-left-out {
   animation: slideLeftOut 0.5s ease forwards;
 }
+
 .slide-right-out {
   animation: slideRightOut 0.5s ease forwards;
 }
