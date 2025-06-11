@@ -1,10 +1,10 @@
 {
   "fontSize": "1.4em",
   "speed": 30,
-  "bgm": "../system/assets/bgm/main.mp3",
+  "bgm": "../assets/bgm/main.mp3",
   "0": {
     "effect": "white-in",
-    "background": "../system/assets/bgev/bg011.jpg"
+    "background": "../assets/bgev/bg011.jpg"
   },
   "1": {
     "characters": [
