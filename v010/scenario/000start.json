@@ -4,10 +4,10 @@
   "start": "scene1",
 
   "scene1": {
-    "bg": "system/assets/bgev/bg011.png",
-    "bgm": "system/assets/bgm/main.mp3",
+    "bg": "../assets/bgev/bg011.png",
+    "bgm": "../assets/bgm/main.mp3",
     "characters": [
-      { "side": "left", "src": "system/assets/char/a01002.png", "effect": "slide-left-in" }
+      { "side": "left", "src": "../assets/char/a01002.png", "effect": "slide-left-in" }
     ],
     "name": "緋奈",
     "text": "こんにちは、私は緋奈。ようこそv010のサンプルへ！",
@@ -16,7 +16,7 @@
 
   "scene2": {
     "characters": [
-      { "side": "right", "src": "system/assets/char/a02002.png", "effect": "slide-right-in" }
+      { "side": "right", "src": "../assets/char/a02002.png", "effect": "slide-right-in" }
     ],
     "name": "藍",
     "text": "こんにちは、緋奈。わたしは藍。v010の機能を説明するよ！",
