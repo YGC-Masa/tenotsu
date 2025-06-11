@@ -1,26 +1,23 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>v010 Sample Visual Novel2</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>物語型ゲーム v010</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="game">
     <div id="background"></div>
     <div id="characters"></div>
-    <div id="text-area">
-      <div id="name"></div>
-      <div id="text"></div>
+    <div id="overlay" class="hidden"></div>
+    <div id="text-box">
+      <p id="dialogue"></p>
+      <div id="choices"></div>
     </div>
-    <div id="choices"></div>
   </div>
-
   <audio id="bgm" loop></audio>
   <audio id="se"></audio>
-
-  <script src="./../characterColors.js"></script>
+  <script src="../characterColors.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
