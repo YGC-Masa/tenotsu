@@ -7,13 +7,13 @@
     "characters": [
       {
         "side": "left",
-        "src": "assets/char/a01002.png",
+        "src": "../assets/char/a01002.png",
         "effect": "slide-left-in",
         "scale": 1
       },
       {
         "side": "right",
-        "src": "assets/char/a02002.png",
+        "src": "../assets/char/a02002.png",
         "effect": "slide-right-in",
         "scale": 1
       }
