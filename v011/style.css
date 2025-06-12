@@ -14,16 +14,12 @@ body {
 
 #background {
   position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: -1;
   transition: opacity 0.5s;
 }
 
-/* キャラ表示位置（v006準拠：3分割） */
 .char-container {
   position: absolute;
   bottom: 0;
@@ -35,11 +31,10 @@ body {
   pointer-events: none;
 }
 
-#char-left   { left: 0; }
+#char-left { left: 0; }
 #char-center { left: 33.33%; }
-#char-right  { right: 0; }
+#char-right { right: 0; }
 
-/* キャラ画像 */
 .char-image {
   max-height: 100%;
   max-width: 100%;
@@ -47,7 +42,6 @@ body {
   transition: all 0.5s ease;
 }
 
-/* ダイアログボックス */
 #dialogue-box {
   position: absolute;
   bottom: 0;
@@ -56,7 +50,6 @@ body {
   color: white;
   padding: 1em;
   box-sizing: border-box;
-  z-index: 5;
 }
 
 #name {
@@ -69,7 +62,6 @@ body {
   line-height: 1.5;
 }
 
-/* 選択肢ボックス */
 #choices {
   position: absolute;
   bottom: 120px;
@@ -90,13 +82,25 @@ body {
   border-radius: 8px;
 }
 
-/* エフェクト */
-.fade-in { animation: fadeIn 0.5s ease forwards; }
-.fade-out { animation: fadeOut 0.5s ease forwards; }
-.slide-left-in { animation: slideLeftIn 0.5s ease forwards; }
-.slide-right-in { animation: slideRightIn 0.5s ease forwards; }
-.slide-left-out { animation: slideLeftOut 0.5s ease forwards; }
-.slide-right-out { animation: slideRightOut 0.5s ease forwards; }
+/* Effects */
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+.fade-out {
+  animation: fadeOut 0.5s ease forwards;
+}
+.slide-left-in {
+  animation: slideLeftIn 0.5s ease forwards;
+}
+.slide-right-in {
+  animation: slideRightIn 0.5s ease forwards;
+}
+.slide-left-out {
+  animation: slideLeftOut 0.5s ease forwards;
+}
+.slide-right-out {
+  animation: slideRightOut 0.5s ease forwards;
+}
 
 @keyframes fadeIn {
   from { opacity: 0; }
