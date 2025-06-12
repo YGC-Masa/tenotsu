@@ -1,106 +1,105 @@
-let scenario = [];
-let currentIndex = 0;
-let currentBGM = null;
-let charaColors = {};
+let script = [];
+let index = 0;
+let currentScene = "prologue";
+let bgmPlayer = new Audio();
 
-async function loadScenario(url) {
-  const res = await fetch(url);
-  scenario = await res.json();
-}
-
-async function loadCharacterColors(url) {
-  const res = await fetch(url);
-  charaColors = await res.json();
-}
-
-function setBGM(src) {
-  if (!src) return;
-  if (currentBGM) {
-    currentBGM.pause();
-    currentBGM = null;
-  }
-  currentBGM = new Audio(src);
-  currentBGM.loop = true;
-  currentBGM.volume = 0.5;
-  currentBGM.play();
-}
-
-function setBackground(src) {
-  const bg = document.getElementById("background");
-  bg.style.backgroundImage = `url(${src})`;
-}
-
-function updateCharacters(scene) {
-  const charLeft = document.getElementById("char-left");
-  const charRight = document.getElementById("char-right");
-  const charCenter = document.getElementById("char-center");
-
-  [charLeft, charRight, charCenter].forEach(img => {
-    img.style.opacity = "0";
-    img.src = "";
-  });
-
-  if (scene.characters) {
-    scene.characters.forEach(c => {
-      let el;
-      if (c.side === "left") el = charLeft;
-      else if (c.side === "right") el = charRight;
-      else el = charCenter;
-
-      el.src = c.src;
-      el.style.opacity = "1";
+function loadScenario(name, startIndex = 0) {
+  currentScene = name;
+  fetch(`scenario/${name}.json`)
+    .then(res => res.json())
+    .then(data => {
+      script = data;
+      index = startIndex;
+      showScene();
     });
-  }
 }
 
-function updateText(name, text) {
-  const nameElem = document.getElementById("name");
-  const textElem = document.getElementById("text");
+function playBGM(src) {
+  if (!src) return;
+  if (bgmPlayer.src.includes(src)) return;
+  bgmPlayer.pause();
+  bgmPlayer = new Audio(src);
+  bgmPlayer.loop = true;
+  bgmPlayer.volume = 0.5;
+  bgmPlayer.play();
+}
 
-  nameElem.innerText = name || "";
-  textElem.innerText = "";
-  textElem.style.color = name && charaColors[name] ? charaColors[name] : "#ffffff";
+function showScene() {
+  const scene = script[index];
+  const nameBox = document.getElementById("name");
+  const dialogueBox = document.getElementById("dialogue");
+  const character = document.getElementById("character");
+  const background = document.getElementById("background");
+  const choicesBox = document.getElementById("choices");
 
-  let index = 0;
-  const speed = 30;
+  if (scene.choices) {
+    document.getElementById("text-box").classList.add("hidden");
+    choicesBox.classList.remove("hidden");
+    choicesBox.innerHTML = "";
 
+    scene.choices.forEach(choice => {
+      const btn = document.createElement("button");
+      btn.textContent = choice.text;
+      btn.onclick = () => {
+        if (choice.next !== undefined) {
+          index = choice.next;
+          choicesBox.classList.add("hidden");
+          document.getElementById("text-box").classList.remove("hidden");
+          showScene();
+        } else if (choice.jump) {
+          loadScenario(choice.jump.scene, choice.jump.index);
+        }
+      };
+      choicesBox.appendChild(btn);
+    });
+    return;
+  }
+
+  if (scene.character) {
+    character.src = scene.character;
+    character.className = scene.side === "right" ? "right" : "left";
+  }
+
+  if (scene.background) {
+    background.style.backgroundImage = `url(${scene.background})`;
+  }
+
+  if (scene.bgm) {
+    playBGM(scene.bgm);
+  }
+
+  nameBox.textContent = scene.name || "";
+  dialogueBox.textContent = "";
+  dialogueBox.style.fontSize = scene.fontSize || "20px";
+  const charColor = scene.color || (characterColors && characterColors[scene.name]) || "white";
+  dialogueBox.style.color = charColor;
+  typeText(scene.text || "", scene.speed || 30);
+}
+
+function typeText(text, speed) {
+  const dialogueBox = document.getElementById("dialogue");
+  let i = 0;
+  dialogueBox.textContent = "";
   const interval = setInterval(() => {
-    if (index < text.length) {
-      textElem.innerText += text.charAt(index);
-      index++;
+    if (i < text.length) {
+      dialogueBox.textContent += text.charAt(i);
+      i++;
     } else {
       clearInterval(interval);
     }
   }, speed);
 }
 
-function showScene(index) {
-  const scene = scenario[index];
-  if (!scene) return;
-
-  // テキストクリア
-  document.getElementById("text").innerText = "";
-  document.getElementById("name").innerText = "";
-
-  if (scene.bg) setBackground(scene.bg);
-  if (scene.bgm) setBGM(scene.bgm);
-  updateCharacters(scene);
-  updateText(scene.name, scene.text);
-}
-
-function nextScene() {
-  if (currentIndex < scenario.length - 1) {
-    currentIndex++;
-    showScene(currentIndex);
+document.getElementById("ui").addEventListener("click", () => {
+  if (script[index]?.choices) return;
+  index++;
+  if (index < script.length) {
+    showScene();
+  } else {
+    document.getElementById("dialogue").textContent = "（物語は続く……）";
+    document.getElementById("name").textContent = "";
+    bgmPlayer.pause();
   }
-}
-
-document.getElementById("text-area").addEventListener("click", () => {
-  nextScene();
 });
 
-window.onload = async () => {
-  await loadCharacterColors("./characterColors.json");
-  await loadScenario("./scenario/start.json");
-  showScene(currentIndex);
-};
+window.onload = () => loadScenario("prologue", 0);
