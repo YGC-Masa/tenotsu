@@ -33,7 +33,6 @@ function setCharacter({ side, src, effect, scale = 1.0 }) {
   img.src = src;
   img.className = "char-image";
   img.style.transform = `scale(${scale})`;
-
   applyEffect(img, effect);
   container.appendChild(img);
 }
@@ -44,7 +43,7 @@ function setBackground(src, effect) {
 }
 
 function showDialogue({ name, text, speed, fontSize: size }) {
-  if (nameBox && characterColors[name]) {
+  if (characterColors[name]) {
     nameBox.style.color = characterColors[name];
   } else {
     nameBox.style.color = "#C0C0C0";
@@ -97,10 +96,6 @@ function showChoices(choices) {
 function playLine() {
   const line = scenario[currentLine];
   if (!line) return;
-
-  if (line.effect && line.effect.startsWith("bg-")) {
-    setBackground(line.effect.replace("bg-", ""), line.effect);
-  }
 
   if (line.background) setBackground(line.background, line.effect);
 
