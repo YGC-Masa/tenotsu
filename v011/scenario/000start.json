@@ -1,44 +1,53 @@
 [
   {
-    "background": "../assets/bgev/bg011.jpg",
+    "background": "../assets/bgev/bg011.png",
     "effect": "fade-in",
-    "fontSize": "1.2em",
-    "speed": 30,
     "characters": [
       {
-        "side": "left",
+        "side": "center",
         "src": "../assets/char/a01002.png",
         "effect": "slide-left-in",
-        "scale": 1
-      },
+        "scale": 1.0
+      }
+    ],
+    "name": "緋奈",
+    "text": "ここが、物語の始まりの場所……。",
+    "speed": 30,
+    "fontSize": "1.2em"
+  },
+  {
+    "characters": [
       {
         "side": "right",
         "src": "../assets/char/a02002.png",
         "effect": "slide-right-in",
-        "scale": 1
+        "scale": 1.0
       }
     ],
-    "name": "緋奈",
-    "text": "3ここから物語が始まるわ。"
+    "name": "藍",
+    "text": "本当にここで合ってるの？ ちょっと不安なんだけど。",
+    "speed": 30
   },
   {
-    "name": "藍",
-    "text": "準備はいい？進めてみようか。"
+    "name": "緋奈",
+    "text": "大丈夫。きっと何かが始まるはず。",
+    "speed": 30
   },
   {
     "choices": [
       {
-        "text": "先に進む",
-        "jumpToLine": 3
+        "text": "扉を開ける",
+        "jumpToLine": 4
       },
       {
-        "text": "別の物語へ",
-        "jumpToScenario": "otherStory.json"
+        "text": "引き返す",
+        "jumpToUrl": "https://example.com/escape"
       }
     ]
   },
   {
     "name": "緋奈",
-    "text": "よし、次に進みましょう。"
+    "text": "――いこう。",
+    "speed": 30
   }
 ]
