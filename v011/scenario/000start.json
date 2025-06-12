@@ -1,53 +1,28 @@
 [
   {
     "background": "../assets/bgev/bg011.jpg",
-    "effect": "fade-in",
     "characters": [
-      {
-        "side": "center",
-        "src": "../assets/char/a01002.png",
-        "effect": "slide-left-in",
-        "scale": 1.0
-      }
+      { "side": "left", "src": "../assets/char/a01002.png", "effect": "slide-left-in" },
+      { "side": "right", "src": "../assets/char/a02002.png", "effect": "slide-right-in" }
     ],
     "name": "緋奈",
-    "text": "ここが、物語の始まりの場所……。",
+    "text": "ようこそ、ｖ11の物語の世界へ。",
     "speed": 30,
     "fontSize": "1.2em"
   },
   {
-    "characters": [
-      {
-        "side": "right",
-        "src": "../assets/char/a02002.png",
-        "effect": "slide-right-in",
-        "scale": 1.0
-      }
-    ],
     "name": "藍",
-    "text": "本当にここで合ってるの？ ちょっと不安なんだけど。",
-    "speed": 30
-  },
-  {
-    "name": "緋奈",
-    "text": "大丈夫。きっと何かが始まるはず。",
+    "text": "ここから君の冒険が始まるよ。",
     "speed": 30
   },
   {
     "choices": [
-      {
-        "text": "扉を開ける",
-        "jumpToLine": 4
-      },
-      {
-        "text": "引き返す",
-        "jumpToUrl": "https://example.com/escape"
-      }
+      { "text": "進む", "jumpToLine": 3 },
+      { "text": "やめる", "jumpToUrl": "https://example.com" }
     ]
   },
   {
     "name": "緋奈",
-    "text": "――いこう。",
-    "speed": 30
+    "text": "それじゃあ、行こうか！"
   }
 ]
