@@ -1,3 +1,5 @@
+import './characterColors.js';
+
 let scenario = [];
 let currentLine = 0;
 let isTyping = false;
@@ -28,7 +30,6 @@ function setCharacter({ side, src, effect, scale = 1.0 }) {
   const container = charSlots[side];
   container.innerHTML = "";
   if (!src) return;
-
   const img = document.createElement("img");
   img.src = src;
   img.className = "char-image";
@@ -43,7 +44,7 @@ function setBackground(src, effect) {
 }
 
 function showDialogue({ name, text, speed, fontSize: size }) {
-  if (characterColors[name]) {
+  if (nameBox && characterColors[name]) {
     nameBox.style.color = characterColors[name];
   } else {
     nameBox.style.color = "#C0C0C0";
@@ -68,9 +69,7 @@ function typeText(text) {
       setTimeout(type, typingSpeed);
     } else {
       isTyping = false;
-      if (autoMode) {
-        autoTimer = setTimeout(nextLine, 1500);
-      }
+      if (autoMode) autoTimer = setTimeout(nextLine, 1500);
     }
   }
   type();
@@ -98,14 +97,10 @@ function playLine() {
   if (!line) return;
 
   if (line.background) setBackground(line.background, line.effect);
-
   (line.characters || []).forEach(c => setCharacter(c));
 
-  if (line.choices) {
-    showChoices(line.choices);
-  } else {
-    showDialogue(line);
-  }
+  if (line.choices) showChoices(line.choices);
+  else showDialogue(line);
 }
 
 function nextLine() {
