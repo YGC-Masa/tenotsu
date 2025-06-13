@@ -8,7 +8,15 @@
         "src": "../assets/char/a01002.png",
         "effect": "slide-left-in",
         "scale": 1.0
-      },
+      }
+    ],
+    "name": "緋奈",
+    "text": "1ようこそ。ここが新しい世界の入り口よ。",
+    "speed": 30,
+    "fontSize": "1.2em"
+  },
+  {
+    "characters": [
       {
         "side": "right",
         "src": "../assets/char/a02002.png",
@@ -16,13 +24,25 @@
         "scale": 1.0
       }
     ],
-    "name": "緋奈",
-    "text": "これはセーフエリア対応版のテストです。",
-    "speed": 40,
-    "fontSize": "1.4em"
+    "name": "藍",
+    "text": "いろんな仕掛けがあるから、ゆっくり試してみて。",
+    "speed": 30,
+    "fontSize": "1.2em"
   },
   {
-    "name": "藍",
-    "text": "横画面でも縦画面でも、安全な表示が保たれます。"
+    "characters": [
+      {
+        "side": "left",
+        "src": null
+      },
+      {
+        "side": "right",
+        "src": null
+      }
+    ],
+    "name": "",
+    "text": "こうして2人の旅が始まった――。",
+    "speed": 30,
+    "fontSize": "1.2em"
   }
 ]
