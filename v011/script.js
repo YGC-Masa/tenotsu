@@ -1,4 +1,3 @@
-
 const baseWidth = 1920;
 const baseHeight = 1080;
 let scaleRatio = 1;
@@ -21,8 +20,11 @@ function showCharacter(side, src) {
     const img = document.createElement("img");
     img.src = src;
     img.className = "char-image";
+
+    // 横表示は幅400pxベース、縦表示は600pxベースのスケーリング
     const baseCharWidth = 600;
     const shrinkRatio = isLandscape() ? 400 / baseCharWidth : 1;
+
     img.style.transform = `scale(${scaleRatio * shrinkRatio})`;
     container.appendChild(img);
   }
@@ -61,11 +63,13 @@ function showScene() {
 
   showBackground(scene.background);
   ["left", "center", "right"].forEach(pos => {
-    showCharacter(pos, (scene.characters || []).find(c => c.side === pos)?.src || null);
+    const char = (scene.characters || []).find(c => c.side === pos);
+    showCharacter(pos, char?.src || null);
   });
 
   const color = window.characterColors?.[scene.name] || "#C0C0C0";
   showText(scene.name || "", scene.text || "", color);
+
   if (scene.choices) {
     showChoices(scene.choices);
   } else {
