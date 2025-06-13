@@ -1,5 +1,3 @@
-/* === style.css === */
-
 html, body {
   margin: 0;
   padding: 0;
@@ -36,8 +34,8 @@ html, body {
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  overflow: hidden;
   z-index: 1;
-  pointer-events: none;
 }
 
 #char-left { left: 0; }
@@ -45,14 +43,15 @@ html, body {
 #char-right { right: 0; }
 
 .char-image {
+  max-width: none;
+  max-height: none;
   transform-origin: bottom center;
-  will-change: transform;
 }
 
 #dialogue-box {
   position: absolute;
   left: 50%;
-  bottom: env(safe-area-inset-bottom, 0);
+  bottom: 0;
   transform: translateX(-50%);
   width: 90%;
   max-width: 1280px;
