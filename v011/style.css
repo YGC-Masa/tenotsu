@@ -1,112 +1,79 @@
-html, body {
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
   height: 100%;
+  overflow: hidden;
   background: black;
-  font-family: "メイリオ", sans-serif;
+  font-family: sans-serif;
+  -webkit-text-size-adjust: none;
 }
 
 #game-container {
   position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+  width: 100%;
+  height: 100%;
 }
 
 #background {
   position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* キャラ表示スロット */
 .char-slot {
   position: absolute;
-  bottom: 160px;
+  bottom: 0;
   width: 33.33%;
-  height: 80%;
+  height: 100%;
   display: flex;
-  justify-content: center;
   align-items: flex-end;
+  justify-content: center;
   pointer-events: none;
 }
 
-#char-left {
-  left: 0;
-}
-
-#char-center {
-  left: 33.33%;
-}
-
-#char-right {
-  left: 66.66%;
-}
+#char-left   { left: 0; }
+#char-center { left: 33.33%; }
+#char-right  { right: 0; }
 
 .char-image {
   max-height: 100%;
   max-width: 100%;
-  transition: transform 0.3s ease;
-  pointer-events: none;
+  height: auto;
+  width: auto;
+  object-fit: contain;
 }
 
-/* テキストボックス */
 #dialogue-box {
   position: absolute;
-  bottom: env(safe-area-inset-bottom, 0);
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 1280px;
+  bottom: 0;
+  width: 100%;
   background: rgba(0, 0, 0, 0.6);
   color: white;
-  padding: 1.5em;
-  border-radius: 1em;
-  box-shadow: 0 0 10px black;
+  padding: 1em;
+  font-size: 1.2em;
+  line-height: 1.6;
+  box-sizing: border-box;
+  padding-bottom: env(safe-area-inset-bottom, 1em);
 }
 
 #name {
   font-weight: bold;
-  font-size: 1.2em;
-  margin-bottom: 0.5em;
-}
-
-#text {
-  font-size: 1.2em;
-  line-height: 1.6;
+  margin-bottom: 0.3em;
 }
 
 #choices {
   margin-top: 1em;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
 }
 
 #choices button {
+  display: block;
+  margin: 0.3em 0;
+  padding: 0.5em 1em;
   font-size: 1em;
-  padding: 0.6em 1em;
-  background: #333;
-  color: white;
-  border: none;
-  border-radius: 0.5em;
-  cursor: pointer;
 }
-
-#choices button:hover {
-  background: #555;
-}
-
-/* アニメーション効果 */
-.dissolve {
-  animation: dissolve 0.5s ease;
-}
-@keyframes dissolve {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* 追加エフェクトは必要に応じて定義 */
