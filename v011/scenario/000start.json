@@ -2,27 +2,38 @@
   {
     "background": "../assets/bgev/bg011.jpg",
     "characters": [
-      { "side": "left", "src": "../assets/char/a01002.png", "effect": "slide-left-in" },
-      { "side": "right", "src": "../assets/char/a02002.png", "effect": "slide-right-in" }
+      {
+        "side": "left",
+        "src": "../assets/char/a01002.png",
+        "effect": "fade-in",
+        "scale": 1.0
+      }
     ],
     "name": "緋奈",
-    "text": "ようこそ、ｖ11の物語の世界へ。",
+    "text": "これはテストの開始です。",
     "speed": 30,
     "fontSize": "1.2em"
   },
   {
+    "characters": [
+      {
+        "side": "right",
+        "src": "../assets/char/a02002.png",
+        "effect": "fade-in",
+        "scale": 1.0
+      }
+    ],
     "name": "藍",
-    "text": "ここから君の冒険が始まるよ。",
+    "text": "右側にキャラクターを表示しています。",
     "speed": 30
   },
   {
+    "text": "ここで選択肢が出ます。",
     "choices": [
-      { "text": "進む", "jumpToLine": 3 },
-      { "text": "やめる", "jumpToUrl": "https://example.com" }
+      { "text": "次へ", "jumpToLine": 3 }
     ]
   },
   {
-    "name": "緋奈",
-    "text": "それじゃあ、行こうか！"
+    "text": "テスト完了です。"
   }
 ]
