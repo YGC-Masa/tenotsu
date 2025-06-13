@@ -16,28 +16,31 @@ function isLandscape() {
 function showCharacter(side, src) {
   const container = document.getElementById(`char-${side}`);
   container.innerHTML = "";
-
   if (src) {
     const img = document.createElement("img");
+    img.src = src;
+    img.className = "char-image";
+
     img.onload = () => {
-      const baseW = 600;
-      const baseH = 800;
+      const screenH = window.innerHeight;
+      const screenW = window.innerWidth;
+      const shortSide = Math.min(screenW, screenH);
 
-      const imgW = img.naturalWidth;
-      const imgH = img.naturalHeight;
+      const naturalW = img.naturalWidth;
+      const naturalH = img.naturalHeight;
 
-      const imgShort = Math.min(imgW, imgH);
-      const baseShort = Math.min(baseW, baseH);
+      const imgShortSide = Math.min(naturalW, naturalH);
+      const imgLongSide = Math.max(naturalW, naturalH);
 
-      const shortSideScale = imgShort === 0 ? 1 : (baseShort / imgShort);
-      const shrinkRatio = isLandscape() ? 400 / baseW : 1;
+      const scaleByShort = shortSide / imgShortSide;
+      const scaleByLong = screenH / naturalH;
 
-      const finalScale = scaleRatio * shortSideScale * shrinkRatio;
+      // 横画面では縮小、縦画面では短辺優先だが長辺が画面を超えないように調整
+      const finalScale = Math.min(scaleByShort, scaleByLong);
 
       img.style.transform = `scale(${finalScale})`;
     };
-    img.src = src;
-    img.className = "char-image";
+
     container.appendChild(img);
   }
 }
