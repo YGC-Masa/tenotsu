@@ -1,6 +1,6 @@
 [
   {
-    "background": "../assets2/bgev/bg011.jpg",
+    "background": "../assets2/bgev/bg011.png",
     "characters": [
       { "side": "left", "src": "../assets2/char/a01002.png" },
       { "side": "right", "src": "../assets2/char/a02002.png" }
@@ -10,7 +10,7 @@
     "speed": 3000
   },
   {
-    "background": "../assets2/bgev/bg011.jpg",
+    "background": "../assets2/bgev/bg011.png",
     "characters": [
       { "side": "center", "src": "../assets2/char/a02002.png" }
     ],
