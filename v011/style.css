@@ -118,7 +118,7 @@ html, body {
 @media screen and (orientation: landscape) {
   #dialogue-box {
     bottom: 3%;
-    max-height: 22%;
+    max-height: 15%;
     padding: 1.5em 2em;
     font-size: 1em;
     width: 96%;
@@ -128,6 +128,6 @@ html, body {
   }
 
   #text {
-    font-size: 1em;
+    font-size: 0.8em;
   }
 }
