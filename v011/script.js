@@ -1,5 +1,3 @@
-import './characterColors.js';
-
 let scenario = [];
 let currentLine = 0;
 let isTyping = false;
@@ -30,10 +28,12 @@ function setCharacter({ side, src, effect, scale = 1.0 }) {
   const container = charSlots[side];
   container.innerHTML = "";
   if (!src) return;
+
   const img = document.createElement("img");
   img.src = src;
   img.className = "char-image";
   img.style.transform = `scale(${scale})`;
+
   applyEffect(img, effect);
   container.appendChild(img);
 }
@@ -44,11 +44,7 @@ function setBackground(src, effect) {
 }
 
 function showDialogue({ name, text, speed, fontSize: size }) {
-  if (nameBox && characterColors[name]) {
-    nameBox.style.color = characterColors[name];
-  } else {
-    nameBox.style.color = "#C0C0C0";
-  }
+  nameBox.style.color = characterColors[name] || "#C0C0C0";
   nameBox.textContent = name || "";
   textBox.style.fontSize = size || fontSize;
   typingSpeed = speed || 30;
@@ -98,7 +94,6 @@ function playLine() {
 
   if (line.background) setBackground(line.background, line.effect);
   (line.characters || []).forEach(c => setCharacter(c));
-
   if (line.choices) showChoices(line.choices);
   else showDialogue(line);
 }
