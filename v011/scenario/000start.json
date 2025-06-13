@@ -2,38 +2,18 @@
   {
     "background": "../assets/bgev/bg011.jpg",
     "characters": [
-      {
-        "side": "left",
-        "src": "../assets/char/a01002.png",
-        "effect": "fade-in",
-        "scale": 1.0
-      }
+      { "side": "left", "src": "../assets/char/a01002.png", "effect": "slide-left-in", "scale": 1.0 },
+      { "side": "right", "src": "../assets/char/a02002.png", "effect": "slide-right-in", "scale": 1.0 }
     ],
     "name": "緋奈",
-    "text": "これはテストの開始です。",
-    "speed": 30,
-    "fontSize": "1.2em"
-  },
-  {
-    "characters": [
-      {
-        "side": "right",
-        "src": "../assets/char/a02002.png",
-        "effect": "fade-in",
-        "scale": 1.0
-      }
-    ],
-    "name": "藍",
-    "text": "右側にキャラクターを表示しています。",
+    "text": "ここが新しい舞台ね。\n準備はいい？",
+    "fontSize": "1.2em",
     "speed": 30
   },
   {
-    "text": "ここで選択肢が出ます。",
-    "choices": [
-      { "text": "次へ", "jumpToLine": 3 }
-    ]
-  },
-  {
-    "text": "テスト完了です。"
+    "name": "藍",
+    "text": "もちろん。行こう、緋奈。",
+    "fontSize": "1.2em",
+    "speed": 30
   }
 ]
