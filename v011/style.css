@@ -1,16 +1,14 @@
-html, body {
+body {
   margin: 0;
-  padding: 0;
-  height: 100%;
   overflow: hidden;
-  font-family: "Segoe UI", sans-serif;
-  background: black;
+  background-color: black;
+  font-family: sans-serif;
 }
 
 #game {
   position: relative;
   width: 100vw;
-  height: 100dvh;
+  height: 100vh;
   overflow: hidden;
 }
 
@@ -19,17 +17,19 @@ html, body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: opacity 0.5s;
   z-index: 0;
 }
 
-.char-slot {
+.char-container {
   position: absolute;
   bottom: 0;
   width: 33.33%;
   height: 100%;
   display: flex;
-  align-items: flex-end;
   justify-content: center;
+  align-items: flex-end;
+  pointer-events: none;
   z-index: 1;
 }
 
@@ -40,67 +40,65 @@ html, body {
 .char-image {
   max-height: 100%;
   max-width: 100%;
+  object-fit: contain;
   transition: all 0.5s ease;
 }
 
 #dialogue-box {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: env(safe-area-inset-bottom, 0);
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 24px 36px;
-  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0));
+  bottom: 0;
+  width: 100%;
+  padding: calc(20px * var(--scale));
   box-sizing: border-box;
-  z-index: 10;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  z-index: 2;
 }
 
 #name {
   font-weight: bold;
-  margin-bottom: 8px;
+  margin-bottom: 0.5em;
+  font-size: calc(24px * var(--scale));
 }
 
 #text {
-  white-space: pre-wrap;
-  line-height: 1.6;
+  font-size: calc(20px * var(--scale));
+  line-height: 1.5;
 }
 
 #choices {
   position: absolute;
-  bottom: calc(140px + env(safe-area-inset-bottom, 0));
-  left: 0;
-  right: 0;
+  bottom: calc(120px * var(--scale));
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  z-index: 20;
+  justify-content: center;
+  gap: calc(10px * var(--scale));
+  z-index: 3;
 }
 
 #choices button {
-  background: rgba(255, 255, 255, 0.9);
+  padding: calc(10px * var(--scale)) calc(20px * var(--scale));
+  font-size: calc(16px * var(--scale));
   border: none;
-  padding: 12px 24px;
-  font-size: 1.1em;
-  border-radius: 6px;
+  background-color: #ffffffcc;
+  color: #000;
   cursor: pointer;
+  border-radius: calc(8px * var(--scale));
 }
 
-/* エフェクト */
-.fade-in { animation: fadeIn 0.5s forwards; }
-.fade-out { animation: fadeOut 0.5s forwards; }
-.slide-left-in { animation: slideLeftIn 0.5s forwards; }
-.slide-right-in { animation: slideRightIn 0.5s forwards; }
-.dissolve { animation: dissolve 0.5s forwards; }
+/* アニメーション効果 */
+.fade-in { animation: fadeIn 0.5s ease forwards; }
+.fade-out { animation: fadeOut 0.5s ease forwards; }
+.slide-left-in { animation: slideLeftIn 0.5s ease forwards; }
+.slide-right-in { animation: slideRightIn 0.5s ease forwards; }
+.slide-left-out { animation: slideLeftOut 0.5s ease forwards; }
+.slide-right-out { animation: slideRightOut 0.5s ease forwards; }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { opacity: 0; } to { opacity: 1; }
 }
 @keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from { opacity: 1; } to { opacity: 0; }
 }
 @keyframes slideLeftIn {
   from { transform: translateX(-100%); opacity: 0; }
@@ -110,24 +108,11 @@ html, body {
   from { transform: translateX(100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
-@keyframes dissolve {
-  from { opacity: 0; }
-  to { opacity: 1; }
+@keyframes slideLeftOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-100%); opacity: 0; }
 }
-/* 横画面時（画面の幅が高さより大きい）にテキストボックスを小さく調整 */
-@media screen and (orientation: landscape) {
-  #dialogue-box {
-    bottom: 3%;
-    max-height: 15%;
-    padding: 1.5em 2em;
-    font-size: 1em;
-    width: 96%;
-    left: 2%;
-    right: 2%;
-    border-radius: 1em;
-  }
-
-  #text {
-    font-size: 0.8em;
-  }
+@keyframes slideRightOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
 }
