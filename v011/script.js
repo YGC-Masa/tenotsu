@@ -28,7 +28,9 @@ function showCharacter(side, src) {
         baseHeight / img.naturalHeight
       );
       const shrinkRatio = isLandscape() ? 400 / baseWidth : 1;
-      img.style.transform = `scale(${scaleRatio * ratio * shrinkRatio})`;
+
+      // ✅ キャラには scaleRatio を外す
+      img.style.transform = `scale(${ratio * shrinkRatio})`;
     };
 
     container.appendChild(img);
