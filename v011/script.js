@@ -3,9 +3,7 @@ const baseHeight = 1080;
 let scaleRatio = 1;
 
 function calculateScaleRatio() {
-  const screenW = window.innerWidth;
-  const screenH = window.innerHeight;
-  const shortSide = Math.min(screenW, screenH);
+  const shortSide = Math.min(window.innerWidth, window.innerHeight);
   scaleRatio = shortSide / Math.min(baseWidth, baseHeight);
 }
 
@@ -21,24 +19,16 @@ function showCharacter(side, src) {
     img.src = src;
     img.className = "char-image";
 
+    const baseWidth = 600;
+    const baseHeight = 800;
+
     img.onload = () => {
-      const screenH = window.innerHeight;
-      const screenW = window.innerWidth;
-      const shortSide = Math.min(screenW, screenH);
-
-      const naturalW = img.naturalWidth;
-      const naturalH = img.naturalHeight;
-
-      const imgShortSide = Math.min(naturalW, naturalH);
-      const imgLongSide = Math.max(naturalW, naturalH);
-
-      const scaleByShort = shortSide / imgShortSide;
-      const scaleByLong = screenH / naturalH;
-
-      // 横画面では縮小、縦画面では短辺優先だが長辺が画面を超えないように調整
-      const finalScale = Math.min(scaleByShort, scaleByLong);
-
-      img.style.transform = `scale(${finalScale})`;
+      const ratio = Math.min(
+        baseWidth / img.naturalWidth,
+        baseHeight / img.naturalHeight
+      );
+      const shrinkRatio = isLandscape() ? 400 / baseWidth : 1;
+      img.style.transform = `scale(${scaleRatio * ratio * shrinkRatio})`;
     };
 
     container.appendChild(img);
