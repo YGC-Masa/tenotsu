@@ -1,4 +1,3 @@
-// キャラクターごとのセリフ色定義
 window.characterColors = {
   "": "#C0C0C0",
   "緋奈": "#d3381c",
