@@ -5,7 +5,6 @@ let typingSpeed = 30;
 let fontSize = "1.2em";
 let autoMode = false;
 let autoTimer = null;
-let scaleRatio = 1.0;
 
 const bg = document.getElementById("background");
 const nameBox = document.getElementById("name");
@@ -18,17 +17,6 @@ const charSlots = {
   right: document.getElementById("char-right")
 };
 
-function updateScaleRatio() {
-  const baseWidth = 1920;
-  const baseHeight = 1080;
-  const screenWidth = window.innerWidth;
-  const screenHeight = window.innerHeight;
-  const shortSide = Math.min(screenWidth, screenHeight);
-  scaleRatio = shortSide / Math.min(baseWidth, baseHeight);
-}
-updateScaleRatio();
-window.addEventListener("resize", updateScaleRatio);
-
 function applyEffect(element, effect) {
   if (!effect) effect = "dissolve";
   element.classList.remove(...element.classList);
@@ -40,10 +28,12 @@ function setCharacter({ side, src, effect, scale = 1.0 }) {
   const container = charSlots[side];
   container.innerHTML = "";
   if (!src) return;
+
   const img = document.createElement("img");
   img.src = src;
   img.className = "char-image";
-  img.style.transform = `scale(${scale * scaleRatio})`;
+  img.style.transform = `scale(${scale})`;
+
   applyEffect(img, effect);
   container.appendChild(img);
 }
@@ -79,7 +69,9 @@ function typeText(text) {
       setTimeout(type, typingSpeed);
     } else {
       isTyping = false;
-      if (autoMode) autoTimer = setTimeout(nextLine, 1500);
+      if (autoMode) {
+        autoTimer = setTimeout(nextLine, 1500);
+      }
     }
   }
   type();
@@ -105,8 +97,10 @@ function showChoices(choices) {
 function playLine() {
   const line = scenario[currentLine];
   if (!line) return;
+
   if (line.background) setBackground(line.background, line.effect);
   (line.characters || []).forEach(c => setCharacter(c));
+
   if (line.choices) {
     showChoices(line.choices);
   } else {
@@ -124,7 +118,6 @@ function nextLine() {
 }
 
 dialogueBox.addEventListener("click", nextLine);
-document.body.addEventListener("click", nextLine);
 document.body.addEventListener("dblclick", () => {
   autoMode = !autoMode;
   if (autoMode) nextLine();
