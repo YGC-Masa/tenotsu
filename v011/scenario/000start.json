@@ -1,19 +1,51 @@
 [
   {
     "background": "../assets/bgev/bg011.jpg",
+    "effect": "fade-in"
+  },
+  {
     "characters": [
-      { "side": "left", "src": "../assets/char/a01002.png", "effect": "slide-left-in", "scale": 1.0 },
-      { "side": "right", "src": "../assets/char/a02002.png", "effect": "slide-right-in", "scale": 1.0 }
+      {
+        "side": "left",
+        "src": "../assets/char/a01002.png",
+        "effect": "slide-left-in",
+        "scale": 1.0
+      }
     ],
     "name": "緋奈",
-    "text": "2ここが新しい舞台ね。\n準備はいい？",
-    "fontSize": "1.2em",
+    "text": "こんにちは、ここはv011の世界。",
     "speed": 30
   },
   {
+    "characters": [
+      {
+        "side": "right",
+        "src": "../assets/char/a02002.png",
+        "effect": "slide-right-in",
+        "scale": 1.0
+      }
+    ],
     "name": "藍",
-    "text": "もちろん。行こう、緋奈。",
-    "fontSize": "1.2em",
+    "text": "表示は短辺に合わせてスケーリングされているよ。",
     "speed": 30
+  },
+  {
+    "text": "これで縦画面スマホでも読みやすくなったはず。"
+  },
+  {
+    "choices": [
+      {
+        "text": "次へ進む",
+        "jumpToLine": 5
+      },
+      {
+        "text": "最初に戻る",
+        "jumpToLine": 0
+      }
+    ]
+  },
+  {
+    "name": "緋奈",
+    "text": "この仕組みで色んな端末に対応できるね！"
   }
 ]
