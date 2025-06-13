@@ -114,3 +114,20 @@ html, body {
   from { opacity: 0; }
   to { opacity: 1; }
 }
+/* 横画面時（画面の幅が高さより大きい）にテキストボックスを小さく調整 */
+@media screen and (orientation: landscape) {
+  #dialogue-box {
+    bottom: 3%;
+    max-height: 22%;
+    padding: 1.5em 2em;
+    font-size: 1em;
+    width: 96%;
+    left: 2%;
+    right: 2%;
+    border-radius: 1em;
+  }
+
+  #text {
+    font-size: 1em;
+  }
+}
