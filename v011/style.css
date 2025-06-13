@@ -76,7 +76,7 @@ html, body {
 /* 横画面ではテキストボックスを画面の高さの約半分にする */
 @media (orientation: landscape) {
   #dialogue {
-    height: 50vh;
+    height: 20vh;
     overflow-y: auto;
   }
 }
