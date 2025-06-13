@@ -10,7 +10,7 @@
     "speed": 3000
   },
   {
-    "background": "../assets2/bgev/bg011.png",
+    "background": "../assets2/bgev/bg011.jpg",
     "characters": [
       { "side": "center", "src": "../assets2/char/a02002.png" }
     ],
