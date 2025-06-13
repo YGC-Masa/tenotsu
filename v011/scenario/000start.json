@@ -6,7 +6,7 @@
       { "side": "right", "src": "../assets/char/a02002.png", "effect": "slide-right-in", "scale": 1.0 }
     ],
     "name": "緋奈",
-    "text": "ここが新しい舞台ね。\n準備はいい？",
+    "text": "2ここが新しい舞台ね。\n準備はいい？",
     "fontSize": "1.2em",
     "speed": 30
   },
