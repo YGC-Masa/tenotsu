@@ -2,23 +2,23 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>v011 Novel Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>物語ゲーム</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="game">
-    <img id="background" src="" alt="背景" />
-    <div id="char-left" class="char-container"></div>
-    <div id="char-center" class="char-container"></div>
-    <div id="char-right" class="char-container"></div>
+    <img id="background" src="" alt="背景画像" />
+    <div id="char-left" class="char-slot"></div>
+    <div id="char-center" class="char-slot"></div>
+    <div id="char-right" class="char-slot"></div>
     <div id="dialogue-box">
       <div id="name"></div>
       <div id="text"></div>
     </div>
     <div id="choices"></div>
   </div>
-  <script src="../characterColors.js"></script>
+  <script src="characterColors.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
