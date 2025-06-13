@@ -16,16 +16,28 @@ function isLandscape() {
 function showCharacter(side, src) {
   const container = document.getElementById(`char-${side}`);
   container.innerHTML = "";
+
   if (src) {
     const img = document.createElement("img");
+    img.onload = () => {
+      const baseW = 600;
+      const baseH = 800;
+
+      const imgW = img.naturalWidth;
+      const imgH = img.naturalHeight;
+
+      const imgShort = Math.min(imgW, imgH);
+      const baseShort = Math.min(baseW, baseH);
+
+      const shortSideScale = imgShort === 0 ? 1 : (baseShort / imgShort);
+      const shrinkRatio = isLandscape() ? 400 / baseW : 1;
+
+      const finalScale = scaleRatio * shortSideScale * shrinkRatio;
+
+      img.style.transform = `scale(${finalScale})`;
+    };
     img.src = src;
     img.className = "char-image";
-
-    // 横表示は幅400pxベース、縦表示は600pxベースのスケーリング
-    const baseCharWidth = 600;
-    const shrinkRatio = isLandscape() ? 400 / baseCharWidth : 1;
-
-    img.style.transform = `scale(${scaleRatio * shrinkRatio})`;
     container.appendChild(img);
   }
 }
@@ -63,13 +75,11 @@ function showScene() {
 
   showBackground(scene.background);
   ["left", "center", "right"].forEach(pos => {
-    const char = (scene.characters || []).find(c => c.side === pos);
-    showCharacter(pos, char?.src || null);
+    showCharacter(pos, (scene.characters || []).find(c => c.side === pos)?.src || null);
   });
 
   const color = window.characterColors?.[scene.name] || "#C0C0C0";
   showText(scene.name || "", scene.text || "", color);
-
   if (scene.choices) {
     showChoices(scene.choices);
   } else {
