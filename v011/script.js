@@ -2,12 +2,10 @@ let scenario = [];
 let currentLine = 0;
 let isTyping = false;
 let typingSpeed = 30;
+let fontSize = "1.2em";
 let autoMode = false;
 let autoTimer = null;
 let scaleRatio = 1;
-
-const baseWidth = 1920;
-const baseHeight = 1080;
 
 const bg = document.getElementById("background");
 const nameBox = document.getElementById("name");
@@ -20,16 +18,15 @@ const charSlots = {
   right: document.getElementById("char-right")
 };
 
-// スケーリングの適用
-function applyScaling() {
-  const width = window.innerWidth;
-  const height = window.innerHeight;
-  const shortSide = Math.min(width, height);
-  scaleRatio = shortSide / 1080;
-  document.documentElement.style.setProperty('--scale', scaleRatio);
+function updateScaleRatio() {
+  const baseShort = 1080;
+  const shortSide = Math.min(window.innerWidth, window.innerHeight);
+  scaleRatio = shortSide / baseShort;
+  document.documentElement.style.setProperty('--scale-ratio', scaleRatio);
 }
-window.addEventListener("resize", applyScaling);
-applyScaling();
+
+window.addEventListener("resize", updateScaleRatio);
+updateScaleRatio();
 
 function applyEffect(element, effect) {
   if (!effect) effect = "dissolve";
@@ -57,9 +54,10 @@ function setBackground(src, effect) {
   bg.src = src;
 }
 
-function showDialogue({ name, text, speed }) {
+function showDialogue({ name, text, speed, fontSize: size }) {
   nameBox.style.color = characterColors[name] || "#C0C0C0";
   nameBox.textContent = name || "";
+  textBox.style.fontSize = size || fontSize;
   typingSpeed = speed || 30;
   typeText(text);
 }
@@ -78,9 +76,7 @@ function typeText(text) {
       setTimeout(type, typingSpeed);
     } else {
       isTyping = false;
-      if (autoMode) {
-        autoTimer = setTimeout(nextLine, 1500);
-      }
+      if (autoMode) autoTimer = setTimeout(nextLine, 1500);
     }
   }
   type();
@@ -109,7 +105,6 @@ function playLine() {
 
   if (line.background) setBackground(line.background, line.effect);
   (line.characters || []).forEach(c => setCharacter(c));
-
   if (line.choices) {
     showChoices(line.choices);
   } else {
