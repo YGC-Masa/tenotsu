@@ -1,15 +1,19 @@
-body {
+html, body {
   margin: 0;
+  padding: 0;
+  background: black;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
-  background-color: black;
   font-family: sans-serif;
 }
 
-#game {
+#game-container {
   position: relative;
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
+  box-sizing: border-box;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 #background {
@@ -17,102 +21,59 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: opacity 0.5s;
   z-index: 0;
 }
 
-.char-container {
+.char-slot {
   position: absolute;
   bottom: 0;
-  width: 33.33%;
-  height: 100%;
+  z-index: 1;
+  width: 30%;
+  height: auto;
   display: flex;
   justify-content: center;
-  align-items: flex-end;
-  pointer-events: none;
-  z-index: 1;
 }
 
 #char-left { left: 0; }
-#char-center { left: 33.33%; }
+#char-center { left: 35%; width: 30%; }
 #char-right { right: 0; }
 
 .char-image {
-  max-height: 100%;
   max-width: 100%;
-  object-fit: contain;
+  height: auto;
   transition: all 0.5s ease;
 }
 
 #dialogue-box {
   position: absolute;
-  bottom: 0;
-  width: 100%;
-  padding: calc(20px * var(--scale));
-  box-sizing: border-box;
+  bottom: env(safe-area-inset-bottom, 0);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 1080px;
   background: rgba(0, 0, 0, 0.6);
   color: white;
+  padding: 1em;
+  box-sizing: border-box;
+  border-radius: 1em;
   z-index: 2;
 }
 
 #name {
   font-weight: bold;
   margin-bottom: 0.5em;
-  font-size: calc(24px * var(--scale));
 }
 
 #text {
-  font-size: calc(20px * var(--scale));
-  line-height: 1.5;
+  font-size: 1.2em;
 }
 
 #choices {
-  position: absolute;
-  bottom: calc(120px * var(--scale));
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  gap: calc(10px * var(--scale));
-  z-index: 3;
+  margin-top: 1em;
 }
 
-#choices button {
-  padding: calc(10px * var(--scale)) calc(20px * var(--scale));
-  font-size: calc(16px * var(--scale));
-  border: none;
-  background-color: #ffffffcc;
-  color: #000;
-  cursor: pointer;
-  border-radius: calc(8px * var(--scale));
-}
-
-/* アニメーション効果 */
-.fade-in { animation: fadeIn 0.5s ease forwards; }
-.fade-out { animation: fadeOut 0.5s ease forwards; }
-.slide-left-in { animation: slideLeftIn 0.5s ease forwards; }
-.slide-right-in { animation: slideRightIn 0.5s ease forwards; }
-.slide-left-out { animation: slideLeftOut 0.5s ease forwards; }
-.slide-right-out { animation: slideRightOut 0.5s ease forwards; }
-
-@keyframes fadeIn {
-  from { opacity: 0; } to { opacity: 1; }
-}
-@keyframes fadeOut {
-  from { opacity: 1; } to { opacity: 0; }
-}
-@keyframes slideLeftIn {
-  from { transform: translateX(-100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-@keyframes slideRightIn {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-@keyframes slideLeftOut {
-  from { transform: translateX(0); opacity: 1; }
-  to { transform: translateX(-100%); opacity: 0; }
-}
-@keyframes slideRightOut {
-  from { transform: translateX(0); opacity: 1; }
-  to { transform: translateX(100%); opacity: 0; }
+button {
+  font-size: 1em;
+  margin: 0.2em;
+  padding: 0.5em 1em;
 }
