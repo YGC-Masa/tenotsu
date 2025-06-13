@@ -1,137 +1,94 @@
-let scenario = [];
-let currentLine = 0;
-let isTyping = false;
-let typingSpeed = 30;
-let fontSize = "1.2em";
-let autoMode = false;
-let autoTimer = null;
 
-const bg = document.getElementById("background");
-const nameBox = document.getElementById("name");
-const textBox = document.getElementById("text");
-const dialogueBox = document.getElementById("dialogue-box");
-const choicesBox = document.getElementById("choices");
-const charSlots = {
-  left: document.getElementById("char-left"),
-  center: document.getElementById("char-center"),
-  right: document.getElementById("char-right")
-};
+const baseWidth = 1920;
+const baseHeight = 1080;
+let scaleRatio = 1;
 
-function applyEffect(element, effect) {
-  if (!effect) effect = "dissolve";
-  element.classList.remove(...element.classList);
-  void element.offsetWidth;
-  element.classList.add(effect);
+function calculateScaleRatio() {
+  const screenW = window.innerWidth;
+  const screenH = window.innerHeight;
+  const shortSide = Math.min(screenW, screenH);
+  scaleRatio = shortSide / Math.min(baseWidth, baseHeight);
 }
 
-function setCharacter({ side, src, effect, scale = 1.0 }) {
-  const container = charSlots[side];
+function isLandscape() {
+  return window.innerWidth > window.innerHeight;
+}
+
+function showCharacter(side, src) {
+  const container = document.getElementById(`char-${side}`);
   container.innerHTML = "";
-  if (!src) return;
-
-  const img = document.createElement("img");
-  img.src = src;
-  img.className = "char-image";
-  img.style.transform = `scale(${scale})`;
-
-  applyEffect(img, effect);
-  container.appendChild(img);
+  if (src) {
+    const img = document.createElement("img");
+    img.src = src;
+    img.className = "char-image";
+    const baseCharWidth = 600;
+    const shrinkRatio = isLandscape() ? 400 / baseCharWidth : 1;
+    img.style.transform = `scale(${scaleRatio * shrinkRatio})`;
+    container.appendChild(img);
+  }
 }
 
-function setBackground(src, effect) {
-  if (effect) applyEffect(bg, effect);
+function showBackground(src) {
+  const bg = document.getElementById("background");
   bg.src = src;
 }
 
-function showDialogue({ name, text, speed, fontSize: size }) {
-  if (nameBox && characterColors[name]) {
-    nameBox.style.color = characterColors[name];
-  } else {
-    nameBox.style.color = "#C0C0C0";
-  }
-  nameBox.textContent = name || "";
-  textBox.style.fontSize = size || fontSize;
-  typingSpeed = speed || 30;
-  typeText(text);
-}
-
-function typeText(text) {
-  isTyping = true;
-  textBox.textContent = "";
-  let i = 0;
-  function type() {
-    if (!isTyping) {
-      textBox.textContent = text;
-      return;
-    }
-    if (i < text.length) {
-      textBox.textContent += text[i++];
-      setTimeout(type, typingSpeed);
-    } else {
-      isTyping = false;
-      if (autoMode) {
-        autoTimer = setTimeout(nextLine, 1500);
-      }
-    }
-  }
-  type();
+function showText(name, text, color) {
+  document.getElementById("name").textContent = name;
+  document.getElementById("name").style.color = color || "#C0C0C0";
+  document.getElementById("text").textContent = text;
 }
 
 function showChoices(choices) {
-  choicesBox.innerHTML = "";
+  const container = document.getElementById("choices");
+  container.innerHTML = "";
   choices.forEach(choice => {
-    const btn = document.createElement("button");
-    btn.textContent = choice.text;
-    btn.onclick = () => {
-      if (choice.jumpToUrl) location.href = choice.jumpToUrl;
-      if (choice.jumpToScenario) loadScenario(choice.jumpToScenario);
-      if (typeof choice.jumpToLine === "number") {
-        currentLine = choice.jumpToLine;
-        playLine();
-      }
+    const button = document.createElement("button");
+    button.textContent = choice.text;
+    button.onclick = () => {
+      if (choice.jumpTo) loadScenario(choice.jumpTo);
     };
-    choicesBox.appendChild(btn);
+    container.appendChild(button);
   });
 }
 
-function playLine() {
-  const line = scenario[currentLine];
-  if (!line) return;
+let currentScenario = null;
+let currentIndex = 0;
 
-  if (line.background) setBackground(line.background, line.effect);
-  (line.characters || []).forEach(c => setCharacter(c));
+function showScene() {
+  const scene = currentScenario[currentIndex];
+  if (!scene) return;
 
-  if (line.choices) {
-    showChoices(line.choices);
+  showBackground(scene.background);
+  ["left", "center", "right"].forEach(pos => {
+    showCharacter(pos, (scene.characters || []).find(c => c.side === pos)?.src || null);
+  });
+
+  const color = window.characterColors?.[scene.name] || "#C0C0C0";
+  showText(scene.name || "", scene.text || "", color);
+  if (scene.choices) {
+    showChoices(scene.choices);
   } else {
-    showDialogue(line);
+    showChoices([]);
+    currentIndex++;
+    setTimeout(showScene, scene.speed || 2000);
   }
 }
 
-function nextLine() {
-  if (isTyping) {
-    isTyping = false;
-    return;
-  }
-  currentLine++;
-  playLine();
-}
-
-dialogueBox.addEventListener("click", nextLine);
-document.body.addEventListener("dblclick", () => {
-  autoMode = !autoMode;
-  if (autoMode) nextLine();
-  else clearTimeout(autoTimer);
-});
-
-function loadScenario(filename) {
-  fetch(`scenario/${filename}`)
+function loadScenario(path) {
+  fetch(path)
     .then(res => res.json())
     .then(data => {
-      scenario = data;
-      currentLine = 0;
-      playLine();
+      currentScenario = data;
+      currentIndex = 0;
+      showScene();
     });
 }
 
-loadScenario("000start.json");
+window.addEventListener("resize", () => {
+  calculateScaleRatio();
+  showScene();
+});
+
+calculateScaleRatio();
+loadScenario("scenario/000start.json");
