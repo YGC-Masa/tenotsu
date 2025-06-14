@@ -47,27 +47,19 @@ html, body {
 }
 #char-right {
   right: 0;
-  width: 33.33%; /* 左右で統一 */
+  width: 33.33%;
 }
 
 .char-image {
   max-width: none;
   max-height: none;
   width: auto;
-  height: auto;
+  height: 50vh;
   transform-origin: bottom center;
 }
 
-/* 横向き：横幅600pxに統一 */
-@media (orientation: landscape) {
-  .char-image {
-    width: 600px;
-    height: auto;
-  }
-}
-
-/* 縦向き：高さ50vhに統一 */
-@media (orientation: portrait) {
+/* 縦向き・横向き問わず高さ50vhで統一 */
+@media (orientation: portrait), (orientation: landscape) {
   .char-image {
     height: 50vh;
     width: auto;
