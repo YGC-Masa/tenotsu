@@ -54,12 +54,26 @@ html, body {
   max-width: none;
   max-height: none;
   width: auto;
-  height: 50vh;
+  height: 50vh; /* デフォルトは縦向き用 */
   transform-origin: bottom center;
 }
 
-/* 縦向き・横向き問わず高さ50vhで統一 */
-@media (orientation: portrait), (orientation: landscape) {
+/* 横向き時：高さ70vhでスケーリング */
+@media (orientation: landscape) {
+  .char-image {
+    height: 70vh;
+    width: auto;
+    max-height: 70vh;
+    max-width: none;
+  }
+
+  #dialogue-box {
+    width: 50%;
+  }
+}
+
+/* 縦向き時：高さ50vh（再定義は任意） */
+@media (orientation: portrait) {
   .char-image {
     height: 50vh;
     width: auto;
@@ -81,12 +95,6 @@ html, body {
   box-sizing: border-box;
   z-index: 2;
   border-radius: 16px 16px 0 0;
-}
-
-@media (orientation: landscape) {
-  #dialogue-box {
-    width: 50%;
-  }
 }
 
 #name {
