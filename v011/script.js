@@ -3,7 +3,9 @@ const baseHeight = 1080;
 let scaleRatio = 1;
 
 function calculateScaleRatio() {
-  const shortSide = Math.min(window.innerWidth, window.innerHeight);
+  const screenW = window.innerWidth;
+  const screenH = window.innerHeight;
+  const shortSide = Math.min(screenW, screenH);
   scaleRatio = shortSide / Math.min(baseWidth, baseHeight);
 }
 
@@ -11,7 +13,7 @@ function isLandscape() {
   return window.innerWidth > window.innerHeight;
 }
 
-function showCharacter(side, src) {
+function showCharacter(side, src, scale = 1.0) {
   const container = document.getElementById(`char-${side}`);
   container.innerHTML = "";
   if (src) {
@@ -23,14 +25,17 @@ function showCharacter(side, src) {
     const baseHeight = 800;
 
     img.onload = () => {
-      const ratio = Math.min(
-        baseWidth / img.naturalWidth,
-        baseHeight / img.naturalHeight
+      const naturalW = img.naturalWidth;
+      const naturalH = img.naturalHeight;
+
+      const fitRatio = Math.min(
+        baseWidth / naturalW,
+        baseHeight / naturalH
       );
+
       const shrinkRatio = isLandscape() ? 400 / baseWidth : 1;
 
-      // ✅ キャラには scaleRatio を外す
-      img.style.transform = `scale(${ratio * shrinkRatio})`;
+      img.style.transform = `scale(${fitRatio * shrinkRatio * scale})`;
     };
 
     container.appendChild(img);
@@ -70,11 +75,13 @@ function showScene() {
 
   showBackground(scene.background);
   ["left", "center", "right"].forEach(pos => {
-    showCharacter(pos, (scene.characters || []).find(c => c.side === pos)?.src || null);
+    const char = (scene.characters || []).find(c => c.side === pos);
+    showCharacter(pos, char?.src || null, char?.scale || 1.0);
   });
 
   const color = window.characterColors?.[scene.name] || "#C0C0C0";
   showText(scene.name || "", scene.text || "", color);
+
   if (scene.choices) {
     showChoices(scene.choices);
   } else {
