@@ -3,7 +3,7 @@
   "speed": 30,
   "scenes": [
     {
-      "bg": "../assets2/bgev/bg011.png",
+      "bg": "../assets2/bgev/bg011.jpg",
       "bgm": "../assets2/bgm/main.mp3",
       "name": "緋奈",
       "text": "ここは夢の中……？",
