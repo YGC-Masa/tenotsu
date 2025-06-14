@@ -1,92 +1,102 @@
-(async function() {
-  const background = document.getElementById("background");
-  const charSlots = {
-    left: document.getElementById("char-left"),
-    center: document.getElementById("char-center"),
-    right: document.getElementById("char-right")
-  };
-  const nameBox = document.getElementById("name");
-  const textBox = document.getElementById("text");
-  const choicesBox = document.getElementById("choices");
+let currentIndex = 0;
+let scenario = [];
+const textBox = document.getElementById("text");
+const optionsBox = document.getElementById("options");
+const bgImage = document.getElementById("background");
+const charLeft = document.getElementById("char-left");
+const charCenter = document.getElementById("char-center");
+const charRight = document.getElementById("char-right");
+const bgm = document.getElementById("bgm");
 
-  let currentChars = { left: null, center: null, right: null };
-  const response = await fetch("scenario/000start.json");
-  const data = await response.json();
-  const scenes = data.scenes;
-  const fontSize = data.fontSize || "1em";
-  const speed = data.speed || 40;
-  document.documentElement.style.setProperty("--fontSize", fontSize);
+const characterMap = {
+  left: charLeft,
+  center: charCenter,
+  right: charRight,
+};
 
-  let i = 0;
-  const delay = ms => new Promise(res => setTimeout(res, ms));
+let characterColors = {};
 
-  async function showScene(index) {
-    if (!scenes[index]) return;
-    const scene = scenes[index];
-    if (scene.bg) background.src = scene.bg;
-    if (scene.bgm) playBGM(scene.bgm);
-    if (scene.se) playSE(scene.se);
+fetch("characterColors.js")
+  .then((res) => res.text())
+  .then((text) => {
+    characterColors = eval(text);
+  });
 
-    if (scene.characters) {
-      ["left", "center", "right"].forEach(pos => {
-        const charData = scene.characters.find(c => c.side === pos);
-        if (charData) {
-          if (charData.src === null) {
-            charSlots[pos].innerHTML = "";
-            currentChars[pos] = null;
-          } else {
-            if (currentChars[pos] !== charData.src) {
-              const img = new Image();
-              img.src = charData.src;
-              img.className = "char-image";
-              charSlots[pos].innerHTML = "";
-              charSlots[pos].appendChild(img);
-              currentChars[pos] = charData.src;
-            }
-          }
-        }
-      });
-    }
+function setBackground(src) {
+  bgImage.src = src || "";
+}
 
-    nameBox.textContent = scene.name || "";
-    nameBox.style.color = characterColors[scene.name] || "#C0C0C0";
-    textBox.textContent = "";
-    for (let j = 0; j < (scene.text || "").length; j++) {
-      textBox.textContent += scene.text[j];
-      await delay(speed);
-    }
-
-    choicesBox.innerHTML = "";
-    if (scene.choices) {
-      scene.choices.forEach(choice => {
-        const btn = document.createElement("button");
-        btn.textContent = choice.label;
-        btn.onclick = () => showScene(choice.jump);
-        choicesBox.appendChild(btn);
-      });
+function setCharacters(characters) {
+  for (const side in characterMap) {
+    const char = characters.find((c) => c.side === side);
+    const img = characterMap[side];
+    if (char && char.src) {
+      img.src = char.src;
+      img.style.display = "block";
     } else {
-      document.body.onclick = () => {
-        document.body.onclick = null;
-        showScene(++i);
-      };
+      img.style.display = "none";
     }
   }
+}
 
-  function playBGM(src) {
-    if (!playBGM.audio) {
-      playBGM.audio = new Audio();
-      playBGM.audio.loop = true;
+function setText(text, speaker = "") {
+  textBox.innerHTML = speaker
+    ? `<span style="color:${characterColors[speaker] || "#C0C0C0"}">${speaker}：</span>${text}`
+    : text;
+}
+
+function setOptions(options) {
+  optionsBox.innerHTML = "";
+  options?.forEach((opt) => {
+    const btn = document.createElement("div");
+    btn.className = "option";
+    btn.textContent = opt.text;
+    btn.onclick = () => {
+      if (opt.jumpToUrl) location.href = opt.jumpToUrl;
+      else if (opt.jumpToScenario) loadScenario(opt.jumpToScenario);
+      else if (opt.jumpTo != null) {
+        currentIndex = opt.jumpTo;
+        showLine();
+      }
+    };
+    optionsBox.appendChild(btn);
+  });
+}
+
+function playBgm(src) {
+  if (src) {
+    if (bgm.src !== src) {
+      bgm.src = src;
+      bgm.play();
     }
-    if (playBGM.audio.src !== location.origin + "/" + src) {
-      playBGM.audio.src = src;
-    }
-    playBGM.audio.play();
+  } else {
+    bgm.pause();
+    bgm.src = "";
   }
+}
 
-  function playSE(src) {
-    const audio = new Audio(src);
-    audio.play();
+function showLine() {
+  const line = scenario[currentIndex];
+  if (!line) return;
+  if (line.background) setBackground(line.background);
+  if (line.characters) setCharacters(line.characters);
+  if (line.bgm !== undefined) playBgm(line.bgm);
+  setText(line.text || "", line.speaker);
+  setOptions(line.options);
+  if (!line.options) {
+    currentIndex++;
+    setTimeout(showLine, line.speed || 2000);
   }
+}
 
-  showScene(i);
-})();
+function loadScenario(path) {
+  fetch(path)
+    .then((res) => res.json())
+    .then((data) => {
+      scenario = data;
+      currentIndex = 0;
+      showLine();
+    });
+}
+
+loadScenario("v011/scenario/000start.json");
