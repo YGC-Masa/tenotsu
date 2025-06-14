@@ -1,89 +1,92 @@
-const baseWidth = 1920;
-const baseHeight = 1080;
+(async function() {
+  const background = document.getElementById("background");
+  const charSlots = {
+    left: document.getElementById("char-left"),
+    center: document.getElementById("char-center"),
+    right: document.getElementById("char-right")
+  };
+  const nameBox = document.getElementById("name");
+  const textBox = document.getElementById("text");
+  const choicesBox = document.getElementById("choices");
 
-function isLandscape() {
-  return window.innerWidth > window.innerHeight;
-}
+  let currentChars = { left: null, center: null, right: null };
+  const response = await fetch("scenario/000start.json");
+  const data = await response.json();
+  const scenes = data.scenes;
+  const fontSize = data.fontSize || "1em";
+  const speed = data.speed || 40;
+  document.documentElement.style.setProperty("--fontSize", fontSize);
 
-function showCharacter(side, src, scale = 1) {
-  const container = document.getElementById(`char-${side}`);
-  container.innerHTML = "";
-  if (src) {
-    const img = document.createElement("img");
-    img.src = src;
-    img.className = "char-image";
-    // ここはCSSで高さ制御するため、transform scaleは削除
-    // 必要なら scale を追加するならCSSクラスやスタイルで調整する
-    container.appendChild(img);
+  let i = 0;
+  const delay = ms => new Promise(res => setTimeout(res, ms));
+
+  async function showScene(index) {
+    if (!scenes[index]) return;
+    const scene = scenes[index];
+    if (scene.bg) background.src = scene.bg;
+    if (scene.bgm) playBGM(scene.bgm);
+    if (scene.se) playSE(scene.se);
+
+    if (scene.characters) {
+      ["left", "center", "right"].forEach(pos => {
+        const charData = scene.characters.find(c => c.side === pos);
+        if (charData) {
+          if (charData.src === null) {
+            charSlots[pos].innerHTML = "";
+            currentChars[pos] = null;
+          } else {
+            if (currentChars[pos] !== charData.src) {
+              const img = new Image();
+              img.src = charData.src;
+              img.className = "char-image";
+              charSlots[pos].innerHTML = "";
+              charSlots[pos].appendChild(img);
+              currentChars[pos] = charData.src;
+            }
+          }
+        }
+      });
+    }
+
+    nameBox.textContent = scene.name || "";
+    nameBox.style.color = characterColors[scene.name] || "#C0C0C0";
+    textBox.textContent = "";
+    for (let j = 0; j < (scene.text || "").length; j++) {
+      textBox.textContent += scene.text[j];
+      await delay(speed);
+    }
+
+    choicesBox.innerHTML = "";
+    if (scene.choices) {
+      scene.choices.forEach(choice => {
+        const btn = document.createElement("button");
+        btn.textContent = choice.label;
+        btn.onclick = () => showScene(choice.jump);
+        choicesBox.appendChild(btn);
+      });
+    } else {
+      document.body.onclick = () => {
+        document.body.onclick = null;
+        showScene(++i);
+      };
+    }
   }
-}
 
-function showBackground(src) {
-  const bg = document.getElementById("background");
-  if (src && typeof src === "string") {
-    bg.src = src;
-    lastBackground = src; // 新しい背景を記憶
-  } else if (lastBackground) {
-    bg.src = lastBackground; // 前の背景を再適用
+  function playBGM(src) {
+    if (!playBGM.audio) {
+      playBGM.audio = new Audio();
+      playBGM.audio.loop = true;
+    }
+    if (playBGM.audio.src !== location.origin + "/" + src) {
+      playBGM.audio.src = src;
+    }
+    playBGM.audio.play();
   }
-}
 
-function showText(name, text, color) {
-  document.getElementById("name").textContent = name;
-  document.getElementById("name").style.color = color || "#C0C0C0";
-  document.getElementById("text").textContent = text;
-}
-
-function showChoices(choices) {
-  const container = document.getElementById("choices");
-  container.innerHTML = "";
-  choices.forEach(choice => {
-    const button = document.createElement("button");
-    button.textContent = choice.text;
-    button.onclick = () => {
-      if (choice.jumpTo) loadScenario(choice.jumpTo);
-    };
-    container.appendChild(button);
-  });
-}
-
-let currentScenario = null;
-let currentIndex = 0;
-let lastBackground = null; // 前の背景画像パスを保持
-
-function showScene() {
-  const scene = currentScenario[currentIndex];
-  if (!scene) return;
-
-  showBackground(scene.background);
-  ["left", "center", "right"].forEach(pos => {
-    const char = (scene.characters || []).find(c => c.side === pos);
-    showCharacter(pos, char?.src || null, char?.scale || 1);
-  });
-
-  const color = window.characterColors?.[scene.name] || "#C0C0C0";
-  showText(scene.name || "", scene.text || "", color);
-  if (scene.choices) {
-    showChoices(scene.choices);
-  } else {
-    showChoices([]);
-    currentIndex++;
-    setTimeout(showScene, scene.speed || 2000);
+  function playSE(src) {
+    const audio = new Audio(src);
+    audio.play();
   }
-}
 
-function loadScenario(path) {
-  fetch(path)
-    .then(res => res.json())
-    .then(data => {
-      currentScenario = data;
-      currentIndex = 0;
-      showScene();
-    });
-}
-
-window.addEventListener("resize", () => {
-  showScene();
-});
-
-loadScenario("scenario/000start.json");
+  showScene(i);
+})();
