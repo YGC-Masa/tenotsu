@@ -2,7 +2,7 @@
   {
     "name": "",
     "text": "これはv011の全機能を紹介するチュートリアルです。",
-    "background": "../assets2/bgev/bg011.jpg",
+    "background": "assets2/bgev/bg011.jpg",
     "fontSize": "1.1em",
     "speed": 2500
   },
@@ -10,7 +10,7 @@
     "name": "緋奈",
     "text": "こんにちは！私は『緋奈』。左側に表示されてるよ。",
     "characters": [
-      { "side": "left", "src": "../assets2/char/a01002.png", "scale": 1 }
+      { "side": "left", "src": "assets2/char/a01002.png", "scale": 1 }
     ],
     "effect": "fade-in"
   },
