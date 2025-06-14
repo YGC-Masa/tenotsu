@@ -47,7 +47,7 @@ html, body {
 }
 #char-right {
   right: 0;
-  width: 33.33%;
+  width: 33.33%; /* 左右で統一 */
 }
 
 .char-image {
@@ -58,13 +58,15 @@ html, body {
   transform-origin: bottom center;
 }
 
+/* 横向き：横幅600pxに統一 */
 @media (orientation: landscape) {
   .char-image {
-    height: 800px;
-    width: auto;
+    width: 600px;
+    height: auto;
   }
 }
 
+/* 縦向き：高さ50vhに統一 */
 @media (orientation: portrait) {
   .char-image {
     height: 50vh;
@@ -112,7 +114,7 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0); /* SAFE AREA */
 }
 
 #choices button {
