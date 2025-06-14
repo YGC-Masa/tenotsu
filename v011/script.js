@@ -1,102 +1,83 @@
-let currentIndex = 0;
-let scenario = [];
-const textBox = document.getElementById("text");
-const optionsBox = document.getElementById("options");
-const bgImage = document.getElementById("background");
-const charLeft = document.getElementById("char-left");
-const charCenter = document.getElementById("char-center");
-const charRight = document.getElementById("char-right");
-const bgm = document.getElementById("bgm");
+const baseWidth = 1920;
+const baseHeight = 1080;
 
-const characterMap = {
-  left: charLeft,
-  center: charCenter,
-  right: charRight,
-};
-
-let characterColors = {};
-
-fetch("characterColors.js")
-  .then((res) => res.text())
-  .then((text) => {
-    characterColors = eval(text);
-  });
-
-function setBackground(src) {
-  bgImage.src = src || "";
+function isLandscape() {
+  return window.innerWidth > window.innerHeight;
 }
 
-function setCharacters(characters) {
-  for (const side in characterMap) {
-    const char = characters.find((c) => c.side === side);
-    const img = characterMap[side];
-    if (char && char.src) {
-      img.src = char.src;
-      img.style.display = "block";
-    } else {
-      img.style.display = "none";
-    }
-  }
-}
-
-function setText(text, speaker = "") {
-  textBox.innerHTML = speaker
-    ? `<span style="color:${characterColors[speaker] || "#C0C0C0"}">${speaker}：</span>${text}`
-    : text;
-}
-
-function setOptions(options) {
-  optionsBox.innerHTML = "";
-  options?.forEach((opt) => {
-    const btn = document.createElement("div");
-    btn.className = "option";
-    btn.textContent = opt.text;
-    btn.onclick = () => {
-      if (opt.jumpToUrl) location.href = opt.jumpToUrl;
-      else if (opt.jumpToScenario) loadScenario(opt.jumpToScenario);
-      else if (opt.jumpTo != null) {
-        currentIndex = opt.jumpTo;
-        showLine();
-      }
-    };
-    optionsBox.appendChild(btn);
-  });
-}
-
-function playBgm(src) {
+function showCharacter(side, src, scale = 1) {
+  const container = document.getElementById(`char-${side}`);
+  container.innerHTML = "";
   if (src) {
-    if (bgm.src !== src) {
-      bgm.src = src;
-      bgm.play();
-    }
-  } else {
-    bgm.pause();
-    bgm.src = "";
+    const img = document.createElement("img");
+    img.src = src;
+    img.className = "char-image";
+    // ここはCSSで高さ制御するため、transform scaleは削除
+    // 必要なら scale を追加するならCSSクラスやスタイルで調整する
+    container.appendChild(img);
   }
 }
 
-function showLine() {
-  const line = scenario[currentIndex];
-  if (!line) return;
-  if (line.background) setBackground(line.background);
-  if (line.characters) setCharacters(line.characters);
-  if (line.bgm !== undefined) playBgm(line.bgm);
-  setText(line.text || "", line.speaker);
-  setOptions(line.options);
-  if (!line.options) {
+function showBackground(src) {
+  const bg = document.getElementById("background");
+  bg.src = src;
+}
+
+function showText(name, text, color) {
+  document.getElementById("name").textContent = name;
+  document.getElementById("name").style.color = color || "#C0C0C0";
+  document.getElementById("text").textContent = text;
+}
+
+function showChoices(choices) {
+  const container = document.getElementById("choices");
+  container.innerHTML = "";
+  choices.forEach(choice => {
+    const button = document.createElement("button");
+    button.textContent = choice.text;
+    button.onclick = () => {
+      if (choice.jumpTo) loadScenario(choice.jumpTo);
+    };
+    container.appendChild(button);
+  });
+}
+
+let currentScenario = null;
+let currentIndex = 0;
+
+function showScene() {
+  const scene = currentScenario[currentIndex];
+  if (!scene) return;
+
+  showBackground(scene.background);
+  ["left", "center", "right"].forEach(pos => {
+    const char = (scene.characters || []).find(c => c.side === pos);
+    showCharacter(pos, char?.src || null, char?.scale || 1);
+  });
+
+  const color = window.characterColors?.[scene.name] || "#C0C0C0";
+  showText(scene.name || "", scene.text || "", color);
+  if (scene.choices) {
+    showChoices(scene.choices);
+  } else {
+    showChoices([]);
     currentIndex++;
-    setTimeout(showLine, line.speed || 2000);
+    setTimeout(showScene, scene.speed || 2000);
   }
 }
 
 function loadScenario(path) {
   fetch(path)
-    .then((res) => res.json())
-    .then((data) => {
-      scenario = data;
+    .then(res => res.json())
+    .then(data => {
+      currentScenario = data;
       currentIndex = 0;
-      showLine();
+      showScene();
     });
 }
 
-loadScenario("v011/scenario/000start.json");
+window.addEventListener("resize", () => {
+  showScene();
+});
+
+loadScenario("scenario/000start.json");
