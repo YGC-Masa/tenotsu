@@ -1,16 +1,18 @@
-html, body {
+body, html {
   margin: 0;
   padding: 0;
   height: 100%;
-  background-color: black;
+  background: black;
   font-family: sans-serif;
-  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 #game {
   position: relative;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
 #background {
@@ -21,112 +23,59 @@ html, body {
   z-index: 0;
 }
 
-.character {
-  position: absolute;
-  bottom: 20vh;
-  max-height: 70vh;
-  max-width: 100%;
-  object-fit: contain;
-  z-index: 1;
-  display: none;
-  transition: all 0.3s ease;
-}
-
-#char-left {
-  left: 5%;
-}
-
-#char-center {
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-#char-right {
-  right: 5%;
-}
-
-#textbox {
+#character-container {
   position: absolute;
   bottom: 0;
   width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 2vw;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+.char {
+  max-height: 70vh;
+  max-width: 600px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  .char {
+    max-height: 80vh;
+  }
+  #text-box {
+    height: 20vh;
+  }
+}
+
+#text-box {
+  position: absolute;
+  bottom: env(safe-area-inset-bottom, 0);
+  left: 0;
+  width: 100%;
   height: 30vh;
-  background-color: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.6);
   color: white;
-  z-index: 2;
   padding: 1em;
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-#name {
-  font-weight: bold;
-  margin-bottom: 0.5em;
-}
-
-#text {
-  flex-grow: 1;
+  z-index: 2;
+  font-size: 1.5em;
   overflow-y: auto;
 }
 
-#next-button {
-  align-self: flex-end;
-  margin-top: 0.5em;
-  padding: 0.4em 1em;
-  background-color: rgba(255,255,255,0.2);
-  border: none;
-  color: white;
+#options {
+  margin-top: 1em;
+}
+
+.option {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid white;
+  padding: 0.5em;
+  margin: 0.3em 0;
   cursor: pointer;
-  font-size: 1em;
-}
-
-.overlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 10;
-  pointer-events: none;
-}
-
-/* 共通エフェクト（fade, slide など） */
-.fade-in {
-  animation: fadeIn 1s forwards;
-}
-.fade-out {
-  animation: fadeOut 1s forwards;
-}
-.slide-left-in {
-  animation: slideLeftIn 1s forwards;
-}
-.slide-right-in {
-  animation: slideRightIn 1s forwards;
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
-@keyframes slideLeftIn {
-  from { transform: translateX(-100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-@keyframes slideRightIn {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-/* スマホ横画面対応 */
-@media screen and (max-width: 1024px) and (orientation: landscape) {
-  .character {
-    max-height: 80vh;
-    bottom: 20vh;
-  }
-
-  #textbox {
-    height: 20vh;
-  }
 }
