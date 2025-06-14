@@ -12,7 +12,8 @@ function showCharacter(side, src, scale = 1) {
     const img = document.createElement("img");
     img.src = src;
     img.className = "char-image";
-    img.style.transform = `scale(${scale})`;
+    // ここはCSSで高さ制御するため、transform scaleは削除
+    // 必要なら scale を追加するならCSSクラスやスタイルで調整する
     container.appendChild(img);
   }
 }
