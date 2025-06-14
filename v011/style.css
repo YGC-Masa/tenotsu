@@ -1,138 +1,132 @@
 html, body {
   margin: 0;
   padding: 0;
-  width: 100%;
   height: 100%;
-  overflow: hidden;
   background-color: black;
   font-family: sans-serif;
-  box-sizing: border-box;
+  overflow: hidden;
 }
 
-#game-container {
+#game {
   position: relative;
   width: 100%;
   height: 100%;
-  touch-action: manipulation;
 }
 
 #background {
   position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   z-index: 0;
 }
 
-.char-slot {
+.character {
   position: absolute;
-  bottom: 0;
-  width: 33.33%;
-  height: 100%;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  bottom: 20vh;
+  max-height: 70vh;
+  max-width: 100%;
+  object-fit: contain;
   z-index: 1;
+  display: none;
+  transition: all 0.3s ease;
 }
 
 #char-left {
-  left: 0;
+  left: 5%;
 }
+
 #char-center {
-  left: 33.33%;
-}
-#char-right {
-  right: 0;
-  width: 34%;
-}
-
-.char-image {
-  max-width: 100%;
-  max-height: 100%;
-  transform-origin: bottom center;
-}
-
-/* 縦向き（ポートレート） */
-@media (orientation: portrait) {
-  .char-image {
-    height: 50vh;
-    width: auto;
-    max-height: 50vh;
-    max-width: none;
-  }
-}
-
-/* デフォルトのテキストボックス */
-#dialogue-box {
-  position: absolute;
   left: 50%;
-  bottom: env(safe-area-inset-bottom, 0);
   transform: translateX(-50%);
-  width: 90%;
-  max-width: 800px;
-  background: rgba(0, 0, 0, 0.7);
+}
+
+#char-right {
+  right: 5%;
+}
+
+#textbox {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 30vh;
+  background-color: rgba(0, 0, 0, 0.6);
   color: white;
-  padding: 20px;
-  box-sizing: border-box;
   z-index: 2;
-  border-radius: 16px 16px 0 0;
-}
-
-@media (orientation: landscape) {
-  #dialogue-box {
-    width: 50%;
-  }
-}
-
-/* ✅ スマホ横画面用の調整（画面が横向きかつ幅が小さいとき） */
-@media (orientation: landscape) and (max-width: 768px) {
-  .char-image {
-    height: 80vh;
-    width: auto;
-    max-height: 80vh;
-    max-width: none;
-  }
-
-  #dialogue-box {
-    height: 20vh;
-    max-height: 20vh;
-    padding: 10px;
-    font-size: 0.9em;
-  }
+  padding: 1em;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 #name {
   font-weight: bold;
-  margin-bottom: 10px;
-  font-size: 1.2em;
+  margin-bottom: 0.5em;
 }
 
 #text {
-  font-size: 1em;
-  line-height: 1.5em;
-  min-height: 3em;
+  flex-grow: 1;
+  overflow-y: auto;
 }
 
-#choices {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-bottom: env(safe-area-inset-bottom, 0);
-}
-
-#choices button {
-  background-color: #444;
-  color: white;
-  padding: 10px;
+#next-button {
+  align-self: flex-end;
+  margin-top: 0.5em;
+  padding: 0.4em 1em;
+  background-color: rgba(255,255,255,0.2);
   border: none;
-  border-radius: 8px;
-  font-size: 1em;
+  color: white;
   cursor: pointer;
+  font-size: 1em;
 }
 
-#choices button:hover {
-  background-color: #666;
+.overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* 共通エフェクト（fade, slide など） */
+.fade-in {
+  animation: fadeIn 1s forwards;
+}
+.fade-out {
+  animation: fadeOut 1s forwards;
+}
+.slide-left-in {
+  animation: slideLeftIn 1s forwards;
+}
+.slide-right-in {
+  animation: slideRightIn 1s forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes slideLeftIn {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideRightIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* スマホ横画面対応 */
+@media screen and (max-width: 1024px) and (orientation: landscape) {
+  .character {
+    max-height: 80vh;
+    bottom: 20vh;
+  }
+
+  #textbox {
+    height: 20vh;
+  }
 }
