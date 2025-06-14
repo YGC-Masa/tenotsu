@@ -2,24 +2,22 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>v011 Story Viewer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>物語ゲーム v011</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="game">
-    <img id="background" />
-    <div id="character-container">
-      <img id="char-left" class="char" />
-      <img id="char-center" class="char" />
-      <img id="char-right" class="char" />
-    </div>
-    <div id="text-box">
-      <p id="text"></p>
-      <div id="options"></div>
+  <div id="game-container">
+    <img id="background" src="assets2/bgev/bg011.jpg" alt="背景" />
+    <div id="char-left" class="char-slot"></div>
+    <div id="char-center" class="char-slot"></div>
+    <div id="char-right" class="char-slot"></div>
+    <div id="dialogue-box">
+      <div id="name"></div>
+      <div id="text"></div>
+      <div id="choices"></div>
     </div>
   </div>
-  <audio id="bgm" loop></audio>
   <script src="characterColors.js"></script>
   <script src="script.js"></script>
 </body>
