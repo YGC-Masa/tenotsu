@@ -14,7 +14,7 @@
       }
     ],
     "name": "緋奈",
-    "text": "ここが最初のシーンだよ。",
+    "text": "ここが最初のシーンだよ。2",
     "speed": 3000
   },
   {
@@ -22,12 +22,12 @@
       {
         "side": "left",
         "src": "../assets2/char/a01002.png",
-        "scale": 1.2
+        "scale": 1.0
       },
       {
         "side": "right",
         "src": "../assets2/char/a02002.png",
-        "scale": 0.9
+        "scale": 1
       }
     ],
     "name": "藍",
