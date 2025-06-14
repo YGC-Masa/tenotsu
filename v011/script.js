@@ -1,82 +1,127 @@
-const baseWidth = 1920;
-const baseHeight = 1080;
-
-function isLandscape() {
-  return window.innerWidth > window.innerHeight;
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: black;
+  font-family: sans-serif;
+  box-sizing: border-box;
 }
 
-function showCharacter(side, src, scale = 1) {
-  const container = document.getElementById(`char-${side}`);
-  container.innerHTML = "";
-  if (src) {
-    const img = document.createElement("img");
-    img.src = src;
-    img.className = "char-image";
-    img.style.transform = `scale(${scale})`;
-    container.appendChild(img);
+#game-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  touch-action: manipulation;
+}
+
+#background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.char-slot {
+  position: absolute;
+  bottom: 0;
+  width: 33.33%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1;
+}
+
+#char-left { left: 0; }
+#char-center { left: 33.33%; }
+#char-right { right: 0; width: 33.34%; }
+
+.char-image {
+  max-width: 100%;
+  max-height: 100%;
+  transform-origin: bottom center;
+}
+
+@media (orientation: portrait) {
+  .char-image {
+    height: 50vh;
+    width: auto;
+    max-height: 50vh;
+    max-width: none;
   }
 }
 
-function showBackground(src) {
-  const bg = document.getElementById("background");
-  bg.src = src;
-}
-
-function showText(name, text, color) {
-  document.getElementById("name").textContent = name;
-  document.getElementById("name").style.color = color || "#C0C0C0";
-  document.getElementById("text").textContent = text;
-}
-
-function showChoices(choices) {
-  const container = document.getElementById("choices");
-  container.innerHTML = "";
-  choices.forEach(choice => {
-    const button = document.createElement("button");
-    button.textContent = choice.text;
-    button.onclick = () => {
-      if (choice.jumpTo) loadScenario(choice.jumpTo);
-    };
-    container.appendChild(button);
-  });
-}
-
-let currentScenario = null;
-let currentIndex = 0;
-
-function showScene() {
-  const scene = currentScenario[currentIndex];
-  if (!scene) return;
-
-  showBackground(scene.background);
-  ["left", "center", "right"].forEach(pos => {
-    const char = (scene.characters || []).find(c => c.side === pos);
-    showCharacter(pos, char?.src || null, char?.scale || 1);
-  });
-
-  const color = window.characterColors?.[scene.name] || "#C0C0C0";
-  showText(scene.name || "", scene.text || "", color);
-  if (scene.choices) {
-    showChoices(scene.choices);
-  } else {
-    showChoices([]);
-    currentIndex++;
-    setTimeout(showScene, scene.speed || 2000);
+@media (orientation: landscape) and (max-width: 768px) {
+  .char-image {
+    height: 80vh;
+    width: auto;
+    max-height: 80vh;
   }
 }
 
-function loadScenario(path) {
-  fetch(path)
-    .then(res => res.json())
-    .then(data => {
-      currentScenario = data;
-      currentIndex = 0;
-      showScene();
-    });
+#dialogue-box {
+  position: absolute;
+  left: 50%;
+  bottom: env(safe-area-inset-bottom, 0);
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 800px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 20px;
+  box-sizing: border-box;
+  z-index: 2;
+  border-radius: 16px 16px 0 0;
 }
 
-window.addEventListener("resize", () => {
-  showScene();
-});
+@media (orientation: landscape) {
+  #dialogue-box {
+    width: 50%;
+  }
+}
 
-loadScenario("scenario/000start.json");
+@media (orientation: landscape) and (max-width: 768px) {
+  #dialogue-box {
+    height: 20vh;
+    overflow-y: auto;
+  }
+}
+
+#name {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 1.2em;
+}
+
+#text {
+  font-size: 1em;
+  line-height: 1.5em;
+  min-height: 3em;
+}
+
+#choices {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+#choices button {
+  background-color: #444;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+#choices button:hover {
+  background-color: #666;
+}
