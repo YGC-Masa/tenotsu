@@ -1,39 +1,41 @@
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* === style.css === */
+:root {
+  --fontSize: 1em;
 }
 
-html, body {
-  width: 100%;
-  height: 100%;
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background: black;
   overflow: hidden;
-  font-family: system-ui, sans-serif;
-  background-color: black;
 }
 
 #game-container {
   position: relative;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
 }
 
 #background {
-  position: absolute;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
   z-index: 0;
 }
 
 .char-slot {
   position: absolute;
-  bottom: 0;
-  width: 33.33%;
+  bottom: 20vh;
+  width: 600px;
+  height: 70vh;
   display: flex;
   justify-content: center;
   align-items: flex-end;
+  z-index: 1;
 }
 
 #char-left {
@@ -41,32 +43,33 @@ html, body {
 }
 
 #char-center {
-  left: 33.33%;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 #char-right {
   right: 0;
-  width: 33.34%;
 }
 
 .char-image {
   max-width: 100%;
   max-height: 100%;
-  transform-origin: bottom center;
-  width: auto;
-  height: auto;
 }
 
 #dialogue-box {
   position: absolute;
   bottom: 0;
   width: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  height: 20vh;
+  background: rgba(0, 0, 0, 0.6);
   color: white;
-  padding: 10px;
-  font-size: var(--fontSize, 1em);
-  z-index: 10;
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding: 1em;
+  box-sizing: border-box;
+  font-size: var(--fontSize);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 #name {
@@ -75,44 +78,27 @@ html, body {
 }
 
 #text {
-  margin-bottom: 1em;
-  min-height: 3em;
+  flex-grow: 1;
+}
+
+#choices {
+  margin-top: 0.5em;
 }
 
 #choices button {
-  margin: 0.25em;
-  padding: 0.5em 1em;
-  background: #444;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  margin-right: 1em;
+  padding: 0.3em 0.8em;
   font-size: 1em;
 }
 
-#choices button:hover {
-  background: #666;
-}
-
-@media (orientation: portrait) {
-  .char-image {
-    height: 50vh;
-    max-height: 50vh;
-    max-width: none;
-  }
-}
-
-@media (orientation: landscape) and (max-width: 768px) {
-  .char-image {
+/* モバイル横画面対応 */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  .char-slot {
     height: 80vh;
-    max-height: 80vh;
-    max-width: none;
+    bottom: 20vh;
   }
 
   #dialogue-box {
     height: 20vh;
-    max-height: 20vh;
-    padding: 10px;
-    font-size: 0.9em;
   }
 }
