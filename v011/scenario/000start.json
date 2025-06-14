@@ -1,5 +1,10 @@
 [
   {
+    "name": "藍",
+    "text": "テイク0",
+    "speed": 2500
+  },
+  {
     "name": "",
     "text": "これはv011の全機能を紹介するチュートリアルです。",
     "background": "./../assets2/bgev/bg011.jpg",
