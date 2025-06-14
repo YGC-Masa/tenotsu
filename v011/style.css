@@ -1,5 +1,3 @@
-/* === style.css === */
-
 html, body {
   margin: 0;
   padding: 0;
@@ -39,16 +37,9 @@ html, body {
   z-index: 1;
 }
 
-#char-left {
-  left: 0;
-}
-#char-center {
-  left: 33.33%;
-}
-#char-right {
-  right: 0;
-  width: 34%; /* 右側キャラのスペース微調整 */
-}
+#char-left { left: 0; }
+#char-center { left: 33.33%; }
+#char-right { right: 0; width: 33.34%; }
 
 .char-image {
   max-width: 100%;
@@ -56,13 +47,20 @@ html, body {
   transform-origin: bottom center;
 }
 
-/* 縦画面時：キャラ画像を50vhに制限 */
 @media (orientation: portrait) {
   .char-image {
     height: 50vh;
     width: auto;
     max-height: 50vh;
     max-width: none;
+  }
+}
+
+@media (orientation: landscape) and (max-width: 768px) {
+  .char-image {
+    height: 80vh;
+    width: auto;
+    max-height: 80vh;
   }
 }
 
@@ -87,27 +85,10 @@ html, body {
   }
 }
 
-/* モバイル端末（スマホ・タブレット）の横向き時のみ適用 */
-@media screen and (max-width: 1024px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
-  .char-slot {
-    height: 80vh;
-  }
-
+@media (orientation: landscape) and (max-width: 768px) {
   #dialogue-box {
-    height: 25vh;
-    font-size: 1em;
-  }
-
-  #name {
-    font-size: 1.2em;
-  }
-
-  #text {
-    font-size: 1em;
-  }
-
-  #choices button {
-    font-size: 0.9em;
+    height: 20vh;
+    overflow-y: auto;
   }
 }
 
