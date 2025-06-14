@@ -20,7 +20,12 @@ function showCharacter(side, src, scale = 1) {
 
 function showBackground(src) {
   const bg = document.getElementById("background");
-  bg.src = src;
+  if (src && typeof src === "string") {
+    bg.src = src;
+    lastBackground = src; // 新しい背景を記憶
+  } else if (lastBackground) {
+    bg.src = lastBackground; // 前の背景を再適用
+  }
 }
 
 function showText(name, text, color) {
@@ -44,6 +49,7 @@ function showChoices(choices) {
 
 let currentScenario = null;
 let currentIndex = 0;
+let lastBackground = null; // 前の背景画像パスを保持
 
 function showScene() {
   const scene = currentScenario[currentIndex];
