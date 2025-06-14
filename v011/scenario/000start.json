@@ -2,16 +2,36 @@
   {
     "background": "../assets2/bgev/bg011.jpg",
     "characters": [
-      { "side": "left", "src": "../assets2/char/a01002.png" },
-      { "side": "right", "src": "../assets2/char/a02002.png" }
+      {
+        "side": "left",
+        "src": "../assets2/char/a01002.png",
+        "scale": 1.2
+      },
+      {
+        "side": "right",
+        "src": "../assets2/char/a02002.png",
+        "scale": 0.9
+      }
     ],
     "name": "緋奈",
-    "text": "こんにちは、世界。",
+    "text": "ここが最初のシーンだよ。",
     "speed": 3000
   },
   {
+    "characters": [
+      {
+        "side": "left",
+        "src": "../assets2/char/a01002.png",
+        "scale": 1.2
+      },
+      {
+        "side": "right",
+        "src": "../assets2/char/a02002.png",
+        "scale": 0.9
+      }
+    ],
     "name": "藍",
-    "text": "ようこそ、新しい冒険へ。",
+    "text": "次のセリフに進むよ。",
     "speed": 3000
   }
 ]
