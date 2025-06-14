@@ -13,31 +13,20 @@ function isLandscape() {
   return window.innerWidth > window.innerHeight;
 }
 
-function showCharacter(side, src, scale = 1.0) {
+function showCharacter(side, src, scale = 1) {
   const container = document.getElementById(`char-${side}`);
   container.innerHTML = "";
   if (src) {
     const img = document.createElement("img");
     img.src = src;
     img.className = "char-image";
-
-    const baseWidth = 600;
-    const baseHeight = 800;
-
-    img.onload = () => {
-      const naturalW = img.naturalWidth;
-      const naturalH = img.naturalHeight;
-
-      const fitRatio = Math.min(
-        baseWidth / naturalW,
-        baseHeight / naturalH
-      );
-
-      const shrinkRatio = isLandscape() ? 400 / baseWidth : 1;
-
-      img.style.transform = `scale(${fitRatio * shrinkRatio * scale})`;
-    };
-
+    if (isLandscape()) {
+      const baseCharWidth = 600;
+      const shrinkRatio = 400 / baseCharWidth;
+      img.style.transform = `scale(${shrinkRatio * scale})`;
+    } else {
+      img.style.transform = `scale(${scale})`;
+    }
     container.appendChild(img);
   }
 }
@@ -76,12 +65,11 @@ function showScene() {
   showBackground(scene.background);
   ["left", "center", "right"].forEach(pos => {
     const char = (scene.characters || []).find(c => c.side === pos);
-    showCharacter(pos, char?.src || null, char?.scale || 1.0);
+    showCharacter(pos, char?.src || null, char?.scale || 1);
   });
 
   const color = window.characterColors?.[scene.name] || "#C0C0C0";
   showText(scene.name || "", scene.text || "", color);
-
   if (scene.choices) {
     showChoices(scene.choices);
   } else {
