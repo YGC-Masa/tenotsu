@@ -1,101 +1,137 @@
-const baseWidth = 1920;
-const baseHeight = 1080;
-let scaleRatio = 1;
+// v011/script.js
 
-function calculateScaleRatio() {
-  const screenW = window.innerWidth;
-  const screenH = window.innerHeight;
-  const shortSide = Math.min(screenW, screenH);
-  scaleRatio = shortSide / Math.min(baseWidth, baseHeight);
-}
+const scenarioPath = "v011/scenario/000start.json";
+let scenario = [];
+let currentLine = 0;
+let isTyping = false;
+let speed = 30;
+let fontSize = "1em";
+let bgm = null;
 
-function isLandscape() {
-  return window.innerWidth > window.innerHeight;
-}
-
-function showCharacter(side, src, scale = 1) {
-  const container = document.getElementById(`char-${side}`);
-  container.innerHTML = "";
-  if (src) {
-    const img = document.createElement("img");
-    img.src = src;
-    img.className = "char-image";
-
-    if (isLandscape() && window.innerWidth >= 900) {
-      // PC横向き：幅600でスケール
-      const baseCharWidth = 600;
-      const shrinkRatio = 400 / baseCharWidth;
-      img.style.transform = `scale(${shrinkRatio * scale})`;
-    } else {
-      img.style.transform = `scale(${scale})`;
-    }
-
-    container.appendChild(img);
-  }
-}
-
-function showBackground(src) {
-  const bg = document.getElementById("background");
-  bg.src = src;
-}
-
-function showText(name, text, color) {
-  document.getElementById("name").textContent = name;
-  document.getElementById("name").style.color = color || "#C0C0C0";
-  document.getElementById("text").textContent = text;
-}
-
-function showChoices(choices) {
-  const container = document.getElementById("choices");
-  container.innerHTML = "";
-  choices.forEach(choice => {
-    const button = document.createElement("button");
-    button.textContent = choice.text;
-    button.onclick = () => {
-      if (choice.jumpTo) loadScenario(choice.jumpTo);
-    };
-    container.appendChild(button);
-  });
-}
-
-let currentScenario = null;
-let currentIndex = 0;
-
-function showScene() {
-  const scene = currentScenario[currentIndex];
-  if (!scene) return;
-
-  showBackground(scene.background);
-  ["left", "center", "right"].forEach(pos => {
-    const char = (scene.characters || []).find(c => c.side === pos);
-    showCharacter(pos, char?.src || null, char?.scale || 1);
-  });
-
-  const color = window.characterColors?.[scene.name] || "#C0C0C0";
-  showText(scene.name || "", scene.text || "", color);
-  if (scene.choices) {
-    showChoices(scene.choices);
-  } else {
-    showChoices([]);
-    currentIndex++;
-    setTimeout(showScene, scene.speed || 2000);
-  }
-}
+const nameBox = document.getElementById("name");
+const textBox = document.getElementById("text");
+const choicesBox = document.getElementById("choices");
+const bgImg = document.getElementById("background");
+const bgmPlayer = document.getElementById("bgm");
+const charSlots = {
+  left: document.getElementById("char-left"),
+  center: document.getElementById("char-center"),
+  right: document.getElementById("char-right"),
+};
 
 function loadScenario(path) {
   fetch(path)
-    .then(res => res.json())
-    .then(data => {
-      currentScenario = data;
-      currentIndex = 0;
-      showScene();
+    .then((res) => res.json())
+    .then((data) => {
+      scenario = data.scenario;
+      speed = data.speed || 30;
+      fontSize = data.fontSize || "1em";
+      textBox.style.fontSize = fontSize;
+      showLine();
     });
 }
 
-window.addEventListener("resize", () => {
-  calculateScaleRatio();
-  showScene();
+function showLine() {
+  if (currentLine >= scenario.length) return;
+  const line = scenario[currentLine];
+
+  // 背景処理
+  if (line.bg) {
+    bgImg.src = `assets/bgev/${line.bg}`;
+  }
+
+  // BGM処理
+  if (line.bgm) {
+    if (line.bgm === "none") {
+      bgmPlayer.pause();
+      bgmPlayer.src = "";
+    } else {
+      bgmPlayer.src = `assets/bgm/${line.bgm}`;
+      bgmPlayer.play();
+    }
+  }
+
+  // キャラクター処理
+  if (line.characters) {
+    ["left", "center", "right"].forEach((side) => {
+      const slot = charSlots[side];
+      const charData = line.characters.find((c) => c.side === side);
+
+      if (!charData || charData.src === null) {
+        slot.innerHTML = "";
+        return;
+      }
+
+      const img = document.createElement("img");
+      img.className = "char-image";
+      img.src = `assets/char/${charData.src}`;
+      slot.innerHTML = "";
+      slot.appendChild(img);
+    });
+  }
+
+  // テキスト処理
+  nameBox.innerText = line.name || "";
+  nameBox.style.color = characterColors[line.name] || characterColors[""];
+  showText(line.text || "", () => {
+    if (line.choices) {
+      showChoices(line.choices);
+    }
+  });
+}
+
+function showText(text, callback) {
+  isTyping = true;
+  textBox.innerText = "";
+  let i = 0;
+
+  function typeChar() {
+    if (i < text.length) {
+      textBox.innerText += text[i++];
+      setTimeout(typeChar, speed);
+    } else {
+      isTyping = false;
+      callback?.();
+    }
+  }
+
+  typeChar();
+}
+
+function showChoices(choices) {
+  choicesBox.innerHTML = "";
+  choices.forEach((choice) => {
+    const btn = document.createElement("button");
+    btn.innerText = choice.text;
+    btn.onclick = () => {
+      if (choice.jumpTo) {
+        currentLine = scenario.findIndex((line) => line.label === choice.jumpTo);
+      } else if (choice.jumpToScenario) {
+        loadScenario(`v011/scenario/${choice.jumpToScenario}`);
+        currentLine = 0;
+        return;
+      } else if (choice.jumpToUrl) {
+        location.href = choice.jumpToUrl;
+        return;
+      } else {
+        currentLine++;
+      }
+      choicesBox.innerHTML = "";
+      showLine();
+    };
+    choicesBox.appendChild(btn);
+  });
+}
+
+document.addEventListener("click", () => {
+  if (isTyping) {
+    isTyping = false;
+    const fullText = scenario[currentLine].text;
+    textBox.innerText = fullText;
+  } else if (!scenario[currentLine].choices) {
+    currentLine++;
+    showLine();
+  }
 });
 
-calculateScaleRatio();
-loadScenario("scenario/000start.json");
+loadScenario(scenarioPath);
