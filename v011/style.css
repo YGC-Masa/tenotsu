@@ -47,7 +47,7 @@ html, body {
 }
 #char-right {
   right: 0;
-  width: 34%;
+  width: 34%; /* 右側キャラのスペース微調整 */
 }
 
 .char-image {
@@ -56,38 +56,13 @@ html, body {
   transform-origin: bottom center;
 }
 
-/* 縦向きデフォルト設定 */
+/* 縦画面時：キャラ画像を50vhに制限 */
 @media (orientation: portrait) {
   .char-image {
     height: 50vh;
     width: auto;
     max-height: 50vh;
     max-width: none;
-  }
-}
-
-/* スマホ横向き対応 */
-@media (max-width: 900px) and (orientation: landscape) {
-  .char-image {
-    height: 80vh;
-    max-height: 80vh;
-    width: auto;
-    max-width: 100vw;
-  }
-
-  #dialogue-box {
-    bottom: env(safe-area-inset-bottom, 0);
-    width: 90%;
-    max-width: none;
-    height: 30vh;
-    overflow-y: auto;
-    padding: 10px;
-    font-size: 1em;
-  }
-
-  #text {
-    font-size: 1em;
-    line-height: 1.4em;
   }
 }
 
@@ -109,6 +84,30 @@ html, body {
 @media (orientation: landscape) {
   #dialogue-box {
     width: 50%;
+  }
+}
+
+/* モバイル端末（スマホ・タブレット）の横向き時のみ適用 */
+@media screen and (max-width: 1024px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
+  .char-slot {
+    height: 80vh;
+  }
+
+  #dialogue-box {
+    height: 25vh;
+    font-size: 1em;
+  }
+
+  #name {
+    font-size: 1.2em;
+  }
+
+  #text {
+    font-size: 1em;
+  }
+
+  #choices button {
+    font-size: 0.9em;
   }
 }
 
