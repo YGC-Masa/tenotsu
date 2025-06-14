@@ -1,37 +1,48 @@
-[
-  {
-    "background": "../assets2/bgev/bg011.jpg",
-    "characters": [
-      {
-        "side": "left",
-        "src": "../assets2/char/a01002.png",
-        "scale": 1
-      },
-      {
-        "side": "right",
-        "src": "../assets2/char/a02002.png",
-        "scale": 1
-      }
-    ],
-    "name": "緋奈",
-    "text": "ここが最初のシーンだよ。0",
-    "speed": 3000
-  },
-  {
-    "characters": [
-      {
-        "side": "left",
-        "src": "../assets2/char/a01002.png",
-        "scale": 1.0
-      },
-      {
-        "side": "right",
-        "src": "../assets2/char/a02002.png",
-        "scale": 1
-      }
-    ],
-    "name": "藍",
-    "text": "次のセリフに進むよ。",
-    "speed": 3000
-  }
-]
+{
+  "fontSize": "1em",
+  "speed": 30,
+  "scenario": [
+    {
+      "bg": "bg011.png",
+      "bgm": "main.mp3",
+      "characters": [
+        { "side": "left", "src": "a01002.png" }
+      ],
+      "name": "緋奈",
+      "text": "ようこそ、物語の世界へ。準備はできてる？"
+    },
+    {
+      "characters": [
+        { "side": "left", "src": "a01002.png" },
+        { "side": "right", "src": "a02002.png" }
+      ],
+      "name": "藍",
+      "text": "ふふ、こっちの準備も万端だよ。"
+    },
+    {
+      "name": "緋奈",
+      "text": "さあ、あなたの選択でこの物語が動き出すの。"
+    },
+    {
+      "choices": [
+        {
+          "text": "物語を始める",
+          "jumpTo": "start"
+        },
+        {
+          "text": "公式サイトを見る",
+          "jumpToUrl": "https://example.com"
+        }
+      ]
+    },
+    {
+      "label": "start",
+      "characters": [
+        { "side": "left", "src": null },
+        { "side": "right", "src": null }
+      ],
+      "name": "",
+      "text": "──そして、物語は静かに幕を開けた。"
+    }
+  ]
+}
