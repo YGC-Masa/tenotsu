@@ -1,50 +1,63 @@
-{
-  "speed": 40,
-  "fontSize": "1em",
-  "scenes": [
-    {
-      "bg": "../assets2/bgev/bg011.jpg",
-      "characters": [
-        { "side": "left", "src": "../assets2/char/a01002.png" }
-      ],
-      "name": "緋奈",
-      "text": "これはv011のサンプルシナリオです。0"
-    },
-    {
-      "text": "テキスト速度・フォントサイズ・セリフ色・BGM・効果音・キャラ表示位置・分岐などが使えます。"
-    },
-    {
-      "bgm": "../assets2/bgm/main.mp3",
-      "se": "../assets2/bgm/se_sample.mp3",
-      "text": "BGMと効果音が再生されました。"
-    },
-    {
-      "characters": [
-        { "side": "right", "src": "../assets2/char/a02002.png" }
-      ],
-      "name": "藍",
-      "text": "右側にキャラクターが追加されました。"
-    },
-    {
-      "text": "次は分岐の例です。選択肢を選んでください。",
-      "choices": [
-        { "label": "緋奈の話を聞く", "jump": 6 },
-        { "label": "藍の話を聞く", "jump": 7 }
-      ]
-    },
-    {
-      "text": "（この行は選択肢の直前の空シーン）"
-    },
-    {
-      "name": "緋奈",
-      "text": "私の話を選んでくれてありがとう。"
-    },
-    {
-      "name": "藍",
-      "text": "私の方を選んだんだね。ありがとう。"
-    },
-    {
-      "text": "これでシナリオは終わりです。ありがとうございました。"
-    }
-  ]
-}
+[
+  {
+    "name": "",
+    "text": "これはv011の全機能を紹介するチュートリアルです。",
+    "background": "../assets2/bgev/bg011.jpg",
+    "fontSize": "1.1em",
+    "speed": 2500
+  },
+  {
+    "name": "緋奈",
+    "text": "こんにちは！私は『緋奈』。左側に表示されてるよ。",
+    "characters": [
+      { "side": "left", "src": "../assets2/char/a01002.png", "scale": 1 }
+    ],
+    "effect": "fade-in"
+  },
+  {
+    "name": "藍",
+    "text": "私は『藍』。右側に登場するね。少し小さめに表示してみるよ。",
+    "characters": [
+      { "side": "right", "src": "../assets2/char/a02002.png", "scale": 0.8 }
+    ],
+    "effect": "slide-left-in"
+  },
+  {
+    "name": "",
+    "text": "左右のキャラが同時に表示され、スケールが異なることが分かります。",
+    "speed": 3000
+  },
+  {
+    "name": "緋奈",
+    "text": "表示速度（speed）やフォントサイズ（fontSize）も調整できるよ！",
+    "fontSize": "1.2em",
+    "speed": 2800
+  },
+  {
+    "name": "藍",
+    "text": "さて、次は選択肢のテストです。選んだ内容で展開が変わります。",
+    "speed": 2500
+  },
+  {
+    "name": "",
+    "text": "どちらのルートに進みますか？",
+    "choices": [
+      {
+        "text": "緋奈ともっと話す",
+        "jumpToScenario": "scenario/hinaRoute.json"
+      },
+      {
+        "text": "藍ともっと話す",
+        "jumpToScenario": "scenario/aiRoute.json"
+      },
+      {
+        "text": "公式サイトを見る",
+        "jumpToUrl": "https://example.com"
+      }
+    ]
+  },
+  {
+    "name": "",
+    "text": "※選択後、自動でジャンプします。"
+  }
+]
