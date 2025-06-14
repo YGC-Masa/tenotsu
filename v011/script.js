@@ -1,115 +1,105 @@
-let currentScenario = null;
-let currentIndex = 0;
-let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-let lastBackground = null;
+let currentSceneIndex = 0;
+let scenario = [];
+let speed = 30;
+let fontSize = '1em';
+
+const charSlots = {
+  left: document.getElementById("char-left"),
+  center: document.getElementById("char-center"),
+  right: document.getElementById("char-right"),
+};
+
+function setCharacter(side, src, effect, scale = 1) {
+  const slot = charSlots[side];
+  slot.innerHTML = "";
+
+  if (src) {
+    const img = document.createElement("img");
+    img.src = src;
+    img.className = "char-image";
+    img.style.transform = `scale(${scale})`;
+    if (effect) {
+      img.style.animation = `${effect} 0.5s ease`;
+    }
+    slot.appendChild(img);
+  }
+}
+
+function showBackground(src, effect) {
+  const bg = document.getElementById("background");
+  if (!src) return;
+  bg.style.animation = "";
+  if (effect) {
+    bg.style.animation = `${effect} 0.5s ease`;
+  }
+  bg.src = src;
+}
+
+function showText(text, speed) {
+  const textElement = document.getElementById("text");
+  textElement.innerHTML = "";
+  let i = 0;
+  function type() {
+    if (i < text.length) {
+      textElement.innerHTML += text[i++];
+      setTimeout(type, speed);
+    }
+  }
+  type();
+}
+
+function showScene(index) {
+  const scene = scenario[index];
+  if (!scene) return;
+
+  currentSceneIndex = index;
+  speed = scene.speed ?? speed;
+  fontSize = scene.fontSize ?? fontSize;
+  document.getElementById("text").style.fontSize = fontSize;
+
+  if (scene.background) {
+    showBackground(scene.background, scene.effect);
+  }
+
+  if (scene.characters) {
+    scene.characters.forEach((char) => {
+      setCharacter(char.side, char.src, char.effect, char.scale ?? 1);
+    });
+  }
+
+  const nameElem = document.getElementById("name");
+  nameElem.textContent = scene.name || "";
+  nameElem.style.color = characterColors[scene.name] || characterColors[""];
+
+  showText(scene.text || "", speed);
+
+  const choicesContainer = document.getElementById("choices");
+  choicesContainer.innerHTML = "";
+  if (scene.choices) {
+    scene.choices.forEach((choice) => {
+      const btn = document.createElement("button");
+      btn.textContent = choice.text;
+      btn.onclick = () => {
+        if (choice.jumpToScenario) {
+          loadScenario(choice.jumpToScenario);
+        } else if (typeof choice.jumpTo === "number") {
+          showScene(choice.jumpTo);
+        }
+      };
+      choicesContainer.appendChild(btn);
+    });
+  }
+}
 
 function loadScenario(path) {
-  fetch(path)
-    .then(response => response.json())
-    .then(data => {
-      currentScenario = data;
-      currentIndex = 0;
-      applySettings(data);
-      showNext();
+  fetch(`scenario/${path}`)
+    .then((res) => res.json())
+    .then((data) => {
+      scenario = data;
+      showScene(0);
     });
 }
 
-function applySettings(data) {
-  const text = document.getElementById("text");
-  text.style.fontSize = (data.fontSize || "24px");
-  text.dataset.speed = data.speed || "40";
-}
-
-function showNext() {
-  if (!currentScenario || currentIndex >= currentScenario.scenes.length) return;
-  const scene = currentScenario.scenes[currentIndex++];
-
-  if (scene.jumpToUrl) {
-    window.location.href = scene.jumpToUrl;
-    return;
-  }
-
-  if (scene.jumpToScenario) {
-    loadScenario(scene.jumpToScenario);
-    return;
-  }
-
-  showBackground(scene.background);
-  showCharacters(scene.characters || []);
-  showDialogue(scene);
-
-  if (scene.effect) {
-    applyEffect(scene.effect);
-  }
-}
-
-function showBackground(src) {
-  const bg = document.getElementById("background");
-  if (src && typeof src === "string") {
-    bg.src = src;
-    lastBackground = src;
-  } else if (lastBackground) {
-    bg.src = lastBackground;
-  }
-}
-
-function showCharacters(characters) {
-  const positions = ["left", "center", "right"];
-  positions.forEach(pos => {
-    const img = document.getElementById(`char-${pos}`);
-    img.style.display = "none";
-  });
-
-  characters.forEach(char => {
-    const img = document.getElementById(`char-${char.side}`);
-    if (char.src) {
-      img.src = char.src;
-      img.style.display = "block";
-      img.className = ""; // エフェクトリセット
-      if (char.effect) img.classList.add(char.effect);
-    } else {
-      img.style.display = "none";
-    }
-  });
-}
-
-function showDialogue(scene) {
-  const nameElem = document.getElementById("name");
-  const textElem = document.getElementById("text");
-  const colorMap = window.characterColors || {};
-  const color = colorMap[scene.name] || "#C0C0C0";
-
-  nameElem.textContent = scene.name || "";
-  nameElem.style.color = color;
-
-  textElem.innerHTML = "";
-  const text = scene.text || "";
-  let index = 0;
-  const speed = parseInt(textElem.dataset.speed, 10);
-
-  function typeChar() {
-    if (index < text.length) {
-      textElem.innerHTML += text[index++];
-      setTimeout(typeChar, speed);
-    }
-  }
-
-  typeChar();
-}
-
-function applyEffect(effectName) {
-  const overlay = document.getElementById("overlay");
-  overlay.className = "overlay " + effectName;
-  overlay.style.display = "block";
-  overlay.addEventListener("animationend", () => {
-    overlay.style.display = "none";
-    overlay.className = "overlay";
-  }, { once: true });
-}
-
-document.getElementById("next-button").addEventListener("click", showNext);
-
-// 初期シナリオ読み込み
-window.addEventListener("DOMContentLoaded", () => {
-  loadScenario("scenario/000start.json");
-});
+window.onload = () => {
+  loadScenario("000start.json");
+};
