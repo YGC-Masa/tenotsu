@@ -1,3 +1,5 @@
+// === script.js ===
+
 const baseWidth = 1920;
 const baseHeight = 1080;
 let scaleRatio = 1;
@@ -21,8 +23,7 @@ function showCharacter(side, src, scale = 1) {
     img.src = src;
     img.className = "char-image";
     if (isLandscape()) {
-      const baseCharWidth = 600;
-      const shrinkRatio = 400 / baseCharWidth;
+      const shrinkRatio = 0.66; // 横向き共通縮小倍率
       img.style.transform = `scale(${shrinkRatio * scale})`;
     } else {
       img.style.transform = `scale(${scale})`;
