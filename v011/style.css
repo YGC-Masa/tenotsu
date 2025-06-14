@@ -47,18 +47,24 @@ html, body {
 }
 #char-right {
   right: 0;
-  width: 33.33%;
+  width: 34%; /* 右側キャラのスペース微調整 */
 }
 
 .char-image {
-  max-width: none;
-  max-height: none;
-  width: auto;
-  height: 50vh; /* デフォルトは縦向き用 */
+  max-width: 100%;
+  max-height: 100%;
   transform-origin: bottom center;
 }
 
-/* 横向き時：高さ70vhでスケーリング */
+@media (orientation: portrait) {
+  .char-image {
+    height: 50vh;
+    width: auto;
+    max-height: 50vh;
+    max-width: none;
+  }
+}
+
 @media (orientation: landscape) {
   .char-image {
     height: 70vh;
@@ -66,19 +72,29 @@ html, body {
     max-height: 70vh;
     max-width: none;
   }
-
-  #dialogue-box {
-    width: 50%;
-  }
 }
 
-/* 縦向き時：高さ50vh（再定義は任意） */
-@media (orientation: portrait) {
+@media (max-width: 900px) and (orientation: landscape) {
   .char-image {
-    height: 50vh;
+    height: 80vh;
+    max-height: 80vh;
     width: auto;
-    max-height: 50vh;
+    max-width: 100vw;
+  }
+
+  #dialogue-box {
+    bottom: env(safe-area-inset-bottom, 0);
+    width: 90%;
     max-width: none;
+    height: 40vh;
+    overflow-y: auto;
+    padding: 10px;
+    font-size: 1em;
+  }
+
+  #text {
+    font-size: 1em;
+    line-height: 1.4em;
   }
 }
 
@@ -95,6 +111,12 @@ html, body {
   box-sizing: border-box;
   z-index: 2;
   border-radius: 16px 16px 0 0;
+}
+
+@media (orientation: landscape) {
+  #dialogue-box {
+    width: 50%;
+  }
 }
 
 #name {
@@ -114,7 +136,7 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding-bottom: env(safe-area-inset-bottom, 0); /* SAFE AREA */
+  padding-bottom: env(safe-area-inset-bottom, 0); /* SAFE AREA 追加 */
 }
 
 #choices button {
