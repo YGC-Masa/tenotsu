@@ -47,13 +47,22 @@ html, body {
 }
 #char-right {
   right: 0;
-  width: 33.33%; /* ← 修正済：左右均等に */
+  width: 33.33%;
 }
 
 .char-image {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: none;
+  max-height: none;
+  width: auto;
+  height: auto;
   transform-origin: bottom center;
+}
+
+@media (orientation: landscape) {
+  .char-image {
+    height: 800px;
+    width: auto;
+  }
 }
 
 @media (orientation: portrait) {
