@@ -1,3 +1,5 @@
+/* === style.css === */
+
 html, body {
   margin: 0;
   padding: 0;
@@ -45,7 +47,7 @@ html, body {
 }
 #char-right {
   right: 0;
-  width: 34%; /* 右側キャラのスペース微調整 */
+  width: 33.33%; /* ← 修正済：左右均等に */
 }
 
 .char-image {
@@ -101,7 +103,7 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding-bottom: env(safe-area-inset-bottom, 0); /* SAFE AREA 追加 */
+  padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 #choices button {
@@ -116,3 +118,4 @@ html, body {
 
 #choices button:hover {
   background-color: #666;
+}
