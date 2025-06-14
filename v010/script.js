@@ -1,191 +1,83 @@
-import { characterColors } from "../characterColors.js";
+const baseWidth = 1920;
+const baseHeight = 1080;
 
-const textBox = document.getElementById("text");
-const nameBox = document.getElementById("name");
-const choicesBox = document.getElementById("choices");
-const background = document.getElementById("background");
-const characterLayer = document.getElementById("character-layer");
-const bgm = document.getElementById("bgm");
-const se = document.getElementById("se");
-
-let currentCharacters = {}; // sideごとの表示キャラ状態
-let textSpeed = 30;
-let fontSize = "20px";
-
-async function loadScenario(path) {
-  const res = await fetch(path);
-  return await res.json();
+function isLandscape() {
+  return window.innerWidth > window.innerHeight;
 }
 
-function setBackground(src) {
-  background.style.backgroundImage = `url(../${src})`;
-}
-
-function playBGM(src) {
-  bgm.src = `../${src}`;
-  bgm.play();
-}
-
-function playSE(src) {
-  se.src = `../${src}`;
-  se.play();
-}
-
-function clearCharacters() {
-  characterLayer.innerHTML = "";
-  currentCharacters = {};
-}
-
-function showCharacter({ side, src, effect }) {
-  if (!side) return;
-  const div = document.createElement("img");
-  div.classList.add("character");
-  div.dataset.side = side;
-  div.style.opacity = "0";
-
-  if (side === "left") div.style.left = "5%";
-  if (side === "center") div.style.left = "35%";
-  if (side === "right") div.style.left = "65%";
-
+function showCharacter(side, src, scale = 1) {
+  const container = document.getElementById(`char-${side}`);
+  container.innerHTML = "";
   if (src) {
-    div.src = `../${src}`;
-    characterLayer.appendChild(div);
-    requestAnimationFrame(() => {
-      div.style.opacity = "1";
-    });
-    currentCharacters[side] = div;
+    const img = document.createElement("img");
+    img.src = src;
+    img.className = "char-image";
+    // ここはCSSで高さ制御するため、transform scaleは削除
+    // 必要なら scale を追加するならCSSクラスやスタイルで調整する
+    container.appendChild(img);
+  }
+}
+
+function showBackground(src) {
+  const bg = document.getElementById("background");
+  bg.src = src;
+}
+
+function showText(name, text, color) {
+  document.getElementById("name").textContent = name;
+  document.getElementById("name").style.color = color || "#C0C0C0";
+  document.getElementById("text").textContent = text;
+}
+
+function showChoices(choices) {
+  const container = document.getElementById("choices");
+  container.innerHTML = "";
+  choices.forEach(choice => {
+    const button = document.createElement("button");
+    button.textContent = choice.text;
+    button.onclick = () => {
+      if (choice.jumpTo) loadScenario(choice.jumpTo);
+    };
+    container.appendChild(button);
+  });
+}
+
+let currentScenario = null;
+let currentIndex = 0;
+
+function showScene() {
+  const scene = currentScenario[currentIndex];
+  if (!scene) return;
+
+  showBackground(scene.background);
+  ["left", "center", "right"].forEach(pos => {
+    const char = (scene.characters || []).find(c => c.side === pos);
+    showCharacter(pos, char?.src || null, char?.scale || 1);
+  });
+
+  const color = window.characterColors?.[scene.name] || "#C0C0C0";
+  showText(scene.name || "", scene.text || "", color);
+  if (scene.choices) {
+    showChoices(scene.choices);
   } else {
-    const existing = currentCharacters[side];
-    if (existing) {
-      existing.style.opacity = "0";
-      setTimeout(() => existing.remove(), 500);
-      delete currentCharacters[side];
-    }
+    showChoices([]);
+    currentIndex++;
+    setTimeout(showScene, scene.speed || 2000);
   }
 }
 
-function applyEffect(effect, callback) {
-  const overlay = document.createElement("div");
-  overlay.style.position = "fixed";
-  overlay.style.top = 0;
-  overlay.style.left = 0;
-  overlay.style.width = "100%";
-  overlay.style.height = "100%";
-  overlay.style.zIndex = 9999;
-  document.body.appendChild(overlay);
-
-  const fadeColor = {
-    "black-in": "black",
-    "black-out": "black",
-    "white-in": "white",
-    "white-out": "white"
-  }[effect] || "black";
-
-  if (effect === "black-in" || effect === "white-in") {
-    overlay.style.backgroundColor = fadeColor;
-    overlay.style.opacity = "1";
-    overlay.style.transition = "opacity 0.5s";
-    requestAnimationFrame(() => {
-      overlay.style.opacity = "0";
+function loadScenario(path) {
+  fetch(path)
+    .then(res => res.json())
+    .then(data => {
+      currentScenario = data;
+      currentIndex = 0;
+      showScene();
     });
-  } else if (effect === "black-out" || effect === "white-out") {
-    overlay.style.backgroundColor = fadeColor;
-    overlay.style.opacity = "0";
-    overlay.style.transition = "opacity 0.5s";
-    requestAnimationFrame(() => {
-      overlay.style.opacity = "1";
-    });
-  } else {
-    overlay.remove();
-    if (callback) callback();
-    return;
-  }
-
-  setTimeout(() => {
-    overlay.remove();
-    if (callback) callback();
-  }, 500);
 }
 
-function wait(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+window.addEventListener("resize", () => {
+  showScene();
+});
 
-async function typeText(text) {
-  textBox.innerHTML = "";
-  for (let char of text) {
-    textBox.innerHTML += char;
-    await wait(textSpeed);
-  }
-}
-
-function setFont(size) {
-  textBox.style.fontSize = size;
-  nameBox.style.fontSize = size;
-}
-
-async function showLine(line) {
-  const effect = line.effect || "dissolve";
-
-  if (line.bg) setBackground(line.bg);
-  if (line.bgm) playBGM(line.bgm);
-  if (line.se) playSE(line.se);
-
-  if (line.characters) {
-    line.characters.forEach(showCharacter);
-  }
-
-  if (line.text) {
-    const match = line.text.match(/^(.+?)「(.*)」$/);
-    if (match) {
-      const speaker = match[1];
-      const content = match[2];
-      nameBox.textContent = speaker;
-      nameBox.style.color = characterColors[speaker] || "#C0C0C0";
-      await typeText(content);
-    } else {
-      nameBox.textContent = "";
-      await typeText(line.text);
-    }
-    await wait(500);
-  }
-
-  if (line.choices) {
-    choicesBox.innerHTML = "";
-    return new Promise((resolve) => {
-      line.choices.forEach((choice) => {
-        const btn = document.createElement("button");
-        btn.textContent = choice.text;
-        btn.className = "choice-button";
-        btn.onclick = () => {
-          if (choice.jumpToScenario) {
-            loadAndRun(`scenario/${choice.jumpToScenario}`);
-          } else if (choice.jumpToUrl) {
-            window.location.href = choice.jumpToUrl;
-          }
-          resolve();
-        };
-        choicesBox.appendChild(btn);
-      });
-    });
-  }
-
-  return wait(300);
-}
-
-async function runScenario(scenario) {
-  if (scenario.fontSize) setFont(scenario.fontSize);
-  if (scenario.speed) textSpeed = scenario.speed;
-
-  for (let i = 0; i < scenario.start.length; i++) {
-    await showLine(scenario.start[i]);
-  }
-}
-
-async function loadAndRun(path) {
-  const scenario = await loadScenario(path);
-  clearCharacters();
-  await runScenario(scenario);
-}
-
-loadAndRun("scenario/000start.json");
+loadScenario("scenario/000start.json");
