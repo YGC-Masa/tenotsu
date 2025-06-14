@@ -18,11 +18,19 @@ function showCharacter(side, src, scale = 1) {
   }
 }
 
+let currentScenario = null;
+let currentIndex = 0;
+let lastBackground = null; // 前の背景画像パスを保持
+
 function showBackground(src) {
   const bg = document.getElementById("background");
-  bg.src = src;
+  if (src && typeof src === "string") {
+    bg.src = src;
+    lastBackground = src; // 新しい背景を記憶
+  } else if (lastBackground) {
+    bg.src = lastBackground; // 前の背景を再適用
+  }
 }
-
 function showText(name, text, color) {
   document.getElementById("name").textContent = name;
   document.getElementById("name").style.color = color || "#C0C0C0";
@@ -42,8 +50,7 @@ function showChoices(choices) {
   });
 }
 
-let currentScenario = null;
-let currentIndex = 0;
+
 
 function showScene() {
   const scene = currentScenario[currentIndex];
