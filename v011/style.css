@@ -1,3 +1,4 @@
+/* === style.css === */
 
 * {
   box-sizing: border-box;
@@ -34,8 +35,6 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  padding: 0 2vw; /* ← 画面幅に応じて左右に余白を確保 */
-  box-sizing: border-box;
 }
 
 #char-left {
@@ -52,7 +51,7 @@ html, body {
 }
 
 .char-image {
-  max-width: 100%;
+  max-width: 90%;         /* ← 追加済み */
   max-height: 100%;
   transform-origin: bottom center;
   width: auto;
