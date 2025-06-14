@@ -1,4 +1,13 @@
-/* === script.js === */
+const baseWidth = 1920;
+const baseHeight = 1080;
+let scaleRatio = 1;
+
+function calculateScaleRatio() {
+  const screenW = window.innerWidth;
+  const screenH = window.innerHeight;
+  const shortSide = Math.min(screenW, screenH);
+  scaleRatio = shortSide / Math.min(baseWidth, baseHeight);
+}
 
 function isLandscape() {
   return window.innerWidth > window.innerHeight;
@@ -12,12 +21,13 @@ function showCharacter(side, src, scale = 1) {
     img.src = src;
     img.className = "char-image";
 
-    if (!isLandscape()) {
-      // 縦画面時のみ scale を反映（CSSは50vh）
-      img.style.transform = `scale(${scale})`;
+    if (isLandscape() && window.innerWidth >= 900) {
+      // PC横向き：幅600でスケール
+      const baseCharWidth = 600;
+      const shrinkRatio = 400 / baseCharWidth;
+      img.style.transform = `scale(${shrinkRatio * scale})`;
     } else {
-      // 横画面時は高さ800pxがCSSで固定なのでscale=1
-      img.style.transform = `scale(1)`;
+      img.style.transform = `scale(${scale})`;
     }
 
     container.appendChild(img);
@@ -83,7 +93,9 @@ function loadScenario(path) {
 }
 
 window.addEventListener("resize", () => {
-  showScene(); // サイズ変更時に再描画
+  calculateScaleRatio();
+  showScene();
 });
 
+calculateScaleRatio();
 loadScenario("scenario/000start.json");
