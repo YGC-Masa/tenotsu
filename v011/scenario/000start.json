@@ -2,7 +2,7 @@
   {
     "name": "",
     "text": "これはv011の全機能を紹介するチュートリアルです。",
-    "background": "../assets2/bgev/bg011.jpg",
+    "background": "./../assets2/bgev/bg011.jpg",
     "fontSize": "1.1em",
     "speed": 2500
   },
