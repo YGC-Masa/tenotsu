@@ -1,54 +1,58 @@
 {
-  "fontSize": "1em",
-  "speed": 40,
+  "fontSize": "1.2em",
+  "speed": 30,
   "scenes": [
     {
       "bg": "../assets2/bgev/bg011.png",
-      "characters": [
-        { "side": "left", "src": "../assets2/char/a01002.png", "effect": "fade-in" }
-      ],
+      "bgm": "../assets2/bgm/main.mp3",
       "name": "緋奈",
-      "text": "こんにちは、ここは新しい世界よ。",
-      "effect": "white-in"
-    },
-    {
+      "text": "ここは夢の中……？",
       "characters": [
-        { "side": "right", "src": "../assets2/char/a02002.png", "effect": "slide-left-in" }
-      ],
-      "name": "藍",
-      "text": "本当にここがそうなのか？ なんだか不思議な場所だな。",
-      "effect": "dissolve"
-    },
-    {
-      "text": "あなたはどうする？",
-      "choices": [
-        {
-          "text": "探索してみる",
-          "next": 4
-        },
-        {
-          "text": "話を続ける",
-          "next": 5
-        }
+        { "side": "center", "src": "../assets2/char/a01002.png" }
       ]
     },
     {
-      "text": "（ここは分岐点なので表示されないダミー）"
-    },
-    {
-      "bg": "../assets2/bgev/bg011.png",
-      "characters": [
-        { "side": "left", "src": null },
-        { "side": "right", "src": "../assets2/char/a02002.png" }
-      ],
       "name": "藍",
-      "text": "よし、じゃあ奥の方へ行ってみよう！",
-      "effect": "fade-in"
+      "text": "ようやく起きた？",
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a02002.png" }
+      ]
     },
     {
       "name": "緋奈",
-      "text": "うふふ、それじゃあ、もう少し話しましょうか。",
-      "effect": "fade-in"
+      "text": "……藍！？ ここはいったい……。",
+      "characters": [
+        { "side": "center", "src": "../assets2/char/a01002.png" },
+        { "side": "left", "src": "../assets2/char/a02002.png" }
+      ]
+    },
+    {
+      "text": "──選択肢が表示される──",
+      "choices": [
+        { "label": "ここはどこ？", "jump": 4 },
+        { "label": "あなたは誰？", "jump": 5 }
+      ]
+    },
+    {
+      "name": "藍",
+      "text": "ここは境界の世界。現実と夢のはざまよ。",
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a02002.png" }
+      ]
+    },
+    {
+      "name": "藍",
+      "text": "私は案内人。あなたを導く存在。",
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a02002.png" }
+      ]
+    },
+    {
+      "name": "緋奈",
+      "text": "……そう、これは夢じゃないんだ。",
+      "characters": [
+        { "side": "center", "src": "../assets2/char/a01002.png" }
+      ]
     }
   ]
 }
