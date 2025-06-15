@@ -1,7 +1,7 @@
 {
   "scenes": [
     {
-      "bg": "../assets2/bg/bg_mountain.jpg",
+      "bg": "../assets2/bgev/bg_mountain.jpg",
       "characters": [
         { "side": "center", "src": "../assets2/char/a02002.png" }
       ],
