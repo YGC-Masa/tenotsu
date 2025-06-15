@@ -3,12 +3,12 @@
   "speed": 30,
   "scenes": [
     {
-      "bg": "../assets2/bg/room_day.jpg",
+      "bg": "../assets2/bgev/bg011.jpg,
       "bgEffect": "fade-in",
       "characters": [
         {
           "side": "left",
-          "src": "../assets2/chara/midori_smile.png",
+          "src": "../assets2/chara/a03002.png.png",
           "effect": "slide-left-in"
         }
       ],
@@ -19,7 +19,7 @@
       "characters": [
         {
           "side": "right",
-          "src": "../assets2/chara/kogane_normal.png",
+          "src": "../assets2/chara/a04002.png",
           "effect": "slide-right-in"
         }
       ],
@@ -34,12 +34,12 @@
       ]
     },
     {
-      "bg": "../assets2/bg/park.jpg",
+      "bg": "../assets2/bgev/a03ev01.png",
       "bgEffect": "fade-in",
       "characters": [
         {
           "side": "left",
-          "src": "../assets2/chara/midori_happy.png",
+          "src": "../assets2/chara/a03002.png",
           "effect": "slide-left-in"
         }
       ],
@@ -47,12 +47,12 @@
       "text": "やっぱり公園は気持ちいいね！"
     },
     {
-      "bg": "../assets2/bg/library.jpg",
+      "bg": "../assets2/bgeva04ev01.png",
       "bgEffect": "fade-in",
       "characters": [
         {
           "side": "right",
-          "src": "../assets2/chara/kogane_think.png",
+          "src": "../assets2/chara/a04002.png",
           "effect": "slide-right-in"
         }
       ],
