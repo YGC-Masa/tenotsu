@@ -1,240 +1,152 @@
-"use strict";
-
-const gameContainer = document.getElementById("game-container");
-const backgroundImg = document.getElementById("background");
+const nameBox = document.getElementById("name");
+const textBox = document.getElementById("text");
+const choicesBox = document.getElementById("choices");
+const bg = document.getElementById("background");
 const charSlots = {
   left: document.getElementById("char-left"),
   center: document.getElementById("char-center"),
-  right: document.getElementById("char-right"),
+  right: document.getElementById("char-right")
 };
-const dialogueBox = document.getElementById("dialogue-box");
-const nameElem = document.getElementById("name");
-const textElem = document.getElementById("text");
-const choicesElem = document.getElementById("choices");
 
-let scenario = null;
-let currentSceneIndex = 0;
-let isAutoMode = false;
-let textTimer = null;
-let textSpeed = 50;
-let currentText = "";
-let displayedTextLength = 0;
+let scenario = [];
+let currentScene = 0;
+let isAutoMode = true;
+let charElements = { left: null, center: null, right: null };
 
-function fadeOut(element, duration = 600) {
-  return new Promise((resolve) => {
-    element.style.transition = `opacity ${duration}ms ease`;
-    element.style.opacity = "0";
-    setTimeout(() => resolve(), duration);
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function applyTextEffect(text, speed) {
+  return new Promise(async (resolve) => {
+    textBox.innerHTML = "";
+    for (let i = 0; i < text.length; i++) {
+      textBox.innerHTML += text[i];
+      await sleep(speed);
+    }
+    resolve();
   });
 }
 
-function fadeIn(element, duration = 600) {
-  return new Promise((resolve) => {
-    element.style.transition = `opacity ${duration}ms ease`;
-    element.style.opacity = "1";
-    setTimeout(() => resolve(), duration);
-  });
-}
-
-async function loadBackground(src) {
-  if (!src) {
-    backgroundImg.src = "";
-    return;
+function setBackground(src, effect) {
+  if (!src) return;
+  if (effect === "fade") {
+    bg.classList.add("fade-out");
+    setTimeout(() => {
+      bg.src = src;
+      bg.onload = () => bg.classList.remove("fade-out");
+    }, 300);
+  } else {
+    bg.src = src;
   }
-  await fadeOut(backgroundImg);
-  return new Promise((resolve) => {
-    backgroundImg.onload = async () => {
-      await fadeIn(backgroundImg);
-      resolve();
-    };
-    backgroundImg.src = src;
-  });
 }
 
-async function changeCharacter(side, src) {
+function setCharacter(side, src) {
   const slot = charSlots[side];
   if (!slot) return;
 
-  if (src === null || src === "null" || src === "") {
-    // キャラを消す
-    if (slot.firstChild) {
-      await fadeOut(slot.firstChild);
-      slot.removeChild(slot.firstChild);
+  // NULL指定：退場処理
+  if (src === null) {
+    if (charElements[side]) {
+      slot.removeChild(charElements[side]);
+      charElements[side] = null;
     }
     return;
   }
 
-  // キャラ画像差し替え
-  let img = slot.querySelector("img");
-  if (!img) {
-    img = document.createElement("img");
-    img.classList.add("char-image");
-    slot.appendChild(img);
+  // 同じ画像なら更新不要
+  if (charElements[side]?.dataset.src === src) return;
+
+  // 一旦削除
+  if (charElements[side]) {
+    slot.removeChild(charElements[side]);
   }
 
-  if (img.src.endsWith(src)) {
-    // 同じ画像なら何もしない
-    return;
-  }
+  // 新規作成
+  const img = document.createElement("img");
+  img.src = src;
+  img.className = "char-image";
+  img.dataset.src = src;
+  img.style.opacity = 0;
 
-  await fadeOut(img);
-  return new Promise((resolve) => {
-    img.onload = async () => {
-      await fadeIn(img);
-      resolve();
-    };
-    img.src = src;
+  img.onload = () => {
+    img.style.transition = "opacity 0.3s";
+    img.style.opacity = 1;
+  };
+
+  charElements[side] = img;
+  slot.appendChild(img);
+}
+
+function setCharacters(charList) {
+  const sides = ["left", "center", "right"];
+  sides.forEach(side => {
+    const entry = charList.find(c => c.side === side);
+    if (entry) {
+      setCharacter(side, entry.src);
+    } else {
+      // null指定が明示されている場合のみ退場させる
+      const hasNull = charList.find(c => c.side === side && c.src === null);
+      if (hasNull) {
+        setCharacter(side, null);
+      }
+    }
   });
 }
 
-// 文字表示処理
-function sleep(ms) {
-  return new Promise((r) => setTimeout(r, ms));
-}
+async function showScene(scene) {
+  nameBox.textContent = scene.name || "";
+  nameBox.style.color = characterColors[scene.name] || "#C0C0C0";
 
-async function showText(text, speed = 50, fontSize = "1em") {
-  textElem.style.fontSize = fontSize;
-  textElem.textContent = "";
-  currentText = text;
-  displayedTextLength = 0;
-
-  while (displayedTextLength < currentText.length) {
-    textElem.textContent = currentText.slice(0, displayedTextLength + 1);
-    displayedTextLength++;
-    await sleep(speed);
-  }
-}
-
-function clearChoices() {
-  choicesElem.innerHTML = "";
-  choicesElem.style.display = "none";
-}
-
-function showChoices(choices) {
-  choicesElem.innerHTML = "";
-  if (!choices || choices.length === 0) {
-    choicesElem.style.display = "none";
-    return;
-  }
-  choicesElem.style.display = "flex";
-  for (const choice of choices) {
-    const btn = document.createElement("button");
-    btn.textContent = choice.text;
-    btn.addEventListener("click", () => {
-      if (choice.next !== undefined) {
-        goToScene(choice.next);
-      } else if (choice.jumpToScenario) {
-        loadScenario(choice.jumpToScenario);
-      }
-    });
-    choicesElem.appendChild(btn);
-  }
-}
-
-async function displayScene(scene) {
-  dialogueBox.hidden = false;
-
-  // 背景差し替え
   if (scene.bg) {
-    await loadBackground(scene.bg);
+    setBackground(scene.bg, scene.bgEffect || null);
   }
 
-  // キャラ差し替え
   if (scene.characters) {
-    const sides = ["left", "center", "right"];
-    for (const side of sides) {
-      const ch = scene.characters.find((c) => c.side === side);
-      const src = ch ? ch.src : null;
-      await changeCharacter(side, src);
-    }
+    setCharacters(scene.characters);
   }
 
-  // 名前表示と色設定
-  const charName = scene.name || "";
-  nameElem.textContent = charName;
-  const color = characterColors[charName] || "#C0C0C0";
-  nameElem.style.setProperty("--nameColor", color);
-
-  // 文字速度・フォントサイズ対応
-  textSpeed = scene.speed || 50;
-  const fontSize = scene.fontSize || "1em";
-
-  // テキスト表示
-  await showText(scene.text || "", textSpeed, fontSize);
-
-  // 選択肢表示
-  clearChoices();
-  if (scene.choices && scene.choices.length > 0) {
-    showChoices(scene.choices);
-  }
-}
-
-async function goToScene(index) {
-  if (!scenario || index < 0 || index >= scenario.scenes.length) return;
-  currentSceneIndex = index;
-  await displayScene(scenario.scenes[currentSceneIndex]);
-}
-
-async function nextScene() {
-  if (!scenario) return;
-  if (currentSceneIndex + 1 < scenario.scenes.length) {
-    await goToScene(currentSceneIndex + 1);
+  if (scene.fontSize) {
+    textBox.style.fontSize = scene.fontSize;
   } else {
-    // 最終シーンなら止める or 物語は続く表示などの処理
-    clearChoices();
-    nameElem.textContent = "";
-    textElem.textContent = "物語は続く・・・";
+    textBox.style.fontSize = "1em";
   }
-}
 
-// クリック処理（背景・キャラ）
-gameContainer.addEventListener("click", async () => {
-  if (!scenario) return;
-  // テキストの途中表示なら即全文表示
-  if (displayedTextLength < currentText.length) {
-    textElem.textContent = currentText;
-    displayedTextLength = currentText.length;
-    return;
-  }
-  // 次のシーンへ進む
-  await nextScene();
-});
+  const speed = scene.speed !== undefined ? scene.speed : 20;
+  await applyTextEffect(scene.text || "", speed);
 
-// ダブルクリックでオートモード（簡易）
-gameContainer.addEventListener("dblclick", () => {
-  isAutoMode = !isAutoMode;
-  if (isAutoMode) {
-    autoPlay();
-  }
-});
-
-async function autoPlay() {
-  while (isAutoMode) {
-    if (displayedTextLength < currentText.length) {
-      textElem.textContent = currentText;
-      displayedTextLength = currentText.length;
-    } else {
-      if (currentSceneIndex + 1 >= scenario.scenes.length) {
-        isAutoMode = false;
-        break;
-      }
-      await nextScene();
+  if (scene.choices) {
+    choicesBox.innerHTML = "";
+    scene.choices.forEach(choice => {
+      const btn = document.createElement("button");
+      btn.textContent = choice.text;
+      btn.onclick = () => {
+        loadScenario(choice.jumpToScenario);
+      };
+      choicesBox.appendChild(btn);
+    });
+  } else if (scene.jumpToScenario) {
+    await sleep(1000);
+    loadScenario(scene.jumpToScenario);
+  } else if (isAutoMode) {
+    await sleep(1000);
+    currentScene++;
+    if (currentScene < scenario.length) {
+      showScene(scenario[currentScene]);
     }
-    await sleep(1500);
   }
 }
 
-// シナリオ読み込み（JSON）
-async function loadScenario(url = "000start.json") {
-  try {
-    const res = await fetch(url);
-    scenario = await res.json();
-    currentSceneIndex = 0;
-    await displayScene(scenario.scenes[currentSceneIndex]);
-  } catch (e) {
-    console.error("シナリオ読み込み失敗", e);
-  }
+function loadScenario(path) {
+  fetch(path)
+    .then(res => res.json())
+    .then(data => {
+      scenario = data.scenes;
+      currentScene = 0;
+      showScene(scenario[currentScene]);
+    });
 }
 
-// 初期化
-loadScenario();
+document.addEventListener("DOMContentLoaded", () => {
+  loadScenario("scenario/000start.json");
+});
