@@ -5,115 +5,143 @@
     center: document.getElementById("char-center"),
     right: document.getElementById("char-right")
   };
+  const dialogueBox = document.getElementById("dialogue-box");
   const nameBox = document.getElementById("name");
   const textBox = document.getElementById("text");
-  const choicesBox = document.getElementById("choices");
-  const nextButton = document.getElementById("next");
 
-  let currentChars = { left: null, center: null, right: null };
+  let scenes = [];
+  let currentSceneIndex = 0;
+  let isTyping = false;
+  let skipTyping = false;
   let autoMode = false;
-
-  const response = await fetch("scenario/000start.json");
-  const data = await response.json();
-  const scenes = data.scenes;
-  const fontSize = data.fontSize || "1em";
-  const speed = data.speed || 40;
-  document.documentElement.style.setProperty("--fontSize", fontSize);
-
-  let i = 0;
+  let autoInterval = null;
+  const speed = 40;
   const delay = ms => new Promise(res => setTimeout(res, ms));
 
-  async function changeBackground(newSrc) {
-    if (!newSrc) return;
-    background.src = newSrc;
+  // テキストを1文字ずつ表示（途中でスキップ可能）
+  async function showText(text) {
+    textBox.textContent = "";
+    isTyping = true;
+    for (let i = 0; i < text.length; i++) {
+      if (skipTyping) {
+        textBox.textContent = text;
+        break;
+      }
+      textBox.textContent += text[i];
+      await delay(speed);
+    }
+    isTyping = false;
+    skipTyping = false;
   }
 
-  async function changeCharacter(pos, charData) {
+  // 背景画像差し替え
+  function changeBackground(src) {
+    if (!src) return;
+    background.src = src;
+  }
+
+  // キャラ表示差し替え（pos: left, center, right）
+  function changeCharacter(pos, charData) {
     const slot = charSlots[pos];
     if (!slot) return;
 
-    // 退場
-    if (charData.src === null) {
+    if (!charData || !charData.src) {
       slot.innerHTML = "";
-      currentChars[pos] = null;
       return;
     }
 
-    if (currentChars[pos] === charData.src) return;
+    if (slot.firstElementChild && slot.firstElementChild.src.endsWith(charData.src)) {
+      // 同じ画像なら何もしない
+      return;
+    }
 
     const img = new Image();
     img.src = charData.src;
-    img.className = "char-image";
-
-    await new Promise(res => {
-      img.onload = res;
-      img.onerror = res;
-    });
-
+    img.alt = charData.name || "";
     slot.innerHTML = "";
     slot.appendChild(img);
-    currentChars[pos] = charData.src;
   }
 
+  // シーン表示
   async function showScene(index) {
     if (!scenes[index]) return;
     const scene = scenes[index];
 
-    if (scene.bg) await changeBackground(scene.bg);
+    changeBackground(scene.bg);
 
-    if (scene.bgm) playBGM(scene.bgm);
-    if (scene.se) playSE(scene.se);
-
-    if (scene.characters) {
-      for (const pos of ["left", "center", "right"]) {
-        const charData = scene.characters.find(c => c.side === pos);
-        if (charData) {
-          await changeCharacter(pos, charData);
-        }
+    // キャラは左右中央分を処理（配列形式を想定）
+    ["left", "center", "right"].forEach(pos => {
+      if (scene.characters && scene.characters[pos]) {
+        changeCharacter(pos, scene.characters[pos]);
+      } else {
+        changeCharacter(pos, null);
       }
-    }
+    });
 
     nameBox.textContent = scene.name || "";
     nameBox.style.color = characterColors[scene.name] || "#C0C0C0";
 
-    textBox.textContent = "";
-    for (let j = 0; j < (scene.text || "").length; j++) {
-      textBox.textContent += scene.text[j];
-      await delay(speed);
-    }
+    await showText(scene.text || "");
+  }
 
-    choicesBox.innerHTML = "";
-    if (scene.choices) {
-      scene.choices.forEach(choice => {
-        const btn = document.createElement("button");
-        btn.textContent = choice.label;
-        btn.onclick = () => showScene(choice.jump);
-        choicesBox.appendChild(btn);
-      });
+  // 次のシーンへ
+  async function nextScene() {
+    currentSceneIndex++;
+    if (currentSceneIndex >= scenes.length) {
+      currentSceneIndex = 0;
+    }
+    await showScene(currentSceneIndex);
+  }
+
+  // クリック時の挙動
+  async function onBgOrCharClick() {
+    if (isTyping) {
+      skipTyping = true;
     } else {
-      nextButton.style.display = "block";
-      nextButton.onclick = () => {
-        nextButton.style.display = "none";
-        showScene(++i);
-      };
+      await nextScene();
     }
   }
 
-  function playBGM(src) {
-    if (!playBGM.audio) {
-      playBGM.audio = new Audio();
-      playBGM.audio.loop = true;
+  // オートモードの切替
+  function toggleAutoMode() {
+    if (autoMode) {
+      clearInterval(autoInterval);
+      autoInterval = null;
+      autoMode = false;
+      console.log("Auto mode OFF");
+    } else {
+      autoMode = true;
+      console.log("Auto mode ON");
+      autoInterval = setInterval(async () => {
+        if (!isTyping) {
+          await nextScene();
+        }
+      }, 3000);
     }
-    if (playBGM.audio.src !== location.origin + "/" + src) {
-      playBGM.audio.src = src;
-    }
-    playBGM.audio.play();
   }
 
-  function playSE(src) {
-    const audio = new Audio(src);
-    audio.play();
+  // 背景・キャラクリックイベント登録
+  background.addEventListener("click", onBgOrCharClick);
+  background.addEventListener("dblclick", toggleAutoMode);
+
+  for (const pos of ["left", "center", "right"]) {
+    charSlots[pos].addEventListener("click", onBgOrCharClick);
+    charSlots[pos].addEventListener("dblclick", toggleAutoMode);
   }
 
-  showScene(i);
+  // テキストボックスクリックで表示ON/OFF切替
+  dialogueBox.addEventListener("click", () => {
+    if (dialogueBox.style.display === "none") {
+      dialogueBox.style.display = "block";
+    } else {
+      dialogueBox.style.display = "none";
+    }
+  });
+
+  // シナリオJSONロード＆初期シーン表示
+  const response = await fetch("scenario/000start.json");
+  const data = await response.json();
+  scenes = data.scenes;
+
+  await showScene(currentSceneIndex);
 })();
