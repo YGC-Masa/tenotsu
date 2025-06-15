@@ -1,13 +1,3 @@
-// キャラクター名と色の対応（characterColors.jsと連携）
-const characterColors = {
-  "": "#C0C0C0",
-  "緋奈": "#d3381c",
-  "藍": "#0067C0",
-  "翠": "#005931",
-  "こがね": "#FFF450",
-  "琥珀": "#F68B1F",
-};
-
 // グローバル変数
 let scenarioData = null;     // 現在読み込んだシナリオJSONデータ
 let currentSceneIndex = 0;   // シナリオの進行インデックス
