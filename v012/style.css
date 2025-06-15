@@ -26,6 +26,7 @@ html, body {
   z-index: 0;
 }
 
+/* キャラ表示枠（左・中央・右） */
 .char-slot {
   position: absolute;
   bottom: 0;
@@ -33,7 +34,6 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  z-index: 5;
 }
 
 #char-left {
@@ -49,15 +49,16 @@ html, body {
   width: 33.34%;
 }
 
+/* キャラ画像 */
 .char-image {
   max-width: 90%;
   max-height: 100%;
   transform-origin: bottom center;
   width: auto;
   height: auto;
-  visibility: hidden;
 }
 
+/* セリフボックス */
 #dialogue-box {
   position: absolute;
   bottom: 0;
@@ -72,16 +73,19 @@ html, body {
   overflow-y: auto;
 }
 
+/* 名前 */
 #name {
   font-weight: bold;
   margin-bottom: 0.5em;
 }
 
+/* テキスト本文 */
 #text {
   margin-bottom: 1em;
   min-height: 3em;
 }
 
+/* 選択肢表示領域 */
 #choices {
   display: flex;
   flex-wrap: wrap;
@@ -90,6 +94,7 @@ html, body {
   margin-top: 0.5em;
 }
 
+/* 選択肢ボタン */
 #choices button {
   min-width: 40%;
   padding: 0.5em 1em;
@@ -105,6 +110,7 @@ html, body {
   background: #666;
 }
 
+/* モバイル縦向き：キャラ高さ調整 */
 @media (orientation: portrait) {
   .char-image {
     height: 50vh;
@@ -113,6 +119,7 @@ html, body {
   }
 }
 
+/* モバイル横向き：キャラ大きく＆セリフ調整（v011と同様） */
 @media (orientation: landscape) and (max-width: 768px) {
   .char-image {
     height: 80vh;
