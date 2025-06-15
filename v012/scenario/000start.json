@@ -1,44 +1,62 @@
 {
+  "fontSize": "1.2em",
+  "speed": 30,
   "scenes": [
     {
-      "bg": "../assets2/bgev/bg011.jpg",
+      "bg": "../assets2/bg/bg001.jpg",
+      "name": "",
+      "text": "ある日の放課後、生徒会室には5人の少女たちが集まっていた。"
+    },
+    {
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a01002.png" }
+      ],
       "name": "緋奈",
-      "text": "こんにちは！今日はとてもいい天気ですね。",
-      "characters": {
-        "left": { "src": "../assets2/char/a01002.png", "name": "緋奈" }
-      }
+      "text": "みんなーっ、今日は何して遊ぶ？"
     },
     {
-      "bg": "../assets2/bgev/bg012.jpg",
+      "characters": [
+        { "side": "right", "src": "../assets2/char/a02002.png" }
+      ],
       "name": "藍",
-      "text": "あ、こんにちは。静かな午後が好きです。",
-      "characters": {
-        "center": { "src": "../assets2/char/a02002.png", "name": "藍" }
-      }
+      "text": "あ、あそぶって……生徒会のお仕事が先じゃないかな……？"
     },
     {
-      "bg": "../assets2/bgev/bg013.jpg",
+      "characters": [
+        { "side": "center", "src": "../assets2/char/a03002.png" }
+      ],
       "name": "翠",
-      "text": "皆さん、よろしくお願いします。",
-      "characters": {
-        "right": { "src": "../assets2/char/a03002.png", "name": "翠" }
-      }
+      "text": "はい。まずは今月の予算案をまとめる必要があります。"
     },
     {
-      "bg": "../assets2/bgev/bg014.jpg",
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a04002.png" }
+      ],
       "name": "こがね",
-      "text": "今日は楽しくいきましょー！",
-      "characters": {
-        "left": { "src": "../assets2/char/a04002.png", "name": "こがね" }
-      }
+      "text": "まーまー、せっかくみんな集まったんやし、お茶でも飲も？"
     },
     {
-      "bg": "../assets2/bgev/bg015.jpg",
+      "characters": [
+        { "side": "right", "src": "../assets2/char/a05002.png" }
+      ],
       "name": "琥珀",
-      "text": "元気いっぱい！頑張るぞー！",
-      "characters": {
-        "center": { "src": "../assets2/char/a05002.png", "name": "琥珀" }
-      }
+      "text": "よーし、じゃあ私がコーヒー淹れるね！特訓してきたから！"
+    },
+    {
+      "name": "翠",
+      "text": "……あの、今は会議中なのですが……。"
+    },
+    {
+      "name": "緋奈",
+      "text": "えへへ、今日もにぎやかで楽しくなりそう♪"
+    },
+    {
+      "name": "",
+      "text": "こうして、ちょっぴり変わった生徒会の日常が始まるのだった。"
+    },
+    {
+      "name": "",
+      "text": "物語は続く……"
     }
   ]
 }
