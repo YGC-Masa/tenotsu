@@ -3,11 +3,11 @@
   "speed": 30,
   "scenes": [
     {
-      "bg": "../assets2/bgev/bg001.png",
+      "bg": "assets2/bgev/bg001.png",
       "bgEffect": "fade",
       "name": "緋奈",
       "characters": [
-        { "side": "left", "src": "../assets2/char/a01002.png" }
+        { "side": "left", "src": "assets2/char/a01002.png" }
       ],
       "text": "やっほー！ついにノベルエンジン v011-last が完成だよ！"
     },
