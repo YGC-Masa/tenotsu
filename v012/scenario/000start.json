@@ -1,22 +1,52 @@
 {
-  "fontSize": "1.2em",
-  "speed": 30,
+  "fontSize": "1em",
+  "speed": 40,
   "scenes": [
     {
       "bg": "../assets2/bgev/bg011.jpg",
-      "bgm": "../assets2/bgm/bgm01.mp3",
-      "name": "翠",
-      "text": "こんにちは、世界！",
       "characters": [
-        { "side": "center", "src": "../assets2/char/01a.png" }
-      ]
+        { "side": "center", "src": "../assets2/chara/a01002.png" }
+      ],
+      "name": "緋奈",
+      "text": "やっほー！今日も元気にいこうね！"
     },
     {
-      "name": "こがね",
-      "text": "次のシーンへようこそ。",
       "characters": [
-        { "side": "center", "src": "../assets2/char/02a.png" }
-      ]
+        { "side": "left", "src": "../assets2/chara/a02002.png" },
+        { "side": "center", "src": "../assets2/chara/a01002.png" }
+      ],
+      "name": "藍",
+      "text": "うん、緋奈ちゃんがいると元気が出るよ。"
+    },
+    {
+      "characters": [
+        { "side": "left", "src": "../assets2/chara/a02002.png" },
+        { "side": "center", "src": "../assets2/chara/a03002.png" },
+        { "side": "right", "src": "../assets2/chara/a01002.png" }
+      ],
+      "name": "翠",
+      "text": "本日は集まっていただきありがとうございます。"
+    },
+    {
+      "characters": [
+        { "side": "left", "src": "../assets2/chara/a04002.png" },
+        { "side": "center", "src": "../assets2/chara/a03002.png" },
+        { "side": "right", "src": "../assets2/chara/a05002.png" }
+      ],
+      "name": "こがね",
+      "text": "お〜！なんか会議っぽ〜い！"
+    },
+    {
+      "characters": [
+        { "side": "center", "src": "../assets2/chara/a05002.png" }
+      ],
+      "name": "琥珀",
+      "text": "さっさと話して、走りに行こうよ！"
+    },
+    {
+      "characters": [],
+      "name": "",
+      "text": "こうして、五人の日常がはじまった——"
     }
   ]
 }
