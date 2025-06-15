@@ -1,16 +1,18 @@
-:root {
-  --fontSize: 1.2em;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  background-color: black;
+/* リセット & ベース */
+html, body {
+  margin: 0; padding: 0; height: 100%;
+  background: #000;
+  color: #fff;
+  font-family: 'Arial', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
   overflow: hidden;
-  font-family: sans-serif;
 }
 
-#game-container {
+#game {
   position: relative;
   width: 100vw;
   height: 100vh;
@@ -22,111 +24,112 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  top: 0; left: 0;
   z-index: 0;
+  user-select: none;
+  pointer-events: none;
 }
 
 .char-container {
   position: absolute;
-  bottom: 0;
+  bottom: env(safe-area-inset-bottom, 20px);
   width: 30%;
   max-width: 320px;
   height: 80vh;
-  cursor: pointer;
-  user-select: none;
-  overflow: visible;
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  z-index: 1;
+  pointer-events: auto;
+  cursor: pointer;
+  user-select: none;
+  z-index: 2;
 }
 
 #char-left {
-  left: 2%;
+  left: 3vw;
 }
 
 #char-center {
-  left: 35%;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 #char-right {
-  right: 2%;
+  right: 3vw;
 }
 
 .char-container img {
   max-height: 100%;
   width: auto;
   pointer-events: none;
+  user-select: none;
 }
 
 #dialogue-box {
   position: absolute;
-  bottom: 0;
-  left: 0;
+  bottom: env(safe-area-inset-bottom, 20px);
   width: 100%;
   max-height: 35vh;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 1em;
+  background: rgba(0, 0, 0, 0.75);
+  padding: 12px 20px;
   box-sizing: border-box;
-  z-index: 2;
-  font-size: var(--fontSize);
+  z-index: 5;
+  user-select: text;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 #name {
   font-weight: bold;
-  margin-bottom: 0.5em;
+  font-size: 1.1em;
+  margin-bottom: 6px;
+  color: var(--name-color, #C0C0C0);
+  text-shadow: 1px 1px 3px #000;
+}
+
+#text {
+  font-size: var(--fontSize, 1em);
+  line-height: 1.4;
+  min-height: 3.2em;
+  color: #fff;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 #choices {
-  position: absolute;
-  bottom: 40vh;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 3;
+  margin-top: 10px;
   display: flex;
-  flex-direction: column;
-  gap: 0.5em;
+  gap: 8px;
+  flex-wrap: wrap;
+  user-select: none;
 }
 
 #choices button {
-  font-size: 1em;
-  padding: 0.5em 1em;
-  background-color: #222;
-  color: white;
-  border: 1px solid white;
+  flex: 1 1 auto;
+  padding: 8px 12px;
+  background: #444;
+  border: none;
+  border-radius: 4px;
+  color: #eee;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  user-select: none;
 }
 
 #choices button:hover {
-  background-color: #444;
+  background: #666;
 }
 
-/* モバイル対応 */
-@media screen and (max-width: 600px) {
-  .char-container {
-    width: 33%;
-    max-width: none;
-  }
-
+/* モバイル縦画面対応でのキャラ見切れ防止 */
+@media (max-width: 600px) and (orientation: portrait) {
   #char-left {
-    left: 0%;
+    left: 5vw;
   }
-
-  #char-center {
-    left: 33.5%;
-  }
-
   #char-right {
-    right: 0%;
+    right: 5vw;
   }
-
-  #dialogue-box {
-    font-size: 1em;
-    max-height: 40vh;
-  }
-
-  #choices button {
-    font-size: 0.9em;
-    padding: 0.4em 0.8em;
+  .char-container {
+    max-width: 220px;
+    height: 65vh;
   }
 }
