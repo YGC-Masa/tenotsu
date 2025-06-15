@@ -3,15 +3,20 @@
   const charSlots = {
     left: document.getElementById("char-left"),
     center: document.getElementById("char-center"),
-    right: document.getElementById("char-right")
+    right: document.getElementById("char-right"),
   };
   const nameBox = document.getElementById("name");
   const textBox = document.getElementById("text");
   const choicesBox = document.getElementById("choices");
+  const dialogueBox = document.getElementById("dialogue-box");
+  const game = document.getElementById("game");
 
   let currentChars = { left: null, center: null, right: null };
+  let isTextDisplaying = false;
   let autoMode = false;
+  let autoTimeoutId = null;
 
+  // フォントサイズ・速度はシナリオから設定
   const response = await fetch("scenario/000start.json");
   const data = await response.json();
   const scenes = data.scenes;
@@ -19,47 +24,62 @@
   const speed = data.speed || 40;
   document.documentElement.style.setProperty("--fontSize", fontSize);
 
-  let i = 0;
-  let isTextDisplaying = false;
-  const delay = ms => new Promise(res => setTimeout(res, ms));
+  let sceneIndex = 0;
 
-  // effect適用関数（対象DOM, effect名, 入場or退場）
-  async function applyEffect(element, effectName, mode = "in") {
-    if (!element) return;
-    if (!effectName) effectName = "fade";
-    const effectClassMap = {
-      "fade": { in: "effect-fade-in", out: "effect-fade-out" },
-      "fade-in": { in: "effect-fade-in" },
-      "fade-out": { out: "effect-fade-out" },
-      "slide-left-in": { in: "effect-slide-left-in" },
-      "slide-right-in": { in: "effect-slide-right-in" },
-      "slide-left-out": { out: "effect-slide-left-out" },
-      "slide-right-out": { out: "effect-slide-right-out" },
-      "black-in": { in: "effect-black-in" },
-      "black-out": { out: "effect-black-out" },
-      "white-in": { in: "effect-white-in" },
-      "white-out": { out: "effect-white-out" },
-    };
-    const cls = effectClassMap[effectName] ? effectClassMap[effectName][mode] : null;
-    if (!cls) return;
-
-    element.classList.add(cls);
-
-    await new Promise(resolve => {
-      function onAnimEnd(e) {
-        if (e.target === element) {
-          element.removeEventListener("animationend", onAnimEnd);
-          element.classList.remove(cls);
-          resolve();
-        }
+  // テキストを1文字ずつ表示
+  async function showText(text) {
+    isTextDisplaying = true;
+    textBox.textContent = "";
+    for (let i = 0; i < text.length; i++) {
+      textBox.textContent += text[i];
+      await delay(speed);
+      if (!isTextDisplaying) {
+        // 中断された場合は一気に表示
+        textBox.textContent = text;
+        break;
       }
-      element.addEventListener("animationend", onAnimEnd);
-    });
+    }
+    isTextDisplaying = false;
   }
 
-  // 背景画像差し替え
-  async function changeBackground(newSrc, effectName) {
-    if (!newSrc) return;
+  // 遅延用
+  const delay = ms => new Promise(res => setTimeout(res, ms));
+
+  // キャラ画像差し替え・退場。nullで退場扱い
+  async function changeCharacter(pos, charData) {
+    const slot = charSlots[pos];
+    if (!slot) return;
+
+    if (!charData || charData.src === null) {
+      // 退場時は即座に画像削除
+      if (currentChars[pos]) {
+        slot.innerHTML = "";
+        currentChars[pos] = null;
+      }
+      return;
+    }
+
+    if (currentChars[pos] === charData.src) return;
+
+    // 画像をプリロードして差し替え
+    const img = new Image();
+    img.src = charData.src;
+    img.className = "char-image";
+    img.style.opacity = "1";
+
+    await new Promise(res => {
+      img.onload = res;
+      img.onerror = res;
+    });
+
+    slot.innerHTML = "";
+    slot.appendChild(img);
+    currentChars[pos] = charData.src;
+  }
+
+  // 背景差し替え
+  async function changeBackground(newSrc) {
+    if (!newSrc || background.src.endsWith(newSrc)) return;
 
     const img = new Image();
     img.src = newSrc;
@@ -68,144 +88,135 @@
       img.onerror = res;
     });
 
-    await applyEffect(background, effectName ? effectName.replace("-in", "-out") : "fade-out", "out");
-
     background.src = newSrc;
-
-    await applyEffect(background, effectName || "fade-in", "in");
   }
 
-  // キャラ画像差し替え（Nullで退場だが currentCharsは保持）
-  async function changeCharacter(pos, charData) {
-    const slot = charSlots[pos];
-    if (!slot) return;
-
-    // 退場: src === null → 表示は消すが currentCharsは保持
-    if (charData.src === null) {
-      if (slot.firstElementChild) {
-        await applyEffect(slot.firstElementChild, charData.effect || "fade-out", "out");
-        slot.innerHTML = "";
-        // currentChars[pos]はクリアしない（画像パスはメモリに残す）
-      }
-      return;
-    }
-
-    // 既に同じ画像なら何もしない
-    if (currentChars[pos] === charData.src) return;
-
-    const img = new Image();
-    img.src = charData.src;
-    img.className = "char-image";
-    img.style.opacity = 0;
-
-    await new Promise(res => {
-      img.onload = res;
-      img.onerror = res;
-    });
-
-    // 古い画像をoutエフェクトで退場
-    if (slot.firstElementChild) {
-      await applyEffect(slot.firstElementChild, charData.effect ? charData.effect.replace("-in", "-out") : "fade-out", "out");
-    }
-
-    slot.innerHTML = "";
-    slot.appendChild(img);
-
-    await applyEffect(img, charData.effect || "fade-in", "in");
-
-    currentChars[pos] = charData.src;
-  }
-
-  // BGM再生
+  // BGM再生（ループ）
   function playBGM(src) {
     if (!playBGM.audio) {
       playBGM.audio = new Audio();
       playBGM.audio.loop = true;
     }
-    if (playBGM.audio.src !== location.origin + "/" + src) {
+    if (!playBGM.audio.src.endsWith(src)) {
       playBGM.audio.src = src;
     }
     playBGM.audio.play();
   }
 
-  // SE再生
+  // SE再生（ワンショット）
   function playSE(src) {
+    if (!src) return;
     const audio = new Audio(src);
     audio.play();
   }
 
-  // テキスト表示を一気に表示するフラグ
-  let skipText = false;
-
+  // シーン表示
   async function showScene(index) {
     if (!scenes[index]) {
-      // シナリオ終了時モブセリフ表示で停止
+      // シナリオ終了時のモブセリフで停止
       nameBox.textContent = "";
-      nameBox.style.color = characterColors[""] || "#C0C0C0";
       textBox.textContent = "物語は続く・・・";
       choicesBox.innerHTML = "";
-      isTextDisplaying = false;
       return;
     }
 
+    sceneIndex = index;
     const scene = scenes[index];
 
-    if (scene.bg) {
-      await changeBackground(scene.bg, scene.bgEffect || scene.effect);
-    }
+    if (scene.bg) await changeBackground(scene.bg);
 
     if (scene.bgm) playBGM(scene.bgm);
     if (scene.se) playSE(scene.se);
 
-    if (scene.characters) {
-      for (const pos of ["left", "center", "right"]) {
-        const charData = scene.characters.find(c => c.side === pos);
-        if (charData) {
-          await changeCharacter(pos, charData);
-        }
-      }
+    // キャラ配置
+    for (const pos of ["left", "center", "right"]) {
+      const charData = scene.characters ? scene.characters.find(c => c.side === pos) : null;
+      await changeCharacter(pos, charData);
     }
 
+    // 名前表示と色設定
     nameBox.textContent = scene.name || "";
     nameBox.style.color = characterColors[scene.name] || "#C0C0C0";
+    document.documentElement.style.setProperty("--name-color", nameBox.style.color);
 
-    textBox.textContent = "";
-    isTextDisplaying = true;
-    skipText = false;
+    // テキスト表示（1文字ずつ）
+    await showText(scene.text || "");
 
-    for (let j = 0; j < (scene.text || "").length; j++) {
-      if (skipText) {
-        textBox.textContent = scene.text;
-        break;
-      }
-      textBox.textContent += scene.text[j];
-      await delay(speed);
-    }
-    isTextDisplaying = false;
-
+    // 選択肢表示
     choicesBox.innerHTML = "";
     if (scene.choices) {
       scene.choices.forEach(choice => {
         const btn = document.createElement("button");
-        btn.textContent = choice.label;
-        btn.onclick = () => showScene(choice.jump);
+        btn.textContent = choice.text;
+        btn.addEventListener("click", () => {
+          showScene(choice.next);
+        });
         choicesBox.appendChild(btn);
       });
+    } else {
+      // 自動で次のシーンへ進むボタンなしモード
     }
   }
 
-  // クリック処理：テキスト表示の制御
-  document.getElementById("game").addEventListener("click", () => {
+  // クリック処理
+  dialogueBox.addEventListener("click", async () => {
     if (isTextDisplaying) {
-      // テキスト表示中は一気に表示に切り替え
-      skipText = true;
+      // 表示中テキストを即座に表示完了
+      isTextDisplaying = false;
     } else {
-      // 表示終了後は次シーンへ
-      showScene(++i);
+      // 次のシーンへ
+      if (sceneIndex + 1 < scenes.length) {
+        await showScene(sceneIndex + 1);
+      }
     }
   });
 
-  // 初回表示
-  showScene(i);
+  // 背景・キャラクリックでテキストウィンドウの表示切替
+  function toggleDialogue() {
+    if (dialogueBox.style.display === "none" || dialogueBox.style.opacity === "0") {
+      dialogueBox.style.display = "block";
+      dialogueBox.style.opacity = "1";
+    } else {
+      dialogueBox.style.opacity = "0";
+      setTimeout(() => (dialogueBox.style.display = "none"), 300);
+    }
+  }
 
+  // ダブルクリックでオートモード開始/停止
+  let clickTimer = null;
+  game.addEventListener("click", (e) => {
+    if (e.target === dialogueBox || dialogueBox.contains(e.target)) return;
+    if (clickTimer) {
+      clearTimeout(clickTimer);
+      clickTimer = null;
+      // ダブルクリック
+      autoMode = !autoMode;
+      if (autoMode) {
+        autoPlay();
+      } else {
+        clearTimeout(autoTimeoutId);
+      }
+    } else {
+      clickTimer = setTimeout(() => {
+        clickTimer = null;
+        // シングルクリックはテキストウィンドウの表示切替
+        toggleDialogue();
+      }, 250);
+    }
+  });
+
+  async function autoPlay() {
+    if (!autoMode) return;
+    if (isTextDisplaying) {
+      isTextDisplaying = false;
+    } else {
+      if (sceneIndex + 1 < scenes.length) {
+        await showScene(sceneIndex + 1);
+      }
+    }
+    autoTimeoutId = setTimeout(autoPlay, 1500);
+  }
+
+  // 初期シーン開始
+  await showScene(0);
 })();
