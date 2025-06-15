@@ -1,9 +1,9 @@
 {
   "scenes": [
     {
-      "bg": "assets2/bg/bg_forest.jpg",
+      "bg": "../assets2/bg/bg_forest.jpg",
       "characters": [
-        { "side": "center", "src": "assets2/char/a04002.png" }
+        { "side": "center", "src": "../assets2/char/a04002.png" }
       ],
       "name": "こがね",
       "text": "木漏れ日って、エモいよね〜"
