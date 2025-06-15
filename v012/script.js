@@ -69,7 +69,6 @@
 
     changeBackground(scene.bg);
 
-    // キャラは左右中央分を処理（配列形式を想定）
     ["left", "center", "right"].forEach(pos => {
       if (scene.characters && scene.characters[pos]) {
         changeCharacter(pos, scene.characters[pos]);
@@ -93,12 +92,12 @@
     await showScene(currentSceneIndex);
   }
 
-  // クリック時の挙動
-  async function onBgOrCharClick() {
-    if (isTyping) {
-      skipTyping = true;
+  // 背景・キャラクリック時 → テキストボックスの表示ON/OFF切替
+  function onBgOrCharClick() {
+    if (dialogueBox.style.display === "none" || dialogueBox.style.display === "") {
+      dialogueBox.style.display = "block";
     } else {
-      await nextScene();
+      dialogueBox.style.display = "none";
     }
   }
 
@@ -120,7 +119,16 @@
     }
   }
 
-  // 背景・キャラクリックイベント登録
+  // テキストボックスクリック時 → 表示中ならスキップ、表示完了なら次シーンへ
+  async function onDialogueClick() {
+    if (isTyping) {
+      skipTyping = true;
+    } else {
+      await nextScene();
+    }
+  }
+
+  // イベント登録
   background.addEventListener("click", onBgOrCharClick);
   background.addEventListener("dblclick", toggleAutoMode);
 
@@ -129,19 +137,14 @@
     charSlots[pos].addEventListener("dblclick", toggleAutoMode);
   }
 
-  // テキストボックスクリックで表示ON/OFF切替
-  dialogueBox.addEventListener("click", () => {
-    if (dialogueBox.style.display === "none") {
-      dialogueBox.style.display = "block";
-    } else {
-      dialogueBox.style.display = "none";
-    }
-  });
+  dialogueBox.addEventListener("click", onDialogueClick);
 
-  // シナリオJSONロード＆初期シーン表示
+  // 初期シナリオ読み込み
   const response = await fetch("scenario/000start.json");
   const data = await response.json();
   scenes = data.scenes;
 
+  // 最初のシーン表示
+  dialogueBox.style.display = "block"; // 初期は表示ON
   await showScene(currentSceneIndex);
 })();
