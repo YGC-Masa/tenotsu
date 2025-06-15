@@ -9,8 +9,8 @@
         { "side": "right", "src": "../assets2/char/a04002.png" }
       ],
       "choices": [
-        { "label": "本を読む", "jumpToScenario": "scenario/end1.json" },
-        { "label": "公園を散歩", "jumpToScenario": "scenario/end2.json" }
+        { "label": "本を読む", "jumpToScenario": "end1.json" },
+        { "label": "公園を散歩", "jumpToScenario": "end2.json" }
       ]
     }
   ]
