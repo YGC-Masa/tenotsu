@@ -1,0 +1,19 @@
+{
+  "fontSize": "1.1em",
+  "speed": 30,
+  "scenes": [
+    {
+      "name": "翠",
+      "text": "現実を忘れて、物語に没頭できました。",
+      "characters": [
+        { "side": "center", "src": "../assets2/char/a03002.png" }
+      ]
+    },
+    {
+      "text": "（END：幻想の旅人）"
+    },
+    {
+      "text": ""
+    }
+  ]
+}
