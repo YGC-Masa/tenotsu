@@ -73,7 +73,7 @@ export const characterColors = {
 
 キャラ画像：80vh
 
-テキストボックス：20vh
+テキストボックス：35vh
 
 PCでは横幅や比率ベースで適切に表示（メディアクエリ適用済）
 
