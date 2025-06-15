@@ -1,59 +1,63 @@
 {
-  "fontSize": "1.1em",
+  "fontSize": "1.2em",
   "speed": 30,
   "scenes": [
     {
-      "bg": "../assets2/bgev/bg011.jpg",
-      "effect": "fade-in",
-      "bgm": "../assets2/bgm/main.mp3",
+      "bg": "../assets2/bg/room_day.jpg",
+      "bgEffect": "fade-in",
       "characters": [
-        { "side": "left", "src": "../assets2/char/a03002.png" }
+        {
+          "side": "left",
+          "src": "../assets2/chara/midori_smile.png",
+          "effect": "slide-left-in"
+        }
       ],
       "name": "翠",
-      "text": "ようこそ！今日から物語を楽しんでくださいね。",
-      "effect": "slide-left-in",
-      "choices": [
-        { "label": "はい", "jump": 1 },
-        { "label": "いいえ", "jump": 2 }
-      ]
+      "text": "おはよう、今日もいい天気だね。"
     },
     {
       "characters": [
-        { "side": "left", "src": "../assets2/char/a04002.png" }
+        {
+          "side": "right",
+          "src": "../assets2/chara/kogane_normal.png",
+          "effect": "slide-right-in"
+        }
       ],
       "name": "こがね",
-      "text": "わかった！じゃあ先に進もう！",
-      "effect": "slide-right-in",
+      "text": "ほんとほんと！　出かけたくなっちゃう〜！"
+    },
+    {
+      "text": "どうしよう、今日はどこに行こうか？",
       "choices": [
-        { "label": "行く", "jump": 3 },
-        { "label": "やめる", "jump": 4 }
+        { "label": "公園に行く", "jump": 3 },
+        { "label": "図書館に行く", "jump": 4 }
       ]
     },
     {
+      "bg": "../assets2/bg/park.jpg",
+      "bgEffect": "fade-in",
       "characters": [
-        { "side": "left", "src": "../assets2/char/a05002.png" }
-      ],
-      "name": "琥珀",
-      "text": "うーん、残念！また今度ね。",
-      "effect": "fade-out"
-    },
-    {
-      "bg": "../assets2/bgev/bg012.jpg",
-      "effect": "slide-left-in",
-      "characters": [
-        { "side": "center", "src": "../assets2/char/a03002.png" }
+        {
+          "side": "left",
+          "src": "../assets2/chara/midori_happy.png",
+          "effect": "slide-left-in"
+        }
       ],
       "name": "翠",
-      "text": "冒険が始まるよ！気をつけてね。",
-      "effect": "fade-in"
+      "text": "やっぱり公園は気持ちいいね！"
     },
     {
-      "bg": "../assets2/bgev/bg013.jpg",
-      "effect": "black-in",
-      "characters": [],
-      "name": "",
-      "text": "ゲームを終了します。また遊んでね！",
-      "effect": "black-out"
+      "bg": "../assets2/bg/library.jpg",
+      "bgEffect": "fade-in",
+      "characters": [
+        {
+          "side": "right",
+          "src": "../assets2/chara/kogane_think.png",
+          "effect": "slide-right-in"
+        }
+      ],
+      "name": "こがね",
+      "text": "しーっ……図書館では静かにしないとね。"
     }
   ]
 }
