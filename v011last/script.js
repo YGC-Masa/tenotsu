@@ -1,9 +1,10 @@
 // グローバル変数
-let scenarioData = null;     // 現在読み込んだシナリオJSONデータ
-let currentSceneIndex = 0;   // シナリオの進行インデックス
+let scenarioData = null;
+let currentSceneIndex = 0;
 let isTextDisplaying = false;
 let autoMode = false;
 let autoTimeout = null;
+
 let charElements = {
   left: document.getElementById("char-left"),
   center: document.getElementById("char-center"),
@@ -15,7 +16,6 @@ let nameBox = document.getElementById("name");
 let textBox = document.getElementById("text");
 let choicesBox = document.getElementById("choices");
 
-// フォントサイズ・速度の初期値
 let fontSize = "1em";
 let textSpeed = 40;
 
@@ -26,7 +26,6 @@ async function loadScenario(url) {
     scenarioData = await response.json();
     currentSceneIndex = 0;
 
-    // fontSize, speedがあれば初期設定
     if (scenarioData.fontSize) fontSize = scenarioData.fontSize;
     if (scenarioData.speed) textSpeed = scenarioData.speed;
 
@@ -38,7 +37,7 @@ async function loadScenario(url) {
   }
 }
 
-// シーン表示
+// シーン表示（キャラ未指定の位置は維持）
 function showScene(index) {
   if (!scenarioData || !scenarioData.scenes || index >= scenarioData.scenes.length) {
     endScenario();
@@ -51,19 +50,12 @@ function showScene(index) {
     changeBackground(scene.bg);
   }
 
-  // キャラクター表示切り替え
+  // キャラクター表示切り替え（指定された位置のみ更新）
   if (scene.characters) {
     scene.characters.forEach(charData => {
       changeCharacter(charData.side, charData.src);
     });
   }
-
-  // キャラクターを指定しない場所はnullでクリア
-  ["left", "center", "right"].forEach(side => {
-    if (!scene.characters || !scene.characters.some(c => c.side === side)) {
-      changeCharacter(side, null);
-    }
-  });
 
   // 名前色
   nameBox.style.color = characterColors[scene.name] || characterColors[""];
@@ -82,12 +74,12 @@ function showScene(index) {
   }
 }
 
-// 背景変更（フェード無し版）
+// 背景変更
 function changeBackground(src) {
   backgroundElement.src = src;
 }
 
-// キャラクター変更。src nullなら非表示
+// キャラクター変更（nullで非表示）
 function changeCharacter(side, src) {
   const el = charElements[side];
   if (!el) return;
@@ -99,7 +91,7 @@ function changeCharacter(side, src) {
   el.innerHTML = `<img src="${src}" alt="${side}">`;
 }
 
-// 文字送り表示
+// テキスト表示（文字送り）
 function displayText(text, speed) {
   clearTimeout(autoTimeout);
   isTextDisplaying = true;
@@ -113,7 +105,6 @@ function displayText(text, speed) {
       autoTimeout = setTimeout(type, speed);
     } else {
       isTextDisplaying = false;
-      // 自動モード時は少し待って次へ
       if (autoMode) {
         autoTimeout = setTimeout(() => {
           nextScene();
@@ -154,7 +145,6 @@ function clearChoices() {
 // 次のシーンへ
 function nextScene() {
   if (isTextDisplaying) {
-    // 表示中は一気に表示
     clearTimeout(autoTimeout);
     textBox.textContent = scenarioData.scenes[currentSceneIndex].text;
     isTextDisplaying = false;
@@ -174,7 +164,6 @@ function endScenario() {
   nameBox.textContent = "";
   textBox.textContent = "物語は続く・・・";
   clearChoices();
-  // オートモード停止
   autoMode = false;
   clearTimeout(autoTimeout);
 }
@@ -191,7 +180,7 @@ function toggleAutoMode() {
   }
 }
 
-// クリックイベント処理
+// ゲームエリアクリック時の処理
 function onClickGameArea() {
   if (isTextDisplaying) {
     clearTimeout(autoTimeout);
@@ -207,12 +196,12 @@ function onDoubleClickGameArea() {
   toggleAutoMode();
 }
 
-// 初期化
+// 初期化処理
 function init() {
   document.getElementById("game-container").addEventListener("click", onClickGameArea);
   document.getElementById("game-container").addEventListener("dblclick", onDoubleClickGameArea);
   loadScenario("scenario/000start.json");
 }
 
-// ページロード時に初期化実行
+// ページ読み込み時に初期化
 window.addEventListener("load", init);
