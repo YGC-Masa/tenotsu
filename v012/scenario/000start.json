@@ -4,46 +4,83 @@
   "scenes": [
     {
       "bg": "../assets2/bgev/bg001.png",
+      "bgEffect": "fade",
       "name": "緋奈",
       "characters": [
         { "side": "left", "src": "../assets2/char/a01002.png" }
       ],
-      "text": "やっほー、みんな元気？今日はいい天気だね！"
+      "text": "やっほー、みんな元気？ 今日はいい天気だね！"
+    },
+    {
+      "name": "藍",
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a01002.png" },
+        { "side": "center", "src": "../assets2/char/a02002.png" }
+      ],
+      "text": "こんにちは、緋奈さん。穏やかで心地よい風ですね。"
+    },
+    {
+      "name": "翠",
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a01002.png" },
+        { "side": "center", "src": "../assets2/char/a02002.png" },
+        { "side": "right", "src": "../assets2/char/a03002.png" }
+      ],
+      "text": "天気も良いし、気持ちよく資料整理できそうです。"
+    },
+    {
+      "name": "こがね",
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a04002.png" },
+        { "side": "center", "src": "../assets2/char/a02002.png" },
+        { "side": "right", "src": "../assets2/char/a03002.png" }
+      ],
+      "text": "やっほーっ！こがね参上っ！今日はなんでも任せてー！"
+    },
+    {
+      "name": "琥珀",
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a04002.png" },
+        { "side": "center", "src": "../assets2/char/a05002.png" },
+        { "side": "right", "src": "../assets2/char/a03002.png" }
+      ],
+      "text": "走ってきたから、ちょっと汗かいちゃったけど…元気いっぱい！"
+    },
+    {
+      "name": "こがね",
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a05002.png" },
+        { "side": "center", "src": "../assets2/char/a04002.png" },
+        { "side": "right", "src": "../assets2/char/a03002.png" }
+      ],
+      "text": "ふふっ、今日はいっぱい騒いじゃおうね！"
+    },
+    {
+      "name": "翠",
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a05002.png" },
+        { "side": "center", "src": "../assets2/char/a04002.png" },
+        { "side": "right", "src": "../assets2/char/a03003.png" }
+      ],
+      "text": "……騒ぐのはほどほどにお願いします。"
     },
     {
       "name": "藍",
       "characters": [
         { "side": "left", "src": null },
-        { "side": "center", "src": "../assets2/char/a02002.png" }
-      ],
-      "text": "こんにちは、緋奈さん。おとなしく見える私でも、ちゃんと元気ですよ。"
-    },
-    {
-      "name": "翠",
-      "characters": [
-        { "side": "left", "src": null },
         { "side": "center", "src": "../assets2/char/a02002.png" },
         { "side": "right", "src": "../assets2/char/a03002.png" }
       ],
-      "text": "お疲れ様です。今日は資料の準備があるので、よろしくお願いします。"
+      "text": "でも、こうしてみんなが集まると楽しいですね。"
     },
     {
-      "name": "こがね",
+      "name": "緋奈",
       "characters": [
         { "side": "left", "src": "../assets2/char/a01002.png" },
-        { "side": "center", "src": null },
+        { "side": "center", "src": "../assets2/char/a02002.png" },
         { "side": "right", "src": "../assets2/char/a03002.png" }
       ],
-      "text": "やっほー！みんなで楽しくやろうよ！仕事も遊びも全力でっしょ！"
-    },
-    {
-      "name": "琥珀",
-      "characters": [
-        { "side": "left", "src": "../assets2/char/a01002.png" },
-        { "side": "center", "src": null },
-        { "side": "right", "src": "../assets2/char/a03002.png" }
-      ],
-      "text": "負けないぞー！今日は走り込みの後に皆と会えて嬉しいな！"
+      "text": "うんうん、毎日が特別になる気がするよ！"
     },
     {
       "name": "",
@@ -52,7 +89,7 @@
         { "side": "center", "src": null },
         { "side": "right", "src": null }
       ],
-      "text": "物語は続く・・・"
+      "text": "物語は続く……"
     }
   ]
 }
