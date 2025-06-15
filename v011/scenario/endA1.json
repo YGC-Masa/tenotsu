@@ -1,17 +1,19 @@
 {
-  "fontSize": "1.2em",
+  "fontSize": "1.1em",
   "speed": 30,
   "scenes": [
     {
       "name": "翠",
-      "text": "ゆっくり本を読む時間って、いいですね。",
+      "text": "歴史に学ぶって、すごく大事なことですよね。",
       "characters": [
         { "side": "center", "src": "../assets2/char/a03002.png" }
       ]
     },
     {
-      "text": "（END1：図書館デート）"
+      "text": "（END：歴史を知る者）"
     },
-    { "text": "" }
+    {
+      "text": ""
+    }
   ]
 }
