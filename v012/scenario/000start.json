@@ -4,82 +4,40 @@
   "scenes": [
     {
       "bg": "../assets2/bgev/bg001.jpg",
-      "bgEffect": "fade",
-      "name": "緋奈",
+      "bgm": "../assets2/bgm/bgm01.mp3",
       "characters": [
-        { "side": "left", "src": "../assets2/char/a01002.png" }
+        { "side": "left", "src": "../assets2/char/a01002.png" },
+        { "side": "right", "src": "../assets2/char/a01003.png" }
       ],
-      "text": "みんな集まってくれてありがとう！今日は特別に盛り上がろうね！"
-    },
-    {
       "name": "こがね",
-      "characters": [
-        { "side": "left", "src": "../assets2/char/a04002.png" }
-      ],
-      "text": "おっしゃー！右も左も関係なし、元気にいくぜ〜！"
+      "text": "こんにちは、こがねです。よろしくお願いします。"
     },
     {
-      "name": "琥珀",
-      "characters": [
-        { "side": "right", "src": "../assets2/char/a05002.png" }
-      ],
-      "text": "わーい！今日は負けないからね！"
-    },
-    {
-      "name": "こがね",
-      "characters": [
-        { "side": "center", "src": "../assets2/char/a04002.png" }
-      ],
-      "text": "ちょっと、琥珀、そっち動くなって！こっちの方が見栄えいいでしょ？"
-    },
-    {
-      "name": "琥珀",
-      "characters": [
-        { "side": "left", "src": "../assets2/char/a05002.png" }
-      ],
-      "text": "うっそー、ここが一番いいってば！"
-    },
-    {
-      "name": "こがね",
-      "characters": [
-        { "side": "right", "src": "../assets2/char/a04002.png" }
-      ],
-      "text": "ふふ、じゃあこの立ち位置で勝負しようぜ！"
-    },
-    {
-      "name": "緋奈",
-      "characters": [
-        { "side": "center", "src": "../assets2/char/a01002.png" },
-        { "side": "left", "src": "../assets2/char/a05002.png" },
-        { "side": "right", "src": "../assets2/char/a04002.png" }
-      ],
-      "text": "みんな、いい勝負してるね。見ていて楽しいよ。"
-    },
-    {
-      "name": "藍",
-      "characters": [
-        { "side": "center", "src": "../assets2/char/a02002.png" },
-        { "side": "left", "src": "../assets2/char/a05002.png" },
-        { "side": "right", "src": "../assets2/char/a04002.png" }
-      ],
-      "text": "あの、ちょっと落ち着いてくださいね…みんなが楽しく過ごせるようにしましょう。"
-    },
-    {
-      "name": "翠",
-      "characters": [
-        { "side": "center", "src": "../assets2/char/a03002.png" },
-        { "side": "left", "src": "../assets2/char/a05002.png" },
-        { "side": "right", "src": "../assets2/char/a04002.png" }
-      ],
-      "text": "そうですね。仕事も遊びもバランスよく、ですね。"
-    },
-    {
-      "name": "",
+      "bg": null,
       "characters": [
         { "side": "left", "src": null },
-        { "side": "center", "src": null },
+        { "side": "right", "src": "../assets2/char/a01004.png" }
+      ],
+      "name": "琥珀",
+      "text": "私は琥珀。今日はいい天気ですね。"
+    },
+    {
+      "bg": null,
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a01002.png" },
         { "side": "right", "src": null }
       ],
+      "name": "こがね",
+      "text": "それでは、また次回！",
+      "choices": [
+        { "text": "もう一度", "next": 0 },
+        { "text": "終了", "next": 3 }
+      ]
+    },
+    {
+      "bg": null,
+      "characters": [],
+      "name": "",
       "text": "物語は続く・・・"
     }
   ]
