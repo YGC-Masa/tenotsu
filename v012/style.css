@@ -46,6 +46,18 @@ html, body, #game {
   pointer-events: none;
 }
 
+#char-left {
+  left: 0;
+}
+
+#char-center {
+  left: 35%;
+}
+
+#char-right {
+  right: 0;
+}
+
 /* テキストボックス */
 #dialogue-box {
   position: absolute;
