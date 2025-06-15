@@ -11,8 +11,8 @@
         { "side": "center", "src": "../assets2/char/a03002.png" }
       ],
       "choices": [
-        { "label": "静かな場所", "jumpToScenario": "choiceA.json" },
-        { "label": "にぎやかな場所", "jumpToScenario": "choiceB.json" }
+        { "label": "静かな場所", "jumpToScenario": "scenario/choiceA.json" },
+        { "label": "にぎやかな場所", "jumpToScenario": "scenario/choiceB.json" }
       ]
     }
   ]
