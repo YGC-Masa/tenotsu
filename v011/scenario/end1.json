@@ -1,0 +1,17 @@
+{
+  "fontSize": "1.2em",
+  "speed": 30,
+  "scenes": [
+    {
+      "name": "翠",
+      "text": "ゆっくり本を読む時間って、いいですね。",
+      "characters": [
+        { "side": "center", "src": "../assets2/char/a03002.png" }
+      ]
+    },
+    {
+      "text": "（END1：図書館デート）"
+    },
+    { "text": "" }
+  ]
+}

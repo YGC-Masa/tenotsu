@@ -1,153 +1,18 @@
 {
-  "fontSize": "1em",
+  "fontSize": "1.2em",
   "speed": 30,
   "scenes": [
     {
       "bg": "../assets2/bgev/bg011.jpg",
       "bgm": "../assets2/bgm/main.mp3",
-      "name": "緋奈",
-      "text": "今日はみんなでキャンプですね。楽しみにしていました。",
-      "characters": [
-        { "side": "left", "src": "../assets2/char/a01002.png" }
-      ]
-    },
-    {
-      "name": "藍",
-      "text": "準備は万端。予定通りに進めば、星も綺麗に見えるはずだ。",
-      "characters": [
-        { "side": "right", "src": "../assets2/char/a02002.png" }
-      ]
-    },
-    {
       "name": "翠",
-      "text": "忘れ物がないか、最終確認いたしましょう。",
+      "text": "今日はどこへ行きたいですか？",
       "characters": [
         { "side": "center", "src": "../assets2/char/a03002.png" }
-      ]
-    },
-    {
-      "name": "こがね",
-      "text": "わー！楽しそ～！あたし、バーベキュー係ねっ☆",
-      "characters": [
-        { "side": "left", "src": "../assets2/char/a04002.png" }
-      ]
-    },
-    {
-      "name": "琥珀",
-      "text": "いっぱい遊んで、いっぱい食べようねーっ！！",
-      "characters": [
-        { "side": "right", "src": "../assets2/char/a05002.png" }
-      ]
-    },
-    {
-      "name": "",
-      "text": "さて、あなたはどのメンバーと行動する？",
+      ],
       "choices": [
-        { "label": "緋奈と散策", "jump": 6 },
-        { "label": "こがねと料理", "jump": 9 }
-      ]
-    },
-    {
-      "name": "緋奈",
-      "text": "このあたり、静かで落ち着きますね。",
-      "characters": [
-        { "side": "left", "src": "../assets2/char/a01002.png" },
-        { "side": "right", "src": null }
-      ]
-    },
-    {
-      "name": "",
-      "text": "緋奈は森の奥へと案内してくれた。",
-      "choices": [
-        { "label": "星空を一緒に見る", "jump": 7 },
-        { "label": "火を囲んで話す", "jump": 8 }
-      ]
-    },
-    {
-      "name": "緋奈",
-      "text": "わあ…綺麗…。ずっとこの時間が続けばいいのに。",
-      "characters": [
-        { "side": "left", "src": "../assets2/char/a01002.png" }
-      ]
-    },
-    {
-      "name": "",
-      "text": "【エンドA】星空と君と。",
-      "characters": [
-        { "side": "left", "src": null }
-      ]
-    },
-{
-  "name": "",
-  "text": "",
-  "characters": []
-},
-    {
-      "name": "緋奈",
-      "text": "こうして火を囲むと、なんだか本音も話しやすいですね。",
-      "characters": [
-        { "side": "left", "src": "../assets2/char/a01002.png" }
-      ]
-    },
-    {
-      "name": "",
-      "text": "【エンドB】火を囲んで心も温まる。",
-      "characters": [
-        { "side": "left", "src": null }
-      ]
-    },
-    {
-  "name": "",
-  "text": "",
-  "characters": []
-  },
-    {
-      "name": "こがね",
-      "text": "肉は任せな～！ちょっと味見もするねっ♪",
-      "characters": [
-        { "side": "left", "src": "../assets2/char/a04002.png" },
-        { "side": "right", "src": null }
-      ]
-    },
-    {
-      "name": "",
-      "text": "こがねは元気に焼き台を仕切っている。",
-      "choices": [
-        { "label": "手伝う", "jump": 10 },
-        { "label": "味見係になる", "jump": 11 }
-      ]
-    },
-    {
-      "name": "こがね",
-      "text": "おっ、いい焼き加減！あんた、やるじゃん～☆",
-      "characters": [
-        { "side": "left", "src": "../assets2/char/a04002.png" }
-      ]
-    },
-    {
-      "name": "",
-      "text": "【エンドC】コンロの向こうに笑顔があった。",
-      "characters": [
-        { "side": "left", "src": null }
-      ]
-    },
-{
-  "name": "",
-  "text": "",
-  "characters": []
-},
-    {
-      "name": "こがね",
-      "text": "やっば、これうまっ！味見止まんなーい！",
-      "characters": [
-        { "side": "left", "src": "../assets2/char/a04002.png" }
-      ]
-    },
-    {
-      "name": "",
-      "text": "【エンドD】食いしん坊の幸せ。",
-      "characters": [
-        { "side": "left", "src": null }
+        { "label": "静かな場所", "jumpToScenario": "choiceA.json" },
+        { "label": "にぎやかな場所", "jumpToScenario": "choiceB.json" }
       ]
     }
   ]
