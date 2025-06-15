@@ -1,19 +1,59 @@
 {
-  "fontSize": "1.2em",
+  "fontSize": "1.1em",
   "speed": 30,
   "scenes": [
     {
       "bg": "../assets2/bgev/bg011.jpg",
+      "effect": "fade-in",
       "bgm": "../assets2/bgm/main.mp3",
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a03002.png" }
+      ],
       "name": "翠",
-      "text": "今日はどこへ行きたいですか？",
+      "text": "ようこそ！今日から物語を楽しんでくださいね。",
+      "effect": "slide-left-in",
+      "choices": [
+        { "label": "はい", "jump": 1 },
+        { "label": "いいえ", "jump": 2 }
+      ]
+    },
+    {
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a04002.png" }
+      ],
+      "name": "こがね",
+      "text": "わかった！じゃあ先に進もう！",
+      "effect": "slide-right-in",
+      "choices": [
+        { "label": "行く", "jump": 3 },
+        { "label": "やめる", "jump": 4 }
+      ]
+    },
+    {
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a05002.png" }
+      ],
+      "name": "琥珀",
+      "text": "うーん、残念！また今度ね。",
+      "effect": "fade-out"
+    },
+    {
+      "bg": "../assets2/bgev/bg012.jpg",
+      "effect": "slide-left-in",
       "characters": [
         { "side": "center", "src": "../assets2/char/a03002.png" }
       ],
-      "choices": [
-        { "label": "静かな場所", "jumpToScenario": "choiceA.json" },
-        { "label": "にぎやかな場所", "jumpToScenario": "choiceB.json" }
-      ]
+      "name": "翠",
+      "text": "冒険が始まるよ！気をつけてね。",
+      "effect": "fade-in"
+    },
+    {
+      "bg": "../assets2/bgev/bg013.jpg",
+      "effect": "black-in",
+      "characters": [],
+      "name": "",
+      "text": "ゲームを終了します。また遊んでね！",
+      "effect": "black-out"
     }
   ]
 }
