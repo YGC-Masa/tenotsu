@@ -1,0 +1,23 @@
+{
+  "fontSize": "1.1em",
+  "speed": 30,
+  "scenes": [
+    {
+      "name": "こがね",
+      "text": "どこ行く〜？遊園地？ショッピング？",
+      "characters": [
+        { "side": "center", "src": "../assets2/char/a04002.png" }
+      ],
+      "choices": [
+        {
+          "label": "遊園地に行く",
+          "jumpToScenario": "endB1.json"
+        },
+        {
+          "label": "ショッピングする",
+          "jumpToScenario": "endB2.json"
+        }
+      ]
+    }
+  ]
+}
