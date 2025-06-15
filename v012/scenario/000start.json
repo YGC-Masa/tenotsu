@@ -1,0 +1,19 @@
+{
+  "fontSize": "1.2em",
+  "speed": 30,
+  "scenes": [
+    {
+      "bg": "../assets2/bgev/bg011.jpg",
+      "bgm": "../assets2/bgm/main.mp3",
+      "name": "翠",
+      "text": "今日はどこへ行きたいですか？",
+      "characters": [
+        { "side": "center", "src": "../assets2/char/a03002.png" }
+      ],
+      "choices": [
+        { "label": "静かな場所", "jumpToScenario": "choiceA.json" },
+        { "label": "にぎやかな場所", "jumpToScenario": "choiceB.json" }
+      ]
+    }
+  ]
+}

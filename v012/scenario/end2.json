@@ -1,0 +1,43 @@
+{
+  "speed": 40,
+  "fontSize": "medium",
+  "scripts": [
+    {
+      "bg": "bg011.jpg",
+      "text": "さて、次の話題に進もうか。"
+    },
+    {
+      "characters": [
+        {
+          "side": "left",
+          "src": null
+        },
+        {
+          "side": "right",
+          "src": null
+        }
+      ],
+      "effect": "fade-out",
+      "text": "（緋奈と藍は一度退場）"
+    },
+    {
+      "bg": "bg011.jpg",
+      "characters": [
+        {
+          "side": "center",
+          "src": "a01002.png",
+          "effect": "fade-in"
+        }
+      ],
+      "text": "ふふ、それじゃあ続きをはじめましょっか。"
+    },
+    {
+      "choices": [
+        {
+          "label": "最初に戻る",
+          "jumpToScenario": "000start.json"
+        }
+      ]
+    }
+  ]
+}
