@@ -9,8 +9,8 @@
         { "side": "left", "src": "../assets2/char/a05002.png" }
       ],
       "choices": [
-        { "label": "ショッピング", "jumpToScenario": "end3.json" },
-        { "label": "スポーツ体験", "jumpToScenario": "end4.json" }
+        { "label": "ショッピング", "jumpToScenario": "scenario/end3.json" },
+        { "label": "スポーツ体験", "jumpToScenario": "scenario/end4.json" }
       ]
     }
   ]
