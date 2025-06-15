@@ -4,40 +4,54 @@
   "scenes": [
     {
       "bg": "../assets2/bgev/bg001.jpg",
-      "bgm": "../assets2/bgm/bgm01.mp3",
+      "name": "緋奈",
       "characters": [
-        { "side": "left", "src": "../assets2/char/a01002.png" },
-        { "side": "right", "src": "../assets2/char/a01003.png" }
+        { "side": "left", "src": "../assets2/char/a01002.png" }
       ],
-      "name": "こがね",
-      "text": "こんにちは、こがねです。よろしくお願いします。"
+      "text": "やっほー、みんな元気？今日はいい天気だね！"
     },
     {
-      "bg": null,
+      "name": "藍",
       "characters": [
         { "side": "left", "src": null },
-        { "side": "right", "src": "../assets2/char/a01004.png" }
+        { "side": "center", "src": "../assets2/char/a02002.png" }
       ],
-      "name": "琥珀",
-      "text": "私は琥珀。今日はいい天気ですね。"
+      "text": "こんにちは、緋奈さん。おとなしく見える私でも、ちゃんと元気ですよ。"
     },
     {
-      "bg": null,
+      "name": "翠",
+      "characters": [
+        { "side": "left", "src": null },
+        { "side": "center", "src": "../assets2/char/a02002.png" },
+        { "side": "right", "src": "../assets2/char/a03002.png" }
+      ],
+      "text": "お疲れ様です。今日は資料の準備があるので、よろしくお願いします。"
+    },
+    {
+      "name": "こがね",
       "characters": [
         { "side": "left", "src": "../assets2/char/a01002.png" },
-        { "side": "right", "src": null }
+        { "side": "center", "src": null },
+        { "side": "right", "src": "../assets2/char/a03002.png" }
       ],
-      "name": "こがね",
-      "text": "それでは、また次回！",
-      "choices": [
-        { "text": "もう一度", "next": 0 },
-        { "text": "終了", "next": 3 }
-      ]
+      "text": "やっほー！みんなで楽しくやろうよ！仕事も遊びも全力でっしょ！"
     },
     {
-      "bg": null,
-      "characters": [],
+      "name": "琥珀",
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a01002.png" },
+        { "side": "center", "src": null },
+        { "side": "right", "src": "../assets2/char/a03002.png" }
+      ],
+      "text": "負けないぞー！今日は走り込みの後に皆と会えて嬉しいな！"
+    },
+    {
       "name": "",
+      "characters": [
+        { "side": "left", "src": null },
+        { "side": "center", "src": null },
+        { "side": "right", "src": null }
+      ],
       "text": "物語は続く・・・"
     }
   ]
