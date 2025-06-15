@@ -1,156 +1,228 @@
-const nameBox = document.getElementById("name");
-const textBox = document.getElementById("text");
-const choicesBox = document.getElementById("choices");
-const bg = document.getElementById("background");
-const charSlots = {
-  left: document.getElementById("char-left"),
-  center: document.getElementById("char-center"),
-  right: document.getElementById("char-right")
+// キャラクター名と色の対応（characterColors.jsと連携）
+const characterColors = {
+  "": "#C0C0C0",
+  "緋奈": "#d3381c",
+  "藍": "#0067C0",
+  "翠": "#005931",
+  "こがね": "#FFF450",
+  "琥珀": "#F68B1F",
 };
 
-let scenario = [];
-let currentScene = 0;
-let isAutoMode = true;
-let charElements = { left: null, center: null, right: null };
+// グローバル変数
+let scenarioData = null;     // 現在読み込んだシナリオJSONデータ
+let currentSceneIndex = 0;   // シナリオの進行インデックス
+let isTextDisplaying = false;
+let autoMode = false;
+let autoTimeout = null;
+let charElements = {
+  left: document.getElementById("char-left"),
+  center: document.getElementById("char-center"),
+  right: document.getElementById("char-right"),
+};
+let backgroundElement = document.getElementById("background");
+let dialogueBox = document.getElementById("dialogue-box");
+let nameBox = document.getElementById("name");
+let textBox = document.getElementById("text");
+let choicesBox = document.getElementById("choices");
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+// フォントサイズ・速度の初期値
+let fontSize = "1em";
+let textSpeed = 40;
 
-function applyTextEffect(text, speed) {
-  return new Promise(async (resolve) => {
-    textBox.innerHTML = "";
-    for (let i = 0; i < text.length; i++) {
-      textBox.innerHTML += text[i];
-      await sleep(speed);
-    }
-    resolve();
-  });
-}
+// シナリオ読み込み関数
+async function loadScenario(url) {
+  try {
+    const response = await fetch(url);
+    scenarioData = await response.json();
+    currentSceneIndex = 0;
 
-function setBackground(src, effect) {
-  if (!src) return;
-  if (effect === "fade") {
-    bg.classList.add("fade-out");
-    setTimeout(() => {
-      bg.src = src;
-      bg.onload = () => bg.classList.remove("fade-out");
-    }, 300);
-  } else {
-    bg.src = src;
+    // fontSize, speedがあれば初期設定
+    if (scenarioData.fontSize) fontSize = scenarioData.fontSize;
+    if (scenarioData.speed) textSpeed = scenarioData.speed;
+
+    dialogueBox.style.setProperty("--fontSize", fontSize);
+
+    showScene(currentSceneIndex);
+  } catch (e) {
+    console.error("シナリオ読み込み失敗", e);
   }
 }
 
-function setCharacter(side, src) {
-  const slot = charSlots[side];
-  if (!slot) return;
-
-  // NULL指定：退場処理
-  if (src === null) {
-    if (charElements[side]) {
-      slot.removeChild(charElements[side]);
-      charElements[side] = null;
-    }
+// シーン表示
+function showScene(index) {
+  if (!scenarioData || !scenarioData.scenes || index >= scenarioData.scenes.length) {
+    endScenario();
     return;
   }
+  const scene = scenarioData.scenes[index];
 
-  // 同じ画像なら更新不要
-  if (charElements[side]?.dataset.src === src) return;
-
-  // 一旦削除
-  if (charElements[side]) {
-    slot.removeChild(charElements[side]);
+  // 背景変更
+  if (scene.bg) {
+    changeBackground(scene.bg);
   }
 
-  // 新規作成
-  const img = document.createElement("img");
-  img.src = src;
-  img.className = "char-image";
-  img.dataset.src = src;
-  img.style.opacity = 0;
+  // キャラクター表示切り替え
+  if (scene.characters) {
+    scene.characters.forEach(charData => {
+      changeCharacter(charData.side, charData.src);
+    });
+  }
 
-  img.onload = () => {
-    img.style.transition = "opacity 0.3s";
-    img.style.opacity = 1;
-  };
+  // キャラクターを指定しない場所はnullでクリア
+  ["left", "center", "right"].forEach(side => {
+    if (!scene.characters || !scene.characters.some(c => c.side === side)) {
+      changeCharacter(side, null);
+    }
+  });
 
-  charElements[side] = img;
-  slot.appendChild(img);
+  // 名前色
+  nameBox.style.color = characterColors[scene.name] || characterColors[""];
+
+  // 名前表示
+  nameBox.textContent = scene.name;
+
+  // テキスト表示（文字送り）
+  displayText(scene.text, scene.speed || textSpeed);
+
+  // 選択肢がある場合は表示
+  if (scene.choices && scene.choices.length > 0) {
+    showChoices(scene.choices);
+  } else {
+    clearChoices();
+  }
 }
 
-function setCharacters(charList) {
-  const sides = ["left", "center", "right"];
-  sides.forEach(side => {
-    const entry = charList.find(c => c.side === side);
-    if (entry) {
-      setCharacter(side, entry.src);
+// 背景変更（フェード無し版）
+function changeBackground(src) {
+  backgroundElement.src = src;
+}
+
+// キャラクター変更。src nullなら非表示
+function changeCharacter(side, src) {
+  const el = charElements[side];
+  if (!el) return;
+
+  if (!src || src.toLowerCase() === "null") {
+    el.innerHTML = "";
+    return;
+  }
+  el.innerHTML = `<img src="${src}" alt="${side}">`;
+}
+
+// 文字送り表示
+function displayText(text, speed) {
+  clearTimeout(autoTimeout);
+  isTextDisplaying = true;
+  textBox.textContent = "";
+
+  let i = 0;
+  function type() {
+    if (i < text.length) {
+      textBox.textContent += text.charAt(i);
+      i++;
+      autoTimeout = setTimeout(type, speed);
     } else {
-      // null指定が明示されている場合のみ退場させる
-      const hasNull = charList.find(c => c.side === side && c.src === null);
-      if (hasNull) {
-        setCharacter(side, null);
+      isTextDisplaying = false;
+      // 自動モード時は少し待って次へ
+      if (autoMode) {
+        autoTimeout = setTimeout(() => {
+          nextScene();
+        }, 1500);
       }
     }
+  }
+  type();
+}
+
+// 選択肢表示
+function showChoices(choices) {
+  clearChoices();
+  choices.forEach(choice => {
+    const btn = document.createElement("button");
+    btn.textContent = choice.text;
+    btn.onclick = () => {
+      if (choice.jump) {
+        if (choice.jump.startsWith("http")) {
+          window.open(choice.jump, "_blank");
+        } else {
+          loadScenario(choice.jump);
+        }
+      } else {
+        nextScene();
+      }
+      clearChoices();
+    };
+    choicesBox.appendChild(btn);
   });
 }
 
-async function showScene(scene) {
-  nameBox.textContent = scene.name || "";
-  nameBox.style.color = characterColors[scene.name] || "#C0C0C0";
+// 選択肢クリア
+function clearChoices() {
+  choicesBox.innerHTML = "";
+}
 
-  if (scene.bg) {
-    setBackground(scene.bg, scene.bgEffect || null);
-  }
-
-  if (scene.characters) {
-    setCharacters(scene.characters);
-  }
-
-  if (scene.fontSize) {
-    textBox.style.fontSize = scene.fontSize;
+// 次のシーンへ
+function nextScene() {
+  if (isTextDisplaying) {
+    // 表示中は一気に表示
+    clearTimeout(autoTimeout);
+    textBox.textContent = scenarioData.scenes[currentSceneIndex].text;
+    isTextDisplaying = false;
   } else {
-    textBox.style.fontSize = "1em";
-  }
-
-  const speed = scene.speed !== undefined ? scene.speed : 20;
-  await applyTextEffect(scene.text || "", speed);
-
-  if (scene.choices) {
-    choicesBox.innerHTML = "";
-    scene.choices.forEach(choice => {
-      const btn = document.createElement("button");
-      btn.textContent = choice.text;
-      btn.onclick = () => {
-        loadScenario(choice.jumpToScenario);
-      };
-      choicesBox.appendChild(btn);
-    });
-  } else if (scene.jumpToScenario) {
-    await sleep(1000);
-    loadScenario(scene.jumpToScenario);
-  } else if (isAutoMode) {
-    await sleep(1000);
-    currentScene++;
-    if (currentScene < scenario.length) {
-      showScene(scenario[currentScene]);
+    currentSceneIndex++;
+    if (currentSceneIndex >= scenarioData.scenes.length) {
+      endScenario();
+    } else {
+      showScene(currentSceneIndex);
     }
   }
 }
 
-function loadScenario(path) {
-  fetch(path)
-    .then(res => res.json())
-    .then(data => {
-      scenario = data.scenes;
-      currentScene = 0;
-      showScene(scenario[currentScene]);
-    })
-    .catch(err => {
-      console.error("シナリオ読み込みエラー:", err);
-      textBox.textContent = "シナリオが読み込めませんでした。パスや構文を確認してください。";
-    });
+// シナリオ終了処理
+function endScenario() {
+  nameBox.style.color = characterColors[""];
+  nameBox.textContent = "";
+  textBox.textContent = "物語は続く・・・";
+  clearChoices();
+  // オートモード停止
+  autoMode = false;
+  clearTimeout(autoTimeout);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+// オートモード切替
+function toggleAutoMode() {
+  autoMode = !autoMode;
+  if (autoMode && !isTextDisplaying) {
+    autoTimeout = setTimeout(() => {
+      nextScene();
+    }, 1500);
+  } else {
+    clearTimeout(autoTimeout);
+  }
+}
+
+// クリックイベント処理
+function onClickGameArea() {
+  if (isTextDisplaying) {
+    clearTimeout(autoTimeout);
+    textBox.textContent = scenarioData.scenes[currentSceneIndex].text;
+    isTextDisplaying = false;
+  } else {
+    nextScene();
+  }
+}
+
+// ダブルクリックでオートモード切替
+function onDoubleClickGameArea() {
+  toggleAutoMode();
+}
+
+// 初期化
+function init() {
+  document.getElementById("game-container").addEventListener("click", onClickGameArea);
+  document.getElementById("game-container").addEventListener("dblclick", onDoubleClickGameArea);
   loadScenario("scenario/000start.json");
-});
+}
+
+// ページロード時に初期化実行
+window.addEventListener("load", init);
