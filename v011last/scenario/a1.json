@@ -1,7 +1,7 @@
 {
   "scenes": [
     {
-      "bg": "../assets2/bg/bg_beach.jpg",
+      "bg": "../assets2/bgev/bg_beach.jpg",
       "characters": [
         { "side": "right", "src": "../assets2/char/a05002.png" }
       ],
