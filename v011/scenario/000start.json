@@ -77,7 +77,11 @@
         { "side": "left", "src": null }
       ]
     },
-
+{
+  "name": "",
+  "text": "",
+  "characters": []
+},
     {
       "name": "緋奈",
       "text": "こうして火を囲むと、なんだか本音も話しやすいですね。",
@@ -92,6 +96,11 @@
         { "side": "left", "src": null }
       ]
     },
+    {
+  "name": "",
+  "text": "",
+  "characters": []
+  },
     {
       "name": "こがね",
       "text": "肉は任せな～！ちょっと味見もするねっ♪",
@@ -122,7 +131,11 @@
         { "side": "left", "src": null }
       ]
     },
-
+{
+  "name": "",
+  "text": "",
+  "characters": []
+},
     {
       "name": "こがね",
       "text": "やっば、これうまっ！味見止まんなーい！",
