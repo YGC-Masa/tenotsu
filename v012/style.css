@@ -1,135 +1,126 @@
-/* リセット & ベース */
+/* リセット＆ベース */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 html, body {
-  margin: 0; padding: 0; height: 100%;
-  background: #000;
-  color: #fff;
-  font-family: 'Arial', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  user-select: none;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
+  font-family: system-ui, sans-serif;
+  background-color: black;
 }
 
-#game {
+/* ゲーム全体コンテナ */
+#game-container {
   position: relative;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
 }
 
+/* 背景 */
 #background {
   position: absolute;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  top: 0; left: 0;
   z-index: 0;
-  user-select: none;
-  pointer-events: none;
 }
 
+/* キャラコンテナ（3分割で左・中央・右） */
 .char-container {
   position: absolute;
-  bottom: env(safe-area-inset-bottom, 20px);
-  width: 30%;
-  max-width: 320px;
-  height: 80vh;
+  bottom: 0;
+  width: 33.33%;
   display: flex;
   justify-content: center;
   align-items: flex-end;
   pointer-events: auto;
-  cursor: pointer;
   user-select: none;
-  z-index: 2;
+  overflow: visible;
 }
 
-#char-left {
-  left: 3vw;
+.char-container.left {
+  left: 0;
 }
 
-#char-center {
-  left: 50%;
-  transform: translateX(-50%);
+.char-container.center {
+  left: 33.33%;
 }
 
-#char-right {
-  right: 3vw;
+.char-container.right {
+  right: 0;
+  width: 33.34%;
 }
 
+/* キャラ画像 */
 .char-container img {
-  max-height: 100%;
-  width: auto;
+  max-width: 90%;
+  height: auto;
+  max-height: 50vh; /* デフォルト：縦画面を想定 */
   pointer-events: none;
   user-select: none;
 }
 
+/* セリフボックス */
 #dialogue-box {
   position: absolute;
-  bottom: env(safe-area-inset-bottom, 20px);
+  bottom: 0;
   width: 100%;
-  max-height: 35vh;
-  background: rgba(0, 0, 0, 0.75);
-  padding: 12px 20px;
-  box-sizing: border-box;
-  z-index: 5;
-  user-select: text;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 10px;
+  font-size: var(--fontSize, 1em);
+  z-index: 10;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  max-height: 30vh;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 #name {
   font-weight: bold;
-  font-size: 1.1em;
-  margin-bottom: 6px;
-  color: var(--name-color, #C0C0C0);
-  text-shadow: 1px 1px 3px #000;
+  margin-bottom: 0.5em;
 }
 
 #text {
-  font-size: var(--fontSize, 1em);
-  line-height: 1.4;
-  min-height: 3.2em;
-  color: #fff;
-  white-space: pre-wrap;
-  word-break: break-word;
+  margin-bottom: 1em;
+  min-height: 3em;
 }
 
 #choices {
-  margin-top: 10px;
   display: flex;
-  gap: 8px;
   flex-wrap: wrap;
-  user-select: none;
+  justify-content: center;
+  gap: 0.5em;
+  margin-top: 0.5em;
 }
 
 #choices button {
-  flex: 1 1 auto;
-  padding: 8px 12px;
+  min-width: 40%;
+  padding: 0.5em 1em;
   background: #444;
+  color: white;
   border: none;
-  border-radius: 4px;
-  color: #eee;
+  border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  user-select: none;
+  font-size: 1em;
 }
 
 #choices button:hover {
   background: #666;
 }
 
-/* モバイル縦画面対応でのキャラ見切れ防止 */
-@media (max-width: 600px) and (orientation: portrait) {
-  #char-left {
-    left: 5vw;
+/* 横画面（かつ最大768px以下端末想定） */
+@media (orientation: landscape) and (max-width: 768px) {
+  .char-container img {
+    max-height: 80vh; /* 横画面時は高めに */
   }
-  #char-right {
-    right: 5vw;
-  }
-  .char-container {
-    max-width: 220px;
-    height: 65vh;
+
+  #dialogue-box {
+    max-height: 35vh;
+    font-size: 0.9em;
   }
 }
