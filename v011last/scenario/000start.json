@@ -3,24 +3,24 @@
   "speed": 35,
   "scenes": [
     {
-      "bg": "assets2/bg/bg_room.jpg",
+      "bg": "../assets2/bg/bg_room.jpg",
       "characters": [
-        { "side": "left", "src": "assets2/char/a01002.png" }
+        { "side": "left", "src": "../assets2/char/a01002.png" }
       ],
       "name": "緋奈",
       "text": "ねえねえ、今日ってさ……"
     },
     {
       "characters": [
-        { "side": "center", "src": "assets2/char/a03002.png" }
+        { "side": "center", "src": "../assets2/char/a03002.png" }
       ],
       "name": "翠",
       "text": "はい、どうかなさいましたか？"
     },
     {
       "characters": [
-        { "side": "left", "src": "assets2/char/a01002.png" },
-        { "side": "center", "src": "assets2/char/a03002.png" }
+        { "side": "left", "src": "../assets2/char/a01002.png" },
+        { "side": "center", "src": "../assets2/char/a03002.png" }
       ],
       "name": "緋奈",
       "text": "どっちに行こうか迷ってるんだよね〜"
