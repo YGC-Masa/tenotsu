@@ -1,15 +1,15 @@
 {
-  "fontSize": "1.1em",
+  "fontSize": "1em",
   "speed": 30,
   "scenes": [
     {
-      "bg": "../assets2/bgev/bg001.png",
+      "bg": "../assets2/bgev/bg001.jpg",
       "bgEffect": "fade",
       "name": "緋奈",
       "characters": [
         { "side": "left", "src": "../assets2/char/a01002.png" }
       ],
-      "text": "やっほー！ここはブラウザで動くノベルゲームの世界だよ！"
+      "text": "やっほー！ついにノベルエンジン v011-last が完成だよ！"
     },
     {
       "name": "藍",
@@ -17,76 +17,63 @@
         { "side": "left", "src": "../assets2/char/a01002.png" },
         { "side": "center", "src": "../assets2/char/a02002.png" }
       ],
-      "text": "クリックでセリフ送りができます。途中でクリックすれば、テキストを一気に表示できますよ。"
-    },
-    {
-      "name": "翠",
-      "characters": [
-        { "side": "left", "src": "../assets2/char/a01002.png" },
-        { "side": "center", "src": "../assets2/char/a02002.png" },
-        { "side": "right", "src": "../assets2/char/a03002.png" }
-      ],
-      "text": "画面の背景やキャラは、JSONシナリオで簡単に切り替え可能です。背景にはディゾルブ演出も。"
-    },
-    {
-      "name": "こがね",
-      "characters": [
-        { "side": "left", "src": "../assets2/char/a01002.png" },
-        { "side": "center", "src": "../assets2/char/a02002.png" },
-        { "side": "right", "src": "../assets2/char/a04002.png" }
-      ],
-      "text": "それに、キャラ画像を左右・中央に配置できるよ～。表示位置も入れ替えられるし、nullで退場もできちゃう。"
-    },
-    {
-      "name": "琥珀",
-      "characters": [
-        { "side": "left", "src": "../assets2/char/a01002.png" },
-        { "side": "right", "src": "../assets2/char/a05002.png" }
-      ],
-      "text": "背景やキャラをクリックするとセリフウィンドウの表示ON/OFF！ダブルクリックならオートモードに切り替わるよ！"
-    },
-    {
-      "name": "緋奈",
-      "characters": [
-        { "side": "center", "src": "../assets2/char/a01002.png" }
-      ],
-      "text": "セリフごとに文字サイズや速度も変えられるし、分岐の選択肢も出せるよ〜！"
+      "text": "背景もキャラも、ふわっと切り替わって…すごく綺麗ですね。"
     },
     {
       "name": "翠",
       "characters": [
         { "side": "center", "src": "../assets2/char/a03002.png" }
       ],
-      "text": "では実際に分岐を試してみましょう。選択によってジャンプも可能です。"
-    },
-    {
-      "name": "",
-      "characters": [],
-      "choices": [
-        { "text": "選択肢で分岐する！", "next": 8 },
-        { "text": "今回はスキップ", "next": 10 }
-      ]
-    },
-    {
-      "name": "藍",
-      "characters": [
-        { "side": "left", "src": "../assets2/char/a02002.png" }
-      ],
-      "text": "選択肢から次の展開を選べるんですよ。複数のエンディングだって実装できます。"
-    },
-    {
-      "name": "琥珀",
-      "characters": [
-        { "side": "right", "src": "../assets2/char/a05002.png" }
-      ],
-      "text": "jumpToScenario を使えば、別のシナリオファイルにも飛べるんだー！"
+      "text": "背景画像は、bgEffect に fade を指定するだけで切替演出が可能です。"
     },
     {
       "name": "こがね",
       "characters": [
-        { "side": "center", "src": "../assets2/char/a04002.png" }
+        { "side": "left", "src": "../assets2/char/a04002.png" },
+        { "side": "right", "src": "../assets2/char/a05002.png" }
       ],
-      "text": "最後に、画面はスマホでもPCでもキレイに見えるようレスポンシブ対応済み♪ セーフエリアも忘れずにねっ。"
+      "text": "キャラの位置も left / center / right で自由自在～。"
+    },
+    {
+      "name": "琥珀",
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a04002.png" },
+        { "side": "right", "src": "../assets2/char/a05002.png" }
+      ],
+      "text": "さらに！nullを指定すれば、キャラは自然に退場するぞ！"
+    },
+    {
+      "name": "翠",
+      "characters": [
+        { "side": "left", "src": null },
+        { "side": "right", "src": null },
+        { "side": "center", "src": "../assets2/char/a03002.png" }
+      ],
+      "fontSize": "1.2em",
+      "speed": 20,
+      "text": "このセリフは、少し大きくて、ゆっくり表示されています。"
+    },
+    {
+      "name": "こがね",
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a04002.png" },
+        { "side": "right", "src": "../assets2/char/a05002.png" }
+      ],
+      "text": "そして次は選択肢分岐のデモだよ～"
+    },
+    {
+      "name": "",
+      "text": "どこにジャンプする？",
+      "choices": [
+        {
+          "label": "シーンAへ",
+          "jumpTo": "sceneA.json"
+        },
+        {
+          "label": "シーンBへ",
+          "jumpTo": "sceneB.json"
+        }
+      ]
     },
     {
       "name": "",
@@ -95,7 +82,7 @@
         { "side": "center", "src": null },
         { "side": "right", "src": null }
       ],
-      "text": "物語は続く……"
+      "text": "物語は続く・・・"
     }
   ]
 }
