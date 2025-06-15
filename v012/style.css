@@ -34,15 +34,16 @@ html, body, #game {
   height: 80vh;
   cursor: pointer;
   user-select: none;
+  overflow: visible;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
 }
-#char-left { left: 5%; }
-#char-center { left: 35%; }
-#char-right { right: 5%; }
+
 .char-container img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  pointer-events: none; /* 画像はクリックを透過 */
+  max-height: 100%;
+  width: auto;
+  pointer-events: none;
 }
 
 /* テキストボックス */
