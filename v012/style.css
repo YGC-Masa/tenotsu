@@ -125,3 +125,76 @@ html, body {
     font-size: 0.9em;
   }
 }
+/* effectアニメーション用 */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes slideLeftIn {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideRightIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideLeftOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-100%); opacity: 0; }
+}
+@keyframes slideRightOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+@keyframes blackIn {
+  from { background-color: transparent; }
+  to { background-color: black; }
+}
+@keyframes blackOut {
+  from { background-color: black; }
+  to { background-color: transparent; }
+}
+@keyframes whiteIn {
+  from { background-color: transparent; }
+  to { background-color: white; }
+}
+@keyframes whiteOut {
+  from { background-color: white; }
+  to { background-color: transparent; }
+}
+
+/* effect用クラス */
+.effect-fade-in {
+  animation: fadeIn 0.5s forwards;
+}
+.effect-fade-out {
+  animation: fadeOut 0.5s forwards;
+}
+.effect-slide-left-in {
+  animation: slideLeftIn 0.5s forwards;
+}
+.effect-slide-right-in {
+  animation: slideRightIn 0.5s forwards;
+}
+.effect-slide-left-out {
+  animation: slideLeftOut 0.5s forwards;
+}
+.effect-slide-right-out {
+  animation: slideRightOut 0.5s forwards;
+}
+.effect-black-in {
+  animation: blackIn 0.5s forwards;
+}
+.effect-black-out {
+  animation: blackOut 0.5s forwards;
+}
+.effect-white-in {
+  animation: whiteIn 0.5s forwards;
+}
+.effect-white-out {
+  animation: whiteOut 0.5s forwards;
+}
