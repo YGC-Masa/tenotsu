@@ -3,6 +3,7 @@
   margin: 0;
   padding: 0;
 }
+
 html, body {
   width: 100%;
   height: 100%;
@@ -23,8 +24,11 @@ html, body {
   height: 100%;
   object-fit: cover;
   z-index: 0;
-  opacity: 1;
-  transition: opacity 0.6s ease;
+  transition: opacity 0.3s;
+}
+
+#background.fade-out {
+  opacity: 0;
 }
 
 .char-slot {
@@ -34,33 +38,19 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  overflow: visible;
-  pointer-events: auto;
 }
 
-#char-left {
-  left: 0;
-}
-
-#char-center {
-  left: 33.33%;
-}
-
-#char-right {
-  right: 0;
-  width: 33.34%;
-}
+#char-left { left: 0; }
+#char-center { left: 33.33%; }
+#char-right { right: 0; width: 33.34%; }
 
 .char-image {
   max-width: 90%;
-  max-height: 80vh;
+  max-height: 100%;
   transform-origin: bottom center;
   width: auto;
   height: auto;
-  user-select: none;
-  pointer-events: none;
-  opacity: 1;
-  transition: opacity 0.6s ease;
+  transition: opacity 0.3s;
 }
 
 #dialogue-box {
@@ -70,24 +60,21 @@ html, body {
   background: rgba(0, 0, 0, 0.7);
   color: white;
   padding: 10px;
-  font-size: var(--fontSize, 1em);
   z-index: 10;
   padding-bottom: env(safe-area-inset-bottom, 0);
   max-height: 30vh;
   overflow-y: auto;
-  user-select: none;
+  font-size: var(--fontSize, 1em);
 }
 
 #name {
   font-weight: bold;
   margin-bottom: 0.5em;
-  color: var(--nameColor, #fff);
 }
 
 #text {
   margin-bottom: 1em;
   min-height: 3em;
-  white-space: pre-wrap;
 }
 
 #choices {
@@ -127,6 +114,7 @@ html, body {
     max-height: 80vh;
     max-width: none;
   }
+
   #dialogue-box {
     max-height: 35vh;
     font-size: 0.9em;
