@@ -1,0 +1,29 @@
+{
+  "scenes": [
+    {
+      "name": "緋奈",
+      "text": "ここまで読んでくれてありがとう～！"
+    },
+    {
+      "name": "こがね",
+      "text": "ま、またいつでも来てくれていいんだからね～。",
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a04002.png" }
+      ]
+    },
+    {
+      "name": "翠",
+      "text": "それでは、またどこかでお会いしましょう。"
+    },
+    {
+      "name": "",
+      "text": "このあと、自動的に外部ページへジャンプします。",
+      "effect": "fade",
+      "speed": 15
+    },
+    {
+      "name": "",
+      "text": "jump→http://gogle.com"
+    }
+  ]
+}
