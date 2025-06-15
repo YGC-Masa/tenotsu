@@ -1,4 +1,4 @@
-(async function() {
+(async function () {
   const background = document.getElementById("background");
   const charSlots = {
     left: document.getElementById("char-left"),
@@ -10,15 +10,23 @@
   const choicesBox = document.getElementById("choices");
 
   let currentChars = { left: null, center: null, right: null };
-  const response = await fetch("scenario/000start.json");
-  const data = await response.json();
-  const scenes = data.scenes;
-  const fontSize = data.fontSize || "1em";
-  const speed = data.speed || 40;
-  document.documentElement.style.setProperty("--fontSize", fontSize);
-
+  let scenes = [];
+  let fontSize = "1em";
+  let speed = 40;
   let i = 0;
+
   const delay = ms => new Promise(res => setTimeout(res, ms));
+
+  async function loadScenario(filename, startIndex = 0) {
+    const response = await fetch(`scenario/${filename}`);
+    const data = await response.json();
+    scenes = data.scenes;
+    fontSize = data.fontSize || "1em";
+    speed = data.speed || 40;
+    document.documentElement.style.setProperty("--fontSize", fontSize);
+    i = startIndex;
+    showScene(i);
+  }
 
   async function showScene(index) {
     if (!scenes[index]) return;
@@ -51,6 +59,7 @@
     nameBox.textContent = scene.name || "";
     nameBox.style.color = characterColors[scene.name] || "#C0C0C0";
     textBox.textContent = "";
+
     for (let j = 0; j < (scene.text || "").length; j++) {
       textBox.textContent += scene.text[j];
       await delay(speed);
@@ -61,7 +70,13 @@
       scene.choices.forEach(choice => {
         const btn = document.createElement("button");
         btn.textContent = choice.label;
-        btn.onclick = () => showScene(choice.jump);
+        btn.onclick = () => {
+          if (choice.jumpToScenario) {
+            loadScenario(choice.jumpToScenario);
+          } else if (typeof choice.jump === "number") {
+            showScene(choice.jump);
+          }
+        };
         choicesBox.appendChild(btn);
       });
     } else {
@@ -77,7 +92,7 @@
       playBGM.audio = new Audio();
       playBGM.audio.loop = true;
     }
-    if (playBGM.audio.src !== location.origin + "/" + src) {
+    if (!playBGM.audio.src.endsWith(src)) {
       playBGM.audio.src = src;
     }
     playBGM.audio.play();
@@ -88,5 +103,6 @@
     audio.play();
   }
 
-  showScene(i);
+  // 初期読み込み
+  loadScenario("000start.json");
 })();
