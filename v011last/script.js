@@ -144,6 +144,10 @@ function loadScenario(path) {
       scenario = data.scenes;
       currentScene = 0;
       showScene(scenario[currentScene]);
+    })
+    .catch(err => {
+      console.error("シナリオ読み込みエラー:", err);
+      textBox.textContent = "シナリオが読み込めませんでした。パスや構文を確認してください。";
     });
 }
 
