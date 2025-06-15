@@ -3,7 +3,7 @@
   "speed": 35,
   "scenes": [
     {
-      "bg": "../assets2/bg/bg_room.jpg",
+      "bg": "../assets2/bgev/bg_room.jpg",
       "characters": [
         { "side": "left", "src": "../assets2/char/a01002.png" }
       ],
