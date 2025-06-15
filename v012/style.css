@@ -1,3 +1,4 @@
+/* 既存の基本スタイル */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -66,8 +67,7 @@ html, body {
   font-size: var(--fontSize, 1em);
   z-index: 10;
   padding-bottom: env(safe-area-inset-bottom, 0);
-  max-height: 30vh;
-  overflow-y: auto;
+  max-height: 35vh; /* ユーザー指定の変更点 */
 }
 
 #name {
@@ -80,16 +80,8 @@ html, body {
   min-height: 3em;
 }
 
-#choices {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5em;
-  margin-top: 0.5em;
-}
-
 #choices button {
-  min-width: 40%;
+  margin: 0.25em;
   padding: 0.5em 1em;
   background: #444;
   color: white;
@@ -103,6 +95,7 @@ html, body {
   background: #666;
 }
 
+/* モバイル縦画面 */
 @media (orientation: portrait) {
   .char-image {
     height: 50vh;
@@ -111,6 +104,7 @@ html, body {
   }
 }
 
+/* モバイル横画面（小画面） */
 @media (orientation: landscape) and (max-width: 768px) {
   .char-image {
     height: 80vh;
@@ -119,13 +113,14 @@ html, body {
   }
 
   #dialogue-box {
-    height: auto;
-    max-height: 35vh;
+    height: 20vh;
+    max-height: 20vh;
     padding: 10px;
     font-size: 0.9em;
   }
 }
-/* effectアニメーション用 */
+
+/* effect用アニメーション定義 */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
