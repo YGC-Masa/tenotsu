@@ -3,61 +3,20 @@
   "speed": 30,
   "scenes": [
     {
-      "bg": "../assets2/bgev/bg011.jpg,
-      "bgEffect": "fade-in",
-      "characters": [
-        {
-          "side": "left",
-          "src": "../assets2/chara/a03002.png.png",
-          "effect": "slide-left-in"
-        }
-      ],
+      "bg": "../assets2/bgev/bg011.jpg",
+      "bgm": "../assets2/bgm/bgm01.mp3",
       "name": "翠",
-      "text": "おはよう、今日もいい天気だね。"
-    },
-    {
+      "text": "こんにちは、世界！",
       "characters": [
-        {
-          "side": "right",
-          "src": "../assets2/chara/a04002.png",
-          "effect": "slide-right-in"
-        }
-      ],
-      "name": "こがね",
-      "text": "ほんとほんと！　出かけたくなっちゃう〜！"
-    },
-    {
-      "text": "どうしよう、今日はどこに行こうか？",
-      "choices": [
-        { "label": "公園に行く", "jump": 3 },
-        { "label": "図書館に行く", "jump": 4 }
+        { "side": "center", "src": "../assets2/char/01a.png" }
       ]
     },
     {
-      "bg": "../assets2/bgev/a03ev01.png",
-      "bgEffect": "fade-in",
-      "characters": [
-        {
-          "side": "left",
-          "src": "../assets2/chara/a03002.png",
-          "effect": "slide-left-in"
-        }
-      ],
-      "name": "翠",
-      "text": "やっぱり公園は気持ちいいね！"
-    },
-    {
-      "bg": "../assets2/bgeva04ev01.png",
-      "bgEffect": "fade-in",
-      "characters": [
-        {
-          "side": "right",
-          "src": "../assets2/chara/a04002.png",
-          "effect": "slide-right-in"
-        }
-      ],
       "name": "こがね",
-      "text": "しーっ……図書館では静かにしないとね。"
+      "text": "次のシーンへようこそ。",
+      "characters": [
+        { "side": "center", "src": "../assets2/char/02a.png" }
+      ]
     }
   ]
 }
