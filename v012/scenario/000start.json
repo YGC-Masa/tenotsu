@@ -1,14 +1,77 @@
-{
-  "bg": "bg011.jpg",
-  "characters": [
-    { "side": "left", "src": "a03002.png" }
-  ],
-  "dialogue": [
-    {
-      "name": "翠",
-      "text": "こんにちは、今日はいい天気ですね。",
-      "fontSize": "1.2em",
-      "speed": 50
+[
+  {
+    "effect": "fadeOut"
+  },
+  {
+    "bg": "bg011.jpg",
+    "bgm": "main.mp3"
+  },
+  {
+    "effect": "fadeIn"
+  },
+  {
+    "char": {
+      "center": "a03002.png"
+    },
+    "name": "翠",
+    "text": "おはようございます。本日はよろしくお願いいたします。"
+  },
+  {
+    "char": {
+      "left": "a01002.png"
+    },
+    "name": "緋奈",
+    "text": "はーい！　なんかワクワクしてきたね～♪"
+  },
+  {
+    "char": {
+      "right": "a05002.png"
+    },
+    "name": "琥珀",
+    "text": "じゃ、さっそく準備体操から行くよ！",
+    "fontSize": "1.2em",
+    "speed": 15
+  },
+  {
+    "char": {
+      "left": null,
+      "center": null
+    },
+    "name": "藍",
+    "text": "……ふぅ。ちょっと落ち着いてきたかも。",
+    "char": {
+      "right": "a02002.png"
     }
-  ]
-}
+  },
+  {
+    "name": "",
+    "text": "こうして、わたしたちの日常が始まった――"
+  },
+  {
+    "choices": [
+      {
+        "text": "食堂に向かう",
+        "next": 9
+      },
+      {
+        "text": "体育館へ向かう",
+        "next": 11
+      },
+      {
+        "text": "屋上に行く",
+        "jumpToScenario": "001_rooftop.json"
+      }
+    ]
+  },
+  {
+    "name": "緋奈",
+    "text": "わたし、おなかすいた～！"
+  },
+  {
+    "name": "琥珀",
+    "text": "運動の前にちゃんと水分取らなきゃね！"
+  },
+  {
+    "effect": "blackOut"
+  }
+]

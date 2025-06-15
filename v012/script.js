@@ -1,157 +1,207 @@
-// script.js
+// v012仕様対応 script.js
 
-// 事前に config.js で以下のオブジェクトが定義されている想定
-// const ASSET_BASE_PATHS = {
-//   bg: "../assets2/bgev/",
-//   char: "../assets2/char/",
-//   bgm: "../assets2/bgm/",
-// };
+const scenarioDir = "scenario/";
+let currentScenario = "000start.json";
+let currentIndex = 0;
+let autoMode = false;
+let isSkipping = false;
+let isTyping = false;
+let charStyles = {};
+let currentFontSize = "1em";
+let currentSpeed = 30;
 
-const gameContainer = document.getElementById("game-container");
+const nameBox = document.getElementById("name");
+const textBox = document.getElementById("text");
+const choicesBox = document.getElementById("choices");
 const background = document.getElementById("background");
+const bgm = new Audio();
 const charLeft = document.getElementById("char-left");
 const charCenter = document.getElementById("char-center");
 const charRight = document.getElementById("char-right");
-const dialogueBox = document.getElementById("dialogue-box");
-const nameElem = document.getElementById("name");
-const textElem = document.getElementById("text");
-const choicesElem = document.getElementById("choices");
 
-let scenarioData = null;
-let currentIndex = 0;
-let defaultFontSize = "1em";
-let defaultSpeed = 30;  // ミリ秒/文字
-
-// シナリオの素材パスをベースパス付きに加工する
-function processScenarioPaths(scenario) {
-  if (scenario.bg) {
-    scenario.bg = ASSET_BASE_PATHS.bg + scenario.bg;
-  }
-  if (scenario.characters) {
-    scenario.characters.forEach(char => {
-      if (char.src) {
-        char.src = ASSET_BASE_PATHS.char + char.src;
-      }
-    });
-  }
-  if (scenario.bgm) {
-    scenario.bgm = ASSET_BASE_PATHS.bgm + scenario.bgm;
-  }
-  return scenario;
+function loadCharacterStyles() {
+  const script = document.createElement("script");
+  script.src = "../characterStyles.js";
+  document.head.appendChild(script);
 }
 
-// セリフのテキストを速度でゆっくり表示
-function typeText(text, speed, callback) {
-  textElem.textContent = "";
-  let i = 0;
-  function next() {
-    if (i < text.length) {
-      textElem.textContent += text[i];
-      i++;
-      setTimeout(next, speed);
-    } else if (callback) {
+function applyEffect(effect, callback) {
+  switch (effect) {
+    case "fadeOut":
+      background.style.transition = "opacity 0.5s";
+      background.style.opacity = 0;
+      setTimeout(callback, 500);
+      break;
+    case "fadeIn":
+      background.style.transition = "opacity 0.5s";
+      background.style.opacity = 1;
+      setTimeout(callback, 500);
+      break;
+    case "blackOut":
+      background.style.backgroundColor = "black";
+      background.src = "";
+      setTimeout(callback, 500);
+      break;
+    case "whiteOut":
+      background.style.backgroundColor = "white";
+      background.src = "";
+      setTimeout(callback, 500);
+      break;
+    default:
       callback();
-    }
   }
-  next();
 }
 
-// キャラ表示処理（左、中、右）
-function showCharacters(chars) {
-  // まず全キャラ消す
-  charLeft.innerHTML = "";
-  charCenter.innerHTML = "";
-  charRight.innerHTML = "";
-
-  chars.forEach(char => {
-    const img = document.createElement("img");
-    img.className = "char-image";
-    img.src = char.src;
-    // 表示位置によって親要素を変更
-    if (char.side === "left") charLeft.appendChild(img);
-    else if (char.side === "center") charCenter.appendChild(img);
-    else if (char.side === "right") charRight.appendChild(img);
-  });
+function setBackground(bgName) {
+  background.style.backgroundColor = "";
+  background.src = `../assets2/bgev/${bgName}`;
 }
 
-// 選択肢表示
-function showChoices(choices) {
-  choicesElem.innerHTML = "";
-  choices.forEach(choice => {
-    const btn = document.createElement("button");
-    btn.textContent = choice.text;
-    btn.onclick = () => {
-      // 選択肢ジャンプ先があれば
-      if (choice.jumpTo) {
-        loadScenario(choice.jumpTo);
-      } else {
-        nextStep();
-      }
-    };
-    choicesElem.appendChild(btn);
-  });
-}
+function setCharacter(position, filename) {
+  const slot = {
+    left: charLeft,
+    center: charCenter,
+    right: charRight,
+  }[position];
 
-// シナリオの1つのステップを処理
-function displayStep(step) {
-  // 背景切替
-  if (step.bg) {
-    background.src = step.bg;
-  }
-  // キャラ表示
-  if (step.characters) {
-    showCharacters(step.characters);
-  }
-
-  // 名前
-  nameElem.textContent = step.name || "";
-
-  // フォントサイズ設定（個別指定があれば、なければデフォルト）
-  dialogueBox.style.fontSize = step.fontSize || defaultFontSize;
-
-  // セリフ速度（ミリ秒/文字）
-  const speed = step.speed || defaultSpeed;
-
-  // セリフタイプ表示
-  typeText(step.text || "", speed, () => {
-    // セリフ表示後に選択肢表示 or 次ステップ待ち
-    if (step.choices) {
-      showChoices(step.choices);
-    } else {
-      choicesElem.innerHTML = "";
-      // ここで自動的に次へ進める場合はnextStep()呼ぶ（現仕様では手動）
-    }
-  });
-}
-
-// 次のシナリオステップへ
-function nextStep() {
-  currentIndex++;
-  if (currentIndex >= scenarioData.length) {
-    console.log("シナリオ終了");
+  if (filename === null || filename === "null") {
+    slot.innerHTML = "";
     return;
   }
-  displayStep(scenarioData[currentIndex]);
+
+  const img = document.createElement("img");
+  img.src = `../assets2/char/${filename}`;
+  img.classList.add("char-image");
+
+  slot.innerHTML = "";
+  slot.appendChild(img);
 }
 
-// シナリオJSONを読み込む関数
-function loadScenario(path = "scenario/000start.json") {
-  fetch(path)
-    .then(response => response.json())
-    .then(data => {
-      // もしシナリオが配列形式でなくオブジェクト形式なら適宜修正
-      // ここは配列前提
-      scenarioData = data.map(processScenarioPaths);
-      currentIndex = 0;
+function playBGM(filename) {
+  if (!filename) return;
+  bgm.src = `../assets2/bgm/${filename}`;
+  bgm.loop = true;
+  bgm.play();
+}
 
-      // 最初のステップを表示
-      displayStep(scenarioData[currentIndex]);
-    })
-    .catch(err => {
-      console.error("シナリオ読み込み失敗:", err);
+function setFontAndSpeed(name, overrideFontSize, overrideSpeed) {
+  const defaultStyle = characterStyles[name] || { fontSize: "1em", speed: 30 };
+  currentFontSize = overrideFontSize || defaultStyle.fontSize;
+  currentSpeed = overrideSpeed !== undefined ? overrideSpeed : defaultStyle.speed;
+  document.documentElement.style.setProperty("--fontSize", currentFontSize);
+}
+
+async function typeText(text) {
+  isTyping = true;
+  textBox.textContent = "";
+  for (let i = 0; i < text.length; i++) {
+    if (isSkipping) {
+      textBox.textContent = text;
+      break;
+    }
+    textBox.textContent += text[i];
+    await new Promise((r) => setTimeout(r, currentSpeed));
+  }
+  isTyping = false;
+}
+
+function showDialogue(data, callback) {
+  const { name, text, fontSize, speed } = data;
+  nameBox.textContent = name || "";
+  setFontAndSpeed(name, fontSize, speed);
+  typeText(text).then(() => {
+    if (autoMode) {
+      setTimeout(callback, 1000);
+    } else {
+      document.body.addEventListener("click", function onClick() {
+        document.body.removeEventListener("click", onClick);
+        callback();
+      });
+    }
+  });
+}
+
+function showChoices(choices) {
+  choicesBox.innerHTML = "";
+  choices.forEach((choice) => {
+    const button = document.createElement("button");
+    button.textContent = choice.text;
+    button.onclick = () => {
+      if (choice.jumpToScenario) {
+        loadScenario(choice.jumpToScenario);
+      } else {
+        currentIndex = choice.next;
+        runScenario();
+      }
+    };
+    choicesBox.appendChild(button);
+  });
+}
+
+function runScenario() {
+  fetch(`${scenarioDir}${currentScenario}`)
+    .then((res) => res.json())
+    .then((data) => {
+      const line = data[currentIndex];
+      if (!line) return;
+
+      if (line.effect) {
+        applyEffect(line.effect, () => {
+          currentIndex++;
+          runScenario();
+        });
+        return;
+      }
+
+      if (line.bg) setBackground(line.bg);
+      if (line.bgm) playBGM(line.bgm);
+      if (line.char) {
+        if (line.char.left !== undefined) setCharacter("left", line.char.left);
+        if (line.char.center !== undefined) setCharacter("center", line.char.center);
+        if (line.char.right !== undefined) setCharacter("right", line.char.right);
+      }
+
+      if (line.text) {
+        choicesBox.innerHTML = "";
+        showDialogue(line, () => {
+          currentIndex++;
+          runScenario();
+        });
+        return;
+      }
+
+      if (line.choices) {
+        showChoices(line.choices);
+        return;
+      }
+
+      if (line.jumpToScenario) {
+        loadScenario(line.jumpToScenario);
+        return;
+      }
+
+      currentIndex++;
+      runScenario();
     });
 }
 
+function loadScenario(name) {
+  currentScenario = name;
+  currentIndex = 0;
+  runScenario();
+}
+
+document.body.addEventListener("click", () => {
+  if (isTyping) {
+    isSkipping = true;
+  }
+});
+
+document.getElementById("auto-button")?.addEventListener("click", () => {
+  autoMode = !autoMode;
+});
+
 window.onload = () => {
-  loadScenario();
+  loadCharacterStyles();
+  setTimeout(runScenario, 200);
 };
