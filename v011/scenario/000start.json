@@ -6,7 +6,7 @@
       "bg": "../assets2/bgev/bg011.jpg",
       "bgm": "../assets2/bgm/main.mp3",
       "name": "翠",
-      "text": "今日はどう過ごしますか？0",
+      "text": "今日はどう過ごしますか？1",
       "characters": [
         { "side": "center", "src": "../assets2/char/a03002.png" }
       ],
