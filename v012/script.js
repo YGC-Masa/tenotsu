@@ -22,11 +22,10 @@
   let i = 0;
   const delay = ms => new Promise(res => setTimeout(res, ms));
 
-  // effect適用関数（対象DOM, effect名, 入場or退場）
   async function applyEffect(element, effectName, mode = "in") {
     if (!element) return;
     if (!effectName) effectName = "dissolve";
-    // マップを作成（in/outで変化）
+
     const effectClassMap = {
       "dissolve": { in: "effect-fade-in", out: "effect-fade-out" },
       "fade-in": { in: "effect-fade-in" },
@@ -40,13 +39,10 @@
       "white-in": { in: "effect-white-in" },
       "white-out": { out: "effect-white-out" },
     };
-    const cls = effectClassMap[effectName] ? effectClassMap[effectName][mode] : null;
-    if (!cls) return; // 未対応のeffect
+    const cls = effectClassMap[effectName]?.[mode];
+    if (!cls) return;
 
-    // クラス付与してアニメーション開始
     element.classList.add(cls);
-
-    // アニメーション終了時にクラスを外すPromise
     await new Promise(resolve => {
       function onAnimEnd(e) {
         if (e.target === element) {
@@ -59,39 +55,23 @@
     });
   }
 
-  // 背景画像差し替え+effect付き
   async function changeBackground(newSrc, effectName) {
     if (!newSrc) return;
-    // 新しい画像をプリロード
     const img = new Image();
     img.src = newSrc;
-    await new Promise(res => {
-      img.onload = res;
-      img.onerror = res;
-    });
+    await new Promise(res => { img.onload = res; img.onerror = res; });
 
-    // effectがfade系なら、古い画像にfade-outかblack-out等を適用し、その間にsrc切り替え、最後にfade-inを適用する形が理想
-    // ここではシンプルにfadeで実装
-
-    // fade-out古い背景
-    await applyEffect(background, effectName ? effectName.replace("-in", "-out") : "fade-out", "out");
-
-    // 画像差し替え
+    await applyEffect(background, effectName?.replace("-in", "-out") || "fade-out", "out");
     background.src = newSrc;
-
-    // fade-in新背景
     await applyEffect(background, effectName || "fade-in", "in");
   }
 
-  // キャラ画像差し替え+effect付き
   async function changeCharacter(pos, charData) {
     const slot = charSlots[pos];
     if (!slot) return;
 
-    // キャラ退場
     if (charData.src === null) {
       if (currentChars[pos]) {
-        // 退場エフェクトがあれば
         await applyEffect(slot.firstElementChild, charData.effect || "fade-out", "out");
         slot.innerHTML = "";
         currentChars[pos] = null;
@@ -99,31 +79,23 @@
       return;
     }
 
-    // 既に同じ画像なら何もしない
-    if (currentChars[pos] === charData.src) return;
-
-    // 新しい画像を用意
     const img = new Image();
     img.src = charData.src;
     img.className = "char-image";
     img.style.opacity = 0;
 
-    // 表示する前にプリロード
-    await new Promise(res => {
-      img.onload = res;
-      img.onerror = res;
-    });
+    await new Promise(res => { img.onload = res; img.onerror = res; });
 
-    // 古い画像をoutエフェクト
     if (slot.firstElementChild) {
-      await applyEffect(slot.firstElementChild, charData.effect ? charData.effect.replace("-in", "-out") : "fade-out", "out");
+      await applyEffect(slot.firstElementChild, charData.effect?.replace("-in", "-out") || "fade-out", "out");
     }
 
     slot.innerHTML = "";
     slot.appendChild(img);
 
-    // 入場エフェクト
     await applyEffect(img, charData.effect || "fade-in", "in");
+    img.style.opacity = 1;
+
     currentChars[pos] = charData.src;
   }
 
@@ -131,16 +103,13 @@
     if (!scenes[index]) return;
     const scene = scenes[index];
 
-    // 背景差し替え（effect対応）
     if (scene.bg) {
       await changeBackground(scene.bg, scene.bgEffect || scene.effect);
     }
 
-    // BGM・SE再生
     if (scene.bgm) playBGM(scene.bgm);
     if (scene.se) playSE(scene.se);
 
-    // キャラ表示差し替え（effect対応）
     if (scene.characters) {
       for (const pos of ["left", "center", "right"]) {
         const charData = scene.characters.find(c => c.side === pos);
@@ -153,9 +122,10 @@
     nameBox.textContent = scene.name || "";
     nameBox.style.color = characterColors[scene.name] || "#C0C0C0";
 
+    const sceneText = scene.text || "";
     textBox.textContent = "";
-    for (let j = 0; j < (scene.text || "").length; j++) {
-      textBox.textContent += scene.text[j];
+    for (let j = 0; j < sceneText.length; j++) {
+      textBox.textContent += sceneText[j];
       await delay(speed);
     }
 
@@ -167,7 +137,7 @@
         btn.onclick = () => showScene(choice.jump);
         choicesBox.appendChild(btn);
       });
-      document.body.onclick = null; // クリックで自動進行を無効化
+      document.body.onclick = null;
     } else {
       document.body.onclick = () => {
         document.body.onclick = null;
