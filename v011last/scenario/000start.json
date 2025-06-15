@@ -1,79 +1,33 @@
 {
-  "fontSize": "1em",
-  "speed": 30,
   "scenes": [
     {
-      "name": "藍",
+      "name": "",
+      "text": "ようこそ、v011last ノベルゲームシステムへ！",
+      "bg": "../assets2/bgev/bg_sample.jpg",
+      "bgEffect": "fade",
       "characters": [
-        { "side": "left", "src": "../assets2/char/a01002.png" },
-        { "side": "center", "src": "assets2/char/a02002.png" }
-      ],
-      "text": "背景もキャラも、ふわっと切り替わって…すごく綺麗ですね。"
-    },
-    {
-      "name": "翠",
-      "characters": [
-        { "side": "center", "src": "../assets2/char/a03002.png" }
-      ],
-      "text": "背景画像は、bgEffect に fade を指定するだけで切替演出が可能です。"
-    },
-    {
-      "name": "こがね",
-      "characters": [
-        { "side": "left", "src": "../assets2/char/a04002.png" },
-        { "side": "right", "src": "../assets2/char/a05002.png" }
-      ],
-      "text": "キャラの位置も left / center / right で自由自在～。"
-    },
-    {
-      "name": "琥珀",
-      "characters": [
-        { "side": "left", "src": "../assets2/char/a04002.png" },
-        { "side": "right", "src": "../assets2/char/a05002.png" }
-      ],
-      "text": "さらに！nullを指定すれば、キャラは自然に退場するぞ！"
-    },
-    {
-      "name": "翠",
-      "characters": [
-        { "side": "left", "src": null },
-        { "side": "right", "src": null },
-        { "side": "center", "src": "../assets2/char/a03002.png" }
+        { "side": "center", "src": "../assets2/char/a01002.png" }
       ],
       "fontSize": "1.2em",
-      "speed": 20,
-      "text": "このセリフは、少し大きくて、ゆっくり表示されています。"
+      "speed": 20
     },
     {
-      "name": "こがね",
-      "characters": [
-        { "side": "left", "src": "../assets2/char/a04002.png" },
-        { "side": "right", "src": "../assets2/char/a05002.png" }
-      ],
-      "text": "そして次は選択肢分岐のデモだよ～"
+      "name": "緋奈",
+      "text": "こんにちはー！動作チェックしてくれてありがとね♪",
+      "speed": 25
     },
     {
       "name": "",
-      "text": "どこにジャンプする？",
+      "text": "このシステムは、キャラ表示、背景変更、選択肢、分岐、オートモードなどに対応しています。",
+      "fontSize": "1em",
+      "speed": 20
+    },
+    {
+      "name": "緋奈",
+      "text": "じゃあ、選択肢も試してみようか！",
       "choices": [
-        {
-          "label": "シーンAへ",
-          "jumpTo": "sceneA.json"
-        },
-        {
-          "label": "シーンBへ",
-          "jumpTo": "sceneB.json"
-        }
+        { "text": "次へ進む", "jumpToScenario": "scenario/001next.json" }
       ]
-    },
-    {
-      "name": "",
-      "characters": [
-        { "side": "left", "src": null },
-        { "side": "center", "src": null },
-        { "side": "right", "src": null }
-      ],
-      "text": "物語は続く・・・"
     }
   ]
 }
