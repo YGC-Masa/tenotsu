@@ -2,31 +2,85 @@
   "scenes": [
     {
       "name": "",
-      "text": "ようこそ、v011last ノベルゲームシステムへ！",
-      "bg": "../assets2/bgev/bg_sample.jpg",
+      "text": "――これは、ある日の昼休みの出来事。",
+      "bg": "../assets2/bgev/bg001.png",
       "bgEffect": "fade",
-      "characters": [
-        { "side": "center", "src": "../assets2/char/a01002.png" }
-      ],
-      "fontSize": "1.2em",
-      "speed": 20
+      "speed": 30,
+      "fontSize": "1.2em"
     },
     {
       "name": "緋奈",
-      "text": "こんにちはー！動作チェックしてくれてありがとね♪",
+      "text": "ねえねえ！お弁当、今日も豪華なの～♪",
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a01002.png" }
+      ],
+      "speed": 20
+    },
+    {
+      "name": "藍",
+      "text": "わあ…美味しそう。緋奈さんは本当に料理上手ですね。",
+      "characters": [
+        { "side": "center", "src": "../assets2/char/a02002.png" }
+      ],
+      "fontSize": "1.1em"
+    },
+    {
+      "name": "翠",
+      "text": "お二人とも、お昼休みは有意義に過ごしましょう。",
+      "characters": [
+        { "side": "right", "src": "../assets2/char/a03002.png" }
+      ]
+    },
+    {
+      "name": "こがね",
+      "text": "ん～、なんか眠くなってきたかも…。午後の授業、ピンチ～。",
+      "characters": [
+        { "side": "left", "src": "../assets2/char/a04002.png" }
+      ],
+      "speed": 15
+    },
+    {
+      "name": "琥珀",
+      "text": "気合い入れていこうよっ！午後もフルパワー！",
+      "characters": [
+        { "side": "center", "src": "../assets2/char/a05002.png" }
+      ]
+    },
+    {
+      "name": "",
+      "text": "こうして、5人のゆるやかな掛け合いが始まった。",
+      "characters": [
+        { "side": "right", "src": null }
+      ]
+    },
+    {
+      "name": "緋奈",
+      "text": "このノベルゲームのシステム、すごいでしょっ！",
+      "speed": 10
+    },
+    {
+      "name": "翠",
+      "text": "では、機能について簡単にご紹介いたしますね。",
       "speed": 25
     },
     {
       "name": "",
-      "text": "このシステムは、キャラ表示、背景変更、選択肢、分岐、オートモードなどに対応しています。",
-      "fontSize": "1em",
-      "speed": 20
+      "text": "■ 実装済みの機能一覧\n・キャラ表示（最大3人、左右中央）\n・背景切替（フェード対応）\n・名前色付きセリフ\n・文字送り（速度調整可）\n・フォントサイズ指定\n・キャラ退場（null指定）\n・選択肢分岐（他ファイルにもジャンプ可能）\n・スマホ/PCレスポンシブ\n・セーフエリア対応\n・演出効果（fade 他）",
+      "fontSize": "0.95em",
+      "speed": 10
     },
     {
-      "name": "緋奈",
-      "text": "じゃあ、選択肢も試してみようか！",
+      "name": "藍",
+      "text": "…選択肢も、ちゃんと対応していますよ。",
       "choices": [
-        { "text": "次へ進む", "jumpToScenario": "scenario/001next.json" }
+        {
+          "text": "詳しく見てみる",
+          "jumpToScenario": "scenario/010details.json"
+        },
+        {
+          "text": "ここで終了",
+          "jumpToScenario": "scenario/999end.json"
+        }
       ]
     }
   ]
