@@ -85,3 +85,23 @@ html, body, #game {
   white-space: pre-wrap;
   word-break: break-word;
 }
+
+/* モバイル表示時に左右が見切れる対処 */
+@media (max-width: 480px) {
+  .char-container {
+    width: 26vw;            /* 横幅に比例させて縮小 */
+    max-width: none;
+  }
+
+  #char-left {
+    left: 4vw;              /* 左端から少し内側に寄せる */
+  }
+
+  #char-center {
+    left: 37vw;             /* 中央に調整 */
+  }
+
+  #char-right {
+    right: 4vw;             /* 右端から少し内側に寄せる */
+  }
+}
