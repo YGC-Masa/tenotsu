@@ -1,34 +1,28 @@
 {
-  "bg": "bg_mountain.jpg",
   "scenes": [
     {
-      "name": "翠",
-      "text": "計画通りに進んで、みんな満足しています。",
+      "bg": "bg_evening.jpg",
       "characters": [
-        { "name": "翠", "side": "center", "src": "a03002.png" }
+        { "side": "center", "src": "a05002.png" }
       ],
-      "speed": 40,
-      "fontSize": "1.2em"
+      "name": "琥珀",
+      "text": "今日もダメだったね～、でも……なんか楽しかった！"
     },
     {
-      "name": "琥珀",
-      "text": "疲れたけど、登頂できて最高だった！",
       "characters": [
-        { "name": "琥珀", "side": "center", "src": "a05002.png" }
+        { "side": "center", "src": "a04002.png" }
       ],
-      "speed": 35,
-      "fontSize": "1.3em"
+      "name": "こがね",
+      "text": "うん、こんな日も悪くないっしょ？あんがとね。"
     },
     {
       "name": "",
-      "text": "お疲れさまでした。また計画しましょう！",
-      "characters": [],
-      "choices": [
-        {
-          "text": "はじめに戻る",
-          "jumpToScenario": "scenario/000start.json"
-        }
-      ]
+      "text": "夕焼けの中、2人の笑顔がやけにまぶしく見えた。",
+      "effect": "fadeout"
+    },
+    {
+      "name": "",
+      "text": "【END：友情エンド】"
     }
   ]
 }
