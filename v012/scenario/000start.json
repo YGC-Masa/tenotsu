@@ -1,51 +1,25 @@
 {
-  "bg": "bg011.jpg",
-  "bgm": "main.mp3",
   "scenes": [
     {
-      "name": "",
-      "text": "こんにちは。今日はみんなと一緒に相談があります。",
-      "characters": [],
-      "speed": 50,
-      "fontSize": "1.2em"
-    },
-    {
-      "name": "緋奈",
-      "text": "おー！楽しみだね！話そうよ！",
+      "bg": "bg011.jpg",
       "characters": [
-        { "name": "緋奈", "side": "center", "src": "a01002.png" }
+        { "side": "center", "src": "a03002.png" }
       ],
-      "speed": 40,
-      "fontSize": "1.3em"
+      "name": "翠",
+      "text": "こんにちは。私は翠です。今日からこの物語が始まります。",
+      "speed": 50
     },
     {
-      "name": "藍",
-      "text": "どんな話題ですか？しっかり聞きますね。",
+      "bg": "bg011.jpg",
       "characters": [
-        { "name": "緋奈", "side": "left", "src": "a01002.png" },
-        { "name": "藍", "side": "center", "src": "a02002.png" }
+        { "side": "left", "src": "a04002.png" },
+        { "side": "center", "src": "a03002.png" }
       ],
-      "speed": 60,
-      "fontSize": "1em"
-    },
-    {
-      "name": "",
-      "text": "さて、どちらの話題から始めましょうか？",
-      "characters": [
-        { "name": "緋奈", "side": "left", "src": "a01002.png" },
-        { "name": "藍", "side": "center", "src": "a02002.png" }
-      ]
-    },
-    {
+      "name": "こがね",
+      "text": "やあ、こがねだよ。よろしくね！",
       "choices": [
-        {
-          "text": "話題A（山へ行く）",
-          "jumpToScenario": "scenario/choiceA.json"
-        },
-        {
-          "text": "話題B（海へ行く）",
-          "jumpToScenario": "scenario/choiceB.json"
-        }
+        { "text": "よろしく", "jump": "scenario/001next.json" },
+        { "text": "さようなら", "jump": "scenario/002end.json" }
       ]
     }
   ]
