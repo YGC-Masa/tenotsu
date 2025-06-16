@@ -25,4 +25,10 @@
       "characters": [],
       "choices": [
         {
-          "text": "は
+          "text": "はじめに戻る",
+          "jumpToScenario": "scenario/000start.json"
+        }
+      ]
+    }
+  ]
+}
