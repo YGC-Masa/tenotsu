@@ -1,41 +1,16 @@
 {
-  "speed": 40,
-  "fontSize": "medium",
-  "scripts": [
+  "scenes": [
     {
-      "bg": "bg011.jpg",
-      "text": "さて、次の話題に進もうか。"
-    },
-    {
+      "bg": "bg015.jpg",
       "characters": [
-        {
-          "side": "left",
-          "src": null
-        },
-        {
-          "side": "right",
-          "src": null
-        }
+        { "name": "藍", "side": "center", "src": "a02002.png" }
       ],
-      "effect": "fade-out",
-      "text": "（緋奈と藍は一度退場）"
-    },
-    {
-      "bg": "bg011.jpg",
-      "characters": [
-        {
-          "side": "center",
-          "src": "a01002.png",
-          "effect": "fade-in"
-        }
-      ],
-      "text": "ふふ、それじゃあ続きをはじめましょっか。"
-    },
-    {
+      "name": "藍",
+      "text": "休憩して気分もリフレッシュできましたね。",
       "choices": [
         {
-          "label": "最初に戻る",
-          "jumpToScenario": "000start.json"
+          "text": "はじめに戻る",
+          "jumpToScenario": "scenario/000start.json"
         }
       ]
     }
