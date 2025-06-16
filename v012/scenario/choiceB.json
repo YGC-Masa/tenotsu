@@ -36,11 +36,11 @@
       "choices": [
         {
           "text": "2人を見守る（友情ルート）",
-          "jump": "end1.json"
+          "jump": "scenario/end1.json"
         },
         {
           "text": "こがね＆琥珀に手を貸す（勝利ルート）",
-          "jump": "end2.json"
+          "jump": "scenario/end2.json"
         }
       ]
     }
