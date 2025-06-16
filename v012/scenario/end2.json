@@ -1,7 +1,7 @@
 {
   "scenes": [
     {
-      "bg": "bg_stage.jpg",
+      "bg": "bg_beach.jpg",
       "characters": [
         { "side": "left", "src": "a04002.png" },
         { "side": "right", "src": "a05002.png" }
