@@ -41,11 +41,11 @@
       "choices": [
         {
           "text": "こがね＆琥珀と行動する",
-          "jump": "choiceA.json"
+          "jump": "scenario/choiceA.json"
         },
         {
           "text": "翠＆藍と行動する",
-          "jump": "choiceB.json"
+          "jump": "scenario/choiceB.json"
         }
       ]
     }
