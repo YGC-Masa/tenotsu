@@ -1,7 +1,7 @@
 {
   "scenes": [
     {
-      "bg": "bg_street.jpg",
+      "bg": "bg_forest.jpg",
       "characters": [
         { "side": "left", "src": "a03002.png" },
         { "side": "right", "src": "a04002.png" }
