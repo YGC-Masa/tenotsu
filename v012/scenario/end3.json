@@ -1,7 +1,7 @@
 {
   "scenes": [
     {
-      "bg": "bg_night_library.jpg",
+      "bg": "bg024.jpg",
       "characters": [
         { "side": "left", "src": "a03002.png" },
         { "side": "right", "src": "a02002.png" }
