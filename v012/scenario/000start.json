@@ -1,6 +1,6 @@
 {
-  "bg": "bg_room.jpg",
-  "bgm": "bgm/main.mp3",
+  "bg": "bg011.jpg",
+  "bgm": "main.mp3",
   "scenes": [
     {
       "name": "",
