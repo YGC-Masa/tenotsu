@@ -1,37 +1,29 @@
 {
+  "bg": "bg011.jpg",
+  "bgm": "main.mp3",
   "scenes": [
     {
-      "bg": "bg011.jpg",
-      "characters": [
-        { "side": "center", "src": "a01002.png" }
-      ],
-      "name": "緋奈",
-      "text": "おはよう〜っ！今日も元気に行こうねっ！"
-    },
-    {
-      "characters": [
-        { "side": "left", "src": "a02002.png" }
-      ],
-      "name": "藍",
-      "text": "……うん。今日も頑張ろうね。"
-    },
-    {
-      "characters": [
-        { "side": "right", "src": "a03002.png" }
-      ],
-      "name": "翠",
-      "text": "そろそろ時間です。支度をお願いします。",
-      "speed": 20
-    },
-    {
       "name": "",
-      "text": "こうして、彼女たちの日常が始まる。"
-    },
-    {
-      "text": "どうする？",
+      "text": "みんなで話し合う時間だよ。どうする？",
+      "bg": "bg011.jpg",
+      "characters": [],
       "choices": [
-        { "text": "食堂に行く", "jump": "cafeteria.json" },
-        { "text": "部室に行く", "jump": "clubroom.json" }
+        {
+          "text": "みんなで計画を立てる",
+          "jumpToScenario": "scenario/plan_scene.json"
+        },
+        {
+          "text": "休憩をとる",
+          "jumpToScenario": "scenario/rest_scene.json"
+        },
+        {
+          "text": "それぞれに任せる",
+          "jumpToScenario": "scenario/delegate_scene.json"
+        },
+        {
+          "text": "もう一度話し合う",
+          "jumpToScenario": "scenario/repeat_scene.json"
+        }
       ]
     }
   ]
