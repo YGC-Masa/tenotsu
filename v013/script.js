@@ -1,15 +1,21 @@
-// 動的に --vh カスタムプロパティを更新（モバイルブラウザUIの高さ変動対応）
+// 素材の相対パス設定
+const config = {
+  bgPath: "../assets2/bgev/",
+  charPath: "../assets2/char/",
+  bgmPath: "../assets2/bgm/",
+  scenarioPath: "scenario/"
+};
+
+// --vh 動的更新
 function updateVh() {
   const vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty('--vh', `${vh}px`);
 }
-
-// 初期とリサイズ時に呼び出し
 window.addEventListener('resize', updateVh);
 window.addEventListener('orientationchange', updateVh);
 window.addEventListener('load', updateVh);
 
-// シナリオデータ管理用
+// 初期変数
 let scenarioData = null;
 let currentSceneIndex = 0;
 let isTextDisplaying = false;
@@ -32,9 +38,9 @@ let currentFontSize = characterStyles[""].fontSize || "1em";
 let currentSpeed = characterStyles[""].speed || 40;
 
 // シナリオ読み込み
-async function loadScenario(url) {
+async function loadScenario(fileName) {
   try {
-    const res = await fetch(url);
+    const res = await fetch(config.scenarioPath + fileName);
     scenarioData = await res.json();
     currentSceneIndex = 0;
     showScene(currentSceneIndex);
@@ -45,31 +51,32 @@ async function loadScenario(url) {
 
 // シーン表示
 function showScene(index) {
-  if (!scenarioData || index >= scenarioData.scenes.length) {
-    endScenario();
-    return;
-  }
+  if (!scenarioData || index >= scenarioData.scenes.length) return;
 
   const scene = scenarioData.scenes[index];
 
   // 背景
   if (scene.bg) {
-    backgroundElement.src = config.bgPath + scene.bg;
+    applyImageEffect(backgroundElement, config.bgPath + scene.bg, scene.effect);
   }
 
   // キャラ表示
   ["left", "center", "right"].forEach(pos => {
     const charData = scene.characters?.find(c => c.side === pos);
     const img = charData?.src;
-    charElements[pos].innerHTML = (img && img.toLowerCase() !== "null")
-      ? `<img src="${config.charPath + img}" class="char-image">` : "";
+    const el = charElements[pos];
+    if (img && img.toLowerCase() !== "null") {
+      applyImageEffect(el, config.charPath + img, scene.effect, true);
+    } else {
+      el.innerHTML = "";
+    }
   });
 
   // 名前・色
   nameBox.textContent = scene.name || "";
   nameBox.style.color = characterColors[scene.name] || characterColors[""];
 
-  // フォントサイズと速度（キャラごとに反映）
+  // フォントサイズと速度
   const style = characterStyles[scene.name] || characterStyles[""];
   currentFontSize = style.fontSize || characterStyles[""].fontSize;
   currentSpeed = style.speed || characterStyles[""].speed;
@@ -87,6 +94,34 @@ function showScene(index) {
   } else {
     clearChoices();
   }
+}
+
+// エフェクト適用
+function applyImageEffect(targetEl, imagePath, effect, isCharacter = false) {
+  const temp = document.createElement("img");
+  temp.src = imagePath;
+  temp.className = isCharacter ? "char-image" : "";
+  temp.style.opacity = 0;
+
+  if (effect) {
+    temp.classList.add("effect-" + effect);
+  }
+
+  const container = isCharacter ? targetEl : targetEl.parentNode;
+  if (isCharacter) {
+    targetEl.innerHTML = "";
+    targetEl.appendChild(temp);
+  } else {
+    targetEl.src = imagePath;
+    targetEl.className = "";
+    if (effect) {
+      targetEl.classList.add("effect-" + effect);
+    }
+  }
+
+  requestAnimationFrame(() => {
+    temp.style.opacity = 1;
+  });
 }
 
 // テキスト表示
@@ -118,7 +153,7 @@ function showChoices(choices) {
     btn.textContent = choice.text;
     btn.onclick = () => {
       if (choice.jump) {
-        loadScenario(config.scenarioPath + choice.jump);  // ← ここを置換
+        loadScenario(choice.jump);
       } else {
         nextScene();
       }
@@ -126,7 +161,6 @@ function showChoices(choices) {
     choicesBox.appendChild(btn);
   });
 }
-
 function clearChoices() {
   choicesBox.innerHTML = "";
 }
@@ -141,14 +175,6 @@ function nextScene() {
   } else {
     showScene(++currentSceneIndex);
   }
-}
-
-function endScenario() {
-  nameBox.textContent = "";
-  textBox.textContent = "物語は続く…";
-  clearChoices();
-  autoMode = false;
-  clearTimeout(autoTimeout);
 }
 
 // オートモード切り替え
@@ -172,7 +198,6 @@ function onClickGameArea() {
     nextScene();
   }
 }
-
 function onDoubleClickGameArea() {
   toggleAutoMode();
 }
@@ -180,11 +205,8 @@ function onDoubleClickGameArea() {
 // 初期化
 function init() {
   updateVh();
-  window.addEventListener('resize', updateVh);
-  window.addEventListener('orientationchange', updateVh);
   document.getElementById("game-container").addEventListener("click", onClickGameArea);
   document.getElementById("game-container").addEventListener("dblclick", onDoubleClickGameArea);
-  loadScenario(config.scenarioPath + "000start.json");  // ← ここも置換
+  loadScenario("000start.json");
 }
-
 window.addEventListener("load", init);
