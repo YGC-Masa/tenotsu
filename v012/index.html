@@ -1,24 +1,27 @@
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>ノベルゲームv012</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>v012 Novel Game</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="game">
-    <div id="background"></div>
-    <div id="characters">
-      <img id="char-left" class="char" />
-      <img id="char-center" class="char" />
-      <img id="char-right" class="char" />
+  <div id="game-container">
+    <img id="background" src="" alt="背景画像" />
+    <div id="char-left" class="char-slot"></div>
+    <div id="char-center" class="char-slot"></div>
+    <div id="char-right" class="char-slot"></div>
+
+    <div id="dialogue-box">
+      <div id="name"></div>
+      <div id="text"></div>
+      <div id="choices"></div>
     </div>
-    <div id="message-box">
-      <div id="name-box"></div>
-      <div id="text-box"></div>
-    </div>
-    <div id="choices"></div>
   </div>
+
+  <!-- スクリプト読み込み順に注意 -->
+  <script src="config.js"></script>
   <script src="characterColors.js"></script>
   <script src="characterStyles.js"></script>
   <script src="script.js"></script>
