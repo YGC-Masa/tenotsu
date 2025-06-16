@@ -1,17 +1,34 @@
 {
-  "fontSize": "1.2em",
-  "speed": 30,
+  "bg": "bg_beach.jpg",
   "scenes": [
     {
-      "name": "琥珀",
-      "text": "スポーツ体験って、やっぱ燃えるよね！",
+      "name": "こがね",
+      "text": "浜辺でのんびりするのも悪くないよね〜",
       "characters": [
-        { "side": "left", "src": "../assets2/char/a05002.png" }
-      ]
+        { "name": "こがね", "side": "center", "src": "a04002.png" }
+      ],
+      "speed": 45,
+      "fontSize": "1.4em"
     },
     {
-      "text": "（END4：全力で汗を流した1日）"
+      "name": "翠",
+      "text": "穏やかな時間を過ごせました。",
+      "characters": [
+        { "name": "翠", "side": "center", "src": "a03002.png" }
+      ],
+      "speed": 40,
+      "fontSize": "1.2em"
     },
-    { "text": "" }
+    {
+      "name": "",
+      "text": "リフレッシュできましたね。",
+      "characters": [],
+      "choices": [
+        {
+          "text": "はじめに戻る",
+          "jumpToScenario": "scenario/000start.json"
+        }
+      ]
+    }
   ]
 }
