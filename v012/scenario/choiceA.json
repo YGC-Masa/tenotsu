@@ -1,52 +1,46 @@
 {
-  "bg": "bg_mountain.jpg",
-  "bgm": "bgm/main.mp3",
   "scenes": [
     {
-      "name": "翠",
-      "text": "山へ行く計画ですね。準備は大丈夫ですか？",
+      "bg": "bg_park.jpg",
       "characters": [
-        { "name": "翠", "side": "center", "src": "a03002.png" }
+        { "side": "left", "src": "a04002.png" },
+        { "side": "right", "src": "a05002.png" }
       ],
-      "speed": 40,
-      "fontSize": "1.2em"
-    },
-    {
       "name": "こがね",
-      "text": "わー！登山とか超楽しみ！でも疲れそう…",
-      "characters": [
-        { "name": "翠", "side": "left", "src": "a03002.png" },
-        { "name": "こがね", "side": "center", "src": "a04002.png" }
-      ],
-      "speed": 30,
-      "fontSize": "1.5em"
+      "text": "さてさて、まずはスイーツ食べてから考えよっか♪"
     },
     {
       "name": "琥珀",
-      "text": "体力には自信あるよ！みんなを引っ張るね！",
-      "characters": [
-        { "name": "こがね", "side": "left", "src": "a04002.png" },
-        { "name": "琥珀", "side": "center", "src": "a05002.png" }
-      ],
-      "speed": 50,
-      "fontSize": "1.3em"
+      "text": "ちょ、こがね！？今は勝負がかかってるんだよ！？"
     },
     {
       "name": "",
-      "text": "どうしますか？",
+      "text": "周囲から視線を感じる……"
+    },
+    {
+      "name": "",
+      "text": "（通行人A）あの子たち、すごい雰囲気……！"
+    },
+    {
       "characters": [
-        { "name": "琥珀", "side": "center", "src": "a05002.png" }
-      ]
+        { "side": "left", "src": "null" }
+      ],
+      "name": "こがね",
+      "text": "ふふーん、どっちが先に目標達成できるか勝負しよっか！"
+    },
+    {
+      "name": "琥珀",
+      "text": "望むところだよっ！"
     },
     {
       "choices": [
         {
-          "text": "しっかり計画を立てる",
-          "jumpToScenario": "scenario/end1.json"
+          "text": "2人を見守る（友情ルート）",
+          "jump": "end1.json"
         },
         {
-          "text": "気楽に行こう",
-          "jumpToScenario": "scenario/end2.json"
+          "text": "こがね＆琥珀に手を貸す（勝利ルート）",
+          "jump": "end2.json"
         }
       ]
     }
