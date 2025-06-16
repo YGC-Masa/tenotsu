@@ -1,18 +1,28 @@
 {
+  "bg": "bg_field.jpg",
   "scenes": [
     {
-      "bg": "bg015.jpg",
+      "name": "こがね",
+      "text": "気楽にいったからこそ楽しかったんだよね！",
       "characters": [
-        { "name": "藍", "side": "center", "src": "a02002.png" }
+        { "name": "こがね", "side": "center", "src": "a04002.png" }
       ],
-      "name": "藍",
-      "text": "休憩して気分もリフレッシュできましたね。",
+      "speed": 30,
+      "fontSize": "1.5em"
+    },
+    {
+      "name": "緋奈",
+      "text": "次はもっとアクティブに動こうよ！",
+      "characters": [
+        { "name": "緋奈", "side": "center", "src": "a01002.png" }
+      ],
+      "speed": 40,
+      "fontSize": "1.3em"
+    },
+    {
+      "name": "",
+      "text": "楽しい思い出ができましたね。",
+      "characters": [],
       "choices": [
         {
-          "text": "はじめに戻る",
-          "jumpToScenario": "scenario/000start.json"
-        }
-      ]
-    }
-  ]
-}
+          "text": "は
