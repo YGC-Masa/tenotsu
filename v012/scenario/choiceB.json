@@ -1,16 +1,22 @@
 {
-  "fontSize": "1.2em",
-  "speed": 30,
   "scenes": [
     {
-      "name": "琥珀",
-      "text": "にぎやかなとこ行くなら、アスレチックもアリだよ！どうする？",
+      "bg": "bg013.jpg",
       "characters": [
-        { "side": "left", "src": "../assets2/char/a05002.png" }
+        { "name": "翠", "side": "left", "src": "a03002.png" },
+        { "name": "こがね", "side": "center", "src": "a04002.png" }
       ],
+      "name": "翠",
+      "text": "話題Bに移りましょう。どうする？",
       "choices": [
-        { "label": "ショッピング", "jumpToScenario": "end3.json" },
-        { "label": "スポーツ体験", "jumpToScenario": "end4.json" }
+        {
+          "text": "全員に任せる",
+          "jumpToScenario": "scenario/end3.json"
+        },
+        {
+          "text": "もう一度話し合う",
+          "jumpToScenario": "scenario/end4.json"
+        }
       ]
     }
   ]
