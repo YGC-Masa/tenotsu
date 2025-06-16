@@ -1,41 +1,18 @@
 {
-  "speed": 40,
-  "fontSize": "medium",
-  "scripts": [
+  "scenes": [
     {
-      "bg": "bg011.jpg",
-      "text": "さて、次の話題に進もうか。"
-    },
-    {
+      "bg": "bg016.jpg",
       "characters": [
-        {
-          "side": "left",
-          "src": null
-        },
-        {
-          "side": "right",
-          "src": null
-        }
+        { "name": "こがね", "side": "left", "src": "a04002.png" },
+        { "name": "翠", "side": "center", "src": "a03002.png" },
+        { "name": "琥珀", "side": "right", "src": "a05002.png" }
       ],
-      "effect": "fade-out",
-      "text": "（緋奈と藍は一度退場）"
-    },
-    {
-      "bg": "bg011.jpg",
-      "characters": [
-        {
-          "side": "center",
-          "src": "a01002.png",
-          "effect": "fade-in"
-        }
-      ],
-      "text": "ふふ、それじゃあ続きをはじめましょっか。"
-    },
-    {
+      "name": "こがね",
+      "text": "みんなに任せたら、どんな結果になるか楽しみですね！",
       "choices": [
         {
-          "label": "最初に戻る",
-          "jumpToScenario": "000start.json"
+          "text": "はじめに戻る",
+          "jumpToScenario": "scenario/000start.json"
         }
       ]
     }
