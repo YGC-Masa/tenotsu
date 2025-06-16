@@ -11,8 +11,8 @@ let charColors = {};
 
 window.addEventListener("load", async () => {
   // 外部ファイルを読み込む
-  charColors = await loadJSON("../characterColors.js");
-  charStyles = await loadJSON("../characterStyles.js");
+  charColors = await loadJSON("characterColors.js");
+  charStyles = await loadJSON("characterStyles.js");
   scenario = await loadJSON("scenario/000start.json");
 
   showLine();
