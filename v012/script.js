@@ -184,4 +184,8 @@ function init() {
   window.addEventListener('resize', updateVh);
   window.addEventListener('orientationchange', updateVh);
   document.getElementById("game-container").addEventListener("click", onClickGameArea);
-  document.get
+  document.getElementById("game-container").addEventListener("dblclick", onDoubleClickGameArea);
+  loadScenario("scenario/000start.json");
+}
+
+window.addEventListener("load", init);
