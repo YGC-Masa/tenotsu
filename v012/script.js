@@ -1,3 +1,15 @@
+// 動的に --vh カスタムプロパティを更新（モバイルブラウザUIの高さ変動対応）
+function updateVh() {
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+// 初期とリサイズ時に呼び出し
+window.addEventListener('resize', updateVh);
+window.addEventListener('orientationchange', updateVh);
+window.addEventListener('load', updateVh);
+
+// シナリオデータ管理用
 let scenarioData = null;
 let currentSceneIndex = 0;
 let isTextDisplaying = false;
@@ -62,6 +74,8 @@ function showScene(index) {
   currentFontSize = style.fontSize || characterStyles[""].fontSize;
   currentSpeed = style.speed || characterStyles[""].speed;
   dialogueBox.style.setProperty("--fontSize", currentFontSize);
+  // 直接フォントサイズ反映も念のため
+  dialogueBox.style.fontSize = currentFontSize;
 
   // セリフ
   const text = scene.text || "";
@@ -138,7 +152,7 @@ function endScenario() {
   clearTimeout(autoTimeout);
 }
 
-// オート
+// オートモード切り替え
 function toggleAutoMode() {
   autoMode = !autoMode;
   if (autoMode && !isTextDisplaying) {
@@ -148,6 +162,7 @@ function toggleAutoMode() {
   }
 }
 
+// ゲームエリアクリック処理
 function onClickGameArea() {
   if (isTextDisplaying) {
     clearTimeout(autoTimeout);
@@ -163,10 +178,10 @@ function onDoubleClickGameArea() {
   toggleAutoMode();
 }
 
+// 初期化
 function init() {
+  updateVh();
+  window.addEventListener('resize', updateVh);
+  window.addEventListener('orientationchange', updateVh);
   document.getElementById("game-container").addEventListener("click", onClickGameArea);
-  document.getElementById("game-container").addEventListener("dblclick", onDoubleClickGameArea);
-  loadScenario("scenario/000start.json");
-}
-
-window.addEventListener("load", init);
+  document.get
