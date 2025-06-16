@@ -1,12 +1,28 @@
 {
+  "bg": "bg_beach.jpg",
   "scenes": [
     {
-      "bg": "bg017.jpg",
+      "name": "緋奈",
+      "text": "海で泳ぐのは爽快だったね！",
       "characters": [
-        { "name": "翠", "side": "center", "src": "a03002.png" }
+        { "name": "緋奈", "side": "center", "src": "a01002.png" }
       ],
-      "name": "翠",
-      "text": "もう一度話し合って、慎重に進めましょう。",
+      "speed": 40,
+      "fontSize": "1.3em"
+    },
+    {
+      "name": "藍",
+      "text": "水に慣れてよかったです。",
+      "characters": [
+        { "name": "藍", "side": "center", "src": "a02002.png" }
+      ],
+      "speed": 50,
+      "fontSize": "1.1em"
+    },
+    {
+      "name": "",
+      "text": "また遊びに行きましょう！",
+      "characters": [],
       "choices": [
         {
           "text": "はじめに戻る",
