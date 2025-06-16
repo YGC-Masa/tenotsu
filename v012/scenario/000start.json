@@ -4,25 +4,17 @@
   "scenes": [
     {
       "name": "",
-      "text": "みんなで話し合う時間だよ。どうする？",
+      "text": "今日はどちらの話題から始めますか？",
       "bg": "bg011.jpg",
       "characters": [],
       "choices": [
         {
-          "text": "みんなで計画を立てる",
-          "jumpToScenario": "scenario/plan_scene.json"
+          "text": "話題Aにする",
+          "jumpToScenario": "scenario/choiceA.json"
         },
         {
-          "text": "休憩をとる",
-          "jumpToScenario": "scenario/rest_scene.json"
-        },
-        {
-          "text": "それぞれに任せる",
-          "jumpToScenario": "scenario/delegate_scene.json"
-        },
-        {
-          "text": "もう一度話し合う",
-          "jumpToScenario": "scenario/repeat_scene.json"
+          "text": "話題Bにする",
+          "jumpToScenario": "scenario/choiceB.json"
         }
       ]
     }
