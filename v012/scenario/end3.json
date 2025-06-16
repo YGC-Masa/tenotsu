@@ -1,14 +1,12 @@
 {
   "scenes": [
     {
-      "bg": "bg016.jpg",
+      "bg": "bg017.jpg",
       "characters": [
-        { "name": "こがね", "side": "left", "src": "a04002.png" },
-        { "name": "翠", "side": "center", "src": "a03002.png" },
-        { "name": "琥珀", "side": "right", "src": "a05002.png" }
+        { "name": "翠", "side": "center", "src": "a03002.png" }
       ],
-      "name": "こがね",
-      "text": "みんなに任せたら、どんな結果になるか楽しみですね！",
+      "name": "翠",
+      "text": "もう一度話し合って、慎重に進めましょう。",
       "choices": [
         {
           "text": "はじめに戻る",
