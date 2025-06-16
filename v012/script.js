@@ -4,7 +4,6 @@ function updateVh() {
   document.documentElement.style.setProperty('--vh', `${vh}px`);
 }
 
-// 初期とリサイズ時に呼び出し
 window.addEventListener('resize', updateVh);
 window.addEventListener('orientationchange', updateVh);
 window.addEventListener('load', updateVh);
@@ -46,7 +45,11 @@ async function loadScenario(url) {
 // シーン表示
 function showScene(index) {
   if (!scenarioData || index >= scenarioData.scenes.length) {
-    endScenario();
+    // 最終シーンに選択肢がなければ endScenario を実行
+    const lastScene = scenarioData?.scenes?.[scenarioData.scenes.length - 1];
+    if (!lastScene?.choices) {
+      endScenario();
+    }
     return;
   }
 
@@ -74,7 +77,6 @@ function showScene(index) {
   currentFontSize = style.fontSize || characterStyles[""].fontSize;
   currentSpeed = style.speed || characterStyles[""].speed;
   dialogueBox.style.setProperty("--fontSize", currentFontSize);
-  // 直接フォントサイズ反映も念のため
   dialogueBox.style.fontSize = currentFontSize;
 
   // セリフ
@@ -111,7 +113,7 @@ function displayText(text, speed) {
   type();
 }
 
-// 選択肢
+// 選択肢表示
 function showChoices(choices) {
   clearChoices();
   choices.forEach(choice => {
@@ -132,7 +134,7 @@ function clearChoices() {
   choicesBox.innerHTML = "";
 }
 
-// 次へ
+// 次のシーンへ
 function nextScene() {
   if (isTextDisplaying) {
     clearTimeout(autoTimeout);
@@ -144,6 +146,7 @@ function nextScene() {
   }
 }
 
+// シナリオ終了処理
 function endScenario() {
   nameBox.textContent = "";
   textBox.textContent = "物語は続く…";
@@ -174,6 +177,7 @@ function onClickGameArea() {
   }
 }
 
+// ダブルクリックでオートモード切り替え
 function onDoubleClickGameArea() {
   toggleAutoMode();
 }
