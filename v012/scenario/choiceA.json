@@ -1,20 +1,51 @@
 {
+  "bg": "bg_mountain.jpg",
+  "bgm": "bgm/main.mp3",
   "scenes": [
     {
-      "bg": "bg012.jpg",
+      "name": "翠",
+      "text": "山へ行く計画ですね。準備は大丈夫ですか？",
       "characters": [
-        { "name": "緋奈", "side": "left", "src": "a01002.png" },
-        { "name": "藍", "side": "center", "src": "a02002.png" }
+        { "name": "翠", "side": "center", "src": "a03002.png" }
       ],
-      "name": "緋奈",
-      "text": "話題Aについて話しましょう。どう進める？",
+      "speed": 40,
+      "fontSize": "1.2em"
+    },
+    {
+      "name": "こがね",
+      "text": "わー！登山とか超楽しみ！でも疲れそう…",
+      "characters": [
+        { "name": "翠", "side": "left", "src": "a03002.png" },
+        { "name": "こがね", "side": "center", "src": "a04002.png" }
+      ],
+      "speed": 30,
+      "fontSize": "1.5em"
+    },
+    {
+      "name": "琥珀",
+      "text": "体力には自信あるよ！みんなを引っ張るね！",
+      "characters": [
+        { "name": "こがね", "side": "left", "src": "a04002.png" },
+        { "name": "琥珀", "side": "center", "src": "a05002.png" }
+      ],
+      "speed": 50,
+      "fontSize": "1.3em"
+    },
+    {
+      "name": "",
+      "text": "どうしますか？",
+      "characters": [
+        { "name": "琥珀", "side": "center", "src": "a05002.png" }
+      ]
+    },
+    {
       "choices": [
         {
-          "text": "みんなで計画を立てる",
+          "text": "しっかり計画を立てる",
           "jumpToScenario": "scenario/end1.json"
         },
         {
-          "text": "少し休憩する",
+          "text": "気楽に行こう",
           "jumpToScenario": "scenario/end2.json"
         }
       ]
