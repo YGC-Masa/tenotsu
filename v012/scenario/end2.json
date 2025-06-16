@@ -1,34 +1,26 @@
 {
-  "bg": "bg_field.jpg",
   "scenes": [
     {
-      "name": "こがね",
-      "text": "気楽にいったからこそ楽しかったんだよね！",
+      "bg": "bg_stage.jpg",
       "characters": [
-        { "name": "こがね", "side": "center", "src": "a04002.png" }
+        { "side": "left", "src": "a04002.png" },
+        { "side": "right", "src": "a05002.png" }
       ],
-      "speed": 30,
-      "fontSize": "1.5em"
+      "name": "こがね",
+      "text": "あっはは、やっちゃったね私たち～！まさか優勝しちゃうとは～！"
     },
     {
-      "name": "緋奈",
-      "text": "次はもっとアクティブに動こうよ！",
-      "characters": [
-        { "name": "緋奈", "side": "center", "src": "a01002.png" }
-      ],
-      "speed": 40,
-      "fontSize": "1.3em"
+      "name": "琥珀",
+      "text": "こがね！ちゃんと準備してた成果だよ！そして、あなたのおかげっ！"
     },
     {
       "name": "",
-      "text": "楽しい思い出ができましたね。",
-      "characters": [],
-      "choices": [
-        {
-          "text": "はじめに戻る",
-          "jumpToScenario": "scenario/000start.json"
-        }
-      ]
+      "text": "2人は観客に手を振りながら、笑顔でステージを降りていった。",
+      "effect": "fadeout"
+    },
+    {
+      "name": "",
+      "text": "【END：勝利エンド】"
     }
   ]
 }
