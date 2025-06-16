@@ -1,52 +1,29 @@
 {
-  "bg": "bg_room.jpg",
-  "bgm": "bgm/main.mp3",
   "scenes": [
     {
-      "name": "",
-      "text": "こんにちは。今日はみんなと一緒に相談があります。",
-      "characters": [],
-      "speed": 50,
-      "fontSize": "1.2em"
-    },
-    {
+      "bg": "bg_room.jpg",
+      "characters": [
+        { "side": "left", "src": "a01002.png" },
+        { "side": "center", "src": "a03002.png" },
+        { "side": "right", "src": "a05002.png" }
+      ],
       "name": "緋奈",
-      "text": "おー！楽しみだね！話そうよ！",
-      "characters": [
-        { "name": "緋奈", "side": "center", "src": "a01002.png" }
-      ],
-      "speed": 40,
-      "fontSize": "1.3em"
+      "text": "わーい！今日もみんなで集まれて嬉しいなっ！"
     },
     {
+      "characters": [
+        { "side": "left", "src": "a02002.png" },
+        { "side": "center", "src": "a04002.png" },
+        { "side": "right", "src": "a05002.png" }
+      ],
       "name": "藍",
-      "text": "どんな話題ですか？しっかり聞きますね。",
-      "characters": [
-        { "name": "緋奈", "side": "left", "src": "a01002.png" },
-        { "name": "藍", "side": "center", "src": "a02002.png" }
-      ],
-      "speed": 60,
-      "fontSize": "1em"
+      "text": "……ふふ、緋奈ちゃんってほんと元気だよね。",
+      "bg": "bg_school.jpg"
     },
     {
-      "name": "",
-      "text": "さて、どちらの話題から始めましょうか？",
-      "characters": [
-        { "name": "緋奈", "side": "left", "src": "a01002.png" },
-        { "name": "藍", "side": "center", "src": "a02002.png" }
-      ]
+      "name": "翠",
+      "text": "みなさん、本日の課題は覚えておりますか？"
     },
     {
-      "choices": [
-        {
-          "text": "話題A（山へ行く）",
-          "jumpToScenario": "scenario/choiceA.json"
-        },
-        {
-          "text": "話題B（海へ行く）",
-          "jumpToScenario": "scenario/choiceB.json"
-        }
-      ]
-    }
-  ]
-}
+      "name": "こがね",
+      "text": "課題ってなに～？聞いてないんだけ
