@@ -1,34 +1,30 @@
 {
-  "bg": "bg_beach.jpg",
   "scenes": [
     {
-      "name": "緋奈",
-      "text": "海で泳ぐのは爽快だったね！",
+      "bg": "bg_night_library.jpg",
       "characters": [
-        { "name": "緋奈", "side": "center", "src": "a01002.png" }
+        { "side": "left", "src": "a03002.png" },
+        { "side": "right", "src": "a02002.png" }
       ],
-      "speed": 40,
-      "fontSize": "1.3em"
+      "name": "翠",
+      "text": "ふぅ……最後まで冷静に判断できましたね。素晴らしい結果です。"
     },
     {
       "name": "藍",
-      "text": "水に慣れてよかったです。",
-      "characters": [
-        { "name": "藍", "side": "center", "src": "a02002.png" }
-      ],
-      "speed": 50,
-      "fontSize": "1.1em"
+      "text": "私……少しは役に立てたかな……？"
+    },
+    {
+      "name": "翠",
+      "text": "もちろんです。藍さんの観察力には助けられましたよ。"
     },
     {
       "name": "",
-      "text": "また遊びに行きましょう！",
-      "characters": [],
-      "choices": [
-        {
-          "text": "はじめに戻る",
-          "jumpToScenario": "scenario/000start.json"
-        }
-      ]
+      "text": "机の上には、緻密な作戦メモと勝利の証が静かに輝いていた。",
+      "effect": "fadeout"
+    },
+    {
+      "name": "",
+      "text": "【END：知略エンド】"
     }
   ]
 }
