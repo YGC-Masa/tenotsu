@@ -1,15 +1,14 @@
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 html, body {
-  width: 100%;
   height: 100%;
-  overflow: hidden;
-  font-family: system-ui, sans-serif;
+  font-family: sans-serif;
   background-color: black;
+  overflow: hidden;
 }
 
 #game-container {
@@ -26,51 +25,49 @@ html, body {
   z-index: 0;
 }
 
-/* キャラ表示スロット */
+/* キャラ表示 */
 .char-slot {
   position: absolute;
   bottom: 0;
-  width: 33.33%;
+  max-height: 90%;
+  z-index: 2;
+  transition: opacity 0.3s;
   display: flex;
   justify-content: center;
   align-items: flex-end;
+  width: 33.33%;
 }
 
 #char-left {
-  left: 0;
+  left: 5%;
 }
 
 #char-center {
-  left: 33.33%;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 #char-right {
-  right: 0;
-  width: 33.34%;
+  right: 5%;
 }
 
-/* キャラ画像 */
 .char-image {
+  max-height: 90%;
   width: auto;
   height: auto;
-  max-width: 90%;
-  max-height: 100%;
   object-fit: contain;
-  transform-origin: bottom center;
 }
 
-/* セリフボックス */
+/* セリフまわり */
 #dialogue-box {
   position: absolute;
   bottom: 0;
   width: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  padding: 1em;
+  background: rgba(0, 0, 0, 0.6);
   color: white;
-  padding: 10px;
-  font-size: var(--fontSize, 1em);
-  z-index: 10;
-  padding-bottom: env(safe-area-inset-bottom, 0);
-  max-height: 30vh;
+  z-index: 3;
+  max-height: 35vh;
   overflow-y: auto;
 }
 
@@ -80,61 +77,30 @@ html, body {
 }
 
 #text {
-  margin-bottom: 1em;
-  min-height: 3em;
+  font-size: 1.1em;
+  line-height: 1.4em;
 }
 
+/* 選択肢 */
 #choices {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5em;
-  margin-top: 0.5em;
+  position: absolute;
+  bottom: 40%;
+  width: 100%;
+  text-align: center;
+  z-index: 4;
 }
 
 #choices button {
-  min-width: 40%;
-  padding: 0.5em 1em;
-  background: #444;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  margin: 0.5em;
+  padding: 0.8em 1.2em;
   font-size: 1em;
+  border: none;
+  border-radius: 0.5em;
+  background: white;
+  color: black;
+  cursor: pointer;
 }
 
 #choices button:hover {
-  background: #666;
-}
-
-/* モバイル縦画面：キャラ画像高さ50vh */
-@media (orientation: portrait) {
-  .char-image {
-    height: 50vh;
-    max-height: 50vh;
-    max-width: none;
-  }
-}
-
-/* モバイル横画面：キャラ画像高さ80vh */
-@media (orientation: landscape) and (max-width: 768px) {
-  .char-image {
-    height: 80vh;
-    max-height: 80vh;
-    max-width: none;
-  }
-
-  #dialogue-box {
-    max-height: 35vh;
-    font-size: 0.9em;
-  }
-}
-
-/* PC横画面：キャラ画像高さ70vh */
-@media (min-width: 769px) {
-  .char-image {
-    height: 70vh;
-    max-height: 70vh;
-    max-width: none;
-  }
+  background: #ddd;
 }
