@@ -1,20 +1,51 @@
 {
+  "bg": "bg_beach.jpg",
+  "bgm": "bgm/beach.mp3",
   "scenes": [
     {
-      "bg": "bg013.jpg",
+      "name": "藍",
+      "text": "海へ行くのもいいですね。泳げますか？",
       "characters": [
-        { "name": "翠", "side": "left", "src": "a03002.png" },
+        { "name": "藍", "side": "center", "src": "a02002.png" }
+      ],
+      "speed": 60,
+      "fontSize": "1.1em"
+    },
+    {
+      "name": "緋奈",
+      "text": "泳げるよ！バーベキューも楽しみ！",
+      "characters": [
+        { "name": "藍", "side": "left", "src": "a02002.png" },
+        { "name": "緋奈", "side": "center", "src": "a01002.png" }
+      ],
+      "speed": 35,
+      "fontSize": "1.4em"
+    },
+    {
+      "name": "こがね",
+      "text": "海はアンニュイだけど、好き〜",
+      "characters": [
+        { "name": "緋奈", "side": "left", "src": "a01002.png" },
         { "name": "こがね", "side": "center", "src": "a04002.png" }
       ],
-      "name": "翠",
-      "text": "話題Bに移りましょう。どうする？",
+      "speed": 50,
+      "fontSize": "1.2em"
+    },
+    {
+      "name": "",
+      "text": "どうしましょう？",
+      "characters": [
+        { "name": "こがね", "side": "center", "src": "a04002.png" }
+      ]
+    },
+    {
       "choices": [
         {
-          "text": "全員に任せる",
+          "text": "海で遊ぶ",
           "jumpToScenario": "scenario/end3.json"
         },
         {
-          "text": "もう一度話し合う",
+          "text": "浜辺でのんびり",
           "jumpToScenario": "scenario/end4.json"
         }
       ]
