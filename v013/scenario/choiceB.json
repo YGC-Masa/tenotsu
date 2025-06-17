@@ -1,0 +1,26 @@
+{
+  "scenes": [
+    {
+      "characters": [
+        { "side": "left", "src": "a03002.png", "effect": "fadein" }
+      ],
+      "name": "翠",
+      "text": "忘れ物はないか、もう一度確認しておきましょう。"
+    },
+    {
+      "characters": [
+        { "side": "left", "src": "a03002.png" },
+        { "side": "right", "src": "a02002.png", "effect": "slideinRight" }
+      ],
+      "name": "藍",
+      "text": "うん、ありがとう……。翠さんって、ほんとに頼りになる。"
+    },
+    {
+      "text": "静かな準備の時間が、逆に気持ちを落ち着かせてくれた。",
+      "choices": [
+        { "text": "準備が整い出発", "jump": "end3.json" },
+        { "text": "やっぱりやめようか", "jump": "end4.json" }
+      ]
+    }
+  ]
+}
