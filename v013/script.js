@@ -178,7 +178,7 @@ function init() {
   updateVh();
   document.getElementById("game-container").addEventListener("click", onClickGameArea);
   document.getElementById("game-container").addEventListener("dblclick", onDoubleClickGameArea);
-  loadScenario("scenario/000start.json");
+  loadScenario("./scenario/000start.json");
 }
 
 window.addEventListener("load", init);
