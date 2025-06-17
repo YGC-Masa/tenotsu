@@ -1,83 +1,25 @@
-[
-  {
-    "bg": "bg011.jpg",
-    "bgm": "main.mp3",
-    "name": "",
-    "text": "画像表示エフェクトのテストを開始します。"
-  },
-  {
-    "char": {
-      "center": { "name": "翠", "img": "a03002.png", "effect": "fadein" }
+{
+  "scenes": [
+    {
+      "bg": "bg011.jpg",
+      "characters": [
+        { "side": "center", "src": "a03002.png", "effect": "fadein" }
+      ],
+      "name": "翠",
+      "text": "ようこそ、物語の世界へ。"
     },
-    "name": "翠",
-    "text": "こちらは fadein の効果です。"
-  },
-  {
-    "char": {
-      "center": null
+    {
+      "characters": [
+        { "side": "right", "src": "a04002.png", "effect": "slideinRight" }
+      ],
+      "name": "こがね",
+      "text": "なんか始まったっぽくない？"
     },
-    "name": "",
-    "text": "キャラを一度退場させます。"
-  },
-  {
-    "char": {
-      "left": { "name": "緋奈", "img": "a01002.png", "effect": "slideinLeft" }
-    },
-    "name": "緋奈",
-    "text": "左からスライドインしました！"
-  },
-  {
-    "char": {
-      "left": null
-    },
-    "name": "",
-    "text": "次の効果に移ります。"
-  },
-  {
-    "char": {
-      "right": { "name": "藍", "img": "a02002.png", "effect": "slideinRight" }
-    },
-    "name": "藍",
-    "text": "右からスライドインしました……。"
-  },
-  {
-    "char": {
-      "right": null
-    },
-    "name": "",
-    "text": "続けて、上下のスライドインを確認します。"
-  },
-  {
-    "char": {
-      "center": { "name": "こがね", "img": "a04002.png", "effect": "slideinUp" }
-    },
-    "name": "こがね",
-    "text": "下から、こんにちは〜"
-  },
-  {
-    "char": {
-      "center": null
-    },
-    "name": "",
-    "text": "最後に上から登場です。"
-  },
-  {
-    "char": {
-      "center": { "name": "琥珀", "img": "a05002.png", "effect": "slideinDown" }
-    },
-    "name": "琥珀",
-    "text": "うえからジャンプイン！"
-  },
-  {
-    "char": {
-      "center": null
-    },
-    "name": "",
-    "text": "エフェクト確認は以上です。"
-  },
-  {
-    "name": "",
-    "text": "シナリオを終了します。",
-    "next": null
-  }
-]
+    {
+      "choices": [
+        { "text": "Aの道へ", "jump": "choiceA.json" },
+        { "text": "Bの道へ", "jump": "choiceB.json" }
+      ]
+    }
+  ]
+}
