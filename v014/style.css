@@ -62,16 +62,23 @@ html, body {
   transition: opacity 0.5s;
 }
 
-/* エフェクトクラス */
-.fadein {
-  opacity: 1 !important;
+/* アニメーション定義 */
+@keyframes fadeInAnim {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.slideinLeft {
-  animation: slideLeft 0.5s ease-out forwards;
+.fadein {
+  animation: fadeInAnim 0.8s ease forwards;
 }
-.slideinRight {
-  animation: slideRight 0.5s ease-out forwards;
+
+@keyframes fadeOutAnim {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.fadeout {
+  animation: fadeOutAnim 0.8s ease forwards;
 }
 
 @keyframes slideLeft {
@@ -79,9 +86,35 @@ html, body {
   to { transform: translateX(0); opacity: 1; }
 }
 
+.slideinLeft {
+  animation: slideLeft 0.5s ease-out forwards;
+}
+
 @keyframes slideRight {
   from { transform: translateX(100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
+}
+
+.slideinRight {
+  animation: slideRight 0.5s ease-out forwards;
+}
+
+@keyframes slideOutLeft {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-100%); opacity: 0; }
+}
+
+.slideoutLeft {
+  animation: slideOutLeft 0.8s ease forwards;
+}
+
+@keyframes slideOutRight {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+
+.slideoutRight {
+  animation: slideOutRight 0.8s ease forwards;
 }
 
 /* セリフ表示 */
