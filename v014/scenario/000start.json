@@ -1,25 +1,29 @@
-{
-  "scenes": [
-    {
-      "bg": "bg011.jpg",
-      "characters": [
-        { "side": "center", "src": "a03002.png", "effect": "fadein" }
-      ],
-      "name": "翠",
-      "text": "ようこそ、物語の世界へ。"
-    },
-    {
-      "characters": [
-        { "side": "right", "src": "a04002.png", "effect": "slideinRight" }
-      ],
-      "name": "こがね",
-      "text": "なんか始まったっぽくない？"
-    },
-    {
-      "choices": [
-        { "text": "Aの道へ", "jump": "choiceA.json" },
-        { "text": "Bの道へ", "jump": "choiceB.json" }
-      ]
-    }
-  ]
-}
+[
+  {
+    "bg": "bg01.jpg",
+    "bgm": "bgm01.mp3",
+    "characters": [
+      { "side": "left", "src": "hina.png", "effect": "slideinLeft" },
+      { "side": "right", "src": "ai.png", "effect": "slideinRight" }
+    ],
+    "name": "緋奈",
+    "text": "こんにちは、緋奈です。スライドイン効果を試しています。"
+  },
+  {
+    "bg": "bg01.jpg",
+    "characters": [
+      { "side": "left", "src": null },       // 緋奈が退場（フェードアウト）
+      { "side": "right", "src": "ai.png" }
+    ],
+    "name": "藍",
+    "text": "藍です。緋奈が消えました。フェードアウト効果も使われています。"
+  },
+  {
+    "bg": "bg01.jpg",
+    "characters": [
+      { "side": "center", "src": "kogane.png", "effect": "fadein" }
+    ],
+    "name": "こがね",
+    "text": "真ん中にこがねがフェードインします。"
+  }
+]
