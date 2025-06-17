@@ -3,25 +3,22 @@
   padding: 0;
   box-sizing: border-box;
 }
-
 html, body {
   height: 100%;
   font-family: sans-serif;
   background-color: black;
   overflow: hidden;
 }
-
 :root {
   --vh: 100vh;
+  --fontSize: 1em;
 }
-
 #game-container {
   position: relative;
   width: 100%;
   height: calc(var(--vh, 1vh) * 100);
   overflow: hidden;
 }
-
 #background {
   position: absolute;
   width: 100%;
@@ -29,8 +26,6 @@ html, body {
   object-fit: cover;
   z-index: 0;
 }
-
-/* キャラ表示 */
 .char-slot {
   position: absolute;
   bottom: 0;
@@ -41,7 +36,6 @@ html, body {
   align-items: flex-end;
   width: 33.33%;
 }
-
 #char-left {
   left: 5%;
 }
@@ -52,7 +46,6 @@ html, body {
 #char-right {
   right: 5%;
 }
-
 .char-image {
   max-height: 90%;
   width: auto;
@@ -61,63 +54,23 @@ html, body {
   opacity: 0;
   transition: opacity 0.5s;
 }
-
-/* アニメーション定義 */
-@keyframes fadeInAnim {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
 .fadein {
-  animation: fadeInAnim 0.8s ease forwards;
+  opacity: 1 !important;
 }
-
-@keyframes fadeOutAnim {
-  from { opacity: 1; }
-  to { opacity: 0; }
+.slideinLeft {
+  animation: slideLeft 0.5s ease-out forwards;
 }
-
-.fadeout {
-  animation: fadeOutAnim 0.8s ease forwards;
+.slideinRight {
+  animation: slideRight 0.5s ease-out forwards;
 }
-
 @keyframes slideLeft {
   from { transform: translateX(-100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
-
-.slideinLeft {
-  animation: slideLeft 0.5s ease-out forwards;
-}
-
 @keyframes slideRight {
   from { transform: translateX(100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
-
-.slideinRight {
-  animation: slideRight 0.5s ease-out forwards;
-}
-
-@keyframes slideOutLeft {
-  from { transform: translateX(0); opacity: 1; }
-  to { transform: translateX(-100%); opacity: 0; }
-}
-
-.slideoutLeft {
-  animation: slideOutLeft 0.8s ease forwards;
-}
-
-@keyframes slideOutRight {
-  from { transform: translateX(0); opacity: 1; }
-  to { transform: translateX(100%); opacity: 0; }
-}
-
-.slideoutRight {
-  animation: slideOutRight 0.8s ease forwards;
-}
-
-/* セリフ表示 */
 #dialogue-box {
   position: absolute;
   bottom: 0;
@@ -130,7 +83,6 @@ html, body {
   overflow-y: auto;
   font-size: var(--fontSize, 1em);
 }
-
 #name {
   font-weight: bold;
   margin-bottom: 0.5em;
@@ -138,8 +90,6 @@ html, body {
 #text {
   line-height: 1.4em;
 }
-
-/* 選択肢 */
 #choices {
   position: absolute;
   bottom: 40%;
@@ -147,7 +97,6 @@ html, body {
   text-align: center;
   z-index: 4;
 }
-
 #choices button {
   margin: 0.5em;
   padding: 0.8em 1.2em;
@@ -161,7 +110,6 @@ html, body {
 #choices button:hover {
   background: #ddd;
 }
-
 @media screen and (min-width: 768px) {
   .char-image {
     max-height: 70vh;
