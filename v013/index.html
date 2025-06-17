@@ -2,59 +2,31 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>ノベルゲーム v013</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>ノベルゲーム</title>
   <link rel="stylesheet" href="style.css" />
-  <style>
-    /* 画像エフェクト用CSS例 */
-    .fadein {
-      animation: fadein 1s forwards;
-    }
-    @keyframes fadein {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    /* キャラクター表示スロットの横並び */
-    #char-layer {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      gap: 1em;
-      height: 60%;
-      pointer-events: none;
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      z-index: 1;
-    }
-    .char-slot {
-      width: 25vw;
-      max-width: 200px;
-      height: 100%;
-      position: relative;
-    }
-    .char-image {
-      max-height: 100%;
-      width: auto;
-      display: block;
-      margin: 0 auto;
-    }
-  </style>
 </head>
 <body>
   <div id="game-container">
-    <div id="background"></div>
-    <div id="char-layer"></div>
+    <img id="background" src="" alt="背景" />
+    
+    <div id="char-layer">
+      <div id="char-left" class="char-slot"></div>
+      <div id="char-center" class="char-slot"></div>
+      <div id="char-right" class="char-slot"></div>
+    </div>
 
     <div id="dialogue-box">
-      <div id="name-area"><span id="name"></span></div>
-      <div id="text-area"><span id="text"></span></div>
-      <div id="choices"></div>
+      <div class="name-area" id="name"></div>
+      <div id="text"></div>
     </div>
+
+    <div class="choices-area" id="choices"></div>
   </div>
 
-  <script type="module" src="script.js"></script>
+  <script src="config.js"></script>
+  <script src="characterColors.js"></script>
+  <script src="characterStyles.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
