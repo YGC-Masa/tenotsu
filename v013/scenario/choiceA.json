@@ -1,0 +1,26 @@
+{
+  "scenes": [
+    {
+      "characters": [
+        { "side": "center", "src": "a05002.png", "effect": "slideinLeft" }
+      ],
+      "name": "琥珀",
+      "text": "よーしっ！全力で行くよっ！！"
+    },
+    {
+      "characters": [
+        { "side": "center", "src": "a05002.png" },
+        { "side": "left", "src": "a04002.png", "effect": "fadein" }
+      ],
+      "name": "こがね",
+      "text": "ふふっ、相変わらず元気だねぇ。あたしも負けてらんないか〜。"
+    },
+    {
+      "text": "そのまま、にぎやかに出発した。",
+      "choices": [
+        { "text": "山へ向かう", "jump": "end1.json" },
+        { "text": "街で寄り道する", "jump": "end2.json" }
+      ]
+    }
+  ]
+}
