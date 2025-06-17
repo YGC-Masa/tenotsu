@@ -3,117 +3,123 @@
   --fontSize: 1em;
 }
 
-body {
+html, body {
   margin: 0;
   padding: 0;
-  background-color: black;
+  height: 100%;
   font-family: sans-serif;
+  background: #000;
   overflow: hidden;
-  height: calc(var(--vh, 1vh) * 100);
 }
 
 #game-container {
-  width: 100%;
-  height: 100%;
   position: relative;
+  width: 100%;
+  height: calc(var(--vh, 1vh) * 100);
+  overflow: hidden;
+  touch-action: manipulation;
 }
 
 #background {
+  position: absolute;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  position: absolute;
-  top: 0;
-  left: 0;
   z-index: 0;
 }
 
-.character-slot {
+/* キャラレイヤー */
+#char-layer {
   position: absolute;
-  bottom: 0;
-  width: 33.3%;
+  width: 100%;
   height: 100%;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 5%;
+  box-sizing: border-box;
+}
+
+.char-slot {
+  width: 30%;
+  height: 80%;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  pointer-events: none;
-  z-index: 1;
-}
-
-#char-left {
-  left: 0;
-}
-
-#char-center {
-  left: 33.3%;
-}
-
-#char-right {
-  left: 66.6%;
 }
 
 .char-image {
   max-height: 100%;
   max-width: 100%;
-  opacity: 0;
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition: opacity 0.5s ease;
 }
 
-/* エフェクトクラス */
+/* 各種エフェクト */
 .fadein {
-  opacity: 1;
-  transform: translateY(0);
+  animation: fadeIn 0.8s ease forwards;
+}
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 .slideinLeft {
-  opacity: 1;
-  transform: translateX(-30px);
+  animation: slideInLeft 0.8s ease forwards;
+}
+@keyframes slideInLeft {
+  0% { transform: translateX(-100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
 }
 
 .slideinRight {
-  opacity: 1;
-  transform: translateX(30px);
+  animation: slideInRight 0.8s ease forwards;
+}
+@keyframes slideInRight {
+  0% { transform: translateX(100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
 }
 
-/* テキスト・UI */
-#text-area {
+/* セリフ・名前・選択肢 */
+#dialogue-box {
   position: absolute;
   bottom: 0;
   width: 100%;
-  max-height: 35vh;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.6);
   color: white;
   padding: 1em;
+  box-sizing: border-box;
   font-size: var(--fontSize);
   z-index: 2;
-  box-sizing: border-box;
+  max-height: 35vh;
 }
 
-#name {
+.name-area {
   font-weight: bold;
   margin-bottom: 0.5em;
 }
 
-#text {
-  white-space: pre-wrap;
+.choices-area {
+  position: absolute;
+  bottom: 35vh;
+  width: 100%;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-#choices {
-  margin-top: 1em;
-}
-
-#choices button {
-  display: block;
-  margin: 0.5em 0;
+.choices-area button {
+  margin: 0.3em;
   padding: 0.5em 1em;
   font-size: 1em;
-  background: #222;
-  color: white;
   border: none;
+  background-color: #fff;
+  color: #000;
   border-radius: 5px;
   cursor: pointer;
 }
 
-#choices button:hover {
-  background: #444;
+.choices-area button:hover {
+  background-color: #ddd;
 }
