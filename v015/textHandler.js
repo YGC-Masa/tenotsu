@@ -1,27 +1,56 @@
 // textHandler.js
 
-export let currentSpeed = 40;
-let textInterval = null;
-export let isTextTyping = false;
+let currentTextTimer = null;
+let isTextAnimating = false;
 
-export function setTextWithSpeed(textElement, text, speed, callback) {
-  clearInterval(textInterval);
-  isTextTyping = true;
-  textElement.innerHTML = "";
+/**
+ * 指定速度で1文字ずつテキストを表示
+ */
+export function setTextWithSpeed(element, text, speed, callback) {
+  if (currentTextTimer) {
+    clearInterval(currentTextTimer);
+  }
+
+  element.innerHTML = "";
+  isTextAnimating = true;
+
   let i = 0;
-  textInterval = setInterval(() => {
-    textElement.innerHTML += text[i++];
-    if (i >= text.length) {
-      clearInterval(textInterval);
-      isTextTyping = false;
+  currentTextTimer = setInterval(() => {
+    if (i < text.length) {
+      element.innerHTML += text[i++];
+    } else {
+      clearInterval(currentTextTimer);
+      currentTextTimer = null;
+      isTextAnimating = false;
       if (callback) callback();
     }
   }, speed);
 }
 
-export function skipTextImmediately(textElement, text, callback) {
-  clearInterval(textInterval);
-  isTextTyping = false;
-  textElement.innerHTML = text;
-  if (callback) callback();
+/**
+ * アニメーション中のテキストを即時表示（スキップ）
+ */
+export function skipText(element, fullText) {
+  if (currentTextTimer) {
+    clearInterval(currentTextTimer);
+    currentTextTimer = null;
+  }
+  isTextAnimating = false;
+  element.innerHTML = fullText;
+}
+
+/**
+ * 現在アニメーション中かどうかを返す
+ */
+export function isAnimating() {
+  return isTextAnimating;
+}
+
+/**
+ * キャラごとのフォントサイズ・速度を適用して速度を返す
+ */
+export function setCharacterStyle(name, styles, defaultFontSize, defaultSpeed) {
+  const style = styles[name] || styles[""];
+  document.documentElement.style.setProperty("--fontSize", style.fontSize || defaultFontSize);
+  return style.speed || defaultSpeed;
 }
