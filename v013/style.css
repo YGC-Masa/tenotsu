@@ -28,7 +28,6 @@ html, body {
   height: 100%;
   object-fit: cover;
   z-index: 0;
-  transition: all 0.8s ease;
 }
 
 /* キャラ表示 */
@@ -42,20 +41,50 @@ html, body {
   align-items: flex-end;
   width: 33.33%;
 }
-#char-left { left: 5%; }
-#char-center { left: 50%; transform: translateX(-50%); }
-#char-right { right: 5%; }
+
+#char-left {
+  left: 5%;
+}
+#char-center {
+  left: 50%;
+  transform: translateX(-50%);
+}
+#char-right {
+  right: 5%;
+}
 
 .char-image {
   max-height: 90%;
   width: auto;
   height: auto;
   object-fit: contain;
-  transition: all 0.8s ease;
   opacity: 0;
+  transition: opacity 0.5s;
 }
 
-/* セリフ */
+/* エフェクトクラス */
+.fadein {
+  opacity: 1 !important;
+}
+
+.slideinLeft {
+  animation: slideLeft 0.5s ease-out forwards;
+}
+.slideinRight {
+  animation: slideRight 0.5s ease-out forwards;
+}
+
+@keyframes slideLeft {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* セリフ表示 */
 #dialogue-box {
   position: absolute;
   bottom: 0;
@@ -68,8 +97,14 @@ html, body {
   overflow-y: auto;
   font-size: var(--fontSize, 1em);
 }
-#name { font-weight: bold; margin-bottom: 0.5em; }
-#text { line-height: 1.4em; }
+
+#name {
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+#text {
+  line-height: 1.4em;
+}
 
 /* 選択肢 */
 #choices {
@@ -79,6 +114,7 @@ html, body {
   text-align: center;
   z-index: 4;
 }
+
 #choices button {
   margin: 0.5em;
   padding: 0.8em 1.2em;
@@ -93,42 +129,8 @@ html, body {
   background: #ddd;
 }
 
-/* PC横画面向け */
 @media screen and (min-width: 768px) {
   .char-image {
     max-height: 70vh;
   }
-}
-
-/* エフェクト */
-.effect-fadein {
-  animation: fadein 0.8s ease forwards;
-}
-@keyframes fadein {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.effect-slideinLeft {
-  animation: slideinLeft 0.8s ease forwards;
-}
-@keyframes slideinLeft {
-  from { transform: translateX(-100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-.effect-slideinRight {
-  animation: slideinRight 0.8s ease forwards;
-}
-@keyframes slideinRight {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-.effect-slideinUp {
-  animation: slideinUp 0.8s ease forwards;
-}
-@keyframes slideinUp {
-  from { transform: translateY(100%); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
 }
