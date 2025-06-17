@@ -55,31 +55,46 @@ function showScene(scene) {
     }
   }
 
-  // キャラ表示
+  // キャラ表示・退場処理
   if (scene.characters) {
     ["left", "center", "right"].forEach(pos => {
       const slot = charSlots[pos];
       const charData = scene.characters.find(c => c.side === pos);
-      slot.innerHTML = "";
 
-      if (charData && charData.src) {
-        const img = document.createElement("img");
-        img.src = config.charPath + charData.src;
-        img.classList.add("char-image");
+      const existingImg = slot.querySelector("img");
 
-        // エフェクト
-        if (charData.effect) {
-          img.classList.add(charData.effect);
-        } else {
-          img.classList.add("fadein"); // デフォルト効果
+      if (!charData || charData.src === null) {
+        if (existingImg) {
+          existingImg.classList.remove("fadein", "slideinLeft", "slideinRight");
+          existingImg.classList.add("fadeout");
+          existingImg.addEventListener("animationend", () => {
+            if (existingImg.parentNode) {
+              existingImg.parentNode.removeChild(existingImg);
+            }
+          }, { once: true });
         }
-
-        slot.appendChild(img);
+        return;
       }
+
+      if (existingImg) {
+        // ここは単純置き換え
+        slot.innerHTML = "";
+      }
+
+      const img = document.createElement("img");
+      img.src = config.charPath + charData.src;
+      img.classList.add("char-image");
+
+      if (charData.effect) {
+        img.classList.add(charData.effect);
+      } else {
+        img.classList.add("fadein");
+      }
+      slot.appendChild(img);
     });
   }
 
-  // 名前とセリフ
+  // 名前・セリフ
   if (scene.name !== undefined && scene.text !== undefined) {
     const color = characterColors[scene.name] || "#FFFFFF";
     nameEl.textContent = scene.name;
@@ -107,39 +122,33 @@ function showScene(scene) {
   }
 }
 
+async function loadScenario(filename) {
+  try {
+    const res = await fetch(config.scenarioPath + filename);
+    if (!res.ok) throw new Error("Failed to load scenario");
+    const data = await res.json();
+    currentScenario = filename;
+    currentIndex = 0;
+    showScene(data[currentIndex]);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 function next() {
   fetch(config.scenarioPath + currentScenario)
     .then(res => res.json())
     .then(data => {
       currentIndex++;
-      if (currentIndex < data.scenes.length) {
-        showScene(data.scenes[currentIndex]);
+      if (currentIndex < data.length) {
+        showScene(data[currentIndex]);
+      } else {
+        console.log("End of scenario");
       }
-    });
+    })
+    .catch(console.error);
 }
 
-function loadScenario(filename) {
-  currentScenario = filename;
-  currentIndex = 0;
-  fetch(config.scenarioPath + filename)
-    .then(res => res.json())
-    .then(data => {
-      showScene(data.scenes[0]);
-    });
-}
-
-document.addEventListener("click", () => {
-  if (!isAuto && choicesEl.children.length === 0) {
-    next();
-  }
-});
-
-window.addEventListener("load", () => {
+window.onload = () => {
   loadScenario(currentScenario);
-  setVhVariable();
-});
-
-function setVhVariable() {
-  let vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty("--vh", `${vh}px`);
-}
+};
