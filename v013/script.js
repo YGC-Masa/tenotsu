@@ -1,125 +1,192 @@
-:root {
-  --vh: 1vh;
-  --fontSize: 1em;
+// 動的に --vh カスタムプロパティを更新
+function updateVh() {
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: sans-serif;
-  background: #000;
-  overflow: hidden;
+// 初期とリサイズ時に更新
+window.addEventListener('resize', updateVh);
+window.addEventListener('orientationchange', updateVh);
+window.addEventListener('load', updateVh);
+
+// グローバル変数
+let scenarioData = null;
+let currentSceneIndex = 0;
+let isTextDisplaying = false;
+let autoMode = false;
+let autoTimeout = null;
+
+let charElements = {
+  left: document.getElementById("char-left"),
+  center: document.getElementById("char-center"),
+  right: document.getElementById("char-right"),
+};
+
+let backgroundElement = document.getElementById("background");
+let dialogueBox = document.getElementById("dialogue-box");
+let nameBox = document.getElementById("name");
+let textBox = document.getElementById("text");
+let choicesBox = document.getElementById("choices");
+
+let currentFontSize = characterStyles[""].fontSize || "1em";
+let currentSpeed = characterStyles[""].speed || 40;
+
+// シナリオ読み込み
+async function loadScenario(fileName) {
+  try {
+    const res = await fetch(config.scenarioPath + fileName);
+    scenarioData = await res.json();
+    currentSceneIndex = 0;
+    showScene(currentSceneIndex);
+  } catch (e) {
+    console.error("読み込み失敗:", e);
+  }
 }
 
-#game-container {
-  position: relative;
-  width: 100%;
-  height: calc(var(--vh, 1vh) * 100);
-  overflow: hidden;
-  touch-action: manipulation;
+// シーン表示
+function showScene(index) {
+  if (!scenarioData || index >= scenarioData.scenes.length) return;
+
+  const scene = scenarioData.scenes[index];
+
+  // 背景
+  if (scene.bg) {
+    backgroundElement.src = config.bgPath + scene.bg;
+  }
+
+  // キャラ表示
+  ["left", "center", "right"].forEach(pos => {
+    const charData = scene.characters?.find(c => c.side === pos);
+    const target = charElements[pos];
+    if (charData && charData.src && charData.src.toLowerCase() !== "null") {
+      const img = document.createElement("img");
+      img.src = config.charPath + charData.src;
+      img.className = "char-image";
+
+      if (charData.effect) {
+        img.classList.add(charData.effect);
+      }
+
+      target.innerHTML = "";
+      target.appendChild(img);
+    } else {
+      target.innerHTML = "";
+    }
+  });
+
+  // 名前と色
+  nameBox.textContent = scene.name || "";
+  nameBox.style.color = characterColors[scene.name] || characterColors[""];
+
+  // フォントサイズと速度（キャラ別）
+  const style = characterStyles[scene.name] || characterStyles[""];
+  currentFontSize = style.fontSize || characterStyles[""].fontSize;
+  currentSpeed = style.speed || characterStyles[""].speed;
+  dialogueBox.style.setProperty("--fontSize", currentFontSize);
+  dialogueBox.style.fontSize = currentFontSize;
+
+  // セリフ
+  const text = scene.text || "";
+  const speed = scene.speed ?? currentSpeed;
+  displayText(text, speed);
+
+  // 選択肢
+  if (scene.choices) {
+    showChoices(scene.choices);
+  } else {
+    clearChoices();
+  }
 }
 
-#background {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 0;
+// テキスト表示
+function displayText(text, speed) {
+  clearTimeout(autoTimeout);
+  isTextDisplaying = true;
+  textBox.textContent = "";
+  let i = 0;
+
+  function type() {
+    if (i < text.length) {
+      textBox.textContent += text.charAt(i++);
+      autoTimeout = setTimeout(type, speed);
+    } else {
+      isTextDisplaying = false;
+      if (autoMode) {
+        autoTimeout = setTimeout(nextScene, 1500);
+      }
+    }
+  }
+  type();
 }
 
-/* キャラレイヤー */
-#char-layer {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  padding: 0 5%;
-  box-sizing: border-box;
+// 選択肢
+function showChoices(choices) {
+  clearChoices();
+  choices.forEach(choice => {
+    const btn = document.createElement("button");
+    btn.textContent = choice.text;
+    btn.onclick = () => {
+      if (choice.jump) {
+        loadScenario(choice.jump);
+      } else {
+        nextScene();
+      }
+    };
+    choicesBox.appendChild(btn);
+  });
 }
 
-.char-slot {
-  width: 30%;
-  height: 80%;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+function clearChoices() {
+  choicesBox.innerHTML = "";
 }
 
-.char-image {
-  max-height: 100%;
-  max-width: 100%;
-  transition: opacity 0.5s ease;
+// 次へ
+function nextScene() {
+  if (isTextDisplaying) {
+    clearTimeout(autoTimeout);
+    const fullText = scenarioData.scenes[currentSceneIndex].text;
+    textBox.textContent = fullText;
+    isTextDisplaying = false;
+  } else {
+    currentSceneIndex++;
+    if (currentSceneIndex < scenarioData.scenes.length) {
+      showScene(currentSceneIndex);
+    }
+  }
 }
 
-/* 各種エフェクト */
-.fadein {
-  animation: fadeIn 0.8s ease forwards;
-}
-@keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
-.slideinLeft {
-  animation: slideInLeft 0.8s ease forwards;
-}
-@keyframes slideInLeft {
-  0% { transform: translateX(-100%); opacity: 0; }
-  100% { transform: translateX(0); opacity: 1; }
+// オートモード
+function toggleAutoMode() {
+  autoMode = !autoMode;
+  if (autoMode && !isTextDisplaying) {
+    autoTimeout = setTimeout(nextScene, 1500);
+  } else {
+    clearTimeout(autoTimeout);
+  }
 }
 
-.slideinRight {
-  animation: slideInRight 0.8s ease forwards;
-}
-@keyframes slideInRight {
-  0% { transform: translateX(100%); opacity: 0; }
-  100% { transform: translateX(0); opacity: 1; }
-}
-
-/* セリフ・名前・選択肢 */
-#dialogue-box {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-  padding: 1em;
-  box-sizing: border-box;
-  font-size: var(--fontSize);
-  z-index: 2;
-  max-height: 35vh;
+// クリック処理
+function onClickGameArea() {
+  if (isTextDisplaying) {
+    clearTimeout(autoTimeout);
+    const fullText = scenarioData.scenes[currentSceneIndex].text;
+    textBox.textContent = fullText;
+    isTextDisplaying = false;
+  } else {
+    nextScene();
+  }
 }
 
-.name-area {
-  font-weight: bold;
-  margin-bottom: 0.5em;
+function onDoubleClickGameArea() {
+  toggleAutoMode();
 }
 
-.choices-area {
-  position: absolute;
-  bottom: 35vh;
-  width: 100%;
-  z-index: 3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+// 初期化
+function init() {
+  updateVh();
+  document.getElementById("game-container").addEventListener("click", onClickGameArea);
+  document.getElementById("game-container").addEventListener("dblclick", onDoubleClickGameArea);
+  loadScenario("000start.json");
 }
 
-.choices-area button {
-  margin: 0.3em;
-  padding: 0.5em 1em;
-  font-size: 1em;
-  border: none;
-  background-color: #fff;
-  color: #000;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.choices-area button:hover {
-  background-color: #ddd;
-}
+window.addEventListener("load", init);
