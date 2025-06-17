@@ -2,31 +2,28 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ビジュアルノベル v015</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>ノベルゲーム v015</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="game-container">
-    <!-- 背景画像 -->
-    <img id="background" src="" alt="背景" />
+    <img id="background" src="" alt="背景画像" />
 
-    <!-- キャラクター表示スロット -->
-    <div id="char-left" class="char-slot"></div>
-    <div id="char-center" class="char-slot"></div>
-    <div id="char-right" class="char-slot"></div>
-
-    <!-- セリフボックス -->
-    <div id="dialogue-box">
-      <div id="name"></div>
-      <div id="text"></div>
+    <div id="char-layer">
+      <div id="char-left" class="char-slot"></div>
+      <div id="char-center" class="char-slot"></div>
+      <div id="char-right" class="char-slot"></div>
     </div>
 
-    <!-- 選択肢ボタン -->
-    <div id="choices"></div>
+    <div id="dialogue-box">
+      <div id="name" class="name-area"></div>
+      <div id="text" class="text-area"></div>
+    </div>
+
+    <div id="choices" class="choices-area"></div>
   </div>
 
-  <!-- JavaScriptファイル読み込み（モジュール形式） -->
   <script type="module" src="script.js"></script>
 </body>
 </html>
