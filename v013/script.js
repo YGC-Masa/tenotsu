@@ -1,191 +1,192 @@
-import { config } from "./config.js";
-import { characterColors } from "./characterColors.js";
-import { characterStyles } from "./characterStyles.js";
+// 動的に --vh カスタムプロパティを更新
+function updateVh() {
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
 
-const bgElem = document.getElementById("background");
-const charLayer = document.getElementById("char-layer");
-const nameElem = document.getElementById("name");
-const textElem = document.getElementById("text");
-const choicesElem = document.getElementById("choices");
+// 初期とリサイズ時に更新
+window.addEventListener('resize', updateVh);
+window.addEventListener('orientationchange', updateVh);
+window.addEventListener('load', updateVh);
 
-let currentScenario = null;
-let currentIndex = 0;
-let autoPlay = false;
-let autoPlayTimeout = null;
+// グローバル変数
+let scenarioData = null;
+let currentSceneIndex = 0;
+let isTextDisplaying = false;
+let autoMode = false;
+let autoTimeout = null;
 
-// 現在表示中のキャラ情報 { slotIndex: {name, imgElem, effectClass} }
-const displayedChars = {};
+let charElements = {
+  left: document.getElementById("char-left"),
+  center: document.getElementById("char-center"),
+  right: document.getElementById("char-right"),
+};
 
-function setBackground(src) {
-  if (bgElem.style.backgroundImage !== `url(${src})`) {
-    bgElem.style.backgroundImage = `url(${src})`;
+let backgroundElement = document.getElementById("background");
+let dialogueBox = document.getElementById("dialogue-box");
+let nameBox = document.getElementById("name");
+let textBox = document.getElementById("text");
+let choicesBox = document.getElementById("choices");
+
+let currentFontSize = characterStyles[""].fontSize || "1em";
+let currentSpeed = characterStyles[""].speed || 40;
+
+// シナリオ読み込み
+async function loadScenario(fileName) {
+  try {
+    const res = await fetch(config.scenarioPath + fileName);
+    scenarioData = await res.json();
+    currentSceneIndex = 0;
+    showScene(currentSceneIndex);
+  } catch (e) {
+    console.error("読み込み失敗:", e);
   }
 }
 
-function clearCharacters() {
-  charLayer.innerHTML = "";
-  Object.keys(displayedChars).forEach(key => delete displayedChars[key]);
-}
+// シーン表示
+function showScene(index) {
+  if (!scenarioData || index >= scenarioData.scenes.length) return;
 
-function showCharacter(slot, charName, imgSrc, effect = "") {
-  // slotは0～2の想定（三人まで横並び）
-  if (!displayedChars[slot]) {
-    const slotDiv = document.createElement("div");
-    slotDiv.className = "char-slot";
-    charLayer.appendChild(slotDiv);
-    displayedChars[slot] = { slotDiv };
-  }
-  const slotDiv = displayedChars[slot].slotDiv;
+  const scene = scenarioData.scenes[index];
 
-  let imgElem = slotDiv.querySelector("img");
-  if (!imgElem) {
-    imgElem = document.createElement("img");
-    imgElem.className = "char-image";
-    slotDiv.appendChild(imgElem);
+  // 背景
+  if (scene.bg) {
+    backgroundElement.src = config.bgPath + scene.bg;
   }
 
-  // 画像差し替えとエフェクト付与
-  imgElem.src = imgSrc;
-  imgElem.className = "char-image"; // クラスリセット
-  if (effect) {
-    imgElem.classList.add(effect);
-  }
-  displayedChars[slot].name = charName;
-  displayedChars[slot].imgElem = imgElem;
-}
+  // キャラ表示
+  ["left", "center", "right"].forEach(pos => {
+    const charData = scene.characters?.find(c => c.side === pos);
+    const target = charElements[pos];
+    if (charData && charData.src && charData.src.toLowerCase() !== "null") {
+      const img = document.createElement("img");
+      img.src = config.charPath + charData.src;
+      img.className = "char-image";
 
-function removeCharacter(slot) {
-  if (displayedChars[slot]) {
-    const slotDiv = displayedChars[slot].slotDiv;
-    slotDiv.innerHTML = "";
-    delete displayedChars[slot];
-  }
-}
+      if (charData.effect) {
+        img.classList.add(charData.effect);
+      }
 
-function setName(name) {
-  if (name === "") {
-    nameElem.textContent = "";
-    nameElem.style.color = characterColors[""] || "#CCC";
+      target.innerHTML = "";
+      target.appendChild(img);
+    } else {
+      target.innerHTML = "";
+    }
+  });
+
+  // 名前と色
+  nameBox.textContent = scene.name || "";
+  nameBox.style.color = characterColors[scene.name] || characterColors[""];
+
+  // フォントサイズと速度（キャラ別）
+  const style = characterStyles[scene.name] || characterStyles[""];
+  currentFontSize = style.fontSize || characterStyles[""].fontSize;
+  currentSpeed = style.speed || characterStyles[""].speed;
+  dialogueBox.style.setProperty("--fontSize", currentFontSize);
+  dialogueBox.style.fontSize = currentFontSize;
+
+  // セリフ
+  const text = scene.text || "";
+  const speed = scene.speed ?? currentSpeed;
+  displayText(text, speed);
+
+  // 選択肢
+  if (scene.choices) {
+    showChoices(scene.choices);
   } else {
-    nameElem.textContent = name;
-    nameElem.style.color = characterColors[name] || "#FFF";
+    clearChoices();
   }
 }
 
-function setText(text, fontSize = "1em", speed = 30) {
-  // テキストの一文字ずつ表示（速度ms）
-  return new Promise((resolve) => {
-    textElem.textContent = "";
-    let i = 0;
-    textElem.style.fontSize = fontSize;
+// テキスト表示
+function displayText(text, speed) {
+  clearTimeout(autoTimeout);
+  isTextDisplaying = true;
+  textBox.textContent = "";
+  let i = 0;
 
-    function typeChar() {
-      if (i < text.length) {
-        textElem.textContent += text.charAt(i);
-        i++;
-        setTimeout(typeChar, speed);
-      } else {
-        resolve();
+  function type() {
+    if (i < text.length) {
+      textBox.textContent += text.charAt(i++);
+      autoTimeout = setTimeout(type, speed);
+    } else {
+      isTextDisplaying = false;
+      if (autoMode) {
+        autoTimeout = setTimeout(nextScene, 1500);
       }
     }
-    typeChar();
-  });
+  }
+  type();
 }
 
-function clearChoices() {
-  choicesElem.innerHTML = "";
-}
-
+// 選択肢
 function showChoices(choices) {
   clearChoices();
   choices.forEach(choice => {
     const btn = document.createElement("button");
     btn.textContent = choice.text;
     btn.onclick = () => {
-      loadScenario(choice.next);
+      if (choice.jump) {
+        loadScenario(choice.jump);
+      } else {
+        nextScene();
+      }
     };
-    choicesElem.appendChild(btn);
+    choicesBox.appendChild(btn);
   });
 }
 
-// シナリオ読み込みと再生
-async function loadScenario(scenarioFile) {
-  clearChoices();
-  setName("");
-  textElem.textContent = "";
-
-  try {
-    const response = await fetch(`./scenario/${scenarioFile}`);
-    const data = await response.json();
-
-    currentScenario = data;
-    currentIndex = 0;
-
-    await playScenario();
-  } catch (e) {
-    console.error("シナリオ読み込み失敗", e);
-  }
+function clearChoices() {
+  choicesBox.innerHTML = "";
 }
 
-async function playScenario() {
-  if (!currentScenario || currentIndex >= currentScenario.length) {
-    clearCharacters();
-    return;
-  }
-
-  const step = currentScenario[currentIndex];
-
-  // 背景切り替え
-  if (step.bg) {
-    setBackground(config.bgPath + step.bg);
-  }
-
-  // キャラ表示処理
-  if (step.characters) {
-    clearCharacters();
-    step.characters.forEach((char, idx) => {
-      if (char.name) {
-        const charImgPath = config.charPath + char.img;
-        showCharacter(idx, char.name, charImgPath, char.effect);
-      }
-    });
-  }
-
-  // 名前設定
-  setName(step.name || "");
-
-  // フォントサイズ・速度はキャラごとにデフォルトがあり、個別指定があれば優先
-  let fontSize = "1em";
-  let speed = 30;
-
-  if (step.name && characterStyles[step.name]) {
-    fontSize = characterStyles[step.name].fontSize || fontSize;
-    speed = characterStyles[step.name].speed || speed;
-  }
-  if (step.fontSize) fontSize = step.fontSize;
-  if (step.speed) speed = step.speed;
-
-  // セリフ表示
-  await setText(step.text || "", fontSize, speed);
-
-  // 選択肢表示
-  if (step.choices && step.choices.length > 0) {
-    showChoices(step.choices);
+// 次へ
+function nextScene() {
+  if (isTextDisplaying) {
+    clearTimeout(autoTimeout);
+    const fullText = scenarioData.scenes[currentSceneIndex].text;
+    textBox.textContent = fullText;
+    isTextDisplaying = false;
   } else {
-    // 次のステップへ
-    currentIndex++;
-    await playScenario();
+    currentSceneIndex++;
+    if (currentSceneIndex < scenarioData.scenes.length) {
+      showScene(currentSceneIndex);
+    }
   }
 }
 
-// ページロード時
-window.addEventListener("load", () => {
-  // CSSのvh対策（モバイルのURLバー問題）
-  function setVH() {
-    document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
+// オートモード
+function toggleAutoMode() {
+  autoMode = !autoMode;
+  if (autoMode && !isTextDisplaying) {
+    autoTimeout = setTimeout(nextScene, 1500);
+  } else {
+    clearTimeout(autoTimeout);
   }
-  setVH();
-  window.addEventListener("resize", setVH);
+}
 
+// クリック処理
+function onClickGameArea() {
+  if (isTextDisplaying) {
+    clearTimeout(autoTimeout);
+    const fullText = scenarioData.scenes[currentSceneIndex].text;
+    textBox.textContent = fullText;
+    isTextDisplaying = false;
+  } else {
+    nextScene();
+  }
+}
+
+function onDoubleClickGameArea() {
+  toggleAutoMode();
+}
+
+// 初期化
+function init() {
+  updateVh();
+  document.getElementById("game-container").addEventListener("click", onClickGameArea);
+  document.getElementById("game-container").addEventListener("dblclick", onDoubleClickGameArea);
   loadScenario("000start.json");
-});
+}
+
+window.addEventListener("load", init);
