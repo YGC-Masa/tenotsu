@@ -32,4 +32,123 @@ function setTextWithSpeed(text, speed, callback) {
 
 function setCharacterStyle(name) {
   const style = characterStyles[name] || characterStyles[""];
-  document.documentElement.style.setProperty("--fontSize", style.fontSize || defaultFontSize
+  document.documentElement.style.setProperty("--fontSize", style.fontSize || defaultFontSize);
+  currentSpeed = style.speed || defaultSpeed;
+}
+
+function showScene(scene) {
+  // 背景
+  if (scene.bg) {
+    bgEl.src = config.bgPath + scene.bg;
+  } else {
+    bgEl.src = "";
+  }
+
+  // BGM
+  if (scene.bgm !== undefined) {
+    if (bgm) {
+      bgm.pause();
+      bgm = null;
+    }
+    if (scene.bgm) {
+      bgm = new Audio(config.bgmPath + scene.bgm);
+      bgm.loop = true;
+      bgm.play();
+    }
+  }
+
+  // キャラ表示
+  if (scene.characters) {
+    ["left", "center", "right"].forEach(pos => {
+      const slot = charSlots[pos];
+      const charData = scene.characters.find(c => c.side === pos);
+      slot.innerHTML = "";
+
+      if (charData && charData.src) {
+        const img = document.createElement("img");
+        img.src = config.charPath + charData.src;
+        img.classList.add("char-image");
+
+        if (charData.effect) {
+          img.classList.add(charData.effect);
+        } else {
+          img.classList.add("fadein");
+        }
+
+        slot.appendChild(img);
+      }
+    });
+  } else {
+    // 何もなければ全キャラ非表示
+    ["left", "center", "right"].forEach(pos => {
+      charSlots[pos].innerHTML = "";
+    });
+  }
+
+  // 名前とセリフ
+  if (scene.name !== undefined && scene.text !== undefined) {
+    const color = characterColors[scene.name] || "#FFFFFF";
+    nameEl.textContent = scene.name;
+    nameEl.style.color = color;
+
+    setCharacterStyle(scene.name);
+    setTextWithSpeed(scene.text, currentSpeed, () => {
+      if (isAuto) next();
+    });
+  } else {
+    nameEl.textContent = "";
+    textEl.textContent = "";
+  }
+
+  // 選択肢
+  if (scene.choices) {
+    choicesEl.innerHTML = "";
+    scene.choices.forEach(choice => {
+      const btn = document.createElement("button");
+      btn.textContent = choice.text;
+      btn.onclick = () => {
+        loadScenario(choice.jump);
+      };
+      choicesEl.appendChild(btn);
+    });
+  } else {
+    choicesEl.innerHTML = "";
+  }
+}
+
+function next() {
+  fetch(config.scenarioPath + currentScenario)
+    .then(res => res.json())
+    .then(data => {
+      currentIndex++;
+      if (currentIndex < data.scenes.length) {
+        showScene(data.scenes[currentIndex]);
+      }
+    });
+}
+
+function loadScenario(filename) {
+  currentScenario = filename;
+  currentIndex = 0;
+  fetch(config.scenarioPath + filename)
+    .then(res => res.json())
+    .then(data => {
+      showScene(data.scenes[0]);
+    });
+}
+
+document.addEventListener("click", () => {
+  if (!isAuto && choicesEl.children.length === 0) {
+    next();
+  }
+});
+
+window.addEventListener("load", () => {
+  loadScenario(currentScenario);
+  setVhVariable();
+});
+
+function setVhVariable() {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
+}
