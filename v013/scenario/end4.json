@@ -1,0 +1,23 @@
+{
+  "scenes": [
+    {
+      "characters": [
+        { "side": "right", "src": "a02002.png", "effect": "fadein" }
+      ],
+      "name": "藍",
+      "text": "……やっぱり、今日は無理しないでおこう。"
+    },
+    {
+      "characters": [
+        { "side": "right", "src": "a02002.png" },
+        { "side": "left", "src": "a03002.png", "effect": "slideinRight" }
+      ],
+      "name": "翠",
+      "text": "無理は禁物です。また、次の機会に。"
+    },
+    {
+      "text": "旅はまた、別の日に始まるのかもしれない。",
+      "end": true
+    }
+  ]
+}
