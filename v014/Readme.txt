@@ -1,161 +1,122 @@
 ✅ ディレクトリ構成
-csharp
-コピーする
-編集する
-project-root/
-├ assets2/                   # 画像・音声などのアセット
-│   ├ bgev/                  # 背景画像（例: bg011.jpg）
-│   ├ char/                  # キャラ画像（例: a03002.png）
-│   └ bgm/                   # BGMファイル（例: main.mp3）
-└ v013/
-    ├ index.html             # エントリーポイント
-    ├ style.css              # スタイル定義（レイアウト、アニメーション含む）
-    ├ script.js              # メイン処理（シナリオ再生・分岐・表示制御）
-    ├ config.js              # アセット/シナリオパス設定
-    ├ characterColors.js     # キャラごとの名前色
-    ├ characterStyles.js     # キャラごとのフォントサイズ/速度
-    └ scenario/
-        ├ 000start.json      # シナリオ本編開始
-        ├ choiceA.json       # 分岐A
-        ├ choiceB.json       # 分岐B
-        ├ end1.json          # 終端1
-        ├ end2.json          # 終端2
-        ├ end3.json          # 終端3
-        └ end4.json          # 終端4
-✅ HTMLレイアウト（index.html）
-セーフエリア対応、縦横レスポンシブ
+　project-root/
+└── v014/
+    ├── index.html              ← 画面のベースHTML
+    ├── style.css               ← 全体スタイル定義
+    ├── script.js               ← 表示・操作の本体ロジック
+    ├── config.js               ← システム設定など
+    ├── characterColors.js      ← キャラ名→色コードの対応
+    ├── characterStyles.js      ← キャラ別のフォント・セリフ設定
+    ├── effect.js               ← 各種演出（fadein, slide等）を定義 ★追加★
+    
+    ├── scenario/
+    │   └── 000start.json       ← シナリオファイル（複数可）
+    
+    └── assets2/
+        ├── char/               ← キャラクター画像
+        ├── bgev/               ← 背景・イベント画像
+        └── bgm/                ← BGM・SE（未使用でもOK）
 
-DOM構造：
+ v014 システムの機能説明
+v014は、HTML + JavaScript + JSONベースのノベルゲームエンジンです。
+シンプルかつ拡張しやすい構造で、ブラウザだけで動作します。
 
-#background：背景
+🎮 1. シナリオ再生機能（JSONベース）
+JSONファイルに記述されたセリフや演出指示を順に再生
 
-#character-layer：キャラ表示用
+各行にキャラ名、セリフ、背景、演出（effect）などを記述可能
 
-#dialogue-box：セリフ＋名前表示エリア
-
-#choices：選択肢ボタン
-
-各DOMにIDを割り当てて JavaScript で制御
-
-✅ CSS（style.css）
-フルスクリーン対応
-
-キャラサイズと位置はv012と同様
-
-#character-layer img に対してエフェクトアニメーション用のクラスを追加
-
-エフェクト定義：
-
-css
-コピーする
-編集する
-.fadein {
-  animation: fadein 0.5s ease-in;
-}
-.slideinLeft {
-  animation: slideinLeft 0.5s ease-out;
-}
-@keyframes fadein {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-@keyframes slideinLeft {
-  from { transform: translateX(-100%); opacity: 0; }
-  to   { transform: translateX(0); opacity: 1; }
-}
-✅ config.js
-js
-コピーする
-編集する
-const config = {
-  bgPath: "../assets2/bgev/",
-  charPath: "../assets2/char/",
-  bgmPath: "../assets2/bgm/",
-  scenarioPath: "./scenario/"
-};
-✅ characterColors.js
-js
-コピーする
-編集する
-const characterColors = {
-  "": "#C0C0C0",
-  "緋奈": "#d3381c",
-  "藍": "#0067C0",
-  "翠": "#005931",
-  "こがね": "#FFF450",
-  "琥珀": "#F68B1F",
-};
-✅ characterStyles.js
-js
-コピーする
-編集する
-const characterStyles = {
-  "":        { fontSize: "1em", speed: 40 },   // デフォルト
-  "緋奈":    { fontSize: "1.2em", speed: 30 },
-  "藍":      { fontSize: "1.1em", speed: 50 },
-  "翠":      { fontSize: "1em",   speed: 35 },
-  "こがね":  { fontSize: "1.3em", speed: 25 },
-  "琥珀":    { fontSize: "1.2em", speed: 20 },
-};
-キャラごとに表示速度とフォントサイズを定義
-
-セリフ中に "fontSize" や "speed" を一時的に上書き可能
-
-✅ script.js の主な機能
-シナリオJSONの読み込みと順次再生
-
-キャラ画像の表示・退場（null指定で退場）
-
-背景画像の切り替え
-
-名前色／フォントサイズの反映
-
-オートモード対応（セリフ自動送り）
-
-選択肢表示と分岐処理（2x2対応）
-
-BGM再生
-
-画像エフェクト対応：キャラ画像の表示時に "effect" 指定可
-
-エフェクト指定例（シナリオJSON内）：
 json
 コピーする
 編集する
 {
-  "char": { "center": "a04002.png" },
-  "effect": { "center": "fadein" },
-  "name": "こがね",
-  "text": "あたしの出番～？"
+  "char": "緋奈",
+  "text": "こんにちは！",
+  "bg": "bg011.jpg",
+  "effect": "fadein"
 }
-✅ シナリオ仕様（JSON形式）
-各エントリには以下を指定可能：
+🎭 2. キャラクター表示・切替
+キャラクター画像を表示・非表示
 
-キー	内容
-bg	背景画像ファイル名（例：bg011.jpg）
-bgm	BGMファイル名（例：main.mp3）
-char	キャラ画像（left/center/right に指定）
-effect	各キャラ位置に "fadein" などの効果
-name	キャラ名（空文字でモブ）
-text	セリフ本文
-speed	1文字ごとの表示速度（ミリ秒）
-fontSize	セリフのフォントサイズ（例："1.2em"）
-choices	選択肢（表示テキストとジャンプ先ファイル名）
-jumpTo	次にジャンプするファイル名（選択肢のあとなど）
+キャラ名に応じた色やフォントを自動適用（characterStyles.js）
 
-✅ 仕様上の補足
-"char": { "center": null } でその位置のキャラ退場
+キャラ画像は assets2/char/ に配置
 
-"name": "" のときはナレーションやモブ扱い（灰色表示）
+🖼️ 3. 背景切替
+背景画像をスムーズに切り替え
 
-"jumpTo" はファイル名を指定（例："choiceA.json"）
+assets2/bgev/ にある画像を使用
 
-"choices" は最大4つまで表示可能（左右2x2レイアウト）
+フェードインやトランジションなどの演出に対応
 
-シナリオ切り替え時に "物語は続く" 表示は v013では廃止
+✨ 4. 演出効果（Effect）
+セリフや背景・キャラ登場時に演出が可能
 
-✅ 未対応・今後の保留仕様
-end1～end4に到達したときだけ別の終了演出 → 実装保留中
+effect.js に演出ロジックを集約
 
-音声再生（SEやボイス）→ 現時点では未対応
+対応演出：
 
+fadein（ふわっと出現）
+
+slideleft / slideright
+
+whitein / blackin
+
+transition（カスタム対応可）
+
+🎨 5. キャラごとのセリフスタイル
+キャラ名に応じて自動で色やフォントを適用
+
+キャラ別に個性を演出可能
+
+例：
+
+緋奈 → 赤っぽいセリフ
+
+藍 → 青で落ち着いた文字
+
+📄 6. 複数シナリオ対応
+シナリオは .json ファイルとして複数作成可
+
+スクリプトで任意のファイルを読み込む設計
+
+例：000start.json, chapter1.json, ending.json など
+
+🎵 7. BGM/効果音対応（拡張）
+assets2/bgm/ に音声ファイルを入れれば再生可能
+
+"bgm": "bgm001.mp3" のようにJSONに指定
+
+今後の拡張にも対応しやすい設計
+
+💻 8. 完全クライアントサイド動作
+サーバー不要、ローカルでダブルクリック実行OK
+
+学習用途や自主制作ゲーム、体験展示などに最適
+
+🧩 9. モジュール構造で拡張しやすい
+effect.js, characterStyles.js, config.js などを分離
+
+拡張がしやすく、開発チームでの分担も容易
+
+📱 10. ブラウザ互換性・軽量設計
+主要ブラウザで動作（Chrome推奨）
+
+軽量なのでモバイル対応も可能
+
+🔄 将来的な拡張候補
+機能	補足
+セーブ／ロード機能	ローカルストレージ対応で実装可能
+選択肢分岐	JSON構造に choices を追加可能
+BGM・効果音再生	<audio> タグを使って容易に追加可能
+フラグ管理	変数管理モジュールを追加すれば対応可能
+マルチ言語対応	別JSONファイル or 切替スイッチで対応可能
+
+📌 まとめ
+項目	内容
+対応形式	JSON + HTML/CSS/JS
+表示要素	キャラ / 背景 / セリフ
+演出効果	fadein, slide, ほか
+拡張性	モジュール構造で追加しやすい
+動作環境	ブラウザ（オフラインでもOK）
+学習・制作用途に最適	自作ノベル・ビジュアル制作・体験展示等
