@@ -50,9 +50,10 @@ function showScene(index) {
   const scene = scenarioData.scenes[index];
 
   // 背景画像切替
-  if (scene.bg) {
-    backgroundElement.src = config.bgPath + scene.bg;
-  }
+function setBackground(bg) {
+  const bgPath = config.bgPath + bg;
+  background.style.backgroundImage = `url('${bgPath}')`;
+}
 
   // キャラ表示
   ["left", "center", "right"].forEach(pos => {
