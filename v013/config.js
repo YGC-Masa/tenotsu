@@ -1,6 +1,6 @@
 const config = {
-  bgPath: "../assets2/bgev/",
-  charPath: "../assets2/char/",
-  bgmPath: "../assets2/bgm/",
-  scenarioPath: "scenario/", // 追加されたシナリオファイルの相対パス
+  bgPath: "../assets2/bgev/",     // 背景画像フォルダ
+  charPath: "../assets2/char/",   // キャラクター画像フォルダ
+  bgmPath: "../assets2/bgm/",     // BGMファイルフォルダ
+  scenarioPath: "scenario/"       // シナリオJSONファイルフォルダ
 };
