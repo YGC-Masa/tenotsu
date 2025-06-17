@@ -3,22 +3,27 @@
   padding: 0;
   box-sizing: border-box;
 }
+
 html, body {
   height: 100%;
   font-family: sans-serif;
   background-color: black;
   overflow: hidden;
 }
+
 :root {
   --vh: 100vh;
   --fontSize: 1em;
 }
+
 #game-container {
   position: relative;
   width: 100%;
   height: calc(var(--vh, 1vh) * 100);
   overflow: hidden;
 }
+
+/* 背景画像 */
 #background {
   position: absolute;
   width: 100%;
@@ -26,6 +31,8 @@ html, body {
   object-fit: cover;
   z-index: 0;
 }
+
+/* キャラ表示スロット */
 .char-slot {
   position: absolute;
   bottom: 0;
@@ -36,6 +43,7 @@ html, body {
   align-items: flex-end;
   width: 33.33%;
 }
+
 #char-left {
   left: 5%;
 }
@@ -46,6 +54,7 @@ html, body {
 #char-right {
   right: 5%;
 }
+
 .char-image {
   max-height: 90%;
   width: auto;
@@ -54,23 +63,67 @@ html, body {
   opacity: 0;
   transition: opacity 0.5s;
 }
+
+/* 演出効果 */
 .fadein {
   opacity: 1 !important;
 }
+.fadeout {
+  opacity: 0 !important;
+  transition: opacity 0.5s;
+}
+
 .slideinLeft {
   animation: slideLeft 0.5s ease-out forwards;
 }
 .slideinRight {
   animation: slideRight 0.5s ease-out forwards;
 }
+.whitein {
+  animation: whiteIn 0.5s forwards;
+}
+.whiteout {
+  animation: whiteOut 0.5s forwards;
+}
+.blackin {
+  animation: blackIn 0.5s forwards;
+}
+.blackout {
+  animation: blackOut 0.5s forwards;
+}
+.transition {
+  transition: all 0.5s ease;
+}
+
+/* キーフレーム */
 @keyframes slideLeft {
   from { transform: translateX(-100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
+
 @keyframes slideRight {
   from { transform: translateX(100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
+
+@keyframes whiteIn {
+  from { background-color: white; opacity: 0; }
+  to { background-color: transparent; opacity: 1; }
+}
+@keyframes whiteOut {
+  from { background-color: transparent; opacity: 1; }
+  to { background-color: white; opacity: 0; }
+}
+@keyframes blackIn {
+  from { background-color: black; opacity: 0; }
+  to { background-color: transparent; opacity: 1; }
+}
+@keyframes blackOut {
+  from { background-color: transparent; opacity: 1; }
+  to { background-color: black; opacity: 0; }
+}
+
+/* セリフウィンドウ */
 #dialogue-box {
   position: absolute;
   bottom: 0;
@@ -83,13 +136,17 @@ html, body {
   overflow-y: auto;
   font-size: var(--fontSize, 1em);
 }
+
 #name {
   font-weight: bold;
   margin-bottom: 0.5em;
 }
+
 #text {
   line-height: 1.4em;
 }
+
+/* 選択肢 */
 #choices {
   position: absolute;
   bottom: 40%;
@@ -97,6 +154,7 @@ html, body {
   text-align: center;
   z-index: 4;
 }
+
 #choices button {
   margin: 0.5em;
   padding: 0.8em 1.2em;
@@ -110,6 +168,8 @@ html, body {
 #choices button:hover {
   background: #ddd;
 }
+
+/* デスクトップ拡張対応 */
 @media screen and (min-width: 768px) {
   .char-image {
     max-height: 70vh;
