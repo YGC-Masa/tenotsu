@@ -12,7 +12,7 @@
   {
     "bg": "bg01.jpg",
     "characters": [
-      { "side": "left", "src": null },       // 緋奈が退場（フェードアウト）
+      { "side": "left", "src": null },    
       { "side": "right", "src": "ai.png" }
     ],
     "name": "藍",
