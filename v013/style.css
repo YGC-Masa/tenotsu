@@ -3,25 +3,26 @@
   --fontSize: 1em;
 }
 
-html, body {
+body, html {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: sans-serif;
   background: #000;
-  overflow: hidden;
+  font-family: 'Arial', sans-serif;
+  color: white;
 }
 
 #game-container {
   position: relative;
-  width: 100%;
+  width: 100vw;
   height: calc(var(--vh, 1vh) * 100);
   overflow: hidden;
-  touch-action: manipulation;
+  background: black;
 }
 
 #background {
   position: absolute;
+  top: 0; left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -31,95 +32,95 @@ html, body {
 /* キャラレイヤー */
 #char-layer {
   position: absolute;
+  bottom: 0;
+  left: 0;
   width: 100%;
-  height: 100%;
-  z-index: 1;
+  height: 60%;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  padding: 0 5%;
-  box-sizing: border-box;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .char-slot {
-  width: 30%;
-  height: 80%;
+  width: 33.3%;
+  height: 100%;
   display: flex;
-  align-items: flex-end;
   justify-content: center;
+  align-items: flex-end;
 }
 
 .char-image {
   max-height: 100%;
   max-width: 100%;
-  transition: opacity 0.5s ease;
+  object-fit: contain;
+  transition: all 0.5s ease;
 }
 
-/* 各種エフェクト */
+/* エフェクト用クラス */
 .fadein {
-  animation: fadeIn 0.8s ease forwards;
+  animation: fadeIn 1s ease forwards;
 }
 @keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .slideinLeft {
-  animation: slideInLeft 0.8s ease forwards;
+  animation: slideInLeft 0.7s ease forwards;
 }
 @keyframes slideInLeft {
-  0% { transform: translateX(-100%); opacity: 0; }
-  100% { transform: translateX(0); opacity: 1; }
+  from { transform: translateX(-100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
 }
 
 .slideinRight {
-  animation: slideInRight 0.8s ease forwards;
+  animation: slideInRight 0.7s ease forwards;
 }
 @keyframes slideInRight {
-  0% { transform: translateX(100%); opacity: 0; }
-  100% { transform: translateX(0); opacity: 1; }
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
 }
 
-/* セリフ・名前・選択肢 */
+/* セリフボックス */
 #dialogue-box {
   position: absolute;
   bottom: 0;
+  left: 0;
   width: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
+  height: 35vh;
+  background: rgba(0, 0, 0, 0.7);
   padding: 1em;
   box-sizing: border-box;
-  font-size: var(--fontSize);
   z-index: 2;
-  max-height: 35vh;
+  font-size: var(--fontSize);
+  overflow-y: auto;
 }
 
-.name-area {
+#name {
   font-weight: bold;
   margin-bottom: 0.5em;
 }
 
-.choices-area {
-  position: absolute;
-  bottom: 35vh;
-  width: 100%;
-  z-index: 3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+#text {
+  white-space: pre-wrap;
 }
 
-.choices-area button {
-  margin: 0.3em;
-  padding: 0.5em 1em;
-  font-size: 1em;
+/* 選択肢 */
+#choices {
+  margin-top: 1em;
+}
+
+#choices button {
+  background: #222;
+  color: white;
   border: none;
-  background-color: #fff;
-  color: #000;
-  border-radius: 5px;
+  padding: 0.5em 1em;
+  margin-right: 0.5em;
   cursor: pointer;
+  font-size: 1em;
 }
-
-.choices-area button:hover {
-  background-color: #ddd;
+#choices button:hover {
+  background: #555;
 }
