@@ -1,0 +1,23 @@
+{
+  "scenes": [
+    {
+      "characters": [
+        { "side": "center", "src": "a03002.png", "effect": "fadein" }
+      ],
+      "name": "翠",
+      "text": "では、参りましょう。安全第一で。"
+    },
+    {
+      "characters": [
+        { "side": "center", "src": "a03002.png" },
+        { "side": "right", "src": "a02002.png", "effect": "slideinLeft" }
+      ],
+      "name": "藍",
+      "text": "うん、よろしくお願いします。"
+    },
+    {
+      "text": "丁寧な出発が、素敵な旅の始まりになった。",
+      "end": true
+    }
+  ]
+}
