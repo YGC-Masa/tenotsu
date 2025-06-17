@@ -2,62 +2,23 @@
   "scenes": [
     {
       "bg": "bg011.jpg",
-      "bgEffect": "fadein",
-      "name": "緋奈",
-      "text": "こんばんは！背景がフェードインで現れました。",
       "characters": [
-        { "side": "center", "src": "a01002.png", "effect": "fadein" }
+        { "side": "center", "src": "a03002.png", "effect": "fadein" }
       ],
-      "speed": 40
-    },
-    {
-      "bgEffect": "fadeout",
-      "name": "藍",
-      "text": "次は背景がフェードアウトします。",
-      "characters": [
-        { "side": "center", "src": "a02002.png", "effect": "fadein" }
-      ],
-      "speed": 40
-    },
-    {
-      "bg": "bg012.jpg",
-      "bgEffect": "slideinRight",
       "name": "翠",
-      "text": "背景が右からスライドイン！",
+      "text": "ようこそ、物語の世界へ。"
+    },
+    {
       "characters": [
-        { "side": "left", "src": "a03002.png", "effect": "slideinLeft" },
         { "side": "right", "src": "a04002.png", "effect": "slideinRight" }
       ],
-      "speed": 30
-    },
-    {
-      "bgEffect": "slideoutLeft",
       "name": "こがね",
-      "text": "背景とキャラが左にスライドアウトします。",
-      "characters": [
-        { "side": "left", "src": "a03002.png", "effect": "slideoutLeft" },
-        { "side": "right", "src": "a04002.png", "effect": "slideoutRight" }
-      ],
-      "speed": 30
+      "text": "なんか始まったっぽくない？"
     },
     {
-      "bg": "bg013.jpg",
-      "bgEffect": "fadein",
-      "name": "琥珀",
-      "text": "最後は背景がフェードイン、キャラはフェードインで表示。",
-      "characters": [
-        { "side": "center", "src": "a05002.png", "effect": "fadein" }
-      ],
-      "speed": 40,
       "choices": [
-        {
-          "text": "もう一度やる",
-          "jump": "scenario/001effectSample.json"
-        },
-        {
-          "text": "戻る",
-          "jump": "scenario/000start.json"
-        }
+        { "text": "Aの道へ", "jump": "choiceA.json" },
+        { "text": "Bの道へ", "jump": "choiceB.json" }
       ]
     }
   ]
