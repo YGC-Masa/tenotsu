@@ -1,6 +1,6 @@
 [
   {
-    "bg": "bg01.jpg",
+    "bg": "bg010.jpg",
     "bgm": "bgm01.mp3",
     "characters": [
       { "side": "left", "src": "hina.png", "effect": "slideinLeft" },
