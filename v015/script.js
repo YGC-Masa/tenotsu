@@ -1,10 +1,15 @@
+// script.js
+import {
+  setTextWithSpeed,
+  skipText,
+  isAnimating,
+  setCharacterStyle
+} from "./textHandler.js";
+
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
 let bgm = null;
-
-let currentTextTimer = null;
-let isTextAnimating = false;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -20,43 +25,17 @@ const charSlots = {
 let defaultFontSize = "1em";
 let defaultSpeed = 40;
 let currentSpeed = defaultSpeed;
-let autoDelay = 1200;
-
-function setTextWithSpeed(text, speed, callback) {
-  if (currentTextTimer) {
-    clearInterval(currentTextTimer);
-    currentTextTimer = null;
-  }
-
-  textEl.innerHTML = "";
-  isTextAnimating = true;
-
-  let i = 0;
-  currentTextTimer = setInterval(() => {
-    if (i < text.length) {
-      textEl.innerHTML += text[i++];
-    } else {
-      clearInterval(currentTextTimer);
-      currentTextTimer = null;
-      isTextAnimating = false;
-      if (callback) callback();
-    }
-  }, speed);
-}
-
-function setCharacterStyle(name) {
-  const style = characterStyles[name] || characterStyles[""];
-  document.documentElement.style.setProperty("--fontSize", style.fontSize || defaultFontSize);
-  currentSpeed = style.speed || defaultSpeed;
-}
+let lastScene = null;
 
 function showScene(scene) {
+  lastScene = scene;
+
   // 背景
   if (scene.bg) {
     bgEl.src = config.bgPath + scene.bg;
   }
 
-  // BGM処理
+  // BGM
   if (scene.bgm !== undefined) {
     if (bgm) {
       bgm.pause();
@@ -69,7 +48,7 @@ function showScene(scene) {
     }
   }
 
-  // キャラ描画
+  // キャラ表示
   if (scene.characters) {
     ["left", "center", "right"].forEach(pos => {
       const slot = charSlots[pos];
@@ -81,7 +60,6 @@ function showScene(scene) {
         img.src = config.charPath + charData.src;
         img.classList.add("char-image");
 
-        // エフェクト
         if (charData.effect) {
           img.classList.add(charData.effect);
         } else {
@@ -93,19 +71,15 @@ function showScene(scene) {
     });
   }
 
-  // 名前・テキスト
+  // 名前とテキスト
   if (scene.name !== undefined && scene.text !== undefined) {
     const color = characterColors[scene.name] || "#FFFFFF";
     nameEl.textContent = scene.name;
     nameEl.style.color = color;
 
-    setCharacterStyle(scene.name);
-    setTextWithSpeed(scene.text, currentSpeed, () => {
-      if (isAuto && !scene.choices) {
-        setTimeout(() => {
-          next();
-        }, autoDelay);
-      }
+    currentSpeed = setCharacterStyle(scene.name, characterStyles, defaultFontSize, defaultSpeed);
+    setTextWithSpeed(textEl, scene.text, currentSpeed, () => {
+      if (isAuto) next();
     });
   }
 
@@ -146,61 +120,27 @@ function loadScenario(filename) {
     });
 }
 
-// スキップ・クリック処理
+// クリックで次へ or スキップ処理
 document.addEventListener("click", () => {
   if (choicesEl.children.length > 0) return;
 
-  if (isTextAnimating) {
-    // 途中でも全文表示
-    if (currentTextTimer) {
-      clearInterval(currentTextTimer);
-      currentTextTimer = null;
-    }
-    const text = textEl.textContent;
-    const scene = getCurrentScene();
-    textEl.innerHTML = scene ? scene.text : text;
-    isTextAnimating = false;
+  if (isAnimating() && lastScene && lastScene.text) {
+    skipText(textEl, lastScene.text);
   } else {
     next();
   }
 });
 
-function getCurrentScene() {
-  // 現在のシーン情報を再取得
-  try {
-    const path = config.scenarioPath + currentScenario;
-    const request = new XMLHttpRequest();
-    request.open("GET", path, false); // 同期リクエスト（非推奨だが簡易実装）
-    request.send(null);
-    if (request.status === 200) {
-      const data = JSON.parse(request.responseText);
-      return data.scenes[currentIndex];
-    }
-  } catch (e) {
-    console.error("現在のシーン取得失敗:", e);
-  }
-  return null;
-}
-
-// vh再設定
-function setVhVariable() {
-  const vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty("--vh", `${vh}px`);
-}
+// リサイズ対応
+window.addEventListener("resize", setVhVariable);
+window.addEventListener("orientationchange", setVhVariable);
 
 window.addEventListener("load", () => {
-  setVhVariable();
   loadScenario(currentScenario);
-});
-
-window.addEventListener("resize", () => {
   setVhVariable();
 });
 
-// キーボードでオート切替
-document.addEventListener("keydown", (e) => {
-  if (e.key === "a") {
-    isAuto = !isAuto;
-    console.log("Auto mode:", isAuto);
-  }
-});
+function setVhVariable() {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
+}
