@@ -1,37 +1,83 @@
-{
-  "scenes": [
-    {
-      "bg": "bg011.jpg",
-      "bgm": "main.mp3",
-      "characters": [
-        { "side": "left", "src": "a01002.png", "effect": "fadein" }
-      ],
-      "name": "緋奈",
-      "text": "おっはよーっ！今日もいい天気だねっ！"
+[
+  {
+    "bg": "bg011.jpg",
+    "bgm": "main.mp3",
+    "name": "",
+    "text": "画像表示エフェクトのテストを開始します。"
+  },
+  {
+    "char": {
+      "center": { "name": "翠", "img": "a03002.png", "effect": "fadein" }
     },
-    {
-      "characters": [
-        { "side": "left", "src": "a01002.png" },
-        { "side": "right", "src": "a02002.png", "effect": "slideinRight" }
-      ],
-      "name": "藍",
-      "text": "うん……ほんとに、すがすがしい朝。"
+    "name": "翠",
+    "text": "こちらは fadein の効果です。"
+  },
+  {
+    "char": {
+      "center": null
     },
-    {
-      "characters": [
-        { "side": "left", "src": null },
-        { "side": "right", "src": "a02002.png" },
-        { "side": "center", "src": "a03002.png", "effect": "slideinLeft" }
-      ],
-      "name": "翠",
-      "text": "おはようございます。皆さん、準備は万端ですか？"
+    "name": "",
+    "text": "キャラを一度退場させます。"
+  },
+  {
+    "char": {
+      "left": { "name": "緋奈", "img": "a01002.png", "effect": "slideinLeft" }
     },
-    {
-      "text": "さて、どうする？",
-      "choices": [
-        { "text": "元気に出発！", "jump": "choiceA.json" },
-        { "text": "もう少し準備を続ける", "jump": "choiceB.json" }
-      ]
-    }
-  ]
-}
+    "name": "緋奈",
+    "text": "左からスライドインしました！"
+  },
+  {
+    "char": {
+      "left": null
+    },
+    "name": "",
+    "text": "次の効果に移ります。"
+  },
+  {
+    "char": {
+      "right": { "name": "藍", "img": "a02002.png", "effect": "slideinRight" }
+    },
+    "name": "藍",
+    "text": "右からスライドインしました……。"
+  },
+  {
+    "char": {
+      "right": null
+    },
+    "name": "",
+    "text": "続けて、上下のスライドインを確認します。"
+  },
+  {
+    "char": {
+      "center": { "name": "こがね", "img": "a04002.png", "effect": "slideinUp" }
+    },
+    "name": "こがね",
+    "text": "下から、こんにちは〜"
+  },
+  {
+    "char": {
+      "center": null
+    },
+    "name": "",
+    "text": "最後に上から登場です。"
+  },
+  {
+    "char": {
+      "center": { "name": "琥珀", "img": "a05002.png", "effect": "slideinDown" }
+    },
+    "name": "琥珀",
+    "text": "うえからジャンプイン！"
+  },
+  {
+    "char": {
+      "center": null
+    },
+    "name": "",
+    "text": "エフェクト確認は以上です。"
+  },
+  {
+    "name": "",
+    "text": "シナリオを終了します。",
+    "next": null
+  }
+]
