@@ -1,125 +1,119 @@
-let currentScenario = "000start.json";
-let currentIndex = 0;
-let isAuto = false;
-let bgm = null;
-
-const bgEl = document.getElementById("background");
-const nameEl = document.getElementById("name");
-const textEl = document.getElementById("text");
-const choicesEl = document.getElementById("choices");
-
-const charSlots = {
-  left: document.getElementById("char-left"),
-  center: document.getElementById("char-center"),
-  right: document.getElementById("char-right")
-};
-
-let defaultFontSize = "1em";
-let defaultSpeed = 40;
-let currentSpeed = defaultSpeed;
-
-function setTextWithSpeed(text, speed, callback) {
-  textEl.innerHTML = "";
-  let i = 0;
-  const interval = setInterval(() => {
-    textEl.innerHTML += text[i++];
-    if (i >= text.length) {
-      clearInterval(interval);
-      if (callback) callback();
-    }
-  }, speed);
+:root {
+  --vh: 1vh;
+  --fontSize: 1em;
 }
 
-function setCharacterStyle(name) {
-  const style = characterStyles[name] || characterStyles[""];
-  document.documentElement.style.setProperty("--fontSize", style.fontSize || defaultFontSize);
-  currentSpeed = style.speed || defaultSpeed;
+body {
+  margin: 0;
+  padding: 0;
+  background-color: black;
+  font-family: sans-serif;
+  overflow: hidden;
+  height: calc(var(--vh, 1vh) * 100);
 }
 
-function showScene(scene) {
-  // 背景
-  if (scene.bg) {
-    bgEl.src = config.bgPath + scene.bg;
-  }
-
-  // BGM
-  if (scene.bgm !== undefined) {
-    if (bgm) {
-      bgm.pause();
-      bgm = null;
-    }
-    if (scene.bgm) {
-      bgm = new Audio(config.bgmPath + scene.bgm);
-      bgm.loop = true;
-      bgm.play();
-    }
-  }
-
-  // キャラ表示
-  if (scene.characters) {
-    ["left", "center", "right"].forEach(pos => {
-      const slot = charSlots[pos];
-      const charData = scene.characters.find(c => c.side === pos);
-      slot.innerHTML = "";
-
-      if (charData && charData.src) {
-        const img = document.createElement("img");
-        img.src = config.charPath + charData.src;
-        img.classList.add("char-image");
-
-        // エフェクト
-        if (charData.effect) {
-          img.classList.add(charData.effect);
-        } else {
-          img.classList.add("fadein"); // デフォルト効果
-        }
-
-        slot.appendChild(img);
-      }
-    });
-  }
-
-  // 名前とセリフ
-  if (scene.name !== undefined && scene.text !== undefined) {
-    const color = characterColors[scene.name] || "#FFFFFF";
-    nameEl.textContent = scene.name;
-    nameEl.style.color = color;
-
-    setCharacterStyle(scene.name);
-    setTextWithSpeed(scene.text, currentSpeed, () => {
-      if (isAuto) next();
-    });
-  }
-
-  // 選択肢
-  if (scene.choices) {
-    choicesEl.innerHTML = "";
-    scene.choices.forEach(choice => {
-      const btn = document.createElement("button");
-      btn.textContent = choice.text;
-      btn.onclick = () => {
-        loadScenario(choice.jump);
-      };
-      choicesEl.appendChild(btn);
-    });
-  } else {
-    choicesEl.innerHTML = "";
-  }
+#game-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
-function next() {
-  fetch(config.scenarioPath + currentScenario)
-    .then(res => res.json())
-    .then(data => {
-      currentIndex++;
-      if (currentIndex < data.scenes.length) {
-        showScene(data.scenes[currentIndex]);
-      }
-    });
+#background {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
 }
 
-function loadScenario(filename) {
-  currentScenario = filename;
-  currentIndex = 0;
-  fetch(config.scenarioPath + filename)
-    .then(res =>
+.character-slot {
+  position: absolute;
+  bottom: 0;
+  width: 33.3%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+#char-left {
+  left: 0;
+}
+
+#char-center {
+  left: 33.3%;
+}
+
+#char-right {
+  left: 66.6%;
+}
+
+.char-image {
+  max-height: 100%;
+  max-width: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* エフェクトクラス */
+.fadein {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.slideinLeft {
+  opacity: 1;
+  transform: translateX(-30px);
+}
+
+.slideinRight {
+  opacity: 1;
+  transform: translateX(30px);
+}
+
+/* テキスト・UI */
+#text-area {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  max-height: 35vh;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 1em;
+  font-size: var(--fontSize);
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+#name {
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+#text {
+  white-space: pre-wrap;
+}
+
+#choices {
+  margin-top: 1em;
+}
+
+#choices button {
+  display: block;
+  margin: 0.5em 0;
+  padding: 0.5em 1em;
+  font-size: 1em;
+  background: #222;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#choices button:hover {
+  background: #444;
+}
