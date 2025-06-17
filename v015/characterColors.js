@@ -1,8 +1,7 @@
-const characterColors = {
-  "": "#C0C0C0",
+export const characterColors = {
   "緋奈": "#d3381c",
   "藍": "#0067C0",
   "翠": "#005931",
   "こがね": "#FFF450",
-  "琥珀": "#F68B1F"
+  "琥珀": "#F68B1F",
 };
