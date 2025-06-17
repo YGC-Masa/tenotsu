@@ -1,3 +1,5 @@
+// script.js
+
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
@@ -11,7 +13,7 @@ const choicesEl = document.getElementById("choices");
 const charSlots = {
   left: document.getElementById("char-left"),
   center: document.getElementById("char-center"),
-  right: document.getElementById("char-right")
+  right: document.getElementById("char-right"),
 };
 
 let defaultFontSize = "1em";
@@ -36,12 +38,24 @@ function setCharacterStyle(name) {
   currentSpeed = style.speed || defaultSpeed;
 }
 
+function applyEffect(el, effectName) {
+  if (window.effects && effectName && window.effects[effectName]) {
+    window.effects[effectName](el);
+  } else {
+    // デフォルトはfadein
+    window.effects?.fadein(el);
+  }
+}
+
 function showScene(scene) {
   // 背景
   if (scene.bg) {
-    bgEl.src = config.bgPath + scene.bg;
-  } else {
-    bgEl.src = "";
+    // 背景画像変更前にフェードアウトしてから差し替え→フェードイン
+    applyEffect(bgEl, "fadeout");
+    setTimeout(() => {
+      bgEl.src = config.bgPath + scene.bg;
+      applyEffect(bgEl, scene.bgEffect || "fadein");
+    }, 500);
   }
 
   // BGM
@@ -59,28 +73,23 @@ function showScene(scene) {
 
   // キャラ表示
   if (scene.characters) {
-    ["left", "center", "right"].forEach(pos => {
+    ["left", "center", "right"].forEach((pos) => {
       const slot = charSlots[pos];
-      const charData = scene.characters.find(c => c.side === pos);
+      const charData = scene.characters.find((c) => c.side === pos);
       slot.innerHTML = "";
 
       if (charData && charData.src) {
         const img = document.createElement("img");
         img.src = config.charPath + charData.src;
         img.classList.add("char-image");
-
-        if (charData.effect) {
-          img.classList.add(charData.effect);
-        } else {
-          img.classList.add("fadein");
-        }
-
         slot.appendChild(img);
+
+        applyEffect(img, charData.effect || "fadein");
       }
     });
   } else {
-    // 何もなければ全キャラ非表示
-    ["left", "center", "right"].forEach(pos => {
+    // キャラ無しならクリア
+    ["left", "center", "right"].forEach((pos) => {
       charSlots[pos].innerHTML = "";
     });
   }
@@ -95,15 +104,12 @@ function showScene(scene) {
     setTextWithSpeed(scene.text, currentSpeed, () => {
       if (isAuto) next();
     });
-  } else {
-    nameEl.textContent = "";
-    textEl.textContent = "";
   }
 
   // 選択肢
   if (scene.choices) {
     choicesEl.innerHTML = "";
-    scene.choices.forEach(choice => {
+    scene.choices.forEach((choice) => {
       const btn = document.createElement("button");
       btn.textContent = choice.text;
       btn.onclick = () => {
@@ -118,8 +124,8 @@ function showScene(scene) {
 
 function next() {
   fetch(config.scenarioPath + currentScenario)
-    .then(res => res.json())
-    .then(data => {
+    .then((res) => res.json())
+    .then((data) => {
       currentIndex++;
       if (currentIndex < data.scenes.length) {
         showScene(data.scenes[currentIndex]);
@@ -131,8 +137,8 @@ function loadScenario(filename) {
   currentScenario = filename;
   currentIndex = 0;
   fetch(config.scenarioPath + filename)
-    .then(res => res.json())
-    .then(data => {
+    .then((res) => res.json())
+    .then((data) => {
       showScene(data.scenes[0]);
     });
 }
