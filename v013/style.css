@@ -1,161 +1,134 @@
-:root {
-  --vh: 1vh;
-  --fontSize: 1em;
-}
-
-body, html {
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
   height: 100%;
-  background: #000;
-  font-family: 'Arial', sans-serif;
-  color: white;
+  font-family: sans-serif;
+  background-color: black;
+  overflow: hidden;
+}
+
+:root {
+  --vh: 100vh;
 }
 
 #game-container {
   position: relative;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: calc(var(--vh, 1vh) * 100);
   overflow: hidden;
-  background: black;
 }
 
 #background {
   position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background-size: cover;
-  background-position: center;
-  transition: background-image 1s ease;
-  z-index: 0;
-}
-
-#character-layer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
   width: 100%;
-  height: 60%;
-  pointer-events: none;
-  z-index: 1;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  transition: all 0.8s ease;
 }
 
-#char-left,
-#char-center,
-#char-right {
+/* キャラ表示 */
+.char-slot {
   position: absolute;
   bottom: 0;
-  transform: translateX(-50%);
-  max-height: 100%;
-  max-width: 100%;
+  max-height: 90%;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  width: 33.33%;
 }
-
-#char-left {
-  left: 25%;
-}
-
-#char-center {
-  left: 50%;
-}
-
-#char-right {
-  left: 75%;
-}
+#char-left { left: 5%; }
+#char-center { left: 50%; transform: translateX(-50%); }
+#char-right { right: 5%; }
 
 .char-image {
-  max-height: 100%;
-  max-width: 100%;
+  max-height: 90%;
+  width: auto;
+  height: auto;
   object-fit: contain;
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  transition: all 0.8s ease;
+  opacity: 0;
 }
 
-/* アニメーション定義 */
-@keyframes fadein {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes slideinLeft {
-  from { opacity: 0; transform: translateX(-50%) translateX(-100px); }
-  to   { opacity: 1; transform: translateX(-50%) translateX(0); }
-}
-
-@keyframes slideinRight {
-  from { opacity: 0; transform: translateX(-50%) translateX(100px); }
-  to   { opacity: 1; transform: translateX(-50%) translateX(0); }
-}
-
-@keyframes slideinUp {
-  from { opacity: 0; transform: translateX(-50%) translateY(100px); }
-  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-
-@keyframes slideinDown {
-  from { opacity: 0; transform: translateX(-50%) translateY(-100px); }
-  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-
-/* エフェクト用クラス */
-.fadein {
-  animation: fadein 0.6s ease forwards;
-}
-
-.slideinLeft {
-  animation: slideinLeft 0.6s ease forwards;
-}
-
-.slideinRight {
-  animation: slideinRight 0.6s ease forwards;
-}
-
-.slideinUp {
-  animation: slideinUp 0.6s ease forwards;
-}
-
-.slideinDown {
-  animation: slideinDown 0.6s ease forwards;
-}
-
-/* セリフ表示エリア */
+/* セリフ */
 #dialogue-box {
   position: absolute;
   bottom: 0;
-  left: 0;
   width: 100%;
-  height: 35vh;
-  background: rgba(0, 0, 0, 0.7);
   padding: 1em;
-  box-sizing: border-box;
-  z-index: 2;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  z-index: 3;
+  max-height: 35vh;
   overflow-y: auto;
   font-size: var(--fontSize, 1em);
 }
+#name { font-weight: bold; margin-bottom: 0.5em; }
+#text { line-height: 1.4em; }
 
-#name-area {
-  font-weight: bold;
-  margin-bottom: 0.5em;
-}
-
-#text-area {
-  white-space: pre-wrap;
-}
-
+/* 選択肢 */
 #choices {
-  margin-top: 1em;
+  position: absolute;
+  bottom: 40%;
+  width: 100%;
+  text-align: center;
+  z-index: 4;
 }
-
-.choice-button {
-  background: #222;
-  color: white;
+#choices button {
+  margin: 0.5em;
+  padding: 0.8em 1.2em;
+  font-size: 1em;
   border: none;
-  padding: 0.5em 1em;
-  margin-right: 0.5em;
+  border-radius: 0.5em;
+  background: white;
+  color: black;
   cursor: pointer;
 }
+#choices button:hover {
+  background: #ddd;
+}
 
-.choice-button:hover {
-  background: #555;
+/* PC横画面向け */
+@media screen and (min-width: 768px) {
+  .char-image {
+    max-height: 70vh;
+  }
+}
+
+/* エフェクト */
+.effect-fadein {
+  animation: fadein 0.8s ease forwards;
+}
+@keyframes fadein {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.effect-slideinLeft {
+  animation: slideinLeft 0.8s ease forwards;
+}
+@keyframes slideinLeft {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.effect-slideinRight {
+  animation: slideinRight 0.8s ease forwards;
+}
+@keyframes slideinRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.effect-slideinUp {
+  animation: slideinUp 0.8s ease forwards;
+}
+@keyframes slideinUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
