@@ -1,15 +1,15 @@
-// 動的に --vh カスタムプロパティを更新
+// 動的に --vh カスタムプロパティを更新（モバイルブラウザUIの高さ変動対応）
 function updateVh() {
   const vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty('--vh', `${vh}px`);
 }
 
-// 初期とリサイズ時に更新
+// 初期とリサイズ時に呼び出し
 window.addEventListener('resize', updateVh);
 window.addEventListener('orientationchange', updateVh);
 window.addEventListener('load', updateVh);
 
-// グローバル変数
+// シナリオデータ管理用
 let scenarioData = null;
 let currentSceneIndex = 0;
 let isTextDisplaying = false;
@@ -32,14 +32,14 @@ let currentFontSize = characterStyles[""].fontSize || "1em";
 let currentSpeed = characterStyles[""].speed || 40;
 
 // シナリオ読み込み
-async function loadScenario(fileName) {
+async function loadScenario(filename) {
   try {
-    const res = await fetch(config.scenarioPath + fileName);
+    const res = await fetch(config.scenarioPath + filename);
     scenarioData = await res.json();
     currentSceneIndex = 0;
     showScene(currentSceneIndex);
   } catch (e) {
-    console.error("読み込み失敗:", e);
+    console.error("シナリオ読み込み失敗:", e);
   }
 }
 
@@ -49,7 +49,7 @@ function showScene(index) {
 
   const scene = scenarioData.scenes[index];
 
-  // 背景
+  // 背景画像切替
   if (scene.bg) {
     backgroundElement.src = config.bgPath + scene.bg;
   }
@@ -57,35 +57,27 @@ function showScene(index) {
   // キャラ表示
   ["left", "center", "right"].forEach(pos => {
     const charData = scene.characters?.find(c => c.side === pos);
-    const target = charElements[pos];
-    if (charData && charData.src && charData.src.toLowerCase() !== "null") {
-      const img = document.createElement("img");
-      img.src = config.charPath + charData.src;
-      img.className = "char-image";
-
-      if (charData.effect) {
-        img.classList.add(charData.effect);
-      }
-
-      target.innerHTML = "";
-      target.appendChild(img);
+    const img = charData?.src;
+    const effect = charData?.effect || "";
+    if (img && img.toLowerCase() !== "null") {
+      charElements[pos].innerHTML = `<img src="${config.charPath + img}" class="char-image ${effect}">`;
     } else {
-      target.innerHTML = "";
+      charElements[pos].innerHTML = "";
     }
   });
 
-  // 名前と色
+  // 名前・色
   nameBox.textContent = scene.name || "";
   nameBox.style.color = characterColors[scene.name] || characterColors[""];
 
-  // フォントサイズと速度（キャラ別）
+  // フォントサイズと速度（キャラごとに反映）
   const style = characterStyles[scene.name] || characterStyles[""];
   currentFontSize = style.fontSize || characterStyles[""].fontSize;
   currentSpeed = style.speed || characterStyles[""].speed;
   dialogueBox.style.setProperty("--fontSize", currentFontSize);
   dialogueBox.style.fontSize = currentFontSize;
 
-  // セリフ
+  // セリフ表示
   const text = scene.text || "";
   const speed = scene.speed ?? currentSpeed;
   displayText(text, speed);
@@ -98,7 +90,7 @@ function showScene(index) {
   }
 }
 
-// テキスト表示
+// テキスト表示（タイプ風）
 function displayText(text, speed) {
   clearTimeout(autoTimeout);
   isTextDisplaying = true;
@@ -119,11 +111,12 @@ function displayText(text, speed) {
   type();
 }
 
-// 選択肢
+// 選択肢表示
 function showChoices(choices) {
   clearChoices();
   choices.forEach(choice => {
     const btn = document.createElement("button");
+    btn.className = "choice-button";
     btn.textContent = choice.text;
     btn.onclick = () => {
       if (choice.jump) {
@@ -140,7 +133,7 @@ function clearChoices() {
   choicesBox.innerHTML = "";
 }
 
-// 次へ
+// 次のシーンへ
 function nextScene() {
   if (isTextDisplaying) {
     clearTimeout(autoTimeout);
@@ -149,13 +142,11 @@ function nextScene() {
     isTextDisplaying = false;
   } else {
     currentSceneIndex++;
-    if (currentSceneIndex < scenarioData.scenes.length) {
-      showScene(currentSceneIndex);
-    }
+    showScene(currentSceneIndex);
   }
 }
 
-// オートモード
+// オートモード切り替え
 function toggleAutoMode() {
   autoMode = !autoMode;
   if (autoMode && !isTextDisplaying) {
@@ -165,7 +156,7 @@ function toggleAutoMode() {
   }
 }
 
-// クリック処理
+// ゲーム画面クリック処理
 function onClickGameArea() {
   if (isTextDisplaying) {
     clearTimeout(autoTimeout);
