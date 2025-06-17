@@ -2,24 +2,59 @@
   "scenes": [
     {
       "bg": "bg011.jpg",
+      "bgm": "main.mp3",
       "characters": [
-        { "side": "center", "src": "a03002.png", "effect": "fadein" }
+        {"side": "center", "src": "a01002.png", "effect": "fadein"}
+      ],
+      "name": "緋奈",
+      "text": "こんにちは！緋奈です。明るく元気に今日も頑張ります！",
+      "effect": "fadein"
+    },
+    {
+      "bg": "bg011.jpg",
+      "characters": [
+        {"side": "left", "src": "a02002.png", "effect": "slideleft"},
+        {"side": "right", "src": "a03002.png", "effect": "slideright"}
+      ],
+      "name": "藍",
+      "text": "藍です。控えめだけど、みんなを支えますよ。",
+      "effect": "slideleft"
+    },
+    {
+      "bg": "bg020.jpg",
+      "characters": [
+        {"side": "center", "src": "a03002.png", "effect": "fadein"}
       ],
       "name": "翠",
-      "text": "ようこそ、物語の世界へ。"
+      "text": "翠です。仕事はまじめにこなします。",
+      "effect": "whitein"
     },
     {
+      "bg": "bg021.jpg",
       "characters": [
-        { "side": "right", "src": "a04002.png", "effect": "slideinRight" }
+        {"side": "left", "src": "a04002.png", "effect": "slideleft"}
       ],
       "name": "こがね",
-      "text": "なんか始まったっぽくない？"
+      "text": "こがねだよ～。ちょっとだるいけど、よろしくね☆",
+      "effect": "blackin"
     },
     {
-      "choices": [
-        { "text": "Aの道へ", "jump": "choiceA.json" },
-        { "text": "Bの道へ", "jump": "choiceB.json" }
-      ]
+      "bg": "bg022.jpg",
+      "characters": [
+        {"side": "right", "src": "a05002.png", "effect": "slideright"}
+      ],
+      "name": "琥珀",
+      "text": "琥珀だ！元気いっぱいで頑張るぜ！",
+      "effect": "fadein"
+    },
+    {
+      "bg": "bg001.png",
+      "characters": [
+        {"side": "center", "src": "a01002.png", "effect": "fadein"}
+      ],
+      "name": "緋奈",
+      "text": "これで全員紹介完了！\nみんな、よろしくね！",
+      "effect": "fadein"
     }
   ]
 }
