@@ -1,29 +1,23 @@
-[
-  {
-    "bg": "bg010.jpg",
-    "bgm": "bgm01.mp3",
-    "characters": [
-      { "side": "left", "src": "hina.png", "effect": "slideinLeft" },
-      { "side": "right", "src": "ai.png", "effect": "slideinRight" }
-    ],
-    "name": "緋奈",
-    "text": "こんにちは、緋奈です。スライドイン効果を試しています。"
-  },
-  {
-    "bg": "bg01.jpg",
-    "characters": [
-      { "side": "left", "src": null },    
-      { "side": "right", "src": "ai.png" }
-    ],
-    "name": "藍",
-    "text": "藍です。緋奈が消えました。フェードアウト効果も使われています。"
-  },
-  {
-    "bg": "bg01.jpg",
-    "characters": [
-      { "side": "center", "src": "kogane.png", "effect": "fadein" }
-    ],
-    "name": "こがね",
-    "text": "真ん中にこがねがフェードインします。"
-  }
-]
+{
+  "scenes": [
+    {
+      "bg": "bg010.jpg",
+      "bgm": "main.mp3",
+      "characters": [
+        { "side": "center", "src": "a03002.png", "effect": "fadein" }
+      ],
+      "name": "翠",
+      "text": "こんにちは。これはv014のテストシナリオです。"
+    },
+    {
+      "name": "こがね",
+      "text": "やっほー！キャラのフォントサイズと速度も変わるよ！"
+    },
+    {
+      "choices": [
+        { "text": "はい", "jump": "choiceA.json" },
+        { "text": "いいえ", "jump": "choiceB.json" }
+      ]
+    }
+  ]
+}
