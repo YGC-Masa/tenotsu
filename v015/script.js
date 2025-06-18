@@ -2,7 +2,7 @@ import { playEffect } from './effectHandler.js';
 
 const config = {
   scenarioPath: './scenario/000start.json',
-  assetBasePath: './assets2/',
+  assetBasePath: '../assets2/',
 };
 
 const gameContainer = document.getElementById('game-container');
