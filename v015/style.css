@@ -1,91 +1,150 @@
+/* === 全体基本設定 === */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    font-family: 'Segoe UI', sans-serif;
+    overflow: hidden;
+}
+
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+}
+
+/* === 背景画像 === */
+#background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+/* === キャラクター画像スロット === */
+#char-left, #char-center, #char-right {
+    position: absolute;
+    bottom: 0;
+    max-height: 90%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+#char-left {
+    left: 10%;
+    transform: translateX(-10%);
+}
+
+#char-center {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#char-right {
+    right: 10%;
+    transform: translateX(10%);
+}
+
+.char-image {
+    max-height: 90vh;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+    user-select: none;
+}
+
+/* === テキストボックス === */
+#dialogue-box {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 20px;
+    font-size: 1.2rem;
+    z-index: 2;
+    box-sizing: border-box;
+}
+
+/* キャラ名表示 */
+#name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* === エフェクト（演出）クラス === */
+
 /* フェードイン */
 .fadein {
-  animation: fadeInAnim 0.5s ease forwards;
-}
-@keyframes fadeInAnim {
-  from { opacity: 0; }
-  to { opacity: 1; }
+    animation: fadeIn 1s ease-out forwards;
 }
 
-/* スライド左から */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* スライドイン左 */
 .slideleft {
-  animation: slideLeftAnim 0.5s ease forwards;
-}
-@keyframes slideLeftAnim {
-  from {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+    animation: slideLeft 0.5s ease-out forwards;
 }
 
-/* スライド右から */
+@keyframes slideLeft {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* スライドイン右 */
 .slideright {
-  animation: slideRightAnim 0.5s ease forwards;
-}
-@keyframes slideRightAnim {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+    animation: slideRight 0.5s ease-out forwards;
 }
 
-/* ホワイトイン（白フェードイン） */
+@keyframes slideRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* ホワイトイン */
 .whitein {
-  animation: whiteInAnim 0.5s ease forwards;
-  background: white;
-  position: relative;
-  z-index: 1000;
-}
-@keyframes whiteInAnim {
-  0% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
+    animation: whiteIn 1s ease-out forwards;
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: white;
+    z-index: 10000;
+    pointer-events: none;
 }
 
-/* ブラックイン（黒フェードイン） */
+@keyframes whiteIn {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* ブラックイン */
 .blackin {
-  animation: blackInAnim 0.5s ease forwards;
-  background: black;
-  position: relative;
-  z-index: 1000;
-}
-@keyframes blackInAnim {
-  0% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
+    animation: blackIn 1s ease-out forwards;
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: black;
+    z-index: 10000;
+    pointer-events: none;
 }
 
-/* transition用のカスタム効果（例） */
-.transition-custom {
-  animation: transitionCustomAnim 1s ease forwards;
+@keyframes blackIn {
+    from { opacity: 1; }
+    to { opacity: 0; }
 }
-@keyframes transitionCustomAnim {
-  from {
-    filter: blur(5px);
-    opacity: 0;
-  }
-  to {
-    filter: blur(0);
-    opacity: 1;
-  }
+
+/* === 汎用クラス === */
+.hidden {
+    display: none;
+}
+
+.visible {
+    display: block;
 }
