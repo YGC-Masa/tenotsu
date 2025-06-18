@@ -20,7 +20,6 @@ const choicesBox = document.getElementById('choices');
 let scenario = [];
 let currentIndex = 0;
 let isPlaying = false;
-let skipRequested = false;
 
 async function loadScenario() {
   const res = await fetch(config.scenarioPath);
@@ -28,14 +27,13 @@ async function loadScenario() {
 }
 
 function clearChars() {
-  Object.values(charSlots).forEach(slot => slot.innerHTML = '');
+  Object.values(charSlots).forEach(slot => (slot.innerHTML = ''));
 }
 
 function showCharacter(slotId, charImage, effect) {
   const slot = charSlots[slotId];
   if (!slot) return;
 
-  // 既存キャラ削除
   slot.innerHTML = '';
 
   if (!charImage) return;
@@ -45,11 +43,8 @@ function showCharacter(slotId, charImage, effect) {
   img.classList.add('char-image');
   slot.appendChild(img);
 
-  // 効果をかける
   if (effect) {
-    playEffect(effect, img, () => {
-      img.style.opacity = '1'; // 効果完了で確実に表示
-    });
+    playEffect(effect, img);
   } else {
     img.style.opacity = '1';
   }
@@ -57,13 +52,11 @@ function showCharacter(slotId, charImage, effect) {
 
 function setBackground(imageName, effect) {
   if (!imageName) return;
+
+  background.src = `${config.assetBasePath}bgev/${imageName}`;
+
   if (effect) {
-    // 効果付きで背景差し替え
-    playEffect(effect, background, () => {
-      background.src = `${config.assetBasePath}bgev/${imageName}`;
-    });
-  } else {
-    background.src = `${config.assetBasePath}bgev/${imageName}`;
+    playEffect(effect, background);
   }
 }
 
@@ -73,9 +66,7 @@ function showDialogue(name, text, color, effect) {
   textBox.textContent = text || '';
 
   if (effect) {
-    playEffect(effect, dialogueBox, () => {
-      // 効果完了後なにかあれば
-    });
+    playEffect(effect, dialogueBox);
   }
 }
 
@@ -94,6 +85,30 @@ function showChoices(choices) {
       playScenario();
     });
     choicesBox.appendChild(btn);
+  });
+}
+
+function waitForUserInputOrTimeout(timeout) {
+  return new Promise(resolve => {
+    let resolved = false;
+
+    function onClick() {
+      if (!resolved) {
+        resolved = true;
+        document.removeEventListener('click', onClick);
+        resolve();
+      }
+    }
+
+    document.addEventListener('click', onClick);
+
+    setTimeout(() => {
+      if (!resolved) {
+        resolved = true;
+        document.removeEventListener('click', onClick);
+        resolve();
+      }
+    }, timeout);
   });
 }
 
@@ -128,40 +143,16 @@ async function playScenario() {
   if (item.choices && item.choices.length > 0) {
     showChoices(item.choices);
   } else {
-    // 自動進行（スキップ対応も）
+    // 自動進行（クリックまたはタイムアウト待ち）
     await waitForUserInputOrTimeout(item.wait || 2000);
     currentIndex++;
-    playScenario();
+    await playScenario();
   }
-}
-
-function waitForUserInputOrTimeout(timeout) {
-  return new Promise(resolve => {
-    let resolved = false;
-
-    function onClick() {
-      if (!resolved) {
-        resolved = true;
-        document.removeEventListener('click', onClick);
-        resolve();
-      }
-    }
-
-    document.addEventListener('click', onClick);
-
-    setTimeout(() => {
-      if (!resolved) {
-        resolved = true;
-        document.removeEventListener('click', onClick);
-        resolve();
-      }
-    }, timeout);
-  });
 }
 
 async function init() {
   await loadScenario();
-  playScenario();
+  await playScenario();
 }
 
 window.addEventListener('load', init);
