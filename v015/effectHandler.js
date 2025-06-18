@@ -1,147 +1,94 @@
-// effectHandler.js
-
-/**
- * 画面効果を実行する関数
- * @param {string} effectName - エフェクト名（fadein, fadeout, whitein, whiteout, blackin, blackout, slideleft, slideright, transitionなど）
- * @param {HTMLElement} target - 効果をかける要素（例: 背景画像やゲーム全体コンテナ）
- * @param {Function} onComplete - 効果完了時のコールバック
- * @param {object} [options] - オプション（durationなど）
- */
-export function playEffect(effectName, target, onComplete, options = {}) {
-  const duration = options.duration || 500; // デフォルト500ms
-  let animationClass = '';
-  let cleanup = () => {
-    if (animationClass) target.classList.remove(animationClass);
-  };
-
-  switch (effectName.toLowerCase()) {
-    case 'fadein':
-      animationClass = 'fadein';
-      target.style.opacity = 0;
-      target.style.transition = `opacity ${duration}ms ease`;
-      target.style.opacity = 1;
-      setTimeout(() => {
-        cleanup();
-        onComplete && onComplete();
-      }, duration);
-      break;
-
-    case 'fadeout':
-      animationClass = 'fadeout';
-      target.style.opacity = 1;
-      target.style.transition = `opacity ${duration}ms ease`;
-      target.style.opacity = 0;
-      setTimeout(() => {
-        cleanup();
-        onComplete && onComplete();
-      }, duration);
-      break;
-
-    case 'whitein':
-      animationClass = 'whitein';
-      applyOverlay('white', duration, onComplete);
-      break;
-
-    case 'whiteout':
-      animationClass = 'whiteout';
-      removeOverlay(duration, onComplete);
-      break;
-
-    case 'blackin':
-      animationClass = 'blackin';
-      applyOverlay('black', duration, onComplete);
-      break;
-
-    case 'blackout':
-      animationClass = 'blackout';
-      removeOverlay(duration, onComplete);
-      break;
-
-    case 'slideleft':
-      animationClass = 'slideinLeft';
-      target.classList.add(animationClass);
-      setTimeout(() => {
-        target.classList.remove(animationClass);
-        onComplete && onComplete();
-      }, duration);
-      break;
-
-    case 'slideright':
-      animationClass = 'slideinRight';
-      target.classList.add(animationClass);
-      setTimeout(() => {
-        target.classList.remove(animationClass);
-        onComplete && onComplete();
-      }, duration);
-      break;
-
-    case 'transition':
-      // カスタムトランジションは options.transitionClass で指定を想定
-      if (options.transitionClass) {
-        animationClass = options.transitionClass;
-        target.classList.add(animationClass);
-        setTimeout(() => {
-          target.classList.remove(animationClass);
-          onComplete && onComplete();
-        }, duration);
-      } else {
-        onComplete && onComplete();
-      }
-      break;
-
-    default:
-      // 未対応のエフェクトは即時完了扱い
-      onComplete && onComplete();
-      break;
-  }
-}
-
-/**
- * オーバーレイ適用（whitein, blackin 用）
- * @param {string} color - 'white' or 'black'
- * @param {number} duration - ミリ秒
- * @param {Function} callback - 完了時
- */
-function applyOverlay(color, duration, callback) {
-  let overlay = document.getElementById('effect-overlay');
-  if (!overlay) {
-    overlay = document.createElement('div');
-    overlay.id = 'effect-overlay';
-    Object.assign(overlay.style, {
-      position: 'fixed',
-      top: '0',
-      left: '0',
-      width: '100vw',
-      height: '100vh',
-      backgroundColor: color,
-      opacity: 0,
-      pointerEvents: 'none',
-      zIndex: 9999,
-      transition: `opacity ${duration}ms ease`
-    });
-    document.body.appendChild(overlay);
-  }
-  overlay.style.opacity = '1';
-
-  setTimeout(() => {
-    callback && callback();
-  }, duration);
-}
-
-/**
- * オーバーレイ解除（whiteout, blackout 用）
- * @param {number} duration - ミリ秒
- * @param {Function} callback - 完了時
- */
-function removeOverlay(duration, callback) {
-  const overlay = document.getElementById('effect-overlay');
-  if (!overlay) {
-    callback && callback();
+export function playEffect(effect, target, callback) {
+  if (!effect || !target) {
+    callback?.();
     return;
   }
-  overlay.style.opacity = '0';
-  setTimeout(() => {
-    if (overlay.parentElement) overlay.parentElement.removeChild(overlay);
-    callback && callback();
-  }, duration);
+  const effectsMap = {
+    fadein: () => {
+      target.style.transition = "opacity 0.5s";
+      target.style.opacity = "0";
+      requestAnimationFrame(() => {
+        target.style.opacity = "1";
+      });
+      setTimeout(() => callback?.(), 500);
+    },
+    fadeout: () => {
+      target.style.transition = "opacity 0.5s";
+      target.style.opacity = "1";
+      requestAnimationFrame(() => {
+        target.style.opacity = "0";
+      });
+      setTimeout(() => callback?.(), 500);
+    },
+    slideleft: () => {
+      target.style.animation = "slideLeft 0.5s ease-out forwards";
+      setTimeout(() => callback?.(), 500);
+    },
+    slideright: () => {
+      target.style.animation = "slideRight 0.5s ease-out forwards";
+      setTimeout(() => callback?.(), 500);
+    },
+    whitein: () => {
+      // 白フェードイン効果
+      const overlay = document.createElement("div");
+      Object.assign(overlay.style, {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: "white",
+        opacity: "0",
+        pointerEvents: "none",
+        zIndex: 9999,
+        transition: "opacity 0.5s",
+      });
+      document.body.appendChild(overlay);
+      requestAnimationFrame(() => {
+        overlay.style.opacity = "1";
+      });
+      setTimeout(() => {
+        overlay.style.opacity = "0";
+        setTimeout(() => {
+          document.body.removeChild(overlay);
+          callback?.();
+        }, 500);
+      }, 500);
+    },
+    blackin: () => {
+      // 黒フェードイン効果
+      const overlay = document.createElement("div");
+      Object.assign(overlay.style, {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: "black",
+        opacity: "0",
+        pointerEvents: "none",
+        zIndex: 9999,
+        transition: "opacity 0.5s",
+      });
+      document.body.appendChild(overlay);
+      requestAnimationFrame(() => {
+        overlay.style.opacity = "1";
+      });
+      setTimeout(() => {
+        overlay.style.opacity = "0";
+        setTimeout(() => {
+          document.body.removeChild(overlay);
+          callback?.();
+        }, 500);
+      }, 500);
+    },
+    // TODO: transitionはカスタム対応予定
+  };
+
+  const fn = effectsMap[effect.toLowerCase()];
+  if (fn) {
+    fn();
+  } else {
+    callback?.();
+  }
 }
