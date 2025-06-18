@@ -1,0 +1,21 @@
+[
+  {
+    "background": "bg011.jpg",
+    "characters": {
+      "center": { "image": "a01002.png" }
+    },
+    "name": "緋奈",
+    "text": "こんにちは！今日はいい天気だね！",
+    "color": "#d3381c",
+    "wait": 3000
+  },
+  {
+    "characters": {
+      "left": { "image": "a02002.png" }
+    },
+    "name": "藍",
+    "text": "……うん、気持ちいい日差し。",
+    "color": "#0067C0",
+    "wait": 3000
+  }
+]
