@@ -1,40 +1,70 @@
 [
   {
-    "bg": "bg010.jpg",
-    "charLeft": "hina",
+    "background": "bg011.jpg",
+    "effect": "fadein",
+    "characters": {
+      "center": {
+        "image": "a01002.png"
+      }
+    },
     "name": "緋奈",
-    "text": "こんにちは！ビジュアルノベルのサンプルです。",
-    "effect": "fadein"
+    "text": "こんにちは！今日はいい天気ですね。",
+    "wait": 3000
   },
   {
-    "charCenter": "ai",
+    "characters": {
+      "left": {
+        "image": "a02002.png"
+      },
+      "center": {
+        "image": "a01002.png"
+      }
+    },
     "name": "藍",
-    "text": "おとなしく控えめな私もいますよ。",
-    "effect": "slideleft"
+    "text": "そうですね。散歩に行きましょうか？",
+    "wait": 3000
   },
   {
-    "charRight": "midori",
-    "name": "翠",
-    "text": "まじめで敬語を使います。よろしくお願いします。",
-    "effect": "slideright"
+    "name": "緋奈",
+    "text": "いいですね！どこに行きたいですか？",
+    "wait": 3000,
+    "choices": [
+      { "text": "海に行く", "next": 4 },
+      { "text": "山に行く", "next": 5 }
+    ]
   },
   {
-    "bg": "bg011.jpg",
-    "charLeft": "kogane",
-    "name": "こがね",
-    "text": "ギャル系の私も元気に登場！",
-    "effect": "whitein"
+    "background": "bg_beach.jpg",
+    "effect": "fadein",
+    "characters": {
+      "center": {
+        "image": "a01002.png"
+      }
+    },
+    "name": "緋奈",
+    "text": "海は最高ですね！潮風が気持ちいいです。",
+    "wait": 3000
   },
   {
-    "charCenter": "kohaku",
-    "name": "琥珀",
-    "text": "アスリートの元気印、よろしく！",
-    "effect": "blackin"
+    "background": "bg_mountain.jpg",
+    "effect": "fadein",
+    "characters": {
+      "center": {
+        "image": "a01002.png"
+      }
+    },
+    "name": "緋奈",
+    "text": "山もいいですね。空気が澄んでいます。",
+    "wait": 3000
   },
   {
-    "bg": "bg020.jpg",
-    "name": "ナレーション",
-    "text": "ここでシナリオは終了です。",
-    "effect": "fadeout"
+    "background": "bg011.jpg",
+    "effect": "fadein",
+    "name": "",
+    "text": "シナリオ終了。クリックでリスタート。",
+    "wait": 3000,
+    "choices": [
+      { "text": "最初から", "next": 0 }
+    ]
   }
 ]
