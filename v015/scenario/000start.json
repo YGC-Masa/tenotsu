@@ -1,43 +1,33 @@
 [
   {
-    "background": "bg010.jpg",
+    "background": "bg011.jpg",
     "characters": {
       "center": { "image": "a01002.png" }
     },
     "name": "緋奈",
-    "color": "#d3381c",
-    "text": "こんにちは！エフェクトなしのシンプルサンプルです。",
-    "wait": 3000
+    "text": "こんにちは！わたし、緋奈って言うの！",
+    "color": "#d3381c"
   },
   {
-    "background": "bg011.jpg",
     "characters": {
       "left": { "image": "a02002.png" },
-      "right": { "image": "a03002.png" }
+      "center": { "image": "a01002.png" }
     },
     "name": "藍",
-    "color": "#0067C0",
-    "text": "画面切り替えもエフェクト無しです。",
-    "wait": 3000
+    "text": "よろしくお願いします……",
+    "color": "#0067C0"
   },
   {
-    "background": "bg021.jpg",
     "characters": {
-      "center": { "image": "a04002.png" }
+      "left": { "image": "a02002.png" },
+      "center": { "image": "a01002.png" },
+      "right": { "image": "a03002.png" }
     },
-    "name": "こがね",
-    "color": "#FFF450",
-    "text": "キャラの動きも無しで静かに進みます。",
-    "wait": 3000
+    "name": "翠",
+    "text": "さて、本題に入りましょうか。",
+    "color": "#005931"
   },
   {
-    "background": "bg022.jpg",
-    "characters": {
-      "center": { "image": "a05002.png" }
-    },
-    "name": "琥珀",
-    "color": "#F68B1F",
-    "text": "これでシンプル動作確認できますね！",
-    "wait": 3000
+    "text": "（このあと、物語が始まっていく──）"
   }
 ]
