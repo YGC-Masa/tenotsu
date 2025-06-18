@@ -1,70 +1,47 @@
 [
   {
-    "background": "bg011.jpg",
+    "background": "bg010.jpg",
     "effect": "fadein",
     "characters": {
-      "center": {
-        "image": "a01002.png"
-      }
+      "center": { "image": "a01002.png" }
     },
     "name": "緋奈",
-    "text": "こんにちは！今日はいい天気ですね。",
+    "color": "#d3381c",
+    "text": "こんにちは！今日も元気にいきましょう！",
     "wait": 3000
   },
   {
+    "background": "bg011.jpg",
+    "effect": "slideleft",
     "characters": {
-      "left": {
-        "image": "a02002.png"
-      },
-      "center": {
-        "image": "a01002.png"
-      }
+      "left": { "image": "a02002.png" },
+      "right": { "image": "a03002.png" }
     },
     "name": "藍",
-    "text": "そうですね。散歩に行きましょうか？",
+    "color": "#0067C0",
+    "text": "静かな午後ですね。",
     "wait": 3000
   },
   {
-    "name": "緋奈",
-    "text": "いいですね！どこに行きたいですか？",
-    "wait": 3000,
-    "choices": [
-      { "text": "海に行く", "next": 4 },
-      { "text": "山に行く", "next": 5 }
-    ]
-  },
-  {
-    "background": "bg_beach.jpg",
-    "effect": "fadein",
+    "background": "bg021.jpg",
+    "effect": "slideright",
     "characters": {
-      "center": {
-        "image": "a01002.png"
-      }
+      "center": { "image": "a04002.png" }
     },
-    "name": "緋奈",
-    "text": "海は最高ですね！潮風が気持ちいいです。",
+    "name": "こがね",
+    "color": "#FFF450",
+    "text": "夕方はまったり過ごしたいわ。",
     "wait": 3000
   },
   {
-    "background": "bg_mountain.jpg",
-    "effect": "fadein",
+    "background": "bg022.jpg",
+    "effect": "fadeout",
     "characters": {
-      "center": {
-        "image": "a01002.png"
-      }
+      "center": { "image": "a05002.png" }
     },
-    "name": "緋奈",
-    "text": "山もいいですね。空気が澄んでいます。",
+    "name": "琥珀",
+    "color": "#F68B1F",
+    "text": "それじゃ、また明日！",
     "wait": 3000
-  },
-  {
-    "background": "bg011.jpg",
-    "effect": "fadein",
-    "name": "",
-    "text": "シナリオ終了。クリックでリスタート。",
-    "wait": 3000,
-    "choices": [
-      { "text": "最初から", "next": 0 }
-    ]
   }
 ]
