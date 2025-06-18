@@ -1,24 +1,27 @@
-/* リセット */
+/* リセットと基本 */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-
 html, body {
   height: 100%;
   font-family: sans-serif;
   background-color: black;
   overflow: hidden;
+  /* スマホでの安全領域確保 */
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
-/* グローバル変数 */
+/* ビューポート高さ変数（vhの問題対策用）*/
 :root {
   --vh: 100vh;
   --fontSize: 1em;
 }
 
-/* メインコンテナ */
 #game-container {
   position: relative;
   width: 100%;
@@ -35,32 +38,30 @@ html, body {
   z-index: 0;
 }
 
-/* キャラスロット配置 */
+/* キャラ表示スロット */
 .char-slot {
   position: absolute;
-  bottom: 0;
-  max-height: 100%;
+  bottom: env(safe-area-inset-bottom, 0); /* 安全領域下端 */
+  max-height: 90%;
   z-index: 2;
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: flex-end; /* ここでボトム揃え */
   width: 33.33%;
 }
 
 #char-left {
   left: 5%;
 }
-
 #char-center {
   left: 50%;
   transform: translateX(-50%);
 }
-
 #char-right {
   right: 5%;
 }
 
-/* キャラ画像本体 */
+/* キャラ画像 */
 .char-image {
   max-height: 90vh;
   width: auto;
@@ -68,9 +69,9 @@ html, body {
   object-fit: contain;
   opacity: 0;
   transition: opacity 0.5s;
+  align-self: flex-end; /* 念のため */
 }
 
-/* キャラ出現アニメーション */
 .fadein {
   opacity: 1 !important;
 }
@@ -83,21 +84,19 @@ html, body {
   animation: slideRight 0.5s ease-out forwards;
 }
 
-/* アニメーションキーフレーム */
 @keyframes slideLeft {
   from { transform: translateX(-100%); opacity: 0; }
-  to   { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(0); opacity: 1; }
 }
-
 @keyframes slideRight {
   from { transform: translateX(100%); opacity: 0; }
-  to   { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
-/* セリフボックス */
+/* ダイアログボックス */
 #dialogue-box {
   position: absolute;
-  bottom: 0;
+  bottom: env(safe-area-inset-bottom, 0);
   width: 100%;
   padding: 1em;
   background: rgba(0, 0, 0, 0.6);
@@ -117,10 +116,10 @@ html, body {
   line-height: 1.4em;
 }
 
-/* 選択肢ボタン */
+/* 選択肢 */
 #choices {
   position: absolute;
-  bottom: 40%;
+  bottom: calc(env(safe-area-inset-bottom, 0) + 40%);
   width: 100%;
   text-align: center;
   z-index: 4;
@@ -141,7 +140,7 @@ html, body {
   background: #ddd;
 }
 
-/* レスポンシブ調整 */
+/* メディアクエリ：PCなど大画面 */
 @media screen and (min-width: 768px) {
   .char-image {
     max-height: 70vh;
