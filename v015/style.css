@@ -3,18 +3,19 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+:root {
+  --vh: 100vh;
+  --fontSize: 1em;
+}
+
 html, body {
   height: 100%;
   font-family: sans-serif;
   background-color: black;
   overflow: hidden;
 }
-:root {
-  --vh: 100vh;
-  --fontSize: 1em;
-}
 
-/* 更新されたゲームコンテナ */
 #game-container {
   position: relative;
   width: 100%;
@@ -22,68 +23,44 @@ html, body {
   overflow: hidden;
 }
 
-/* 背景 */
+/* 背景画像 */
 #background {
   position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   z-index: 0;
 }
 
-/* キャラ表示領域 */
+/* キャラクター */
 .char-slot {
   position: absolute;
-  bottom: 0;
+  bottom: env(safe-area-inset-bottom, 0); /* iOS等の安全領域考慮 */
   width: 33.33%;
   display: flex;
   justify-content: center;
   align-items: flex-end;
   z-index: 2;
-  pointer-events: none;
 }
 
 #char-left {
-  left: 0;
+  left: 5%;
 }
 #char-center {
   left: 50%;
   transform: translateX(-50%);
 }
 #char-right {
-  right: 0;
+  right: 5%;
 }
 
-/* キャラ画像本体 */
 .char-image {
-  max-height: 90%;
+  max-height: 90vh;
   height: auto;
   width: auto;
   object-fit: contain;
   opacity: 0;
-  transition: opacity 0.5s;
-  pointer-events: none;
-}
-
-/* エフェクト関連 */
-.fadein {
-  opacity: 1 !important;
-}
-.slideinLeft {
-  animation: slideLeft 0.5s ease-out forwards;
-}
-.slideinRight {
-  animation: slideRight 0.5s ease-out forwards;
-}
-@keyframes slideLeft {
-  from { transform: translateX(-100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-@keyframes slideRight {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+  transition: opacity 0.5s ease;
 }
 
 /* セリフボックス */
@@ -95,20 +72,22 @@ html, body {
   background: rgba(0, 0, 0, 0.6);
   color: white;
   z-index: 3;
+  font-size: var(--fontSize);
   max-height: 35vh;
   overflow-y: auto;
-  font-size: var(--fontSize);
+  box-sizing: border-box;
 }
 
+/* キャラ名・セリフ */
 #name {
   font-weight: bold;
   margin-bottom: 0.5em;
 }
 #text {
-  line-height: 1.4em;
+  line-height: 1.5em;
 }
 
-/* 選択肢ボックス */
+/* 選択肢 */
 #choices {
   position: absolute;
   bottom: 40%;
@@ -127,12 +106,32 @@ html, body {
   cursor: pointer;
 }
 #choices button:hover {
-  background: #ddd;
+  background: #ccc;
 }
 
-/* スマホ画面サイズへの対応 */
+/* アニメーション */
+.fadein {
+  opacity: 1 !important;
+}
+.slideinLeft {
+  animation: slideLeft 0.5s ease-out forwards;
+}
+.slideinRight {
+  animation: slideRight 0.5s ease-out forwards;
+}
+
+@keyframes slideLeft {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* モバイル用対応 */
 @media screen and (max-width: 768px) {
   .char-image {
-    max-height: 60vh;
+    max-height: 70vh;
   }
 }
