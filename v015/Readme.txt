@@ -12,9 +12,8 @@
     ├── characterColors.js      ← キャラ名→色コードの対応
     ├── characterStyles.js      ← キャラ別のフォント・セリフ設定
     ├── effect.js               ← 各種演出（fadein, slide等）を定義 ★追加★
-    
     ├── scenario/
-    │   └── 000start.json       ← シナリオファイル（複数可）
+  　　　  └── 000start.json       ← シナリオファイル（複数可）
     
 
 
