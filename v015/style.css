@@ -1,81 +1,143 @@
-* {
+/* 全体のリセットや基本設定 */
+body, html {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-}
-html, body {
   height: 100%;
-  font-family: sans-serif;
-  background-color: black;
-  overflow: hidden;
+  background-color: #000;
+  color: #fff;
+  font-family: "Noto Sans JP", sans-serif;
+  overflow-x: hidden;
 }
-:root {
-  --vh: 100vh;
-  --fontSize: 1em;
-}
+
+/* ゲーム画面のコンテナ */
 #game-container {
   position: relative;
-  width: 100%;
-  height: calc(var(--vh, 1vh) * 100);
+  width: 100vw;
+  height: 100vh;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
+
+/* 背景画像 */
 #background {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   z-index: 0;
 }
+
+/* キャラ配置 */
+#character-container {
+  position: relative;
+  flex: 1 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end; /* ボトム揃え */
+  padding: 0 2vw;
+  z-index: 10;
+  pointer-events: none; /* キャラ画像がクリックを邪魔しないように */
+}
+
 .char-slot {
-  position: absolute;
-  bottom: 0;
-  max-height: 90%;
-  z-index: 2;
+  width: 30vw;
+  max-width: 250px;
+  height: auto;
+  position: relative;
+}
+
+.char-image {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: contain;
+  vertical-align: bottom;
+  pointer-events: auto; /* 必要ならクリック許可 */
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  display: block;
+}
+
+/* セリフウィンドウ */
+#dialogue-box {
+  background-color: rgba(0,0,0,0.7);
+  padding: 1em 1.5em;
+  font-size: 1.2rem;
+  line-height: 1.5;
+  width: 90vw;
+  max-width: 800px;
+  margin: 0 auto 2vh auto;
+  border-radius: 8px;
+  z-index: 20;
+  position: relative;
+  color: #fff;
+}
+
+/* 名前表示 */
+#name {
+  font-weight: bold;
+  font-size: 1.3rem;
+  margin-bottom: 0.5em;
+}
+
+/* 選択肢ボタン */
+#choices {
+  margin-top: 0.5em;
   display: flex;
   justify-content: center;
-  align-items: flex-end;
-  width: 33.33%;
+  gap: 1em;
+  flex-wrap: wrap;
 }
-#char-left { left: 5%; }
-#char-center { left: 50%; transform: translateX(-50%); }
-#char-right { right: 5%; }
-.char-image {
-  max-height: 90%;
-  width: auto;
-  object-fit: contain;
-  opacity: 0;
-  transition: opacity 0.5s;
-}
-.fadein { opacity: 1 !important; }
-#dialogue-box {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  padding: 1em;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-  z-index: 3;
-  max-height: 35vh;
-  overflow-y: auto;
-  font-size: var(--fontSize, 1em);
-}
-#name { font-weight: bold; margin-bottom: 0.5em; }
-#text { line-height: 1.4em; }
-#choices {
-  position: absolute;
-  bottom: 40%;
-  width: 100%;
-  text-align: center;
-  z-index: 4;
-}
+
 #choices button {
-  margin: 0.5em;
-  padding: 0.8em 1.2em;
-  font-size: 1em;
+  background-color: #444;
   border: none;
-  border-radius: 0.5em;
-  background: white;
-  color: black;
+  color: white;
+  padding: 0.5em 1em;
+  border-radius: 5px;
   cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
 }
-#choices button:hover { background: #ddd; }
+
+#choices button:hover,
+#choices button:focus {
+  background-color: #666;
+  outline: none;
+}
+
+/* スマホ対応 */
+/* 画面の安全領域を考慮 */
+body {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* モバイル用キャラ画像サイズ調整 */
+@media screen and (max-width: 600px) {
+  #character-container {
+    padding: 0 1vw;
+  }
+
+  .char-slot {
+    width: 28vw;
+    max-width: 150px;
+  }
+
+  .char-image {
+    max-height: 180px;
+  }
+
+  #dialogue-box {
+    font-size: 1rem;
+    width: 95vw;
+    padding: 0.8em 1em;
+  }
+
+  #choices button {
+    font-size: 0.9rem;
+    padding: 0.4em 0.8em;
+  }
+}
