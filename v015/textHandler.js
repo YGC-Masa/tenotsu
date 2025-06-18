@@ -1,66 +1,60 @@
 // textHandler.js
-
+// テキスト表示・アニメーション管理モジュール
 import { getCharacterStyle } from './characterStyles.js';
 
-let isSkipping = false;
-let currentTimeouts = [];
+export class TextHandler {
+  constructor(nameElement, textElement) {
+    this.nameElement = nameElement;
+    this.textElement = textElement;
 
-/**
- * セリフを表示（typewriter風）
- * @param {string} name - キャラ名
- * @param {string} text - セリフ
- * @param {Function} onComplete - 完了時に呼ばれるコールバック
- */
-export function showDialogue(name, text, onComplete) {
-  const nameBox = document.getElementById('name');
-  const textBox = document.getElementById('text');
-
-  // スタイルの適用
-  const charStyle = getCharacterStyle(name);
-  document.documentElement.style.setProperty('--fontSize', charStyle.fontSize || '1em');
-
-  nameBox.textContent = name;
-  textBox.textContent = '';
-
-  clearAllTimeouts();
-
-  const speed = isSkipping ? 0 : (charStyle.speed || 30); // ミリ秒/文字
-
-  for (let i = 0; i <= text.length; i++) {
-    const timeout = setTimeout(() => {
-      textBox.textContent = text.slice(0, i);
-      if (i === text.length && typeof onComplete === 'function') {
-        onComplete();
-      }
-    }, i * speed);
-    currentTimeouts.push(timeout);
+    this.isTyping = false;
+    this.typingTimeout = null;
+    this.currentText = "";
+    this.currentIndex = 0;
+    this.speed = 40;
   }
-}
 
-/**
- * スキップ状態を切り替え
- * trueで即座に全文表示
- */
-export function toggleSkip(state) {
-  isSkipping = state;
-}
+  async setText(name, text) {
+    // 名前に合わせてフォントサイズと速度をセット
+    const style = getCharacterStyle(name.toLowerCase());
+    this.nameElement.style.fontSize = style.fontSize;
+    this.textElement.style.fontSize = style.fontSize;
+    this.speed = style.speed;
 
-/**
- * 表示中のテキストを強制的に最後まで表示
- */
-export function fastForward(text, onComplete) {
-  clearAllTimeouts();
-  const textBox = document.getElementById('text');
-  textBox.textContent = text;
-  if (typeof onComplete === 'function') {
-    onComplete();
+    this.nameElement.textContent = name;
+    this.currentText = text;
+    this.currentIndex = 0;
+    this.textElement.textContent = "";
+
+    await this.typeText();
   }
-}
 
-/**
- * タイムアウトを全てクリア
- */
-function clearAllTimeouts() {
-  currentTimeouts.forEach(timeout => clearTimeout(timeout));
-  currentTimeouts = [];
+  typeText() {
+    return new Promise((resolve) => {
+      this.isTyping = true;
+
+      const type = () => {
+        if (this.currentIndex < this.currentText.length) {
+          this.textElement.textContent += this.currentText.charAt(this.currentIndex);
+          this.currentIndex++;
+          this.typingTimeout = setTimeout(type, this.speed);
+        } else {
+          this.isTyping = false;
+          resolve();
+        }
+      };
+
+      type();
+    });
+  }
+
+  skip() {
+    if (this.isTyping) {
+      clearTimeout(this.typingTimeout);
+      this.textElement.textContent = this.currentText;
+      this.isTyping = false;
+      return true; // スキップ成功
+    }
+    return false; // スキップできず（完了している）
+  }
 }
