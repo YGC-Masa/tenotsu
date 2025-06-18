@@ -1,7 +1,7 @@
 export const characterStyles = {
-  緋奈: { fontSize: "1.1em", speed: 40 },
-  藍: { fontSize: "1em", speed: 50 },
-  翠: { fontSize: "1em", speed: 45 },
-  こがね: { fontSize: "1.2em", speed: 35 },
-  琥珀: { fontSize: "1.1em", speed: 50 },
+  緋奈: { font: 'bold 1em sans-serif' },
+  藍: { font: 'italic 1em serif' },
+  翠: { font: 'normal 1em "Yu Gothic", sans-serif' },
+  こがね: { font: 'bold 1.1em "Comic Sans MS", cursive' },
+  琥珀: { font: 'normal 1em sans-serif' }
 };
