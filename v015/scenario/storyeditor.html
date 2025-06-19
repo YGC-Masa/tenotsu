@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>シナリオエディタ - storyeditor.html</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: row;
+      height: 100vh;
+    }
+    #form-panel {
+      width: 40%;
+      padding: 1em;
+      background: #f9f9f9;
+      overflow-y: auto;
+      border-right: 1px solid #ccc;
+    }
+    #json-preview {
+      width: 60%;
+      padding: 1em;
+      background: #1e1e1e;
+      color: #eee;
+      font-family: monospace;
+      overflow-y: auto;
+    }
+    label {
+      display: block;
+      margin-top: 1em;
+    }
+    input, select, textarea, button {
+      width: 100%;
+      margin-top: 0.5em;
+      padding: 0.4em;
+    }
+    .char-group {
+      display: flex;
+      gap: 0.5em;
+      margin-bottom: 1em;
+    }
+    .char-group select {
+      flex: 1;
+    }
+    .choice-group {
+      margin-top: 1em;
+    }
+    .choice-item {
+      margin-bottom: 0.5em;
+    }
+    .btn {
+      margin-top: 1em;
+      padding: 0.6em;
+      background: #0078D7;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="form-panel">
+    <h2>シーン編集</h2>
+
+    <label>背景画像
+      <select id="bg">
+        <option value="">（未指定）</option>
+        <option value="bg011.jpg">オフィス昼間</option>
+        <option value="bg_forest.jpg">森</option>
+        <option value="bg_beach.jpg">海</option>
+        <option value="bg_room.jpg">部屋</option>
+        <!-- 必要に応じて追加 -->
+      </select>
+    </label>
+
+    <label>背景エフェクト
+      <select id="bgEffect">
+        <option value="fadein">fadein</option>
+        <option value="whiteout">whiteout</option>
+        <option value="blackout">blackout</option>
+        <option value="slideleft">slideleft</option>
+        <option value="slideright">slideright</option>
+      </select>
+    </label>
+
+    <label>BGM
+      <input id="bgm" type="text" placeholder="main.mp3 等" />
+    </label>
+
+    <label>キャラ表示</label>
+    <div class="char-group">
+      <select id="charLeft">
+        <option value="">左：なし</option>
+        <option value="a01002.png">緋奈</option>
+        <option value="a02002.png">藍</option>
+        <option value="a03002.png">翠</option>
+      </select>
+      <select id="charCenter">
+        <option value="">中央：なし</option>
+        <option value="a04002.png">こがね</option>
+        <option value="a05002.png">琥珀</option>
+      </select>
+      <select id="charRight">
+        <option value="">右：なし</option>
+        <option value="a01002.png">緋奈</option>
+        <option value="a02002.png">藍</option>
+        <option value="a03002.png">翠</option>
+      </select>
+    </div>
+
+    <label>名前
+      <input id="name" type="text" placeholder="キャラ名または空白" />
+    </label>
+    <label>セリフ
+      <textarea id="text" rows="4" placeholder="セリフを入力"></textarea>
+    </label>
+
+    <label>選択肢（必要に応じて）</label>
+    <div id="choices" class="choice-group"></div>
+    <button onclick="addChoice()">＋選択肢を追加</button>
+
+    <button class="btn" onclick="generateJSON()">JSON出力</button>
+  </div>
+  <div id="json-preview">
+    <h2>プレビュー</h2>
+    <pre id="output">{
+
+}</pre>
+  </div>
+
+  <script>
+    const output = document.getElementById("output");
+
+    function addChoice() {
+      const group = document.getElementById("choices");
+      const div = document.createElement("div");
+      div.className = "choice-item";
+      div.innerHTML = `
+        <input type="text" placeholder="表示テキスト" class="choice-text">
+        <input type="text" placeholder="ジャンプ先ファイル名" class="choice-jump">
+      `;
+      group.appendChild(div);
+    }
+
+    function generateJSON() {
+      const scene = {};
+
+      const bg = document.getElementById("bg").value;
+      if (bg) scene.bg = bg;
+
+      const bgEffect = document.getElementById("bgEffect").value;
+      if (bgEffect) scene.bgEffect = bgEffect;
+
+      const bgm = document.getElementById("bgm").value;
+      if (bgm) scene.bgm = bgm;
+
+      const characters = [];
+      const charLeft = document.getElementById("charLeft").value;
+      if (charLeft) characters.push({ side: "left", src: charLeft });
+
+      const charCenter = document.getElementById("charCenter").value;
+      if (charCenter) characters.push({ side: "center", src: charCenter });
+
+      const charRight = document.getElementById("charRight").value;
+      if (charRight) characters.push({ side: "right", src: charRight });
+
+      if (characters.length > 0) scene.characters = characters;
+
+      const name = document.getElementById("name").value;
+      if (name !== "") scene.name = name;
+
+      const text = document.getElementById("text").value;
+      if (text !== "") scene.text = text;
+
+      const choiceEls = document.querySelectorAll(".choice-item");
+      if (choiceEls.length > 0) {
+        scene.choices = [];
+        choiceEls.forEach((item) => {
+          const text = item.querySelector(".choice-text").value;
+          const jump = item.querySelector(".choice-jump").value;
+          if (text && jump) scene.choices.push({ text, jump });
+        });
+      }
+
+      output.textContent = JSON.stringify(scene, null, 2);
+    }
+  </script>
+</body>
+</html>
