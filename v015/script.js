@@ -1,9 +1,9 @@
-// script.js - v015-04 修正版
+// script.js - v015-04 修正版（name/textを保持）
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
-let autoWait = 2000; // オートモード時の待機時間（ミリ秒）
+let autoWait = 2000;
 let bgm = null;
 
 const bgEl = document.getElementById("background");
@@ -91,26 +91,22 @@ async function showScene(scene) {
     });
   }
 
-  // 名前とセリフ（空やundefinedの場合は空文字にフォールバック）
-  if (scene.name !== undefined || scene.text !== undefined) {
-    const safeName = scene.name || "";
-    const safeText = scene.text || "";
-    const color = characterColors[safeName] || "#FFFFFF";
-    nameEl.textContent = safeName;
+  // 名前とセリフ（分岐保持対応）
+  if (scene.name !== undefined) {
+    const color = characterColors[scene.name] || "#FFFFFF";
+    nameEl.textContent = scene.name;
     nameEl.style.color = color;
+    setCharacterStyle(scene.name);
+  }
 
-    setCharacterStyle(safeName);
-    setTextWithSpeed(safeText, currentSpeed, () => {
+  if (scene.text !== undefined) {
+    setTextWithSpeed(scene.text, currentSpeed, () => {
       if (isAuto) {
         setTimeout(() => {
           if (!isPlaying) next();
         }, autoWait);
       }
     });
-  } else {
-    // 名前・テキストが全くない場合はクリア
-    nameEl.textContent = "";
-    textEl.textContent = "";
   }
 
   // 選択肢
@@ -150,7 +146,7 @@ function loadScenario(filename) {
     });
 }
 
-// 背景クリックでオートモード切替
+// 背景ダブルクリックでオートモード切替
 bgEl.addEventListener("dblclick", () => {
   isAuto = !isAuto;
 });
