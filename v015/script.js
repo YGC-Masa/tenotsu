@@ -1,8 +1,8 @@
-// script.js
-
 let currentScenario = "000start.json";
 let currentIndex = 0;
+let loadedScenario = [];
 let isAuto = false;
+let isTyping = false;
 let bgm = null;
 
 const bgEl = document.getElementById("background");
@@ -21,12 +21,14 @@ let defaultSpeed = 40;
 let currentSpeed = defaultSpeed;
 
 function setTextWithSpeed(text, speed, callback) {
+  isTyping = true;
   textEl.innerHTML = "";
   let i = 0;
   const interval = setInterval(() => {
     textEl.innerHTML += text[i++];
     if (i >= text.length) {
       clearInterval(interval);
+      isTyping = false;
       if (callback) callback();
     }
   }, speed);
@@ -42,15 +44,13 @@ function applyEffect(el, effectName) {
   if (window.effects && effectName && window.effects[effectName]) {
     window.effects[effectName](el);
   } else {
-    // デフォルトはfadein
     window.effects?.fadein(el);
   }
 }
 
 function showScene(scene) {
-  // 背景
+  // 背景切り替え
   if (scene.bg) {
-    // 背景画像変更前にフェードアウトしてから差し替え→フェードイン
     applyEffect(bgEl, "fadeout");
     setTimeout(() => {
       bgEl.src = config.bgPath + scene.bg;
@@ -71,30 +71,21 @@ function showScene(scene) {
     }
   }
 
-  // キャラ表示
-  if (scene.characters) {
-    ["left", "center", "right"].forEach((pos) => {
-      const slot = charSlots[pos];
-      const charData = scene.characters.find((c) => c.side === pos);
-      slot.innerHTML = "";
+  // キャラクター表示
+  ["left", "center", "right"].forEach((pos) => {
+    const slot = charSlots[pos];
+    const charData = scene.characters?.find(c => c.side === pos);
+    slot.innerHTML = "";
+    if (charData?.src) {
+      const img = document.createElement("img");
+      img.src = config.charPath + charData.src;
+      img.classList.add("char-image");
+      slot.appendChild(img);
+      applyEffect(img, charData.effect || "fadein");
+    }
+  });
 
-      if (charData && charData.src) {
-        const img = document.createElement("img");
-        img.src = config.charPath + charData.src;
-        img.classList.add("char-image");
-        slot.appendChild(img);
-
-        applyEffect(img, charData.effect || "fadein");
-      }
-    });
-  } else {
-    // キャラ無しならクリア
-    ["left", "center", "right"].forEach((pos) => {
-      charSlots[pos].innerHTML = "";
-    });
-  }
-
-  // 名前とセリフ
+  // テキスト表示
   if (scene.name !== undefined && scene.text !== undefined) {
     const color = characterColors[scene.name] || "#FFFFFF";
     nameEl.textContent = scene.name;
@@ -106,7 +97,7 @@ function showScene(scene) {
     });
   }
 
-  // 選択肢
+  // 選択肢表示
   if (scene.choices) {
     choicesEl.innerHTML = "";
     scene.choices.forEach((choice) => {
@@ -123,28 +114,28 @@ function showScene(scene) {
 }
 
 function next() {
-  fetch(config.scenarioPath + currentScenario)
-    .then((res) => res.json())
-    .then((data) => {
-      currentIndex++;
-      if (currentIndex < data.scenes.length) {
-        showScene(data.scenes[currentIndex]);
-      }
-    });
+  if (isTyping) return;
+  currentIndex++;
+  if (currentIndex < loadedScenario.length) {
+    showScene(loadedScenario[currentIndex]);
+  }
 }
 
 function loadScenario(filename) {
   currentScenario = filename;
   currentIndex = 0;
   fetch(config.scenarioPath + filename)
-    .then((res) => res.json())
-    .then((data) => {
-      showScene(data.scenes[0]);
+    .then(res => res.json())
+    .then(data => {
+      loadedScenario = data.scenes || [];
+      if (loadedScenario.length > 0) {
+        showScene(loadedScenario[0]);
+      }
     });
 }
 
 document.addEventListener("click", () => {
-  if (!isAuto && choicesEl.children.length === 0) {
+  if (!isAuto && choicesEl.children.length === 0 && !isTyping) {
     next();
   }
 });
@@ -155,6 +146,9 @@ window.addEventListener("load", () => {
 });
 
 function setVhVariable() {
-  let vh = window.innerHeight * 0.01;
+  const vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
+
+window.addEventListener("resize", setVhVariable);
+window.addEventListener("orientationchange", setVhVariable);
