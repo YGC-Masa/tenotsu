@@ -46,3 +46,37 @@
       ],
       "name": "翠",
       "text": "ふふ、みんな元気ね。外出の前に計画はしっかり立てた方がいいわ。",
+      "effect": "fadein"
+    },
+    {
+      "bg": "bg_beach.jpg",
+      "bgEffect": "whitein",
+      "characters": [
+        { "side": "left", "src": "a01002.png", "effect": "slideleft" },
+        { "side": "center", "src": "a02002.png", "effect": "fadein" },
+        { "side": "right", "src": "a03002.png", "effect": "slideright" },
+        { "side": "right", "src": "a04002.png", "effect": "fadein" },
+        { "side": "left", "src": "a05002.png", "effect": "slideleft" }
+      ],
+      "name": "緋奈",
+      "text": "じゃあ、海に行くのはどう？みんなで楽しもう！",
+      "effect": "slideleft"
+    },
+    {
+      "name": "こがね",
+      "text": "海最高！早く泳ぎたい〜！",
+      "effect": "slideright"
+    },
+    {
+      "name": "藍",
+      "text": "あ、でも日焼け止め忘れないでね。",
+      "effect": "fadein"
+    },
+    {
+      "choices": [
+        { "text": "海で遊ぶ", "jump": "branchA.json" },
+        { "text": "山にハイキングに行く", "jump": "branchB.json" }
+      ]
+    }
+  ]
+}
