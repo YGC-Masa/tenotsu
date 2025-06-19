@@ -1,0 +1,43 @@
+{
+  "scenes": [
+    {
+      "bg": "bg_forest.jpg",
+      "bgEffect": "whitein",
+      "characters": [
+        { "side": "center", "src": "a03002.png", "effect": "slideleft" }
+      ],
+      "name": "翠",
+      "text": "深呼吸して……ふぅ。やはり自然の空気は格別ですね。"
+    },
+    {
+      "characters": [
+        { "side": "left", "src": "a02002.png", "effect": "slideright" },
+        { "side": "center", "src": "a03002.png" }
+      ],
+      "name": "藍",
+      "text": "静かで落ち着きますね……。私、森って好きです。"
+    },
+    {
+      "text": "ちょっと虫は苦手だけど……でも大丈夫。みんなが一緒ですから。"
+    },
+    {
+      "characters": [
+        { "side": "left", "src": "a01002.png" },
+        { "side": "center", "src": "a03002.png" },
+        { "side": "right", "src": "a02002.png" }
+      ],
+      "name": "緋奈",
+      "text": "帰り道にキノコ見つけたよ！これって食べられる？"
+    },
+    {
+      "bg": "bg023.jpg",
+      "bgEffect": "blackin",
+      "characters": [],
+      "text": "こうして穏やかな一日は過ぎていった……"
+    },
+    {
+      "bg": "bg024.jpg",
+      "text": "《エンディングB：森の午後》"
+    }
+  ]
+}
