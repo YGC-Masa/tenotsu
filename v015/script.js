@@ -49,13 +49,29 @@ function applyEffect(el, effectName) {
 }
 
 function showScene(scene) {
-  // 背景
+  // 背景切り替え（フェードアウト完了後に画像変更）
   if (scene.bg) {
-    applyEffect(bgEl, "fadeout");
-    setTimeout(() => {
+    bgEl.style.transition = "opacity 0.5s ease";
+    bgEl.style.opacity = "1";
+
+    const onFadeOutEnd = () => {
+      bgEl.removeEventListener("transitionend", onFadeOutEnd);
       bgEl.src = config.bgPath + scene.bg;
-      applyEffect(bgEl, scene.bgEffect || "fadein");
-    }, 500);
+
+      // フェードイン
+      requestAnimationFrame(() => {
+        bgEl.style.transition = "opacity 0.5s ease";
+        bgEl.style.opacity = "0";
+        requestAnimationFrame(() => {
+          bgEl.style.opacity = "1";
+        });
+      });
+    };
+
+    bgEl.addEventListener("transitionend", onFadeOutEnd);
+    requestAnimationFrame(() => {
+      bgEl.style.opacity = "0";
+    });
   }
 
   // BGM
@@ -73,30 +89,25 @@ function showScene(scene) {
 
   // キャラ表示
   if (scene.characters === undefined || scene.characters === null) {
-    // characters 指定なし → キャラ維持（何もしない）
+    // 指定なし → 維持
   } else if (Array.isArray(scene.characters) && scene.characters.length === 0) {
-    // 空配列ならキャラクリア
+    // 全キャラ退場
     ["left", "center", "right"].forEach(pos => {
       charSlots[pos].innerHTML = "";
     });
   } else {
-    // charactersが指定されているなら個別処理
+    // 個別指定
     ["left", "center", "right"].forEach(pos => {
       const slot = charSlots[pos];
       const charData = scene.characters.find(c => c.side === pos);
 
-      if (!charData) {
-        // 指定なしは維持（何もしない）
-        return;
-      }
+      if (!charData) return;
 
       if (charData.src === null) {
-        // 明示的退場: 該当キャラのみクリア
         slot.innerHTML = "";
         return;
       }
 
-      // 差し替え
       slot.innerHTML = "";
       const img = document.createElement("img");
       img.src = config.charPath + charData.src;
@@ -117,7 +128,7 @@ function showScene(scene) {
       if (isAuto) {
         setTimeout(() => {
           next();
-        }, 2000); // 2秒待機
+        }, 2000); // オートプレイ待機時間 2秒
       }
     });
   }
