@@ -49,7 +49,7 @@ function applyEffect(el, effectName) {
 }
 
 function showScene(scene) {
-  // 背景切り替え
+  // 背景
   if (scene.bg) {
     applyEffect(bgEl, "fadeout");
     setTimeout(() => {
@@ -71,7 +71,7 @@ function showScene(scene) {
     }
   }
 
-  // キャラクター表示
+  // キャラ表示
   ["left", "center", "right"].forEach((pos) => {
     const slot = charSlots[pos];
     const charData = scene.characters?.find(c => c.side === pos);
@@ -85,7 +85,7 @@ function showScene(scene) {
     }
   });
 
-  // テキスト表示
+  // 名前とセリフ
   if (scene.name !== undefined && scene.text !== undefined) {
     const color = characterColors[scene.name] || "#FFFFFF";
     nameEl.textContent = scene.name;
@@ -97,7 +97,7 @@ function showScene(scene) {
     });
   }
 
-  // 選択肢表示
+  // 選択肢
   if (scene.choices) {
     choicesEl.innerHTML = "";
     scene.choices.forEach((choice) => {
@@ -152,3 +152,10 @@ function setVhVariable() {
 
 window.addEventListener("resize", setVhVariable);
 window.addEventListener("orientationchange", setVhVariable);
+
+// キャラ画像のダブルクリックでオート切替（表示なし・ボタンなし）
+document.addEventListener("dblclick", (e) => {
+  if (e.target.classList.contains("char-image")) {
+    isAuto = !isAuto;
+  }
+});
