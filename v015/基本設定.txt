@@ -35,3 +35,78 @@ bg_mountain.jpg	山
 bg_room.jpg	部屋
 ev001.png	緋奈イベント
 ev002.png	緋奈イベント
+
+以下は、v015-04（またはV015last）対応のための 「ノベルゲーム用シナリオ記述ガイドライン」テンプレートです。
+JSON構成に準拠し、5人のキャラ・背景・BGM・エフェクト・分岐など全機能に対応した記述方法を網羅しています。
+
+📘 シナリオ記述ガイドライン（テンプレート）
+json
+コピーする
+編集する
+{
+  "scenes": [
+    {
+      "bg": "bg001.png",                     // 背景画像ファイル（必須でない）
+      "bgEffect": "fadein",                  // 背景表示時のエフェクト（省略時はfadein）
+
+      "bgm": "main.mp3",                     // BGMファイル（切り替えたいときのみ指定）
+
+      "characters": [                        // キャラ表示（任意）
+        { "side": "left", "src": "a01002.png", "effect": "fadein" },
+        { "side": "right", "src": "a02002.png" }
+      ],
+
+      "name": "緋奈",                        // セリフの発言者名（前のnameを引き継ぎたい場合は省略）
+      "text": "こんにちはー！今日も一緒にがんばろ！"  // セリフ本文（省略すると前回のtextを維持）
+
+      // "text": "" にすると空セリフ（明示的なリセット）となる
+    },
+
+    {
+      "text": "さあ、どこから始めようかな？" // nameが省略されているため「緋奈」のまま続行
+    },
+
+    {
+      "choices": [                           // 分岐指定（ジャンプ先は別のjsonファイル名）
+        { "text": "海に行く！", "jump": "branch_beach.json" },
+        { "text": "森で休む", "jump": "branch_forest.json" }
+      ]
+    }
+  ]
+}
+🧩 各項目の詳細
+項目名	内容/形式	備考
+bg	背景画像ファイル名（例: "bg011.jpg"）	任意。省略時は前の背景を維持
+bgEffect	"fadein" / "fadeout" / "whitein" / "blackin" など	任意。省略時は "fadein" 相当
+bgm	BGMファイル名（例: "main.mp3"）	"null"や未指定で停止も可能
+characters	表示するキャラ配列（最大3人: left/center/right）	"src": "NULL" で退場指示
+name	キャラ名（表示色・スタイルは characterColors.js などで制御）	省略時は直前のnameを使用
+text	セリフ本文。セリフなしは省略か "text": ""	nameだけで感情表示可能
+choices	選択肢配列： text と jump を指定	出現時にクリック待ち状態になる
+
+🎨 エフェクト一覧（effect.jsより）
+fadein, fadeout
+
+whitein, whiteout
+
+blackin, blackout
+
+slideleft, slideright
+
+✅ 書き方のヒント
+キャラを維持したい場合、characters を次シーンに書かないと 消えるので、明示的に再記述。
+
+"src": "NULL" を指定すれば、そのポジションのキャラだけ退場。
+
+セリフを消して「静かな演出」を入れたい時は text を省略または ""。
+
+分岐シーンでは name や text を書かないこともOK（UIには何も出ない）。
+
+🧪 サンプル構成ファイル例
+000start.json：冒頭＋分岐先誘導
+
+branch_beach.json：海イベント
+
+branch_forest.json：森イベント
+
+endingA.json, endingB.json：エンド到達後のエピローグ
