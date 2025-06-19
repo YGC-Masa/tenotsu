@@ -1,19 +1,28 @@
 {
   "scenes": [
     {
-      "bg": "bg_field.jpg",
+      "bg": "bg_beach.jpg",
+      "bgEffect": "fadein",
       "characters": [
-        { "side": "center", "src": "a01002.png" }
+        { "side": "left", "src": "a01002.png", "effect": "fadein" },
+        { "side": "center", "src": "a04002.png", "effect": "fadein" },
+        { "side": "right", "src": "a05002.png", "effect": "fadein" }
       ],
-      "name": "緋奈",
-      "text": "わ〜、やっぱり公園はいいね！"
+      "name": "琥珀",
+      "text": "波が気持ちいいね！みんなで遊べて最高！",
+      "effect": "slideleft"
     },
     {
-      "characters": [
-        { "side": "right", "src": "a02002.png" }
-      ],
-      "name": "藍",
-      "text": "うん……この空気、落ち着くなあ。"
+      "name": "こがね",
+      "text": "焼けちゃうけど、気にしなーい！",
+      "effect": "slideright"
+    },
+    {
+      "bg": "ev001.png",
+      "bgEffect": "whitein",
+      "name": "緋奈",
+      "text": "今日は忘れられない一日になったね！",
+      "effect": "fadein"
     }
   ]
 }
