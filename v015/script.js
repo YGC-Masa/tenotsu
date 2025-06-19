@@ -110,4 +110,65 @@ async function showScene(scene) {
   } else {
     // 名前・テキストが全くない場合はクリア
     nameEl.textContent = "";
-    textEl
+    textEl.textContent = "";
+  }
+
+  // 選択肢
+  if (scene.choices) {
+    choicesEl.innerHTML = "";
+    scene.choices.forEach((choice) => {
+      const btn = document.createElement("button");
+      btn.textContent = choice.text;
+      btn.onclick = () => {
+        loadScenario(choice.jump);
+      };
+      choicesEl.appendChild(btn);
+    });
+  } else {
+    choicesEl.innerHTML = "";
+  }
+}
+
+function next() {
+  fetch(config.scenarioPath + currentScenario)
+    .then((res) => res.json())
+    .then((data) => {
+      currentIndex++;
+      if (currentIndex < data.scenes.length) {
+        showScene(data.scenes[currentIndex]);
+      }
+    });
+}
+
+function loadScenario(filename) {
+  currentScenario = filename;
+  currentIndex = 0;
+  fetch(config.scenarioPath + filename)
+    .then((res) => res.json())
+    .then((data) => {
+      showScene(data.scenes[0]);
+    });
+}
+
+// 背景クリックでオートモード切替
+bgEl.addEventListener("dblclick", () => {
+  isAuto = !isAuto;
+});
+
+document.addEventListener("click", () => {
+  if (!isAuto && choicesEl.children.length === 0 && !isPlaying) {
+    next();
+  }
+});
+
+window.addEventListener("load", () => {
+  loadScenario(currentScenario);
+  setVhVariable();
+});
+
+function setVhVariable() {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
+}
+
+window.addEventListener("resize", setVhVariable);
