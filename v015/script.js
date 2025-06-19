@@ -72,18 +72,28 @@ function showScene(scene) {
   }
 
   // キャラ表示
-  ["left", "center", "right"].forEach((pos) => {
-    const slot = charSlots[pos];
-    const charData = scene.characters?.find(c => c.side === pos);
-    slot.innerHTML = "";
-    if (charData?.src) {
-      const img = document.createElement("img");
-      img.src = config.charPath + charData.src;
-      img.classList.add("char-image");
-      slot.appendChild(img);
-      applyEffect(img, charData.effect || "fadein");
-    }
-  });
+  if (scene.characters === undefined || scene.characters === null) {
+    // characters 指定なし → キャラ維持（何もしない）
+  } else if (Array.isArray(scene.characters) && scene.characters.length === 0) {
+    // 空配列ならキャラクリア
+    ["left", "center", "right"].forEach(pos => {
+      charSlots[pos].innerHTML = "";
+    });
+  } else {
+    // charactersが指定されているなら差し替え
+    ["left", "center", "right"].forEach(pos => {
+      const slot = charSlots[pos];
+      const charData = scene.characters.find(c => c.side === pos);
+      slot.innerHTML = "";
+      if (charData && charData.src) {
+        const img = document.createElement("img");
+        img.src = config.charPath + charData.src;
+        img.classList.add("char-image");
+        slot.appendChild(img);
+        applyEffect(img, charData.effect || "fadein");
+      }
+    });
+  }
 
   // 名前とセリフ
   if (scene.name !== undefined && scene.text !== undefined) {
