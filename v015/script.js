@@ -114,7 +114,11 @@ function showScene(scene) {
 
     setCharacterStyle(scene.name);
     setTextWithSpeed(scene.text, currentSpeed, () => {
-      if (isAuto) next();
+      if (isAuto) {
+        setTimeout(() => {
+          next();
+        }, 2000); // 2秒待機
+      }
     });
   }
 
@@ -174,9 +178,7 @@ function setVhVariable() {
 window.addEventListener("resize", setVhVariable);
 window.addEventListener("orientationchange", setVhVariable);
 
-// キャラ画像のダブルクリックでオート切替（表示なし・ボタンなし）
-document.addEventListener("dblclick", (e) => {
-  if (e.target.classList.contains("char-image")) {
-    isAuto = !isAuto;
-  }
+// 背景画像のダブルクリックでオート切替（表示なし・ボタンなし）
+bgEl.addEventListener("dblclick", () => {
+  isAuto = !isAuto;
 });
