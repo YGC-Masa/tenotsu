@@ -80,18 +80,29 @@ function showScene(scene) {
       charSlots[pos].innerHTML = "";
     });
   } else {
-    // charactersが指定されているなら差し替え
+    // charactersが指定されているなら個別処理
     ["left", "center", "right"].forEach(pos => {
       const slot = charSlots[pos];
       const charData = scene.characters.find(c => c.side === pos);
-      slot.innerHTML = "";
-      if (charData && charData.src) {
-        const img = document.createElement("img");
-        img.src = config.charPath + charData.src;
-        img.classList.add("char-image");
-        slot.appendChild(img);
-        applyEffect(img, charData.effect || "fadein");
+
+      if (!charData) {
+        // 指定なしは維持（何もしない）
+        return;
       }
+
+      if (charData.src === null) {
+        // 明示的退場: 該当キャラのみクリア
+        slot.innerHTML = "";
+        return;
+      }
+
+      // 差し替え
+      slot.innerHTML = "";
+      const img = document.createElement("img");
+      img.src = config.charPath + charData.src;
+      img.classList.add("char-image");
+      slot.appendChild(img);
+      applyEffect(img, charData.effect || "fadein");
     });
   }
 
