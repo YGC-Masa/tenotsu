@@ -1,57 +1,22 @@
 {
   "scenes": [
     {
-      "bg": "bg011.jpg",
+      "bg": "bg001.png",
       "bgEffect": "fadein",
       "bgm": "main.mp3",
       "characters": [
-        {"side": "left", "src": "a01002.png", "effect": "fadein"},
-        {"side": "center", "src": "a02002.png", "effect": "slideleft"},
-        {"side": "right", "src": "a03002.png", "effect": "slideright"}
+        { "side": "left", "src": "a01002.png" }
       ],
       "name": "緋奈",
-      "text": "みんな、今日も元気そうで何より！",
-      "choices": null
+      "text": "おはよーっ！今日はみんなと集まる日だよ〜！"
     },
     {
-      "name": "藍",
-      "text": "おはようございます。ちょっと緊張していますけど。",
-      "choices": null
+      "text": "どこに行くかは、あなたが決めていいってさ！"
     },
     {
-      "name": "翠",
-      "text": "今日は大事な会議があるので、しっかり準備しましょうね。",
-      "choices": null
-    },
-    {
-      "characters": [
-        {"side": "right", "src": "NULL"}
-      ],
-      "name": "こがね",
-      "text": "あたしは適当に楽しくやればいいと思うけどね〜",
-      "choices": null
-    },
-    {
-      "characters": [
-        {"side": "right", "src": "a04002.png", "effect": "slideleft"}
-      ],
-      "name": "こがね",
-      "text": "真面目な話ばっかだとつまんないし！",
-      "choices": null
-    },
-    {
-      "characters": [
-        {"side": "left", "src": "NULL"},
-        {"side": "center", "src": "NULL"},
-        {"side": "right", "src": "NULL"}
-      ],
-      "bgEffect": "blackin",
-      "bg": "bg021.jpg",
-      "name": "",
-      "text": "",
       "choices": [
-        {"text": "しっかり準備して進める派", "jump": "branchA.json"},
-        {"text": "楽しく進める派", "jump": "branchB.json"}
+        { "text": "海に行く", "jump": "branch_beach.json" },
+        { "text": "森で休む", "jump": "branch_forest.json" }
       ]
     }
   ]
