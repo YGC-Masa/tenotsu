@@ -110,8 +110,17 @@ html, body {
 #choices button:hover {
   background: #ddd;
 }
+
+/* PCやタブレットの横幅768px以上はキャラ画像大きめ */
 @media screen and (min-width: 768px) {
   .char-image {
     max-height: 70vh;
+  }
+}
+
+/* モバイル縦画面用：キャラ画像小さめ */
+@media screen and (max-width: 767px) and (orientation: portrait) {
+  .char-image {
+    max-height: 40vh; /* 縦画面で小さめに */
   }
 }
