@@ -1,0 +1,44 @@
+{
+  "scenes": [
+    {
+      "bg": "bg_beach.jpg",
+      "bgEffect": "whitein",
+      "characters": [
+        { "side": "center", "src": "a05002.png", "effect": "slideleft" }
+      ],
+      "name": "琥珀",
+      "text": "おおっ、波の音最高〜！走るぞーっ！"
+    },
+    {
+      "characters": [
+        { "side": "left", "src": "a01002.png" },
+        { "side": "center", "src": "a05002.png" },
+        { "side": "right", "src": "a04002.png", "effect": "slideright" }
+      ],
+      "name": "こがね",
+      "text": "ま、たまにはこういうのも悪くないね〜"
+    },
+    {
+      "text": "風も気持ちいいし、いい選択したじゃん？"
+    },
+    {
+      "characters": [
+        { "side": "left", "src": "a01002.png" },
+        { "side": "center", "src": "a05002.png" },
+        { "side": "right", "src": "NULL" }
+      ],
+      "name": "緋奈",
+      "text": "またみんなで来ようね〜♪"
+    },
+    {
+      "bg": "bg012.jpg",
+      "bgEffect": "blackin",
+      "characters": [],
+      "text": "こうして楽しい海の一日は終わった……"
+    },
+    {
+      "bg": "bg013.jpg",
+      "text": "《エンディングA：海の休日》"
+    }
+  ]
+}
