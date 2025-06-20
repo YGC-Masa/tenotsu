@@ -1,0 +1,26 @@
+{
+  "scenes": [
+    {
+      "bg": "bg_field.jpg",
+      "characters": [
+        { "side": "left", "src": "a03002.png" },
+        { "side": "right", "src": "a02002.png" }
+      ],
+      "name": "翠",
+      "text": "ふふっ、一緒に頑張りましょうね。藍さん。"
+    },
+    {
+      "name": "藍",
+      "text": "はいっ、負けませんよ！"
+    },
+    {
+      "bg": "bg_room.jpg",
+      "bgEffect": "blackin",
+      "characters": [],
+      "text": "試合は白熱したが、翠チームは惜しくも敗北した。"
+    },
+    {
+      "text": "《エンディングB：静かなる誓い》"
+    }
+  ]
+}
