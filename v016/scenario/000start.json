@@ -1,10 +1,27 @@
 {
-  "bg": "bg_room.jpg",
-  "characters": [
-    { "side": "center", "src": "a01002.png" }
-  ],
-  "name": "緋奈",
-  "text": "こんにちは！効果音とボイス、ちゃんと聞こえた？",
-  "se": "ding.mp3",
-  "voice": "hina_001.mp3"
+  "scenes": [
+    {
+      "bg": "bg011.jpg",
+      "characters": [
+        { "side": "center", "src": "a03002.png", "effect": "fadein" }
+      ],
+      "name": "翠",
+      "text": "ようこそ、物語の世界へ。",
+      "se": "ding.mp3"
+    },
+    {
+      "characters": [
+        { "side": "right", "src": "a04002.png", "effect": "slideinRight" }
+      ],
+      "name": "こがね",
+      "text": "なんか始まったっぽくない？",
+      "voice": "hina_001.mp3"
+    },
+    {
+      "choices": [
+        { "text": "Aの道へ", "jump": "https://ygc-masa.github.io/ten_otsu/" },
+        { "text": "はじめから", "jump": "000start.json" }
+      ]
+    }
+  ]
 }
