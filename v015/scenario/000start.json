@@ -1,22 +1,74 @@
 {
   "scenes": [
     {
-      "bg": "bg001.png",
+      "bg": "bg011.jpg",
       "bgEffect": "fadein",
-      "bgm": "main.mp3",
       "characters": [
-        { "side": "left", "src": "a01002.png" }
+        { "side": "left", "src": "a01002.png", "effect": "slideleft" },
+        { "side": "center", "src": "a03002.png", "effect": "slideright" }
       ],
       "name": "緋奈",
-      "text": "おはよーっ！今日はみんなと集まる日だよ〜！"
+      "text": "ねえねえ翠～、今日のお昼、何食べたの？"
     },
     {
-      "text": "どこに行くかは、あなたが決めていいってさ！"
+      "characters": [
+        { "side": "left", "src": "a01002.png" },
+        { "side": "center", "src": "a03002.png" },
+        { "side": "right", "src": "a02002.png", "effect": "fadein" }
+      ],
+      "name": "翠",
+      "text": "私は手作りのお弁当ですよ。藍さんは？"
     },
     {
+      "name": "藍",
+      "text": "えっと……コンビニでサンドイッチを……。"
+    },
+    {
+      "characters": [
+        { "side": "left", "src": "a01002.png" },
+        { "side": "center", "src": "a04002.png", "effect": "slideleft" },
+        { "side": "right", "src": "a05002.png", "effect": "slideright" }
+      ],
+      "name": "こがね",
+      "text": "うわー、全員そろったじゃん。これでパーティーできんじゃね？"
+    },
+    {
+      "name": "琥珀",
+      "text": "じゃあ決まりっしょ！体育館でドッジボール大会だ！"
+    },
+    {
+      "bg": "bg_field.jpg",
+      "bgEffect": "whiteout",
+      "characters": [
+        { "side": "left", "src": "a05002.png" },
+        { "side": "center", "src": "a03002.png" }
+      ],
+      "name": "翠",
+      "text": "……なぜ外に来たのでしょう。"
+    },
+    {
+      "name": "琥珀",
+      "text": "いいじゃん！運動不足解消！それに景色も良いし！"
+    },
+    {
+      "characters": [
+        { "side": "left", "src": "a05002.png" },
+        { "side": "center", "src": "a03002.png" },
+        { "side": "right", "src": "a04002.png" }
+      ],
+      "name": "こがね",
+      "text": "さーて、チーム分けどうする？"
+    },
+    {
+      "name": "翠",
+      "text": "では、ここで多数決を取りましょうか。"
+    },
+    {
+      "name": "",
+      "text": "どちらのチームに入る？",
       "choices": [
-        { "text": "海に行く", "jump": "branch_beach.json" },
-        { "text": "森で休む", "jump": "branch_forest.json" }
+        { "text": "琥珀チームに入る", "jump": "branchA.json" },
+        { "text": "翠チームに入る", "jump": "branchB.json" }
       ]
     }
   ]
