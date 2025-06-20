@@ -1,71 +1,100 @@
-// effect.js - v015-04 統合版
+:root {
+  --fontSize: 1em;
+  --vh: 1vh;
+}
 
-const effects = {
-  fadein: (el) => {
-    el.style.opacity = "0";
-    requestAnimationFrame(() => {
-      el.style.opacity = "1";
-    });
-  },
+body {
+  margin: 0;
+  padding: 0;
+  background: black;
+  font-family: "Helvetica Neue", sans-serif;
+  overflow: hidden;
+}
 
-  fadeout: (el) => {
-    el.style.opacity = "1";
-    requestAnimationFrame(() => {
-      el.style.opacity = "0";
-    });
-  },
+#game-container {
+  position: relative;
+  width: 100%;
+  height: calc(var(--vh, 1vh) * 100);
+  overflow: hidden;
+}
 
-  whitein: (el) => {
-    el.style.transition = "background-color 0.5s ease";
-    el.style.backgroundColor = "rgba(255,255,255,0)";
-    requestAnimationFrame(() => {
-      el.style.backgroundColor = "rgba(255,255,255,1)";
-    });
-  },
+#background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.5s ease;
+  z-index: 0;
+}
 
-  whiteout: (el) => {
-    el.style.transition = "background-color 0.5s ease";
-    el.style.backgroundColor = "rgba(255,255,255,1)";
-    requestAnimationFrame(() => {
-      el.style.backgroundColor = "rgba(255,255,255,0)";
-    });
-  },
+#char-layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 1;
+}
 
-  blackin: (el) => {
-    el.style.transition = "background-color 0.5s ease";
-    el.style.backgroundColor = "rgba(0,0,0,0)";
-    requestAnimationFrame(() => {
-      el.style.backgroundColor = "rgba(0,0,0,1)";
-    });
-  },
+.char-slot {
+  position: relative;
+  width: 33%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
 
-  blackout: (el) => {
-    el.style.transition = "background-color 0.5s ease";
-    el.style.backgroundColor = "rgba(0,0,0,1)";
-    requestAnimationFrame(() => {
-      el.style.backgroundColor = "rgba(0,0,0,0)";
-    });
-  },
+.char-slot img.char-image {
+  max-height: 95%;
+  max-width: 100%;
+  transition: all 0.5s ease;
+}
 
-  slideleft: (el) => {
-    el.style.transform = "translateX(100%)";
-    el.style.opacity = "0";
-    requestAnimationFrame(() => {
-      el.style.transform = "translateX(0)";
-      el.style.opacity = "1";
-    });
-  },
+#dialogue-box {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 1em;
+  font-size: var(--fontSize);
+  z-index: 2;
+}
 
-  slideright: (el) => {
-    el.style.transform = "translateX(-100%)";
-    el.style.opacity = "0";
-    requestAnimationFrame(() => {
-      el.style.transform = "translateX(0)";
-      el.style.opacity = "1";
-    });
-  }
-};
+.name-area {
+  font-weight: bold;
+  margin-bottom: 0.2em;
+}
 
-if (typeof window !== "undefined") {
-  window.effects = effects;
+.text-area {
+  white-space: pre-wrap;
+}
+
+.choices-area {
+  position: absolute;
+  bottom: 6em;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  z-index: 3;
+}
+
+.choices-area button {
+  font-size: 1em;
+  padding: 0.6em 1.2em;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 0.3em;
+  cursor: pointer;
+}
+
+.choices-area button:hover {
+  background-color: #555;
 }
