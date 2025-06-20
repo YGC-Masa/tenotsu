@@ -1,4 +1,4 @@
-// script.js - v16 with external URL support
+// script.js - v016 ボイス・SE対応版
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
@@ -50,10 +50,22 @@ function applyEffect(el, effectName) {
   }
 }
 
+// 効果音再生
+function playSE(filename) {
+  const se = new Audio(config.sePath + filename);
+  se.play().catch((e) => console.warn("SE再生失敗:", e));
+}
+
+// ボイス再生
+function playVoice(filename) {
+  const voice = new Audio(config.voicePath + filename);
+  voice.play().catch((e) => console.warn("ボイス再生失敗:", e));
+}
+
 async function showScene(scene) {
   if (!scene) return;
 
-  // 背景切り替え
+  // 背景表示
   if (scene.bg) {
     await new Promise((resolve) => {
       applyEffect(bgEl, scene.bgEffect || "fadeout");
@@ -67,7 +79,7 @@ async function showScene(scene) {
     });
   }
 
-  // BGM切り替え
+  // BGM
   if (scene.bgm !== undefined) {
     if (bgm) {
       bgm.pause();
@@ -80,7 +92,7 @@ async function showScene(scene) {
     }
   }
 
-  // キャラクター表示
+  // キャラ表示
   if (scene.characters) {
     ["left", "center", "right"].forEach((pos) => {
       const slot = charSlots[pos];
@@ -104,6 +116,11 @@ async function showScene(scene) {
     nameEl.style.color = color;
 
     setCharacterStyle(scene.name);
+
+    // 効果音・ボイス
+    if (scene.se) playSE(scene.se);
+    if (scene.voice) playVoice(scene.voice);
+
     setTextWithSpeed(scene.text, currentSpeed, () => {
       if (isAuto) {
         setTimeout(() => {
@@ -120,11 +137,7 @@ async function showScene(scene) {
       const btn = document.createElement("button");
       btn.textContent = choice.text;
       btn.onclick = () => {
-        if (choice.jump.startsWith("http")) {
-          window.open(choice.jump, "_blank");
-        } else {
-          loadScenario(choice.jump);
-        }
+        loadScenario(choice.jump);
       };
       choicesEl.appendChild(btn);
     });
@@ -154,7 +167,7 @@ function loadScenario(filename) {
     });
 }
 
-// オート切替（背景ダブルクリック）
+// オートモード切り替え（背景ダブルクリック）
 bgEl.addEventListener("dblclick", () => {
   isAuto = !isAuto;
 });
