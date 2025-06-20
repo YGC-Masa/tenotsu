@@ -4,30 +4,30 @@
       "bg": "bg_room.jpg",
       "bgEffect": "fadein",
       "characters": [
-        { "side": "center", "src": "a01002.png", "effect": "slideleft" }
+        { "side": "center", "src": "a01002.png", "effect": "fadein" }
       ],
-      "se": "door_open.mp3",
-      "text": "（ガチャッ）"
-    },
-    {
       "name": "緋奈",
-      "text": "ただいま〜！",
-      "voice": "hina_001.mp3"
+      "text": "ねぇ、どれか選んでみてよ！"
     },
     {
-      "characters": [
-        { "side": "left", "src": "a02002.png", "effect": "fadein" },
-        { "side": "center", "src": "a01002.png" }
-      ],
-      "name": "藍",
-      "text": "おかえりなさい、緋奈さん。",
-      "voice": "ai_001.mp3"
-    },
-    {
-      "text": "今日もにぎやかな一日が始まる——",
-      "bg": "bg011.jpg",
-      "bgEffect": "whiteout",
-      "se": "bell.mp3"
+      "choices": [
+        {
+          "text": "ボイス１を再生",
+          "voice": "hina_001.mp3"
+        },
+        {
+          "text": "ボイス２を再生",
+          "voice": "ai_001.mp3"
+        },
+        {
+          "text": "効果音を鳴らす",
+          "se": "bell.mp3"
+        },
+        {
+          "text": "最初に戻る",
+          "jump": "000start.json"
+        }
+      ]
     }
   ]
 }
