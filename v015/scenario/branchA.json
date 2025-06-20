@@ -1,0 +1,26 @@
+{
+  "scenes": [
+    {
+      "bg": "bg_field.jpg",
+      "characters": [
+        { "side": "left", "src": "a05002.png" },
+        { "side": "center", "src": "a01002.png" }
+      ],
+      "name": "緋奈",
+      "text": "わーい！琥珀ちゃんのチーム、よろしくね～！"
+    },
+    {
+      "name": "琥珀",
+      "text": "全力でいくぞー！！"
+    },
+    {
+      "bg": "bg001.png",
+      "bgEffect": "blackout",
+      "characters": [],
+      "text": "こうして琥珀チームは優勝し、お菓子を山分けしたのだった。"
+    },
+    {
+      "text": "《エンディングA：チームワークは力なり》"
+    }
+  ]
+}
