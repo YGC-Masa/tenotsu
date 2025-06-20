@@ -1,36 +1,10 @@
 {
-  "scenes": [
-    {
-      "bg": "bg011.jpg",
-      "bgEffect": "fadein",
-      "characters": [
-        { "side": "center", "src": "a01002.png", "effect": "slideleft" }
-      ],
-      "name": "緋奈",
-      "text": "ねえねえ、今度のイベントの詳細ってどこで見られるの？"
-    },
-    {
-      "characters": [
-        { "side": "center", "src": "a02002.png", "effect": "slideright" }
-      ],
-      "name": "藍",
-      "text": "えっと……公式サイトに載ってたはずです。リンクを開いてみます？"
-    },
-    {
-      "name": "緋奈",
-      "text": "うんうん、お願いっ！"
-    },
-    {
-      "choices": [
-        {
-          "text": "公式サイトを見る",
-          "jump": "https://example.com"
-        },
-        {
-          "text": "後で見る。ゲームを続ける",
-          "jump": "000start.json"
-        }
-      ]
-    }
-  ]
+  "bg": "bg_room.jpg",
+  "characters": [
+    { "side": "center", "src": "a01002.png" }
+  ],
+  "name": "緋奈",
+  "text": "こんにちは！効果音とボイス、ちゃんと聞こえた？",
+  "se": "ding.mp3",
+  "voice": "hina_001.mp3"
 }
