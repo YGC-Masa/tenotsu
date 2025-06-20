@@ -1,9 +1,9 @@
-// script.js - v015-05 修正版（同期表示・バッファ混在対策）
+// script.js - v015-06（背景読み込み同期＆安定性改善）
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
-let autoWait = 2000; // オートモード時の待機時間（ミリ秒）
+let autoWait = 2000;
 let bgm = null;
 
 const bgEl = document.getElementById("background");
@@ -21,6 +21,15 @@ let defaultFontSize = "1em";
 let defaultSpeed = 40;
 let currentSpeed = defaultSpeed;
 let isPlaying = false;
+
+// 背景画像を確実に読み込んでから表示する
+function loadImageAsync(url) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = resolve;
+    img.src = url;
+  });
+}
 
 function setTextWithSpeed(text, speed, callback) {
   isPlaying = true;
@@ -53,21 +62,16 @@ function applyEffect(el, effectName) {
 async function showScene(scene) {
   if (!scene) return;
 
-  // 背景切り替え
+  // 背景切替
   if (scene.bg) {
-    await new Promise((resolve) => {
-      applyEffect(bgEl, scene.bgEffect || "fadeout");
-      setTimeout(() => {
-        bgEl.onload = () => {
-          applyEffect(bgEl, scene.bgEffect || "fadein");
-          resolve();
-        };
-        bgEl.src = config.bgPath + scene.bg;
-      }, 500);
-    });
+    applyEffect(bgEl, scene.bgEffect || "fadeout");
+    await new Promise((r) => setTimeout(r, 500));
+    await loadImageAsync(config.bgPath + scene.bg);
+    bgEl.src = config.bgPath + scene.bg;
+    applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
-  // BGM切り替え
+  // BGM切替
   if (scene.bgm !== undefined) {
     if (bgm) {
       bgm.pause();
@@ -80,13 +84,12 @@ async function showScene(scene) {
     }
   }
 
-  // キャラクター表示
+  // キャラ表示
   if (scene.characters) {
     ["left", "center", "right"].forEach((pos) => {
       const slot = charSlots[pos];
       const charData = scene.characters.find((c) => c.side === pos);
       slot.innerHTML = "";
-
       if (charData && charData.src && charData.src !== "NULL") {
         const img = document.createElement("img");
         img.src = config.charPath + charData.src;
@@ -97,12 +100,11 @@ async function showScene(scene) {
     });
   }
 
-  // 名前とセリフ
+  // 名前とテキスト
   if (scene.name !== undefined && scene.text !== undefined) {
     const color = characterColors[scene.name] || "#FFFFFF";
     nameEl.textContent = scene.name;
     nameEl.style.color = color;
-
     setCharacterStyle(scene.name);
     setTextWithSpeed(scene.text, currentSpeed, () => {
       if (isAuto) {
@@ -150,7 +152,7 @@ function loadScenario(filename) {
     });
 }
 
-// 背景クリックでオートモード切替
+// 背景ダブルクリックでオートモード切替
 bgEl.addEventListener("dblclick", () => {
   isAuto = !isAuto;
 });
