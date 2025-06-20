@@ -1,3 +1,5 @@
+// script.js - v015-07 修正版（バッファ混在・強制完了対応）
+
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
@@ -19,9 +21,11 @@ let defaultFontSize = "1em";
 let defaultSpeed = 40;
 let currentSpeed = defaultSpeed;
 let isPlaying = false;
+let isTextComplete = true; // 追加：セリフが完全に表示されたか
 
 function setTextWithSpeed(text, speed, callback) {
   isPlaying = true;
+  isTextComplete = false;
   textEl.innerHTML = "";
   let i = 0;
   const interval = setInterval(() => {
@@ -29,6 +33,7 @@ function setTextWithSpeed(text, speed, callback) {
     if (i >= text.length) {
       clearInterval(interval);
       isPlaying = false;
+      isTextComplete = true;
       if (callback) callback();
     }
   }, speed);
@@ -50,6 +55,12 @@ function applyEffect(el, effectName) {
 
 async function showScene(scene) {
   if (!scene) return;
+
+  isTextComplete = false;
+  isPlaying = false;
+  textEl.innerHTML = "";
+  nameEl.textContent = "";
+  nameEl.style.color = "#FFFFFF";
 
   // 背景切り替え
   if (scene.bg) {
@@ -95,24 +106,23 @@ async function showScene(scene) {
     });
   }
 
-  // 名前とセリフ（nameがなくてもOK）
-  if (scene.text !== undefined) {
-    const name = scene.name || "";
-    const color = characterColors[name] || "#FFFFFF";
-    nameEl.textContent = name;
+  // 名前とセリフ
+  if (scene.name !== undefined && scene.text !== undefined) {
+    const color = characterColors[scene.name] || "#FFFFFF";
+    nameEl.textContent = scene.name;
     nameEl.style.color = color;
 
-    setCharacterStyle(name);
+    setCharacterStyle(scene.name);
     setTextWithSpeed(scene.text, currentSpeed, () => {
       if (isAuto) {
         setTimeout(() => {
-          if (!isPlaying) next();
+          if (!isPlaying && isTextComplete) next();
         }, autoWait);
       }
     });
   }
 
-  // 選択肢（あれば待機）
+  // 選択肢
   if (scene.choices) {
     choicesEl.innerHTML = "";
     scene.choices.forEach((choice) => {
@@ -129,6 +139,13 @@ async function showScene(scene) {
 }
 
 function next() {
+  if (!isTextComplete) {
+    // テキスト未完了時は強制完了
+    textEl.innerHTML = "";
+    isPlaying = false;
+    isTextComplete = true;
+  }
+
   fetch(config.scenarioPath + currentScenario)
     .then((res) => res.json())
     .then((data) => {
@@ -149,7 +166,7 @@ function loadScenario(filename) {
     });
 }
 
-// 背景ダブルクリックでオートモード切替
+// 背景クリックでオートモード切替
 bgEl.addEventListener("dblclick", () => {
   isAuto = !isAuto;
 });
