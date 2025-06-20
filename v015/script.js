@@ -1,9 +1,9 @@
-// script.js - v015-04 修正版（name/textを保持）
+// script.js - v015-05 修正版（同期表示・バッファ混在対策）
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
-let autoWait = 2000;
+let autoWait = 2000; // オートモード時の待機時間（ミリ秒）
 let bgm = null;
 
 const bgEl = document.getElementById("background");
@@ -55,10 +55,16 @@ async function showScene(scene) {
 
   // 背景切り替え
   if (scene.bg) {
-    applyEffect(bgEl, scene.bgEffect || "fadeout");
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    bgEl.src = config.bgPath + scene.bg;
-    applyEffect(bgEl, scene.bgEffect || "fadein");
+    await new Promise((resolve) => {
+      applyEffect(bgEl, scene.bgEffect || "fadeout");
+      setTimeout(() => {
+        bgEl.onload = () => {
+          applyEffect(bgEl, scene.bgEffect || "fadein");
+          resolve();
+        };
+        bgEl.src = config.bgPath + scene.bg;
+      }, 500);
+    });
   }
 
   // BGM切り替え
@@ -91,15 +97,13 @@ async function showScene(scene) {
     });
   }
 
-  // 名前とセリフ（分岐保持対応）
-  if (scene.name !== undefined) {
+  // 名前とセリフ
+  if (scene.name !== undefined && scene.text !== undefined) {
     const color = characterColors[scene.name] || "#FFFFFF";
     nameEl.textContent = scene.name;
     nameEl.style.color = color;
-    setCharacterStyle(scene.name);
-  }
 
-  if (scene.text !== undefined) {
+    setCharacterStyle(scene.name);
     setTextWithSpeed(scene.text, currentSpeed, () => {
       if (isAuto) {
         setTimeout(() => {
@@ -146,7 +150,7 @@ function loadScenario(filename) {
     });
 }
 
-// 背景ダブルクリックでオートモード切替
+// 背景クリックでオートモード切替
 bgEl.addEventListener("dblclick", () => {
   isAuto = !isAuto;
 });
