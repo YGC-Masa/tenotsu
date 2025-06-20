@@ -2,16 +2,16 @@
   "scenes": [
     {
       "bg": "bg_forest.jpg",
-      "bgEffect": "whitein",
+      "bgEffect": "fadein",
       "characters": [
-        { "side": "center", "src": "a03002.png", "effect": "slideleft" }
+        { "side": "center", "src": "a03002.png" }
       ],
       "name": "翠",
       "text": "深呼吸して……ふぅ。やはり自然の空気は格別ですね。"
     },
     {
       "characters": [
-        { "side": "left", "src": "a02002.png", "effect": "slideright" },
+        { "side": "left", "src": "a02002.png" },
         { "side": "center", "src": "a03002.png" }
       ],
       "name": "藍",
@@ -28,14 +28,13 @@
       "text": "帰り道にキノコ見つけたよ！これって食べられる？"
     },
     {
-      "bg": "bg023.jpg",
-      "bgEffect": "blackin",
       "characters": [],
-      "text": "こうして穏やかな一日は過ぎていった……"
+      "text": "こうして穏やかな午後のひとときを過ごした……"
     },
     {
       "bg": "bg024.jpg",
-      "text": "《エンディングB：森の午後》"
+      "bgEffect": "blackin",
+      "text": "《エンディングA：森の午後》"
     }
   ]
 }
