@@ -3,7 +3,7 @@
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
-let autoWait = 2000; // オートモード時の待機時間（ミリ秒）
+let autoWait = 1500; // オートモード時の待機時間（ミリ秒）
 let bgm = null;
 
 const bgEl = document.getElementById("background");
