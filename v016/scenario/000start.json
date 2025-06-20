@@ -27,7 +27,7 @@
       "text": "今日もにぎやかな一日が始まる——",
       "bg": "bg011.jpg",
       "bgEffect": "whiteout",
-      "se": "bell_chime.mp3"
+      "se": "bell.mp3"
     }
   ]
 }
