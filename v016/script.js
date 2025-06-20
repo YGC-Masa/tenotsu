@@ -1,9 +1,9 @@
-// script.js - v016 ボイス・SE対応版
+// script.js - v016 修正版（空シナリオ対応、同期表示対策、オート再生対応）
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
-let autoWait = 2000;
+let autoWait = 2000; // オートモード時の待機時間（ミリ秒）
 let bgm = null;
 
 const bgEl = document.getElementById("background");
@@ -50,22 +50,10 @@ function applyEffect(el, effectName) {
   }
 }
 
-// 効果音再生
-function playSE(filename) {
-  const se = new Audio(config.sePath + filename);
-  se.play().catch((e) => console.warn("SE再生失敗:", e));
-}
-
-// ボイス再生
-function playVoice(filename) {
-  const voice = new Audio(config.voicePath + filename);
-  voice.play().catch((e) => console.warn("ボイス再生失敗:", e));
-}
-
 async function showScene(scene) {
   if (!scene) return;
 
-  // 背景表示
+  // 背景切り替え
   if (scene.bg) {
     await new Promise((resolve) => {
       applyEffect(bgEl, scene.bgEffect || "fadeout");
@@ -79,7 +67,7 @@ async function showScene(scene) {
     });
   }
 
-  // BGM
+  // BGM切り替え
   if (scene.bgm !== undefined) {
     if (bgm) {
       bgm.pause();
@@ -92,7 +80,7 @@ async function showScene(scene) {
     }
   }
 
-  // キャラ表示
+  // キャラクター表示
   if (scene.characters) {
     ["left", "center", "right"].forEach((pos) => {
       const slot = charSlots[pos];
@@ -116,11 +104,6 @@ async function showScene(scene) {
     nameEl.style.color = color;
 
     setCharacterStyle(scene.name);
-
-    // 効果音・ボイス
-    if (scene.se) playSE(scene.se);
-    if (scene.voice) playVoice(scene.voice);
-
     setTextWithSpeed(scene.text, currentSpeed, () => {
       if (isAuto) {
         setTimeout(() => {
@@ -163,21 +146,40 @@ function loadScenario(filename) {
   fetch(config.scenarioPath + filename)
     .then((res) => res.json())
     .then((data) => {
+      // 空のシナリオ処理
+      if (!data.scenes || data.scenes.length === 0) {
+        nameEl.textContent = "";
+        textEl.innerHTML = "（このシナリオには表示できる内容がありません）";
+        choicesEl.innerHTML = "";
+        bgEl.src = "";
+        ["left", "center", "right"].forEach(pos => {
+          charSlots[pos].innerHTML = "";
+        });
+        return;
+      }
       showScene(data.scenes[0]);
+    })
+    .catch((err) => {
+      console.error("シナリオ読み込みエラー:", err);
+      nameEl.textContent = "";
+      textEl.innerHTML = "（シナリオファイルの読み込みに失敗しました）";
+      choicesEl.innerHTML = "";
     });
 }
 
-// オートモード切り替え（背景ダブルクリック）
+// オートモード切替（背景ダブルクリック）
 bgEl.addEventListener("dblclick", () => {
   isAuto = !isAuto;
 });
 
+// 手動クリックで次へ（選択肢がない場合）
 document.addEventListener("click", () => {
   if (!isAuto && choicesEl.children.length === 0 && !isPlaying) {
     next();
   }
 });
 
+// 初期読み込み
 window.addEventListener("load", () => {
   loadScenario(currentScenario);
   setVhVariable();
@@ -187,5 +189,4 @@ function setVhVariable() {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
-
 window.addEventListener("resize", setVhVariable);
