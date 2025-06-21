@@ -1,62 +1,45 @@
 {
   "scenes": [
     {
-      "bg": "bg_beach.jpg",
+      "bg": "bg_field.jpg",
       "bgEffect": "whitein",
       "characters": [
-        { "side": "center", "src": "a01002.png", "effect": "slideleft" }
+        { "side": "center", "src": "a01002.png", "effect": "fadein" }
       ],
       "name": "緋奈",
-      "text": "やったー！今日はみんなで海だーっ！"
+      "text": "今日はいい天気だねー！ なんだかワクワクする〜！"
     },
     {
       "characters": [
-        { "side": "left", "src": "a02002.png", "effect": "slideright" }
-      ],
-      "name": "藍",
-      "text": "まぶしいですね……でも、気持ちいいです。"
-    },
-    {
-      "characters": [
-        { "side": "right", "src": "a03002.png", "effect": "fadein" }
+        { "side": "left", "src": "a02002.png" },
+        { "side": "center", "src": "a01002.png" },
+        { "side": "right", "src": "a03002.png", "effect": "slideleft" }
       ],
       "name": "翠",
-      "text": "遊びも大事ですから、今日は思いっきり楽しみましょう。"
+      "text": "皆さん、今日は自由行動にしてみましょうか？"
     },
     {
-      "characters": [
-        { "side": "left", "src": "a04002.png", "effect": "fadein" },
-        { "side": "right", "src": "NULL" }
-      ],
-      "name": "こがね",
-      "text": "あはっ、ひなマジでテンション高っ。テンアゲ〜！"
+      "text": "さて、どこに行きますか？"
     },
     {
-      "characters": [
-        { "side": "center", "src": "a05002.png", "effect": "fadein" }
-      ],
-      "name": "琥珀",
-      "text": "泳ぎの勝負、負けないからね！ぜーったい私が一番！"
-    },
-    {
-      "characters": [
-        { "side": "center", "src": "a01002.png" }
-      ],
-      "name": "緋奈",
-      "text": "ふふっ、みんなでバーベキューもしよーね！お肉〜！"
-    },
-    {
-      "characters": [
-        { "side": "right", "src": "a02002.png" }
-      ],
-      "name": "藍",
-      "text": "あの……日焼け止め、みんなちゃんと塗ってね？"
-    },
-    {
-      "characters": [],
-      "bg": "bg_field.jpg",
-      "bgEffect": "blackin",
-      "text": "夏の一日は、楽しくにぎやかに過ぎていった——"
+      "choices": [
+        {
+          "text": "🌳 森でのんびり（分岐A）",
+          "jump": "branchA.json"
+        },
+        {
+          "text": "🏙 街でショッピング（分岐B）",
+          "jump": "branchB.json"
+        },
+        {
+          "text": "🌐 Webサイトを開く",
+          "url": "https://openai.com"
+        },
+        {
+          "text": "🔁 最初からやり直す",
+          "jump": "000start.json"
+        }
+      ]
     }
   ]
 }
