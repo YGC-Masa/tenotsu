@@ -47,19 +47,19 @@ body {
 }
 
 #char-left {
-  left: 1%;
-  width: 70%;
+  left: 5%;
+  width: 65%;
 }
 
 #char-center {
-  left: 15%;
-  width: 70%;
+  left: 17.5%;
+  width: 65%;
   z-index: 2;
 }
 
 #char-right {
-  left: 29%;
-  width: 70%;
+  left: 30%;
+  width: 65%;
 }
 
 .char-image {
@@ -114,56 +114,9 @@ body {
   background-color: #555;
 }
 
-/* モバイル縦表示 */
+/* モバイル縦時のみフォント拡大 */
 @media screen and (max-width: 768px) and (orientation: portrait) {
   :root {
     --fontSize: 1.2em;
-  }
-
-  .char-image {
-    max-height: 88vh;
-  }
-
-  #char-left {
-    left: 3%;
-    width: 65%;
-  }
-
-  #char-center {
-    left: 17.5%;
-    width: 65%;
-    z-index: 2;
-  }
-
-  #char-right {
-    left: 32%;
-    width: 65%;
-  }
-
-  .choices-area button {
-    font-size: 1.1em;
-  }
-}
-
-/* モバイル横表示対応（画面が広く、縦が狭い） */
-@media screen and (max-width: 1024px) and (max-height: 500px) and (orientation: landscape) {
-  .char-image {
-    max-height: 80vh;
-  }
-
-  #char-left {
-    left: 5%;
-    width: 28%;
-  }
-
-  #char-center {
-    left: 36%;
-    width: 28%;
-    z-index: 2;
-  }
-
-  #char-right {
-    left: 67%;
-    width: 28%;
   }
 }
