@@ -1,10 +1,12 @@
-// script.js - v16 完全版（音声・SE・同期表示対応）
+// script.js - v016 修正版（name未定義・ボイスSE対応・同期描画）
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
 let autoWait = 2000;
 let bgm = null;
+let voice = null;
+let se = null;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -50,30 +52,10 @@ function applyEffect(el, effectName) {
   }
 }
 
-function playSE(filename) {
-  if (!filename) return;
-  const se = new Audio(config.sePath + filename);
-  se.play().catch((e) => {
-    console.warn("SE再生失敗:", filename, e);
-  });
-}
-
-function playVoice(filename) {
-  if (!filename) return;
-  try {
-    const voice = new Audio(config.voicePath + filename);
-    voice.play().catch((e) => {
-      console.warn("ボイス再生失敗:", filename, e);
-    });
-  } catch (e) {
-    console.warn("ボイスオブジェクト作成エラー:", filename, e);
-  }
-}
-
 async function showScene(scene) {
   if (!scene) return;
 
-  // 背景
+  // 背景切り替え
   if (scene.bg) {
     await new Promise((resolve) => {
       applyEffect(bgEl, scene.bgEffect || "fadeout");
@@ -96,11 +78,31 @@ async function showScene(scene) {
     if (scene.bgm) {
       bgm = new Audio(config.bgmPath + scene.bgm);
       bgm.loop = true;
-      bgm.play().catch((e) => console.warn("BGM再生失敗:", e));
+      bgm.play();
     }
   }
 
-  // キャラクター
+  // 効果音
+  if (scene.se) {
+    if (se) {
+      se.pause();
+      se = null;
+    }
+    se = new Audio(config.sePath + scene.se);
+    se.play();
+  }
+
+  // ボイス
+  if (scene.voice) {
+    if (voice) {
+      voice.pause();
+      voice = null;
+    }
+    voice = new Audio(config.voicePath + scene.voice);
+    voice.play();
+  }
+
+  // キャラクター表示
   if (scene.characters) {
     ["left", "center", "right"].forEach((pos) => {
       const slot = charSlots[pos];
@@ -117,24 +119,27 @@ async function showScene(scene) {
     });
   }
 
-  // SE & Voice
-  if (scene.se) playSE(scene.se);
-  if (scene.voice) playVoice(scene.voice);
+  // テキスト表示（name/text）
+  if (scene.text !== undefined) {
+    if (scene.name !== undefined) {
+      const color = characterColors[scene.name] || "#FFFFFF";
+      nameEl.textContent = scene.name;
+      nameEl.style.color = color;
+    } else {
+      nameEl.textContent = "";
+    }
 
-  // 名前とセリフ
-  if (scene.name !== undefined || scene.text !== undefined) {
-    nameEl.textContent = scene.name || "";
-    nameEl.style.color = characterColors[scene.name] || "#FFFFFF";
     setCharacterStyle(scene.name);
-
-    const text = scene.text || "";
-    setTextWithSpeed(text, currentSpeed, () => {
+    setTextWithSpeed(scene.text, currentSpeed, () => {
       if (isAuto) {
         setTimeout(() => {
           if (!isPlaying) next();
         }, autoWait);
       }
     });
+  } else {
+    nameEl.textContent = "";
+    textEl.innerHTML = "";
   }
 
   // 選択肢
@@ -150,13 +155,6 @@ async function showScene(scene) {
     });
   } else {
     choicesEl.innerHTML = "";
-  }
-
-  // 外部リンクジャンプ
-  if (scene.jump && !scene.choices) {
-    setTimeout(() => {
-      location.href = scene.jump;
-    }, 1000);
   }
 }
 
@@ -186,7 +184,6 @@ bgEl.addEventListener("dblclick", () => {
   isAuto = !isAuto;
 });
 
-// 通常進行（クリック）
 document.addEventListener("click", () => {
   if (!isAuto && choicesEl.children.length === 0 && !isPlaying) {
     next();
@@ -202,4 +199,5 @@ function setVhVariable() {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
+
 window.addEventListener("resize", setVhVariable);
