@@ -1,6 +1,15 @@
 1. 📁 ファイル構成
 
 project-root/
+├── assets2/
+│   ├── bgev/         ← 背景画像（bgPath）
+│   ├── bgm/          ← BGM（bgmPath）
+│   ├── char/         ← キャラクター画像（charPath）
+│   ├── se/           ← 効果音ファイル（sePath）
+│   │   └── ding.mp3
+│   └── voice/        ← ボイスファイル（voicePath）
+│       ├── hina_001.mp3
+│       └── ai_001.mp3
 └── v016/
     ├── index.html                   ← HTML本体
     ├── style.css                    ← レイアウトと演出用スタイル
@@ -10,12 +19,9 @@ project-root/
     ├── characterStyles.js           ← 表示スピード・フォント指定
     ├── effect.js                    ← 演出効果定義集
     ├── scenario/
-    │   ├── 000start.json            ← 初期シナリオ
-    │   └── [その他の分岐シナリオ]
-    └── assets2/
-        ├── char/                    ← キャラ画像（.png）
-        ├── bgev/                    ← 背景・イベント画像（.jpg/.png）
-        └── bgm/                     ← BGM（.mp3）
+    　   ├── 000start.json            ← 初期シナリオ
+    　   └── [その他の分岐シナリオ]
+
 
 
 2. 📜 シナリオファイル仕様（JSON）
