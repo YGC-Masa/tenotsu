@@ -19,6 +19,7 @@ body {
   overflow: hidden;
 }
 
+/* 背景画像 */
 #background {
   width: 100%;
   height: 100%;
@@ -29,6 +30,7 @@ body {
   z-index: 0;
 }
 
+/* キャラクター表示レイヤー */
 #char-layer {
   position: absolute;
   width: 100%;
@@ -53,57 +55,7 @@ body {
   object-fit: contain;
 }
 
-/* 📱 モバイル縦（全幅利用） */
-@media screen and (max-width: 768px) and (orientation: portrait) {
-  :root {
-    --fontSize: 1.2em;
-  }
-
-  #char-left {
-    left: 0%;
-    width: 50%;
-  }
-
-  #char-center {
-    left: 25%;
-    width: 50%;
-    z-index: 2;
-  }
-
-  #char-right {
-    left: 50%;
-    width: 50%;
-  }
-
-  .char-image {
-    max-height: 88vh;
-  }
-
-  .choices-area button {
-    font-size: 1.1em;
-  }
-}
-
-/* 📱 モバイル横（左右5%余白、均等3分割） */
-@media screen and (max-width: 1024px) and (orientation: landscape) {
-  #char-left {
-    left: 5%;
-    width: 30%;
-  }
-
-  #char-center {
-    left: 35%;
-    width: 30%;
-    z-index: 2;
-  }
-
-  #char-right {
-    left: 65%;
-    width: 30%;
-  }
-}
-
-/* 💻 PC（左右5%余白、均等3分割） */
+/* デスクトップ（横幅広め） */
 @media screen and (min-width: 1025px) {
   #char-left {
     left: 5%;
@@ -122,6 +74,53 @@ body {
   }
 }
 
+/* モバイル横：重なりなし、セーフエリア100%、左右余白0% */
+@media screen and (max-width: 1024px) and (orientation: landscape) {
+  #char-left {
+    left: 0%;
+    width: 33.33%;
+  }
+
+  #char-center {
+    left: 33.33%;
+    width: 33.33%;
+    z-index: 2;
+  }
+
+  #char-right {
+    left: 66.66%;
+    width: 33.33%;
+  }
+}
+
+/* モバイル縦：重なりあり、中央キャラ最前面、左右余白なし */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  :root {
+    --fontSize: 1.2em;
+  }
+
+  .char-image {
+    max-height: 88vh;
+  }
+
+  #char-left {
+    left: 0%;
+    width: 50%;
+  }
+
+  #char-center {
+    left: 25%;
+    width: 50%;
+    z-index: 2;
+  }
+
+  #char-right {
+    left: 50%;
+    width: 50%;
+  }
+}
+
+/* セリフ・名前の表示 */
 #dialogue-box {
   position: absolute;
   bottom: 0;
@@ -144,7 +143,7 @@ body {
   min-height: 3em;
 }
 
-/* 🎯 選択肢位置（画面縦60%） */
+/* 選択肢ボタン */
 .choices-area {
   position: absolute;
   top: 60%;
@@ -166,4 +165,10 @@ body {
 
 .choices-area button:hover {
   background-color: #555;
+}
+
+@media screen and (max-width: 768px) {
+  #choices button {
+    font-size: 1.1em;
+  }
 }
