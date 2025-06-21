@@ -1,10 +1,10 @@
+// script.js - v021 修正版（キャラ画像保持＋名前未定義時の色対応）
+
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
-let autoWait = 2000;
+let autoWait = 2000; // オートモード時の待機時間（ミリ秒）
 let bgm = null;
-let se = null;
-let voice = null;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -62,8 +62,8 @@ async function showScene(scene) {
           applyEffect(bgEl, scene.bgEffect || "fadein");
           resolve();
         };
-        bgEl.src = scene.bg.startsWith("data:") ? scene.bg : config.bgPath + scene.bg;
-      }, 300);
+        bgEl.src = config.bgPath + scene.bg;
+      }, 500);
     });
   }
 
@@ -76,20 +76,8 @@ async function showScene(scene) {
     if (scene.bgm) {
       bgm = new Audio(config.bgmPath + scene.bgm);
       bgm.loop = true;
-      bgm.play().catch(err => console.warn("BGM error:", err));
+      bgm.play();
     }
-  }
-
-  // 効果音
-  if (scene.se) {
-    se = new Audio(config.sePath + scene.se);
-    se.play().catch(err => console.warn("SE error:", scene.se, err));
-  }
-
-  // ボイス
-  if (scene.voice) {
-    voice = new Audio(config.voicePath + scene.voice);
-    voice.play().catch(err => console.warn("Voice error:", scene.voice, err));
   }
 
   // キャラクター表示
@@ -97,25 +85,31 @@ async function showScene(scene) {
     ["left", "center", "right"].forEach((pos) => {
       const slot = charSlots[pos];
       const charData = scene.characters.find((c) => c.side === pos);
-      slot.innerHTML = "";
 
-      if (charData && charData.src && charData.src !== "NULL") {
-        const img = document.createElement("img");
-        img.src = config.charPath + charData.src;
-        img.classList.add("char-image");
-        slot.appendChild(img);
-        applyEffect(img, charData.effect || "fadein");
+      if (charData) {
+        if (charData.src === "NULL") {
+          slot.innerHTML = "";
+        } else {
+          slot.innerHTML = "";
+          const img = document.createElement("img");
+          img.src = config.charPath + charData.src;
+          img.classList.add("char-image");
+          slot.appendChild(img);
+          applyEffect(img, charData.effect || "fadein");
+        }
       }
+      // 指定がなければslotはそのまま保持
     });
   }
 
   // 名前とセリフ
-  if (scene.name !== undefined && scene.text !== undefined) {
-    const color = characterColors[scene.name] || "#FFFFFF";
-    nameEl.textContent = scene.name;
+  if (scene.text !== undefined) {
+    const speaker = scene.name || "";
+    const color = characterColors[speaker] || characterColors[""] || "#FFFFFF";
+    nameEl.textContent = speaker;
     nameEl.style.color = color;
 
-    setCharacterStyle(scene.name);
+    setCharacterStyle(speaker);
     setTextWithSpeed(scene.text, currentSpeed, () => {
       if (isAuto) {
         setTimeout(() => {
@@ -123,9 +117,6 @@ async function showScene(scene) {
         }, autoWait);
       }
     });
-  } else {
-    nameEl.textContent = "";
-    textEl.textContent = "";
   }
 
   // 選択肢
@@ -135,19 +126,8 @@ async function showScene(scene) {
       const btn = document.createElement("button");
       btn.textContent = choice.text;
       btn.onclick = () => {
-        textEl.textContent = "";
-        nameEl.textContent = "";
-        if (choice.voice) {
-          voice = new Audio(config.voicePath + choice.voice);
-          voice.play().catch(err => console.warn("Voice error:", choice.voice, err));
-        }
-        if (choice.se) {
-          se = new Audio(config.sePath + choice.se);
-          se.play().catch(err => console.warn("SE error:", choice.se, err));
-        }
-        if (choice.jump) {
-          loadScenario(choice.jump);
-        }
+        choicesEl.innerHTML = "";
+        loadScenario(choice.jump);
       };
       choicesEl.appendChild(btn);
     });
@@ -177,21 +157,17 @@ function loadScenario(filename) {
     });
 }
 
-// 背景ダブルクリックでオート切替
 bgEl.addEventListener("dblclick", () => {
   isAuto = !isAuto;
 });
 
-// クリックで次へ
 document.addEventListener("click", () => {
   if (!isAuto && choicesEl.children.length === 0 && !isPlaying) {
     next();
   }
 });
 
-// 初期化
 window.addEventListener("load", () => {
-  bgEl.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIW2NgYGBgAAAABAABJzQnCgAAAABJRU5ErkJggg=="; // 1px黒背景
   loadScenario(currentScenario);
   setVhVariable();
 });
