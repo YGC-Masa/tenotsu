@@ -46,80 +46,27 @@ body {
   pointer-events: none;
 }
 
+#char-left {
+  left: 5%;
+  width: 70%;
+}
+
+#char-center {
+  left: 15%;
+  width: 70%;
+  z-index: 2;
+}
+
+#char-right {
+  left: 25%;
+  width: 70%;
+}
+
 .char-image {
   width: 100%;
   height: auto;
   max-height: 90vh;
   object-fit: contain;
-}
-
-/* 💻 PC デスクトップ */
-@media screen and (min-width: 1025px) {
-  #char-left {
-    left: 5%;
-    width: 30%;
-  }
-
-  #char-center {
-    left: 35%;
-    width: 30%;
-    z-index: 2;
-  }
-
-  #char-right {
-    left: 65%;
-    width: 30%;
-  }
-}
-
-/* 📱 モバイル横表示 */
-@media screen and (max-width: 1024px) and (orientation: landscape) {
-  #char-left {
-    left: 5%;
-    width: 65%;
-  }
-
-  #char-center {
-    left: 17.5%;
-    width: 65%;
-    z-index: 2;
-  }
-
-  #char-right {
-    left: 30%;
-    width: 65%;
-  }
-}
-
-/* 📱 モバイル縦表示 */
-@media screen and (max-width: 768px) and (orientation: portrait) {
-  :root {
-    --fontSize: 1.2em;
-  }
-
-  .char-image {
-    max-height: 88vh;
-  }
-
-  #char-left {
-    left: 1%;
-    width: 50%;
-  }
-
-  #char-center {
-    left: 25%;
-    width: 50%;
-    z-index: 2;
-  }
-
-  #char-right {
-    left: 47%;
-    width: 50%;
-  }
-
-  #choices button {
-    font-size: 1.1em;
-  }
 }
 
 #dialogue-box {
@@ -165,4 +112,81 @@ body {
 
 .choices-area button:hover {
   background-color: #555;
+}
+
+/* 📱 モバイル縦表示 */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  :root {
+    --fontSize: 1.2em;
+  }
+
+  .char-image {
+    max-height: 88vh;
+  }
+
+  #char-left {
+    left: 5%;
+    width: 50%;
+  }
+
+  #char-center {
+    left: 25%;
+    width: 50%;
+    z-index: 2;
+  }
+
+  #char-right {
+    left: 45%;
+    width: 50%;
+  }
+
+  .choices-area button {
+    font-size: 1.1em;
+  }
+}
+
+/* 📱 モバイル横表示（等幅3分割） */
+@media screen and (max-width: 1024px) and (orientation: landscape) {
+  :root {
+    --fontSize: 1em;
+  }
+
+  .char-image {
+    max-height: 85vh;
+  }
+
+  #char-left {
+    left: 0%;
+    width: 33.33%;
+  }
+
+  #char-center {
+    left: 33.33%;
+    width: 33.33%;
+    z-index: 2;
+  }
+
+  #char-right {
+    left: 66.66%;
+    width: 33.33%;
+  }
+}
+
+/* 💻 PC（重なりOK・中央最前面） */
+@media screen and (min-width: 1025px) {
+  #char-left {
+    left: 5%;
+    width: 50%;
+  }
+
+  #char-center {
+    left: 25%;
+    width: 50%;
+    z-index: 2;
+  }
+
+  #char-right {
+    left: 45%;
+    width: 50%;
+  }
 }
