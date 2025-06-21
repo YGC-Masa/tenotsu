@@ -43,16 +43,12 @@ body {
   position: absolute;
   bottom: 0;
   text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
   pointer-events: none;
 }
 
 #char-left {
   left: 1%;
   width: 70%;
-  z-index: 1;
 }
 
 #char-center {
@@ -64,7 +60,6 @@ body {
 #char-right {
   left: 29%;
   width: 70%;
-  z-index: 1;
 }
 
 .char-image {
@@ -72,7 +67,6 @@ body {
   height: auto;
   max-height: 90vh;
   object-fit: contain;
-  vertical-align: bottom;
 }
 
 #dialogue-box {
@@ -120,36 +114,56 @@ body {
   background-color: #555;
 }
 
-/* モバイル縦表示対応 */
-@media screen and (max-width: 768px) {
+/* モバイル縦表示 */
+@media screen and (max-width: 768px) and (orientation: portrait) {
   :root {
     --fontSize: 1.2em;
   }
 
   .char-image {
     max-height: 88vh;
-    vertical-align: bottom;
   }
 
   #char-left {
-    left: 1%;
-    width: 70%;
-    z-index: 1;
+    left: 3%;
+    width: 65%;
   }
 
   #char-center {
-    left: 15%;
-    width: 70%;
+    left: 17.5%;
+    width: 65%;
     z-index: 2;
   }
 
   #char-right {
-    left: 29%;
-    width: 70%;
-    z-index: 1;
+    left: 32%;
+    width: 65%;
   }
 
-  #choices button {
+  .choices-area button {
     font-size: 1.1em;
+  }
+}
+
+/* モバイル横表示対応（画面が広く、縦が狭い） */
+@media screen and (max-width: 1024px) and (max-height: 500px) and (orientation: landscape) {
+  .char-image {
+    max-height: 80vh;
+  }
+
+  #char-left {
+    left: 5%;
+    width: 28%;
+  }
+
+  #char-center {
+    left: 36%;
+    width: 28%;
+    z-index: 2;
+  }
+
+  #char-right {
+    left: 67%;
+    width: 28%;
   }
 }
