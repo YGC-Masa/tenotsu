@@ -53,14 +53,14 @@ body {
   object-fit: contain;
 }
 
-/* 📱 モバイル縦（重なりOK） */
+/* 📱 モバイル縦（全幅利用） */
 @media screen and (max-width: 768px) and (orientation: portrait) {
   :root {
     --fontSize: 1.2em;
   }
 
   #char-left {
-    left: 5%;
+    left: 0%;
     width: 50%;
   }
 
@@ -71,7 +71,7 @@ body {
   }
 
   #char-right {
-    left: 45%;
+    left: 50%;
     width: 50%;
   }
 
@@ -84,41 +84,41 @@ body {
   }
 }
 
-/* 📱 モバイル横（3分割均等） */
+/* 📱 モバイル横（左右5%余白、均等3分割） */
 @media screen and (max-width: 1024px) and (orientation: landscape) {
   #char-left {
-    left: 0%;
-    width: 33.33%;
+    left: 5%;
+    width: 30%;
   }
 
   #char-center {
-    left: 33.33%;
-    width: 33.33%;
+    left: 35%;
+    width: 30%;
     z-index: 2;
   }
 
   #char-right {
-    left: 66.66%;
-    width: 33.33%;
+    left: 65%;
+    width: 30%;
   }
 }
 
-/* 💻 PC（3分割均等） */
+/* 💻 PC（左右5%余白、均等3分割） */
 @media screen and (min-width: 1025px) {
   #char-left {
-    left: 0%;
-    width: 33.33%;
+    left: 5%;
+    width: 30%;
   }
 
   #char-center {
-    left: 33.33%;
-    width: 33.33%;
+    left: 35%;
+    width: 30%;
     z-index: 2;
   }
 
   #char-right {
-    left: 66.66%;
-    width: 33.33%;
+    left: 65%;
+    width: 30%;
   }
 }
 
