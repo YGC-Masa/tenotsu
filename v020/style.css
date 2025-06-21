@@ -46,27 +46,80 @@ body {
   pointer-events: none;
 }
 
-#char-left {
-  left: 5%;
-  width: 70%;
-}
-
-#char-center {
-  left: 15%;
-  width: 70%;
-  z-index: 2;
-}
-
-#char-right {
-  left: 25%;
-  width: 70%;
-}
-
 .char-image {
   width: 100%;
   height: auto;
   max-height: 90vh;
   object-fit: contain;
+}
+
+/* 📱 モバイル縦（重なりOK） */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  :root {
+    --fontSize: 1.2em;
+  }
+
+  #char-left {
+    left: 5%;
+    width: 50%;
+  }
+
+  #char-center {
+    left: 25%;
+    width: 50%;
+    z-index: 2;
+  }
+
+  #char-right {
+    left: 45%;
+    width: 50%;
+  }
+
+  .char-image {
+    max-height: 88vh;
+  }
+
+  .choices-area button {
+    font-size: 1.1em;
+  }
+}
+
+/* 📱 モバイル横（3分割均等） */
+@media screen and (max-width: 1024px) and (orientation: landscape) {
+  #char-left {
+    left: 0%;
+    width: 33.33%;
+  }
+
+  #char-center {
+    left: 33.33%;
+    width: 33.33%;
+    z-index: 2;
+  }
+
+  #char-right {
+    left: 66.66%;
+    width: 33.33%;
+  }
+}
+
+/* 💻 PC（3分割均等） */
+@media screen and (min-width: 1025px) {
+  #char-left {
+    left: 0%;
+    width: 33.33%;
+  }
+
+  #char-center {
+    left: 33.33%;
+    width: 33.33%;
+    z-index: 2;
+  }
+
+  #char-right {
+    left: 66.66%;
+    width: 33.33%;
+  }
 }
 
 #dialogue-box {
@@ -91,6 +144,7 @@ body {
   min-height: 3em;
 }
 
+/* 🎯 選択肢位置（画面縦60%） */
 .choices-area {
   position: absolute;
   top: 60%;
@@ -112,81 +166,4 @@ body {
 
 .choices-area button:hover {
   background-color: #555;
-}
-
-/* 📱 モバイル縦表示 */
-@media screen and (max-width: 768px) and (orientation: portrait) {
-  :root {
-    --fontSize: 1.2em;
-  }
-
-  .char-image {
-    max-height: 88vh;
-  }
-
-  #char-left {
-    left: 5%;
-    width: 50%;
-  }
-
-  #char-center {
-    left: 25%;
-    width: 50%;
-    z-index: 2;
-  }
-
-  #char-right {
-    left: 45%;
-    width: 50%;
-  }
-
-  .choices-area button {
-    font-size: 1.1em;
-  }
-}
-
-/* 📱 モバイル横表示（等幅3分割） */
-@media screen and (max-width: 1024px) and (orientation: landscape) {
-  :root {
-    --fontSize: 1em;
-  }
-
-  .char-image {
-    max-height: 85vh;
-  }
-
-  #char-left {
-    left: 0%;
-    width: 33.33%;
-  }
-
-  #char-center {
-    left: 33.33%;
-    width: 33.33%;
-    z-index: 2;
-  }
-
-  #char-right {
-    left: 66.66%;
-    width: 33.33%;
-  }
-}
-
-/* 💻 PC（重なりOK・中央最前面） */
-@media screen and (min-width: 1025px) {
-  #char-left {
-    left: 5%;
-    width: 50%;
-  }
-
-  #char-center {
-    left: 25%;
-    width: 50%;
-    z-index: 2;
-  }
-
-  #char-right {
-    left: 45%;
-    width: 50%;
-  }
 }
