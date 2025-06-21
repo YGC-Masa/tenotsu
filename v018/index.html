@@ -3,28 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>v018 ノベルゲーム</title>
+  <title>ノベルゲーム v018</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- 背景 -->
-  <div id="background"></div>
+  <div id="game-container">
+    <!-- 背景 -->
+    <img id="background" src="" alt="背景画像" />
 
-  <!-- キャラ表示 -->
-  <div class="char-container">
-    <img id="char1" class="char" src="">
-    <img id="char2" class="char" src="">
-    <img id="char3" class="char" src="">
+    <!-- キャラ表示レイヤー -->
+    <div id="char-layer" class="char-container">
+      <div id="char-left" class="char-slot"></div>
+      <div id="char-right" class="char-slot"></div>
+      <div id="char-center" class="char-slot"></div>
+    </div>
+
+    <!-- セリフ・選択肢ボックス -->
+    <div id="dialogue-box">
+      <div id="name" class="name-area"></div>
+      <div id="text" class="text-area"></div>
+    </div>
+
+    <div id="choices" class="choices-area"></div>
   </div>
-
-  <!-- テキストボックス -->
-  <div id="text-box"></div>
 
   <!-- スクリプト読み込み -->
   <script src="config.js"></script>
-  <script src="effect.js"></script>
   <script src="characterColors.js"></script>
   <script src="characterStyles.js"></script>
+  <script src="effect.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
