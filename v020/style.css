@@ -46,6 +46,14 @@ body {
   pointer-events: none;
 }
 
+.char-image {
+  width: 100%;
+  height: auto;
+  max-height: 90vh;
+  object-fit: contain;
+}
+
+/* ==== デフォルト（PC・大画面） ==== */
 #char-left {
   left: 5%;
   width: 65%;
@@ -62,11 +70,50 @@ body {
   width: 65%;
 }
 
-.char-image {
-  width: 100%;
-  height: auto;
-  max-height: 90vh;
-  object-fit: contain;
+/* ==== モバイル縦表示 ==== */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  :root {
+    --fontSize: 1.2em;
+  }
+
+  .char-image {
+    max-height: 88vh;
+  }
+
+  #char-left {
+    left: 1%;
+    width: 50%;
+  }
+
+  #char-center {
+    left: 25%;
+    width: 50%;
+    z-index: 2;
+  }
+
+  #char-right {
+    left: 49%;
+    width: 50%;
+  }
+}
+
+/* ==== モバイル横表示 ==== */
+@media screen and (max-width: 1024px) and (orientation: landscape) {
+  #char-left {
+    left: 5%;
+    width: 65%;
+  }
+
+  #char-center {
+    left: 17.5%;
+    width: 65%;
+    z-index: 2;
+  }
+
+  #char-right {
+    left: 30%;
+    width: 65%;
+  }
 }
 
 #dialogue-box {
@@ -112,35 +159,4 @@ body {
 
 .choices-area button:hover {
   background-color: #555;
-}
-
-/* モバイル縦表示対応 */
-@media screen and (max-width: 768px) and (orientation: portrait) {
-  :root {
-    --fontSize: 1.2em;
-  }
-
-  .char-image {
-    max-height: 88vh;
-  }
-
-  #char-left {
-    left: 5%;
-    width: 50%;
-  }
-
-  #char-center {
-    left: 25%;
-    width: 50%;
-    z-index: 2;
-  }
-
-  #char-right {
-    left: 45%;
-    width: 50%;
-  }
-
-  #choices button {
-    font-size: 1.1em;
-  }
 }
