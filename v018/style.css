@@ -50,7 +50,6 @@ body {
   padding-right: env(safe-area-inset-right);
 }
 
-/* landscape時だけgrid分割表示に切り替え */
 #char-layer.landscape {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -119,17 +118,4 @@ body {
 }
 
 /* モバイル縦表示調整 */
-@media screen and (max-width: 768px) and (orientation: portrait) {
-  :root {
-    --fontSize: 1.2em;
-  }
-
-  .char-image {
-    max-height: 88vh;
-    vertical-align: bottom;
-  }
-
-  .choices-area button {
-    font-size: 1.1em;
-  }
-}
+@media screen and (m
