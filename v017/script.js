@@ -1,8 +1,12 @@
+// script.js - v017 完全版（選択肢時バッファ混在防止）
+
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
 let autoWait = 2000;
 let bgm = null;
+let voice = null;
+let se = null;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -19,12 +23,16 @@ let defaultFontSize = "1em";
 let defaultSpeed = 40;
 let currentSpeed = defaultSpeed;
 let isPlaying = false;
-let voiceAudio = null;
-let seAudio = null;
+
+function resetTextBuffer() {
+  isPlaying = false;
+  textEl.innerHTML = "";
+  nameEl.textContent = "";
+}
 
 function setTextWithSpeed(text, speed, callback) {
+  resetTextBuffer();
   isPlaying = true;
-  textEl.innerHTML = "";
   let i = 0;
   const interval = setInterval(() => {
     textEl.innerHTML += text[i++];
@@ -53,7 +61,7 @@ function applyEffect(el, effectName) {
 async function showScene(scene) {
   if (!scene) return;
 
-  // 背景切替
+  // 背景切り替え
   if (scene.bg) {
     await new Promise((resolve) => {
       applyEffect(bgEl, scene.bgEffect || "fadeout");
@@ -67,7 +75,7 @@ async function showScene(scene) {
     });
   }
 
-  // BGM
+  // BGM切り替え
   if (scene.bgm !== undefined) {
     if (bgm) {
       bgm.pause();
@@ -76,29 +84,29 @@ async function showScene(scene) {
     if (scene.bgm) {
       bgm = new Audio(config.bgmPath + scene.bgm);
       bgm.loop = true;
-      bgm.play().catch(() => {});
+      bgm.play();
     }
   }
 
-  // SE
+  // 効果音
   if (scene.se) {
-    seAudio = new Audio(config.sePath + scene.se);
-    seAudio.play().catch(() => {});
+    se = new Audio(config.sePath + scene.se);
+    se.play();
   }
 
-  // Voice
+  // ボイス
   if (scene.voice) {
-    if (voiceAudio) voiceAudio.pause();
-    voiceAudio = new Audio(config.voicePath + scene.voice);
-    voiceAudio.play().catch(() => {});
+    voice = new Audio(config.voicePath + scene.voice);
+    voice.play();
   }
 
-  // キャラ表示
+  // キャラクター表示
   if (scene.characters) {
     ["left", "center", "right"].forEach((pos) => {
       const slot = charSlots[pos];
       const charData = scene.characters.find((c) => c.side === pos);
       slot.innerHTML = "";
+
       if (charData && charData.src && charData.src !== "NULL") {
         const img = document.createElement("img");
         img.src = config.charPath + charData.src;
@@ -132,19 +140,16 @@ async function showScene(scene) {
       const btn = document.createElement("button");
       btn.textContent = choice.text;
       btn.onclick = () => {
-        // SE 再生
+        resetTextBuffer();
+        choicesEl.innerHTML = "";
         if (choice.se) {
-          const se = new Audio(config.sePath + choice.se);
-          se.play().catch(() => {});
+          se = new Audio(config.sePath + choice.se);
+          se.play();
         }
-
-        // Voice 再生
         if (choice.voice) {
-          const voice = new Audio(config.voicePath + choice.voice);
-          voice.play().catch(() => {});
+          voice = new Audio(config.voicePath + choice.voice);
+          voice.play();
         }
-
-        // シナリオジャンプ
         if (choice.jump) {
           loadScenario(choice.jump);
         }
