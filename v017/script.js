@@ -1,7 +1,9 @@
+// script.js - v017 修正版（テキストバッファクリア強化版）
+
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
-let autoWait = 2000;
+let autoWait = 2000; // オートモード時の待機時間（ミリ秒）
 let bgm = null;
 
 const bgEl = document.getElementById("background");
@@ -48,34 +50,10 @@ function applyEffect(el, effectName) {
   }
 }
 
-function playVoice(filename) {
-  if (!filename) return;
-  try {
-    const voice = new Audio(config.voicePath + filename);
-    voice.play().catch(err => {
-      console.warn(`❗️ボイス再生失敗: ${filename}`, err);
-    });
-  } catch (e) {
-    console.warn(`❗️ボイス読み込みエラー: ${filename}`, e);
-  }
-}
-
-function playSE(filename) {
-  if (!filename) return;
-  try {
-    const se = new Audio(config.sePath + filename);
-    se.play().catch(err => {
-      console.warn(`❗️SE再生失敗: ${filename}`, err);
-    });
-  } catch (e) {
-    console.warn(`❗️SE読み込みエラー: ${filename}`, e);
-  }
-}
-
 async function showScene(scene) {
   if (!scene) return;
 
-  // 背景
+  // 背景切り替え
   if (scene.bg) {
     await new Promise((resolve) => {
       applyEffect(bgEl, scene.bgEffect || "fadeout");
@@ -89,7 +67,7 @@ async function showScene(scene) {
     });
   }
 
-  // BGM
+  // BGM切り替え
   if (scene.bgm !== undefined) {
     if (bgm) {
       bgm.pause();
@@ -102,7 +80,7 @@ async function showScene(scene) {
     }
   }
 
-  // キャラ
+  // キャラクター表示
   if (scene.characters) {
     ["left", "center", "right"].forEach((pos) => {
       const slot = charSlots[pos];
@@ -119,7 +97,7 @@ async function showScene(scene) {
     });
   }
 
-  // 名前・セリフ・voice/se
+  // 名前とセリフ
   if (scene.name !== undefined && scene.text !== undefined) {
     const color = characterColors[scene.name] || "#FFFFFF";
     nameEl.textContent = scene.name;
@@ -133,10 +111,6 @@ async function showScene(scene) {
         }, autoWait);
       }
     });
-
-    // 音声再生
-    if (scene.voice) playVoice(scene.voice);
-    if (scene.se) playSE(scene.se);
   }
 
   // 選択肢
@@ -146,11 +120,17 @@ async function showScene(scene) {
       const btn = document.createElement("button");
       btn.textContent = choice.text;
       btn.onclick = () => {
-        textEl.innerHTML = ""; // テキストバッファを明示的に消す
+        // バッファクリア
+        textEl.innerHTML = "";
         nameEl.textContent = "";
-        currentScenario = choice.jump || currentScenario;
-        currentIndex = 0;
-        loadScenario(currentScenario);
+
+        if (choice.jump) {
+          currentScenario = choice.jump;
+          currentIndex = 0;
+          loadScenario(currentScenario);
+        } else {
+          next();
+        }
       };
       choicesEl.appendChild(btn);
     });
@@ -176,15 +156,11 @@ function loadScenario(filename) {
   fetch(config.scenarioPath + filename)
     .then((res) => res.json())
     .then((data) => {
-      if (data.scenes && data.scenes.length > 0) {
-        showScene(data.scenes[0]);
-      } else {
-        console.warn(`❗️シナリオにシーンが定義されていません: ${filename}`);
-      }
+      showScene(data.scenes[0]);
     });
 }
 
-// オートモード切替
+// 背景クリックでオートモード切替
 bgEl.addEventListener("dblclick", () => {
   isAuto = !isAuto;
 });
