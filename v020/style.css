@@ -46,52 +46,27 @@ body {
   pointer-events: none;
 }
 
+#char-left {
+  left: 5%;
+  width: 65%;
+}
+
+#char-center {
+  left: 17.5%;
+  width: 65%;
+  z-index: 2;
+}
+
+#char-right {
+  left: 30%;
+  width: 65%;
+}
+
 .char-image {
   width: 100%;
   height: auto;
   max-height: 90vh;
   object-fit: contain;
-}
-
-/* 中央キャラを最前面に */
-#char-center {
-  z-index: 2;
-}
-
-/* モバイル横表示 */
-@media screen and (max-width: 768px) and (orientation: landscape) {
-  #char-left {
-    left: 1%;
-    width: 65%;
-  }
-
-  #char-center {
-    left: 17.5%;
-    width: 65%;
-  }
-
-  #char-right {
-    left: 34%;
-    width: 65%;
-  }
-}
-
-/* モバイル縦 & PC 表示 */
-@media screen and (orientation: portrait), screen and (min-width: 769px) {
-  #char-left {
-    left: 5%;
-    width: 50%;
-  }
-
-  #char-center {
-    left: 25%;
-    width: 50%;
-  }
-
-  #char-right {
-    left: 45%;
-    width: 50%;
-  }
 }
 
 #dialogue-box {
@@ -118,16 +93,16 @@ body {
 
 .choices-area {
   position: absolute;
-  bottom: 6em;
+  top: 60%;
   width: 100%;
   text-align: center;
   z-index: 4;
 }
 
 .choices-area button {
-  margin: 0.5em;
-  padding: 0.5em 1em;
-  font-size: 1em;
+  margin: 0.5em 1em;
+  padding: 0.6em 1.2em;
+  font-size: 1.1em;
   background-color: #333;
   color: white;
   border: none;
@@ -137,4 +112,35 @@ body {
 
 .choices-area button:hover {
   background-color: #555;
+}
+
+/* モバイル縦表示対応 */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  :root {
+    --fontSize: 1.2em;
+  }
+
+  .char-image {
+    max-height: 88vh;
+  }
+
+  #char-left {
+    left: 5%;
+    width: 50%;
+  }
+
+  #char-center {
+    left: 25%;
+    width: 50%;
+    z-index: 2;
+  }
+
+  #char-right {
+    left: 45%;
+    width: 50%;
+  }
+
+  #choices button {
+    font-size: 1.1em;
+  }
 }
