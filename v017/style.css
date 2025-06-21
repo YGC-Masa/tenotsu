@@ -3,135 +3,159 @@
   --fontSize: 1em;
 }
 
-body, html {
+body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
-  font-size: var(--fontSize);
-  height: 100%;
   background-color: black;
+  font-family: sans-serif;
+  overflow: hidden;
 }
 
 #game-container {
   position: relative;
-  width: 100%;
+  width: 100vw;
   height: calc(var(--vh, 1vh) * 100);
   overflow: hidden;
 }
 
+/* 背景画像 */
 #background {
+  position: absolute;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  position: absolute;
   top: 0;
   left: 0;
   z-index: 0;
 }
 
+/* キャラ表示レイヤー */
 #char-layer {
   position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 10;
   pointer-events: none;
-  z-index: 1;
 }
 
 .char-slot {
   position: absolute;
-  bottom: 0;
+  top: 0;
+  height: 100%;
   display: flex;
-  justify-content: center;
   align-items: flex-end;
+  padding-bottom: 4%;
   pointer-events: none;
 }
 
-/* 左キャラ：画面の左半分 */
 #char-left {
-  left: 0%;
+  left: 0;
   width: 50%;
-  z-index: 1;
+  justify-content: flex-start;
+  z-index: 11;
 }
 
-/* 右キャラ：画面の右半分 */
 #char-right {
-  right: 0%;
+  right: 0;
   width: 50%;
-  z-index: 1;
+  justify-content: flex-end;
+  z-index: 11;
 }
 
-/* 中央キャラ：中央寄せ、重ね可 */
 #char-center {
   left: 25%;
   width: 50%;
-  z-index: 2; /* 最前面 */
+  justify-content: center;
+  z-index: 12;
 }
 
 .char-image {
   max-height: 80vh;
-  width: auto;
+  max-width: 100%;
   height: auto;
+  width: auto;
   pointer-events: auto;
+  transition: opacity 0.5s;
 }
 
-/* ダイアログボックス */
+/* セリフ枠 */
 #dialogue-box {
   position: absolute;
   bottom: 0;
   width: 100%;
   background-color: rgba(0, 0, 0, 0.6);
-  color: white;
   padding: 1em;
+  color: white;
+  font-size: var(--fontSize);
+  z-index: 20;
   box-sizing: border-box;
-  z-index: 3;
 }
 
 .name-area {
   font-weight: bold;
-  margin-bottom: 0.5em;
+  margin-bottom: 0.3em;
+  color: #ffffff;
 }
 
 .text-area {
-  white-space: pre-wrap;
+  line-height: 1.5;
 }
 
-/* 選択肢エリア */
-.choices-area {
+/* 選択肢 */
+#choices {
   position: absolute;
-  bottom: 6em;
+  bottom: 120px;
   width: 100%;
   display: flex;
-  justify-content: center;
-  gap: 1em;
-  z-index: 4;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5em;
+  z-index: 30;
 }
 
-.choices-area button {
+#choices button {
   padding: 0.5em 1em;
   font-size: 1em;
-  background-color: #444;
+  background-color: #333;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
+  max-width: 80%;
+  word-break: break-word;
 }
 
-.choices-area button:hover {
-  background-color: #666;
+#choices button:hover {
+  background-color: #555;
 }
 
-/* アニメーション用のフェードイン */
+/* アニメーション用 */
 .fadein {
-  animation: fadein 0.5s ease forwards;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+.fadeout {
+  animation: fadeOut 0.5s ease-out forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
 }
 
-@keyframes fadein {
-  from {
-    opacity: 0;
+/* レスポンシブ対応 */
+@media screen and (max-width: 768px) {
+  :root {
+    --fontSize: 1.2em;
   }
-  to {
-    opacity: 1;
+  .char-image {
+    max-height: 70vh;
+  }
+  #choices button {
+    font-size: 1.1em;
   }
 }
