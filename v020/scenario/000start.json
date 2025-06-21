@@ -40,6 +40,11 @@
       "text": "え、マジ？助かるわー！私お菓子しか持ってきてない！",
       "voice": "kogane01.mp3"
     },
+  {
+      "name": "緋奈",
+      "text": "お菓子しか持ってきてないとか。うける！",
+      "voice": "kogane01.mp3"
+    },
     {
       "characters": [
         { "side": "center", "src": "a05002.png", "effect": "slideleft" }
