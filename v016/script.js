@@ -1,12 +1,8 @@
-// script.js - v016 修正版（name未定義・ボイスSE対応・同期描画）
-
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
 let autoWait = 2000;
 let bgm = null;
-let voice = null;
-let se = null;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -23,6 +19,8 @@ let defaultFontSize = "1em";
 let defaultSpeed = 40;
 let currentSpeed = defaultSpeed;
 let isPlaying = false;
+let voiceAudio = null;
+let seAudio = null;
 
 function setTextWithSpeed(text, speed, callback) {
   isPlaying = true;
@@ -55,7 +53,7 @@ function applyEffect(el, effectName) {
 async function showScene(scene) {
   if (!scene) return;
 
-  // 背景切り替え
+  // 背景切替
   if (scene.bg) {
     await new Promise((resolve) => {
       applyEffect(bgEl, scene.bgEffect || "fadeout");
@@ -78,37 +76,29 @@ async function showScene(scene) {
     if (scene.bgm) {
       bgm = new Audio(config.bgmPath + scene.bgm);
       bgm.loop = true;
-      bgm.play();
+      bgm.play().catch(() => {});
     }
   }
 
-  // 効果音
+  // SE
   if (scene.se) {
-    if (se) {
-      se.pause();
-      se = null;
-    }
-    se = new Audio(config.sePath + scene.se);
-    se.play();
+    seAudio = new Audio(config.sePath + scene.se);
+    seAudio.play().catch(() => {});
   }
 
-  // ボイス
+  // Voice
   if (scene.voice) {
-    if (voice) {
-      voice.pause();
-      voice = null;
-    }
-    voice = new Audio(config.voicePath + scene.voice);
-    voice.play();
+    if (voiceAudio) voiceAudio.pause();
+    voiceAudio = new Audio(config.voicePath + scene.voice);
+    voiceAudio.play().catch(() => {});
   }
 
-  // キャラクター表示
+  // キャラ表示
   if (scene.characters) {
     ["left", "center", "right"].forEach((pos) => {
       const slot = charSlots[pos];
       const charData = scene.characters.find((c) => c.side === pos);
       slot.innerHTML = "";
-
       if (charData && charData.src && charData.src !== "NULL") {
         const img = document.createElement("img");
         img.src = config.charPath + charData.src;
@@ -119,15 +109,11 @@ async function showScene(scene) {
     });
   }
 
-  // テキスト表示（name/text）
-  if (scene.text !== undefined) {
-    if (scene.name !== undefined) {
-      const color = characterColors[scene.name] || "#FFFFFF";
-      nameEl.textContent = scene.name;
-      nameEl.style.color = color;
-    } else {
-      nameEl.textContent = "";
-    }
+  // 名前とセリフ
+  if (scene.name !== undefined && scene.text !== undefined) {
+    const color = characterColors[scene.name] || "#FFFFFF";
+    nameEl.textContent = scene.name;
+    nameEl.style.color = color;
 
     setCharacterStyle(scene.name);
     setTextWithSpeed(scene.text, currentSpeed, () => {
@@ -137,9 +123,6 @@ async function showScene(scene) {
         }, autoWait);
       }
     });
-  } else {
-    nameEl.textContent = "";
-    textEl.innerHTML = "";
   }
 
   // 選択肢
@@ -149,7 +132,22 @@ async function showScene(scene) {
       const btn = document.createElement("button");
       btn.textContent = choice.text;
       btn.onclick = () => {
-        loadScenario(choice.jump);
+        // SE 再生
+        if (choice.se) {
+          const se = new Audio(config.sePath + choice.se);
+          se.play().catch(() => {});
+        }
+
+        // Voice 再生
+        if (choice.voice) {
+          const voice = new Audio(config.voicePath + choice.voice);
+          voice.play().catch(() => {});
+        }
+
+        // シナリオジャンプ
+        if (choice.jump) {
+          loadScenario(choice.jump);
+        }
       };
       choicesEl.appendChild(btn);
     });
@@ -179,7 +177,7 @@ function loadScenario(filename) {
     });
 }
 
-// オートモード切替（背景ダブルクリック）
+// 背景ダブルクリックでオートモード切替
 bgEl.addEventListener("dblclick", () => {
   isAuto = !isAuto;
 });
