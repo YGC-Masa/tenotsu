@@ -43,24 +43,27 @@ body {
   position: absolute;
   bottom: 0;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
   pointer-events: none;
 }
 
 #char-left {
   left: 1%;
-  width: 65%;
+  width: 70%;
   z-index: 1;
 }
 
 #char-center {
-  left: 17.5%; /* (100% - 65%) / 2 */
-  width: 65%;
+  left: 15%;
+  width: 70%;
   z-index: 2;
 }
 
 #char-right {
-  left: 34%;
-  width: 65%;
+  left: 29%;
+  width: 70%;
   z-index: 1;
 }
 
@@ -69,6 +72,7 @@ body {
   height: auto;
   max-height: 90vh;
   object-fit: contain;
+  vertical-align: bottom;
 }
 
 #dialogue-box {
@@ -124,23 +128,24 @@ body {
 
   .char-image {
     max-height: 88vh;
+    vertical-align: bottom;
   }
 
   #char-left {
     left: 1%;
-    width: 65%;
+    width: 70%;
     z-index: 1;
   }
 
   #char-center {
-    left: 17.5%;
-    width: 65%;
+    left: 15%;
+    width: 70%;
     z-index: 2;
   }
 
   #char-right {
-    left: 34%;
-    width: 65%;
+    left: 29%;
+    width: 70%;
     z-index: 1;
   }
 
