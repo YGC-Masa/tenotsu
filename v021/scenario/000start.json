@@ -28,7 +28,7 @@
           "jump": "branchA.json"
         },
         {
-          "text": "🏙 街でショッピング（分岐B）",
+          "text": "🏙 街でショッピング（分岐B）　",
           "jump": "branchB.json"
         },
         {
