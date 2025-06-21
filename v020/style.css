@@ -53,24 +53,45 @@ body {
   object-fit: contain;
 }
 
-/* ==== デフォルト（PC・大画面） ==== */
-#char-left {
-  left: 5%;
-  width: 65%;
+/* 💻 PC デスクトップ */
+@media screen and (min-width: 1025px) {
+  #char-left {
+    left: 5%;
+    width: 30%;
+  }
+
+  #char-center {
+    left: 35%;
+    width: 30%;
+    z-index: 2;
+  }
+
+  #char-right {
+    left: 65%;
+    width: 30%;
+  }
 }
 
-#char-center {
-  left: 17.5%;
-  width: 65%;
-  z-index: 2;
+/* 📱 モバイル横表示 */
+@media screen and (max-width: 1024px) and (orientation: landscape) {
+  #char-left {
+    left: 5%;
+    width: 65%;
+  }
+
+  #char-center {
+    left: 17.5%;
+    width: 65%;
+    z-index: 2;
+  }
+
+  #char-right {
+    left: 30%;
+    width: 65%;
+  }
 }
 
-#char-right {
-  left: 30%;
-  width: 65%;
-}
-
-/* ==== モバイル縦表示 ==== */
+/* 📱 モバイル縦表示 */
 @media screen and (max-width: 768px) and (orientation: portrait) {
   :root {
     --fontSize: 1.2em;
@@ -92,27 +113,12 @@ body {
   }
 
   #char-right {
-    left: 49%;
+    left: 47%;
     width: 50%;
   }
-}
 
-/* ==== モバイル横表示 ==== */
-@media screen and (max-width: 1024px) and (orientation: landscape) {
-  #char-left {
-    left: 5%;
-    width: 65%;
-  }
-
-  #char-center {
-    left: 17.5%;
-    width: 65%;
-    z-index: 2;
-  }
-
-  #char-right {
-    left: 30%;
-    width: 65%;
+  #choices button {
+    font-size: 1.1em;
   }
 }
 
@@ -147,9 +153,9 @@ body {
 }
 
 .choices-area button {
-  margin: 0.5em 1em;
-  padding: 0.6em 1.2em;
-  font-size: 1.1em;
+  margin: 0.5em;
+  padding: 0.5em 1em;
+  font-size: 1em;
   background-color: #333;
   color: white;
   border: none;
