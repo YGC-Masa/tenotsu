@@ -1,5 +1,3 @@
-// script.js - v017 完全修正版（選択肢クリック時バッファクリア対応、最大4分岐対応）
-
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
@@ -29,8 +27,9 @@ function setTextWithSpeed(text, speed, callback) {
   textEl.innerHTML = "";
   let i = 0;
   const interval = setInterval(() => {
-    textEl.innerHTML += text[i++];
-    if (i >= text.length) {
+    if (i < text.length) {
+      textEl.innerHTML += text[i++];
+    } else {
       clearInterval(interval);
       isPlaying = false;
       if (callback) callback();
@@ -39,7 +38,7 @@ function setTextWithSpeed(text, speed, callback) {
 }
 
 function setCharacterStyle(name) {
-  const style = characterStyles[name] || characterStyles[""];
+  const style = characterStyles[name] || {};
   document.documentElement.style.setProperty("--fontSize", style.fontSize || defaultFontSize);
   currentSpeed = style.speed || defaultSpeed;
 }
@@ -52,19 +51,42 @@ function applyEffect(el, effectName) {
   }
 }
 
-function playAudio(type, filename) {
-  if (!filename) return;
-  const path = type === "voice" ? config.voicePath : config.sePath;
-  const audio = new Audio(path + filename);
-  audio.play().catch((e) => console.warn(`${type}再生失敗: ${filename}`, e));
-  if (type === "voice") voice = audio;
-  else se = audio;
+function playVoice(file) {
+  if (voice) {
+    voice.pause();
+    voice = null;
+  }
+  if (file) {
+    voice = new Audio(config.voicePath + file);
+    voice.onerror = () => {
+      console.warn("Voice load error:", file);
+    };
+    voice.play().catch((err) => {
+      console.warn("Voice play error:", err);
+    });
+  }
+}
+
+function playSE(file) {
+  if (se) {
+    se.pause();
+    se = null;
+  }
+  if (file) {
+    se = new Audio(config.sePath + file);
+    se.onerror = () => {
+      console.warn("SE load error:", file);
+    };
+    se.play().catch((err) => {
+      console.warn("SE play error:", err);
+    });
+  }
 }
 
 async function showScene(scene) {
   if (!scene) return;
 
-  // 背景
+  // 背景切り替え
   if (scene.bg) {
     await new Promise((resolve) => {
       applyEffect(bgEl, scene.bgEffect || "fadeout");
@@ -78,7 +100,7 @@ async function showScene(scene) {
     });
   }
 
-  // BGM
+  // BGM切り替え
   if (scene.bgm !== undefined) {
     if (bgm) {
       bgm.pause();
@@ -91,9 +113,9 @@ async function showScene(scene) {
     }
   }
 
-  // SE/Voice
-  playAudio("se", scene.se);
-  playAudio("voice", scene.voice);
+  // SE・ボイス再生
+  if (scene.se) playSE(scene.se);
+  if (scene.voice) playVoice(scene.voice);
 
   // キャラ表示
   if (scene.characters) {
@@ -101,7 +123,6 @@ async function showScene(scene) {
       const slot = charSlots[pos];
       const charData = scene.characters.find((c) => c.side === pos);
       slot.innerHTML = "";
-
       if (charData && charData.src && charData.src !== "NULL") {
         const img = document.createElement("img");
         img.src = config.charPath + charData.src;
@@ -112,14 +133,15 @@ async function showScene(scene) {
     });
   }
 
-  // 名前・テキスト
-  if (scene.name !== undefined || scene.text !== undefined) {
-    nameEl.textContent = scene.name || "";
-    nameEl.style.color = characterColors[scene.name] || "#FFFFFF";
+  // テキストと名前
+  if (scene.name !== undefined && scene.text !== undefined) {
+    const color = characterColors[scene.name] || "#FFFFFF";
+    nameEl.textContent = scene.name;
+    nameEl.style.color = color;
 
     setCharacterStyle(scene.name);
-    setTextWithSpeed(scene.text || "", currentSpeed, () => {
-      if (isAuto) {
+    setTextWithSpeed(scene.text, currentSpeed, () => {
+      if (isAuto && choicesEl.children.length === 0) {
         setTimeout(() => {
           if (!isPlaying) next();
         }, autoWait);
@@ -130,19 +152,21 @@ async function showScene(scene) {
   // 選択肢
   if (scene.choices) {
     choicesEl.innerHTML = "";
-    scene.choices.slice(0, 4).forEach((choice) => {
+    textEl.innerHTML = ""; // テキストバッファをクリア
+    scene.choices.forEach((choice) => {
       const btn = document.createElement("button");
       btn.textContent = choice.text;
       btn.onclick = () => {
-        // 選択時にバッファクリア
+        choicesEl.innerHTML = "";
         textEl.innerHTML = "";
-        nameEl.textContent = "";
-        isPlaying = false;
-
-        if (choice.jump) loadScenario(choice.jump);
-        else if (choice.voice) playAudio("voice", choice.voice);
-        else if (choice.se) playAudio("se", choice.se);
-        else if (choice.text) setTextWithSpeed(choice.text, currentSpeed);
+        if (choice.se) playSE(choice.se);
+        if (choice.voice) playVoice(choice.voice);
+        if (choice.jump) {
+          loadScenario(choice.jump);
+        } else if (choice.next !== undefined) {
+          currentIndex = choice.next - 1;
+          next();
+        }
       };
       choicesEl.appendChild(btn);
     });
@@ -168,10 +192,13 @@ function loadScenario(filename) {
   fetch(config.scenarioPath + filename)
     .then((res) => res.json())
     .then((data) => {
-      showScene(data.scenes[0]);
+      if (data.scenes.length > 0) {
+        showScene(data.scenes[0]);
+      }
     });
 }
 
+// オートモード切替
 bgEl.addEventListener("dblclick", () => {
   isAuto = !isAuto;
 });
