@@ -1,0 +1,20 @@
+{
+  "scenes": [
+    {
+      "bg": "bg_forest.jpg",
+      "bgEffect": "fadein",
+      "characters": [
+        { "side": "left", "src": "a02002.png" },
+        { "side": "center", "src": "a03002.png" }
+      ],
+      "name": "藍",
+      "text": "ここ……本当に静かで気持ちいいです。"
+    },
+    {
+      "text": "鳥の声も聞こえて、癒されますね。"
+    },
+    {
+      "text": "《エンディングA：癒しの森》"
+    }
+  ]
+}
