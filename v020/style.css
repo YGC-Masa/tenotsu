@@ -46,27 +46,52 @@ body {
   pointer-events: none;
 }
 
-#char-left {
-  left: 5%;
-  width: 65%;
-}
-
-#char-center {
-  left: 17.5%;
-  width: 65%;
-  z-index: 2;
-}
-
-#char-right {
-  left: 30%;
-  width: 65%;
-}
-
 .char-image {
   width: 100%;
   height: auto;
   max-height: 90vh;
   object-fit: contain;
+}
+
+/* 中央キャラを最前面に */
+#char-center {
+  z-index: 2;
+}
+
+/* モバイル横表示 */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  #char-left {
+    left: 1%;
+    width: 65%;
+  }
+
+  #char-center {
+    left: 17.5%;
+    width: 65%;
+  }
+
+  #char-right {
+    left: 34%;
+    width: 65%;
+  }
+}
+
+/* モバイル縦 & PC 表示 */
+@media screen and (orientation: portrait), screen and (min-width: 769px) {
+  #char-left {
+    left: 5%;
+    width: 50%;
+  }
+
+  #char-center {
+    left: 25%;
+    width: 50%;
+  }
+
+  #char-right {
+    left: 45%;
+    width: 50%;
+  }
 }
 
 #dialogue-box {
@@ -112,11 +137,4 @@ body {
 
 .choices-area button:hover {
   background-color: #555;
-}
-
-/* モバイル縦時のみフォント拡大 */
-@media screen and (max-width: 768px) and (orientation: portrait) {
-  :root {
-    --fontSize: 1.2em;
-  }
 }
