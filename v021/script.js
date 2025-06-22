@@ -1,5 +1,4 @@
-// script.js - v021-12（初期背景読み込みfix、fontSize優先）
-
+// script.js - v021+ 完全同期版
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
@@ -36,21 +35,18 @@ function setTextWithSpeed(text, speed, callback) {
   }, speed);
 }
 
-function setCharacterStyle(name, scene = {}) {
+function setCharacterStyle(name) {
   const style = characterStyles[name] || characterStyles[""];
-  const fontSize = scene.fontSize || style.fontSize || defaultFontSize;
-  currentSpeed = scene.speed || style.speed || defaultSpeed;
-  document.documentElement.style.setProperty("--fontSize", fontSize);
+  document.documentElement.style.setProperty("--fontSize", style.fontSize || defaultFontSize);
+  currentSpeed = style.speed || defaultSpeed;
 }
 
 async function applyEffect(el, effectName) {
-  return new Promise((resolve) => {
-    if (window.effects && effectName && window.effects[effectName]) {
-      window.effects[effectName](el, resolve);
-    } else {
-      window.effects?.fadein(el, resolve);
-    }
-  });
+  if (window.effects && effectName && window.effects[effectName]) {
+    return await window.effects[effectName](el);
+  } else if (window.effects?.fadein) {
+    return await window.effects.fadein(el);
+  }
 }
 
 function clearCharacters() {
@@ -62,20 +58,17 @@ function clearCharacters() {
 async function showScene(scene) {
   if (!scene) return;
 
-  // 背景処理
+  // 背景表示（完全同期）
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
-
     await new Promise((resolve) => {
-      bgEl.onload = () => resolve();
+      bgEl.onload = resolve;
       bgEl.src = config.bgPath + scene.bg;
-      if (bgEl.complete) resolve(); // キャッシュ済み対応
     });
-
     await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
-  // BGM処理
+  // BGM再生
   if (scene.bgm !== undefined) {
     if (bgm) {
       bgm.pause();
@@ -88,9 +81,9 @@ async function showScene(scene) {
     }
   }
 
-  // キャラクター表示
+  // キャラ表示処理
   if (scene.characters) {
-    ["left", "center", "right"].forEach((pos) => {
+    ["left", "center", "right"].forEach(async (pos) => {
       const slot = charSlots[pos];
       const charData = scene.characters.find((c) => c.side === pos);
       if (charData && charData.src && charData.src !== "NULL") {
@@ -99,19 +92,19 @@ async function showScene(scene) {
         img.classList.add("char-image");
         slot.innerHTML = "";
         slot.appendChild(img);
-        applyEffect(img, charData.effect || "fadein");
+        await applyEffect(img, charData.effect || "fadein");
       } else if (charData && charData.src === "NULL") {
         slot.innerHTML = "";
       }
     });
   }
 
-  // テキストと名前
+  // 名前とセリフ
   if (scene.name !== undefined && scene.text !== undefined) {
     const color = characterColors[scene.name] || characterColors[""] || "#C0C0C0";
     nameEl.textContent = scene.name;
     nameEl.style.color = color;
-    setCharacterStyle(scene.name, scene);
+    setCharacterStyle(scene.name);
     setTextWithSpeed(scene.text, currentSpeed, () => {
       if (isAuto) {
         setTimeout(() => {
@@ -131,7 +124,7 @@ async function showScene(scene) {
     }
   }
 
-  // 効果音
+  // SE
   if (scene.se) {
     try {
       const se = new Audio(config.sePath + scene.se);
@@ -150,6 +143,7 @@ async function showScene(scene) {
       btn.onclick = () => {
         textEl.innerHTML = "";
         nameEl.textContent = "";
+        clearCharacters();
         if (choice.jump) {
           loadScenario(choice.jump);
         } else if (choice.url) {
@@ -185,12 +179,12 @@ function loadScenario(filename) {
     });
 }
 
-// オート再生切り替え（ダブルクリック）
+// オートプレイ切替（ダブルタップ）
 bgEl.addEventListener("dblclick", () => {
   isAuto = !isAuto;
 });
 
-// 通常クリックで次へ
+// クリックで次へ（選択肢表示中を除く）
 document.addEventListener("click", () => {
   if (!isAuto && choicesEl.children.length === 0 && !isPlaying) {
     next();
@@ -203,10 +197,8 @@ window.addEventListener("load", () => {
   setVhVariable();
 });
 
-// モバイル高さ対応
 function setVhVariable() {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
-
 window.addEventListener("resize", setVhVariable);

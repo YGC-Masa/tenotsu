@@ -31,35 +31,38 @@ body {
 
 #char-layer {
   position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
+  top: 0;
+  left: 0;
   z-index: 1;
   pointer-events: none;
 }
 
 .char-slot {
   position: absolute;
-  bottom: -3%;
+  bottom: -3%; /* 下に少しはみ出す */
   text-align: center;
   pointer-events: none;
 }
 
+#char-left,
+#char-center,
+#char-right {
+  width: 30%;
+}
+
 #char-left {
   left: 5%;
-  width: 30%;
 }
 
 #char-center {
   left: 35%;
-  width: 30%;
   z-index: 2;
 }
 
 #char-right {
-  right: 5%;
-  width: 30%;
+  left: 65%;
 }
 
 .char-image {
@@ -101,12 +104,12 @@ body {
 
 .choices-area button {
   margin: 0.5em;
-  padding: 0.5em 1.2em;
+  padding: 0.5em 1em;
   font-size: 1em;
   background-color: #333;
   color: white;
   border: none;
-  border-radius: 0.4em;
+  border-radius: 0.3em;
   cursor: pointer;
 }
 
@@ -118,6 +121,10 @@ body {
 @media screen and (max-width: 768px) and (orientation: portrait) {
   :root {
     --fontSize: 1.2em;
+  }
+
+  .char-image {
+    max-height: 88vh;
   }
 
   #char-left {
@@ -137,26 +144,26 @@ body {
   }
 }
 
-/* モバイル横表示（キャラ均等配置、重なりなし） */
+/* モバイル横表示 */
 @media screen and (max-width: 1024px) and (orientation: landscape) {
   #char-left {
     left: 0%;
-    width: 33.3%;
+    width: 33.33%;
   }
 
   #char-center {
-    left: 33.3%;
-    width: 33.3%;
+    left: 33.33%;
+    width: 33.33%;
     z-index: 2;
   }
 
   #char-right {
-    left: 66.6%;
-    width: 33.3%;
+    left: 66.66%;
+    width: 33.33%;
   }
 }
 
-/* PC表示（キャラ均等配置） */
+/* PC 表示 */
 @media screen and (min-width: 1025px) {
   #char-left {
     left: 5%;
@@ -170,7 +177,7 @@ body {
   }
 
   #char-right {
-    right: 5%;
+    left: 65%;
     width: 30%;
   }
 }

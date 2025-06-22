@@ -1,99 +1,66 @@
-// effect.js - v021-12 完全同期対応（Promiseベース）
+// effect.js - v021 完全同期対応
 
 window.effects = {
-  fadein: (el, resolve) => {
+  fadein: (el) => {
     el.style.opacity = 0;
     el.style.transition = "opacity 0.5s ease";
     requestAnimationFrame(() => {
       el.style.opacity = 1;
-      el.addEventListener("transitionend", function handler() {
-        el.removeEventListener("transitionend", handler);
-        if (resolve) resolve();
-      });
     });
   },
-
-  fadeout: (el, resolve) => {
+  fadeout: (el) => {
     el.style.opacity = 1;
     el.style.transition = "opacity 0.5s ease";
     requestAnimationFrame(() => {
       el.style.opacity = 0;
-      el.addEventListener("transitionend", function handler() {
-        el.removeEventListener("transitionend", handler);
-        if (resolve) resolve();
-      });
     });
   },
-
-  whitein: (el, resolve) => {
+  whitein: (el) => {
     const overlay = document.createElement("div");
-    Object.assign(overlay.style, {
-      position: "absolute",
-      top: "0",
-      left: "0",
-      width: "100%",
-      height: "100%",
-      background: "#fff",
-      zIndex: "99",
-      opacity: "1",
-      transition: "opacity 0.5s ease",
-    });
+    overlay.style.position = "absolute";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.background = "#fff";
+    overlay.style.zIndex = "99";
+    overlay.style.opacity = "1";
+    overlay.style.transition = "opacity 0.5s ease";
     document.body.appendChild(overlay);
     requestAnimationFrame(() => {
       overlay.style.opacity = "0";
-      overlay.addEventListener("transitionend", function handler() {
-        overlay.removeEventListener("transitionend", handler);
-        overlay.remove();
-        if (resolve) resolve();
-      });
+      overlay.addEventListener("transitionend", () => overlay.remove());
     });
   },
-
-  blackin: (el, resolve) => {
+  blackin: (el) => {
     const overlay = document.createElement("div");
-    Object.assign(overlay.style, {
-      position: "absolute",
-      top: "0",
-      left: "0",
-      width: "100%",
-      height: "100%",
-      background: "#000",
-      zIndex: "99",
-      opacity: "1",
-      transition: "opacity 0.5s ease",
-    });
+    overlay.style.position = "absolute";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.background = "#000";
+    overlay.style.zIndex = "99";
+    overlay.style.opacity = "1";
+    overlay.style.transition = "opacity 0.5s ease";
     document.body.appendChild(overlay);
     requestAnimationFrame(() => {
       overlay.style.opacity = "0";
-      overlay.addEventListener("transitionend", function handler() {
-        overlay.removeEventListener("transitionend", handler);
-        overlay.remove();
-        if (resolve) resolve();
-      });
+      overlay.addEventListener("transitionend", () => overlay.remove());
     });
   },
-
-  slideleft: (el, resolve) => {
-    el.style.transition = "transform 0.5s ease";
+  slideleft: (el) => {
     el.style.transform = "translateX(100%)";
-    requestAnimationFrame(() => {
-      el.style.transform = "translateX(0)";
-      el.addEventListener("transitionend", function handler() {
-        el.removeEventListener("transitionend", handler);
-        if (resolve) resolve();
-      });
-    });
-  },
-
-  slideright: (el, resolve) => {
     el.style.transition = "transform 0.5s ease";
-    el.style.transform = "translateX(-100%)";
     requestAnimationFrame(() => {
       el.style.transform = "translateX(0)";
-      el.addEventListener("transitionend", function handler() {
-        el.removeEventListener("transitionend", handler);
-        if (resolve) resolve();
-      });
     });
   },
+  slideright: (el) => {
+    el.style.transform = "translateX(-100%)";
+    el.style.transition = "transform 0.5s ease";
+    requestAnimationFrame(() => {
+      el.style.transform = "translateX(0)";
+    });
+  }
 };
