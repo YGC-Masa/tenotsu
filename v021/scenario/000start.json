@@ -11,18 +11,19 @@
    "text":"うわぁー！今日はピクニック日和だね！"
   },
   {
-     "characters": [   {"side":"left", "src": "a02002.png", "effect": "slideleft"  }   {"side":"center", "src": "a01002.png", "effect": "fadein"  }   {"side":"right", "src": "a03002.png", "effect": "slideright"  }  ],
+     "characters": [   {"side":"left", "src": "a02002.png", "effect": "slideleft"  }  ],
    "name":"藍",
    "text":"緋奈さん、そんなにはしゃぐと転びますよ……。",
    "voice":"ai01.mp3"
   },
   {
-     "characters": [   {"side":"left", "src": "a02002.png", "effect": "slideleft"  }   {"side":"center", "src": "a01002.png", "effect": "fadein"  }   {"side":"right", "src": "a03002.png", "effect": "slideright"  }  ],
+     "characters": [,
+   {"side":"right", "src": "a03002.png", "effect": "slideright"  }  ],
    "name":"翠",
    "text":"私は皆さんの分のお弁当を持ってきました。"
   },
   {
-     "characters": [   {"side":"left", "src": "a02002.png", "effect": "slideleft"  }   {"side":"center", "src": "a04002.png", "effect": "fadein"  }   {"side":"right", "src": "a03002.png", "effect": "slideright"  }  ],
+     "characters": [   {"side":"center", "src": "a04002.png", "effect": "fadein"  }  ],
    "name":"こがね",
    "text":"え、マジ？助かるわー！私お菓子しか持ってきてない！"
   },
@@ -33,9 +34,9 @@
    "speed":"20"
   },
   {
-     "characters": [   {"side":"left", "src": "NULL"   {"side":"left", "src": "a02002.png", "effect": "slideleft"  } },
+     "characters": [   {"side":"left", "src": "NULL" },
    {"side":"center", "src": "a05002.png", "effect": "slideleft"  },
-   {"side":"right", "src": "NULL"   {"side":"right", "src": "a03002.png", "effect": "slideright"  } }  ],
+   {"side":"right", "src": "NULL" }  ],
    "name":"琥珀",
    "text":"みんな元気そうで何よりだね！さて、食べる？走る？"
   },
