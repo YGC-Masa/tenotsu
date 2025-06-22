@@ -1,45 +1,46 @@
 {
-  "scenes": [
-    {
-      "bg": "bg_field.jpg",
-      "bgEffect": "whitein",
-      "characters": [
-        { "side": "center", "src": "a01002.png", "effect": "fadein" }
-      ],
-      "name": "緋奈",
-      "text": "今日はいい天気だねー！ なんだかワクワクする〜！"
-    },
-    {
-      "characters": [
-        { "side": "left", "src": "a02002.png" },
-        { "side": "center", "src": "a01002.png" },
-        { "side": "right", "src": "a03002.png", "effect": "slideleft" }
-      ],
-      "name": "翠",
-      "text": "皆さん、今日は自由行動にしてみましょうか？"
-    },
-    {
-      "text": "さて、どこに行きますか？"
-    },
-    {
-      "choices": [
-        {
-          "text": "🌳 森でのんびり（分岐A）",
-          "jump": "branchA.json"
-        },
-        {
-          "text": "🏙 街でショッピング（分岐B）　",
-          "jump": "branchB.json"
-        },
-        {
-          "text": "🌐 Webサイトを開く",
-          "url": "https://openai.com"
-        },
-        {
-          "text": "🔁 最初からやり直す",
-          "jump": "000start.json"
-        }
-      ]
-    }
-  ]
+ "scenes":[
+  {
+   "bg":"bg_field.jpg",
+   "bgEffect":"fadein",
+   "bgm":"main.mp3",
+     "characters": [   {"side":"left", "src": "a02002.png" },
+   {"side":"center", "src": "a01002.png", "effect": "fadein"  },
+   {"side":"right", "src": "a03002.png", "effect": "slideright"  }  ],
+   "name":"緋奈",
+   "text":"うわぁー！今日はピクニック日和だね！"
+  },
+  {
+     "characters": [   {"side":"left", "src": "a02002.png", "effect": "slideleft"  }   {"side":"center", "src": "a01002.png", "effect": "fadein"  }   {"side":"right", "src": "a03002.png", "effect": "slideright"  }  ],
+   "name":"藍",
+   "text":"緋奈さん、そんなにはしゃぐと転びますよ……。",
+   "voice":"ai01.mp3"
+  },
+  {
+     "characters": [   {"side":"left", "src": "a02002.png", "effect": "slideleft"  }   {"side":"center", "src": "a01002.png", "effect": "fadein"  }   {"side":"right", "src": "a03002.png", "effect": "slideright"  }  ],
+   "name":"翠",
+   "text":"私は皆さんの分のお弁当を持ってきました。"
+  },
+  {
+     "characters": [   {"side":"left", "src": "a02002.png", "effect": "slideleft"  }   {"side":"center", "src": "a04002.png", "effect": "fadein"  }   {"side":"right", "src": "a03002.png", "effect": "slideright"  }  ],
+   "name":"こがね",
+   "text":"え、マジ？助かるわー！私お菓子しか持ってきてない！"
+  },
+  {
+   "name":"緋奈",
+   "text":"あっはっは！お菓子しか持ってきてないとか。うけるんだけど！",
+   "fontsize":"1.5em",
+   "speed":"20"
+  },
+  {
+     "characters": [   {"side":"left", "src": "NULL"   {"side":"left", "src": "a02002.png", "effect": "slideleft"  } },
+   {"side":"center", "src": "a05002.png", "effect": "slideleft"  },
+   {"side":"right", "src": "NULL"   {"side":"right", "src": "a03002.png", "effect": "slideright"  } }  ],
+   "name":"琥珀",
+   "text":"みんな元気そうで何よりだね！さて、食べる？走る？"
+  },
+  {
+   "text":"どうする？"
+  }
+ ]
 }
