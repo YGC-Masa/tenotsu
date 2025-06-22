@@ -17,8 +17,7 @@
    "voice":"ai01.mp3"
   },
   {
-     "characters": [,
-   {"side":"right", "src": "a03002.png", "effect": "slideright"  }  ],
+     "characters": [   {"side":"right", "src": "a03002.png", "effect": "slideright"  }  ],
    "name":"翠",
    "text":"私は皆さんの分のお弁当を持ってきました。"
   },
