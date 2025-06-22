@@ -1,4 +1,4 @@
-// script.js - v021-11（オート待機1750ms／fontSize優先）
+// script.js - v021-12（bgEl.src 二重読み込み回避／fontSize優先／オート1750ms）
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
@@ -44,11 +44,13 @@ function setCharacterStyle(name, scene = {}) {
 }
 
 function applyEffect(el, effectName) {
-  if (window.effects && effectName && window.effects[effectName]) {
-    window.effects[effectName](el);
-  } else {
-    window.effects?.fadein(el);
-  }
+  return new Promise((resolve) => {
+    if (window.effects && effectName && window.effects[effectName]) {
+      window.effects[effectName](el, resolve);
+    } else {
+      window.effects?.fadein(el, resolve);
+    }
+  });
 }
 
 function clearCharacters() {
@@ -60,24 +62,19 @@ function clearCharacters() {
 async function showScene(scene) {
   if (!scene) return;
 
+  // 背景画像とエフェクト
   if (scene.bg) {
+    await applyEffect(bgEl, scene.bgEffect || "fadeout");
+
     await new Promise((resolve) => {
-      applyEffect(bgEl, scene.bgEffect || "fadeout");
-      setTimeout(() => {
-        bgEl.onload = () => {
-          const onTransitionEnd = () => {
-            bgEl.removeEventListener("transitionend", onTransitionEnd);
-            resolve();
-          };
-          bgEl.addEventListener("transitionend", onTransitionEnd);
-          bgEl.src = config.bgPath + scene.bg;
-          applyEffect(bgEl, scene.bgEffect || "fadein");
-        };
-        bgEl.src = config.bgPath + scene.bg;
-      }, 300);
+      bgEl.onload = () => resolve();
+      bgEl.src = config.bgPath + scene.bg;
     });
+
+    await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
+  // BGM処理
   if (scene.bgm !== undefined) {
     if (bgm) {
       bgm.pause();
@@ -90,6 +87,7 @@ async function showScene(scene) {
     }
   }
 
+  // キャラクター表示
   if (scene.characters) {
     ["left", "center", "right"].forEach((pos) => {
       const slot = charSlots[pos];
@@ -107,6 +105,7 @@ async function showScene(scene) {
     });
   }
 
+  // テキスト表示
   if (scene.name !== undefined && scene.text !== undefined) {
     const color = characterColors[scene.name] || characterColors[""] || "#C0C0C0";
     nameEl.textContent = scene.name;
@@ -121,6 +120,7 @@ async function showScene(scene) {
     });
   }
 
+  // ボイス再生
   if (scene.voice) {
     try {
       const voice = new Audio(config.voicePath + scene.voice);
@@ -130,6 +130,7 @@ async function showScene(scene) {
     }
   }
 
+  // 効果音再生
   if (scene.se) {
     try {
       const se = new Audio(config.sePath + scene.se);
@@ -139,6 +140,7 @@ async function showScene(scene) {
     }
   }
 
+  // 選択肢
   if (scene.choices) {
     choicesEl.innerHTML = "";
     scene.choices.forEach((choice) => {
