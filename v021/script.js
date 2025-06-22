@@ -1,4 +1,4 @@
-// script.js - v021+ 完全同期版
+// script.js - v021-11 + fontSize/speed優先対応（ロールバック版）
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
@@ -35,10 +35,11 @@ function setTextWithSpeed(text, speed, callback) {
   }, speed);
 }
 
-function setCharacterStyle(name) {
+function setCharacterStyle(name, scene = {}) {
   const style = characterStyles[name] || characterStyles[""];
-  document.documentElement.style.setProperty("--fontSize", style.fontSize || defaultFontSize);
-  currentSpeed = style.speed || defaultSpeed;
+  const fontSize = scene.fontSize || style.fontSize || defaultFontSize;
+  currentSpeed = scene.speed || style.speed || defaultSpeed;
+  document.documentElement.style.setProperty("--fontSize", fontSize);
 }
 
 async function applyEffect(el, effectName) {
@@ -83,7 +84,7 @@ async function showScene(scene) {
 
   // キャラ表示処理
   if (scene.characters) {
-    ["left", "center", "right"].forEach(async (pos) => {
+    for (const pos of ["left", "center", "right"]) {
       const slot = charSlots[pos];
       const charData = scene.characters.find((c) => c.side === pos);
       if (charData && charData.src && charData.src !== "NULL") {
@@ -96,7 +97,7 @@ async function showScene(scene) {
       } else if (charData && charData.src === "NULL") {
         slot.innerHTML = "";
       }
-    });
+    }
   }
 
   // 名前とセリフ
@@ -104,7 +105,7 @@ async function showScene(scene) {
     const color = characterColors[scene.name] || characterColors[""] || "#C0C0C0";
     nameEl.textContent = scene.name;
     nameEl.style.color = color;
-    setCharacterStyle(scene.name);
+    setCharacterStyle(scene.name, scene);
     setTextWithSpeed(scene.text, currentSpeed, () => {
       if (isAuto) {
         setTimeout(() => {
@@ -179,19 +180,16 @@ function loadScenario(filename) {
     });
 }
 
-// オートプレイ切替（ダブルタップ）
 bgEl.addEventListener("dblclick", () => {
   isAuto = !isAuto;
 });
 
-// クリックで次へ（選択肢表示中を除く）
 document.addEventListener("click", () => {
   if (!isAuto && choicesEl.children.length === 0 && !isPlaying) {
     next();
   }
 });
 
-// 読み込み時
 window.addEventListener("load", () => {
   loadScenario(currentScenario);
   setVhVariable();
@@ -201,4 +199,5 @@ function setVhVariable() {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
+
 window.addEventListener("resize", setVhVariable);
