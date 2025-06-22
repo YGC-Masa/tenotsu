@@ -29,7 +29,7 @@
      "characters": [   {"side":"left", "src": "a01002.png", "effect": "fadein"  }  ],
    "name":"緋奈",
    "text":"あっはっは！お菓子しか持ってきてないとか。うけるんだけど！",
-   "fontsize":"1.5em",
+   "fontSize":"1.5em",
    "speed":"20",
    "voice":"hina_001.mp3"
   },
