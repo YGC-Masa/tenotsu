@@ -12,12 +12,13 @@
      "characters": [   {"side":"left", "src": "a02002.png", "effect": "slideleft"  }  ],
    "name":"藍",
    "text":"緋奈さん、そんなにはしゃぐと転びますよ……。",
-   "voice":"ai01.mp3"
+   "voice":"ai_001.mp3"
   },
   {
      "characters": [   {"side":"right", "src": "a03002.png", "effect": "slideright"  }  ],
    "name":"翠",
-   "text":"私は皆さんの分のお弁当を持ってきました。"
+   "text":"私は皆さんの分のお弁当を持ってきました。",
+   "se":"ding.mp3"
   },
   {
      "characters": [   {"side":"center", "src": "a04002.png", "effect": "fadein"  }  ],
@@ -29,7 +30,8 @@
    "name":"緋奈",
    "text":"あっはっは！お菓子しか持ってきてないとか。うけるんだけど！",
    "fontsize":"1.5em",
-   "speed":"20"
+   "speed":"20",
+   "voice":"hina_001.mp3"
   },
   {
      "characters": [   {"side":"center", "src": "a05002.png", "effect": "slideleft"  }  ],
