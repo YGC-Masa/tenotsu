@@ -1,4 +1,4 @@
-// script.js - v021-12（bgEl.src 二重読み込み回避／fontSize優先／オート1750ms）
+// script.js - v021-12（初期背景読み込みfix、fontSize優先）
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
@@ -43,7 +43,7 @@ function setCharacterStyle(name, scene = {}) {
   document.documentElement.style.setProperty("--fontSize", fontSize);
 }
 
-function applyEffect(el, effectName) {
+async function applyEffect(el, effectName) {
   return new Promise((resolve) => {
     if (window.effects && effectName && window.effects[effectName]) {
       window.effects[effectName](el, resolve);
@@ -62,13 +62,14 @@ function clearCharacters() {
 async function showScene(scene) {
   if (!scene) return;
 
-  // 背景画像とエフェクト
+  // 背景処理
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
 
     await new Promise((resolve) => {
       bgEl.onload = () => resolve();
       bgEl.src = config.bgPath + scene.bg;
+      if (bgEl.complete) resolve(); // キャッシュ済み対応
     });
 
     await applyEffect(bgEl, scene.bgEffect || "fadein");
@@ -105,7 +106,7 @@ async function showScene(scene) {
     });
   }
 
-  // テキスト表示
+  // テキストと名前
   if (scene.name !== undefined && scene.text !== undefined) {
     const color = characterColors[scene.name] || characterColors[""] || "#C0C0C0";
     nameEl.textContent = scene.name;
@@ -120,7 +121,7 @@ async function showScene(scene) {
     });
   }
 
-  // ボイス再生
+  // ボイス
   if (scene.voice) {
     try {
       const voice = new Audio(config.voicePath + scene.voice);
@@ -130,7 +131,7 @@ async function showScene(scene) {
     }
   }
 
-  // 効果音再生
+  // 効果音
   if (scene.se) {
     try {
       const se = new Audio(config.sePath + scene.se);
@@ -184,21 +185,25 @@ function loadScenario(filename) {
     });
 }
 
+// オート再生切り替え（ダブルクリック）
 bgEl.addEventListener("dblclick", () => {
   isAuto = !isAuto;
 });
 
+// 通常クリックで次へ
 document.addEventListener("click", () => {
   if (!isAuto && choicesEl.children.length === 0 && !isPlaying) {
     next();
   }
 });
 
+// 読み込み時
 window.addEventListener("load", () => {
   loadScenario(currentScenario);
   setVhVariable();
 });
 
+// モバイル高さ対応
 function setVhVariable() {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
