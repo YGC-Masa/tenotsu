@@ -1,9 +1,9 @@
-// script.js - v021-11 フォントサイズ・スピードのシナリオ優先対応
+// script.js - v021-11（オート待機1750ms／fontSize優先）
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
-let autoWait = 2000;
+let autoWait = 1750;
 let bgm = null;
 
 const bgEl = document.getElementById("background");
@@ -36,10 +36,11 @@ function setTextWithSpeed(text, speed, callback) {
   }, speed);
 }
 
-function setCharacterStyle(name) {
+function setCharacterStyle(name, scene = {}) {
   const style = characterStyles[name] || characterStyles[""];
-  document.documentElement.style.setProperty("--fontSize", style.fontSize || defaultFontSize);
-  currentSpeed = style.speed || defaultSpeed;
+  const fontSize = scene.fontSize || style.fontSize || defaultFontSize;
+  currentSpeed = scene.speed || style.speed || defaultSpeed;
+  document.documentElement.style.setProperty("--fontSize", fontSize);
 }
 
 function applyEffect(el, effectName) {
@@ -59,7 +60,6 @@ function clearCharacters() {
 async function showScene(scene) {
   if (!scene) return;
 
-  // 背景切り替え（完全同期）
   if (scene.bg) {
     await new Promise((resolve) => {
       applyEffect(bgEl, scene.bgEffect || "fadeout");
@@ -78,7 +78,6 @@ async function showScene(scene) {
     });
   }
 
-  // BGM 切替
   if (scene.bgm !== undefined) {
     if (bgm) {
       bgm.pause();
@@ -91,7 +90,6 @@ async function showScene(scene) {
     }
   }
 
-  // キャラ表示
   if (scene.characters) {
     ["left", "center", "right"].forEach((pos) => {
       const slot = charSlots[pos];
@@ -109,21 +107,11 @@ async function showScene(scene) {
     });
   }
 
-  // 名前とセリフ
   if (scene.name !== undefined && scene.text !== undefined) {
     const color = characterColors[scene.name] || characterColors[""] || "#C0C0C0";
     nameEl.textContent = scene.name;
     nameEl.style.color = color;
-    setCharacterStyle(scene.name);
-
-    // シナリオ内指定があれば上書き
-    if (scene.fontSize) {
-      document.documentElement.style.setProperty("--fontSize", scene.fontSize);
-    }
-    if (scene.speed) {
-      currentSpeed = scene.speed;
-    }
-
+    setCharacterStyle(scene.name, scene);
     setTextWithSpeed(scene.text, currentSpeed, () => {
       if (isAuto) {
         setTimeout(() => {
@@ -133,7 +121,6 @@ async function showScene(scene) {
     });
   }
 
-  // ボイス
   if (scene.voice) {
     try {
       const voice = new Audio(config.voicePath + scene.voice);
@@ -143,7 +130,6 @@ async function showScene(scene) {
     }
   }
 
-  // SE
   if (scene.se) {
     try {
       const se = new Audio(config.sePath + scene.se);
@@ -153,7 +139,6 @@ async function showScene(scene) {
     }
   }
 
-  // 選択肢
   if (scene.choices) {
     choicesEl.innerHTML = "";
     scene.choices.forEach((choice) => {
