@@ -1,4 +1,5 @@
-// script.js - v021+ 完全同期版
+// script.js - v021-11 フォントサイズ・スピードのシナリオ優先対応
+
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
@@ -41,11 +42,11 @@ function setCharacterStyle(name) {
   currentSpeed = style.speed || defaultSpeed;
 }
 
-async function applyEffect(el, effectName) {
+function applyEffect(el, effectName) {
   if (window.effects && effectName && window.effects[effectName]) {
-    return await window.effects[effectName](el);
-  } else if (window.effects?.fadein) {
-    return await window.effects.fadein(el);
+    window.effects[effectName](el);
+  } else {
+    window.effects?.fadein(el);
   }
 }
 
@@ -58,17 +59,26 @@ function clearCharacters() {
 async function showScene(scene) {
   if (!scene) return;
 
-  // 背景表示（完全同期）
+  // 背景切り替え（完全同期）
   if (scene.bg) {
-    await applyEffect(bgEl, scene.bgEffect || "fadeout");
     await new Promise((resolve) => {
-      bgEl.onload = resolve;
-      bgEl.src = config.bgPath + scene.bg;
+      applyEffect(bgEl, scene.bgEffect || "fadeout");
+      setTimeout(() => {
+        bgEl.onload = () => {
+          const onTransitionEnd = () => {
+            bgEl.removeEventListener("transitionend", onTransitionEnd);
+            resolve();
+          };
+          bgEl.addEventListener("transitionend", onTransitionEnd);
+          bgEl.src = config.bgPath + scene.bg;
+          applyEffect(bgEl, scene.bgEffect || "fadein");
+        };
+        bgEl.src = config.bgPath + scene.bg;
+      }, 300);
     });
-    await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
-  // BGM再生
+  // BGM 切替
   if (scene.bgm !== undefined) {
     if (bgm) {
       bgm.pause();
@@ -81,9 +91,9 @@ async function showScene(scene) {
     }
   }
 
-  // キャラ表示処理
+  // キャラ表示
   if (scene.characters) {
-    ["left", "center", "right"].forEach(async (pos) => {
+    ["left", "center", "right"].forEach((pos) => {
       const slot = charSlots[pos];
       const charData = scene.characters.find((c) => c.side === pos);
       if (charData && charData.src && charData.src !== "NULL") {
@@ -92,7 +102,7 @@ async function showScene(scene) {
         img.classList.add("char-image");
         slot.innerHTML = "";
         slot.appendChild(img);
-        await applyEffect(img, charData.effect || "fadein");
+        applyEffect(img, charData.effect || "fadein");
       } else if (charData && charData.src === "NULL") {
         slot.innerHTML = "";
       }
@@ -105,6 +115,15 @@ async function showScene(scene) {
     nameEl.textContent = scene.name;
     nameEl.style.color = color;
     setCharacterStyle(scene.name);
+
+    // シナリオ内指定があれば上書き
+    if (scene.fontSize) {
+      document.documentElement.style.setProperty("--fontSize", scene.fontSize);
+    }
+    if (scene.speed) {
+      currentSpeed = scene.speed;
+    }
+
     setTextWithSpeed(scene.text, currentSpeed, () => {
       if (isAuto) {
         setTimeout(() => {
@@ -143,7 +162,6 @@ async function showScene(scene) {
       btn.onclick = () => {
         textEl.innerHTML = "";
         nameEl.textContent = "";
-        clearCharacters();
         if (choice.jump) {
           loadScenario(choice.jump);
         } else if (choice.url) {
@@ -179,19 +197,16 @@ function loadScenario(filename) {
     });
 }
 
-// オートプレイ切替（ダブルタップ）
 bgEl.addEventListener("dblclick", () => {
   isAuto = !isAuto;
 });
 
-// クリックで次へ（選択肢表示中を除く）
 document.addEventListener("click", () => {
   if (!isAuto && choicesEl.children.length === 0 && !isPlaying) {
     next();
   }
 });
 
-// 読み込み時
 window.addEventListener("load", () => {
   loadScenario(currentScenario);
   setVhVariable();
@@ -201,4 +216,5 @@ function setVhVariable() {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
+
 window.addEventListener("resize", setVhVariable);
