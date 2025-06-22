@@ -1,71 +1,66 @@
-// effect.js - v015-04 統合版
+// effect.js - v021 完全同期対応
 
-const effects = {
+window.effects = {
   fadein: (el) => {
-    el.style.opacity = "0";
+    el.style.opacity = 0;
+    el.style.transition = "opacity 0.5s ease";
     requestAnimationFrame(() => {
-      el.style.opacity = "1";
+      el.style.opacity = 1;
     });
   },
-
   fadeout: (el) => {
-    el.style.opacity = "1";
+    el.style.opacity = 1;
+    el.style.transition = "opacity 0.5s ease";
     requestAnimationFrame(() => {
-      el.style.opacity = "0";
+      el.style.opacity = 0;
     });
   },
-
   whitein: (el) => {
-    el.style.transition = "background-color 0.5s ease";
-    el.style.backgroundColor = "rgba(255,255,255,0)";
+    const overlay = document.createElement("div");
+    overlay.style.position = "absolute";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.background = "#fff";
+    overlay.style.zIndex = "99";
+    overlay.style.opacity = "1";
+    overlay.style.transition = "opacity 0.5s ease";
+    document.body.appendChild(overlay);
     requestAnimationFrame(() => {
-      el.style.backgroundColor = "rgba(255,255,255,1)";
+      overlay.style.opacity = "0";
+      overlay.addEventListener("transitionend", () => overlay.remove());
     });
   },
-
-  whiteout: (el) => {
-    el.style.transition = "background-color 0.5s ease";
-    el.style.backgroundColor = "rgba(255,255,255,1)";
-    requestAnimationFrame(() => {
-      el.style.backgroundColor = "rgba(255,255,255,0)";
-    });
-  },
-
   blackin: (el) => {
-    el.style.transition = "background-color 0.5s ease";
-    el.style.backgroundColor = "rgba(0,0,0,0)";
+    const overlay = document.createElement("div");
+    overlay.style.position = "absolute";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.background = "#000";
+    overlay.style.zIndex = "99";
+    overlay.style.opacity = "1";
+    overlay.style.transition = "opacity 0.5s ease";
+    document.body.appendChild(overlay);
     requestAnimationFrame(() => {
-      el.style.backgroundColor = "rgba(0,0,0,1)";
+      overlay.style.opacity = "0";
+      overlay.addEventListener("transitionend", () => overlay.remove());
     });
   },
-
-  blackout: (el) => {
-    el.style.transition = "background-color 0.5s ease";
-    el.style.backgroundColor = "rgba(0,0,0,1)";
-    requestAnimationFrame(() => {
-      el.style.backgroundColor = "rgba(0,0,0,0)";
-    });
-  },
-
   slideleft: (el) => {
     el.style.transform = "translateX(100%)";
-    el.style.opacity = "0";
+    el.style.transition = "transform 0.5s ease";
     requestAnimationFrame(() => {
       el.style.transform = "translateX(0)";
-      el.style.opacity = "1";
     });
   },
-
   slideright: (el) => {
     el.style.transform = "translateX(-100%)";
-    el.style.opacity = "0";
+    el.style.transition = "transform 0.5s ease";
     requestAnimationFrame(() => {
       el.style.transform = "translateX(0)";
-      el.style.opacity = "1";
     });
   }
 };
-
-if (typeof window !== "undefined") {
-  window.effects = effects;
-}

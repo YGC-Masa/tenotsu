@@ -1,5 +1,4 @@
-// script.js - v16 with external URL support
-
+// script.js - v021+ 完全同期版
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
@@ -42,32 +41,34 @@ function setCharacterStyle(name) {
   currentSpeed = style.speed || defaultSpeed;
 }
 
-function applyEffect(el, effectName) {
+async function applyEffect(el, effectName) {
   if (window.effects && effectName && window.effects[effectName]) {
-    window.effects[effectName](el);
-  } else {
-    window.effects?.fadein(el);
+    return await window.effects[effectName](el);
+  } else if (window.effects?.fadein) {
+    return await window.effects.fadein(el);
+  }
+}
+
+function clearCharacters() {
+  for (const pos in charSlots) {
+    charSlots[pos].innerHTML = "";
   }
 }
 
 async function showScene(scene) {
   if (!scene) return;
 
-  // 背景切り替え
+  // 背景表示（完全同期）
   if (scene.bg) {
+    await applyEffect(bgEl, scene.bgEffect || "fadeout");
     await new Promise((resolve) => {
-      applyEffect(bgEl, scene.bgEffect || "fadeout");
-      setTimeout(() => {
-        bgEl.onload = () => {
-          applyEffect(bgEl, scene.bgEffect || "fadein");
-          resolve();
-        };
-        bgEl.src = config.bgPath + scene.bg;
-      }, 500);
+      bgEl.onload = resolve;
+      bgEl.src = config.bgPath + scene.bg;
     });
+    await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
-  // BGM切り替え
+  // BGM再生
   if (scene.bgm !== undefined) {
     if (bgm) {
       bgm.pause();
@@ -80,29 +81,29 @@ async function showScene(scene) {
     }
   }
 
-  // キャラクター表示
+  // キャラ表示処理
   if (scene.characters) {
-    ["left", "center", "right"].forEach((pos) => {
+    ["left", "center", "right"].forEach(async (pos) => {
       const slot = charSlots[pos];
       const charData = scene.characters.find((c) => c.side === pos);
-      slot.innerHTML = "";
-
       if (charData && charData.src && charData.src !== "NULL") {
         const img = document.createElement("img");
         img.src = config.charPath + charData.src;
         img.classList.add("char-image");
+        slot.innerHTML = "";
         slot.appendChild(img);
-        applyEffect(img, charData.effect || "fadein");
+        await applyEffect(img, charData.effect || "fadein");
+      } else if (charData && charData.src === "NULL") {
+        slot.innerHTML = "";
       }
     });
   }
 
   // 名前とセリフ
   if (scene.name !== undefined && scene.text !== undefined) {
-    const color = characterColors[scene.name] || "#FFFFFF";
+    const color = characterColors[scene.name] || characterColors[""] || "#C0C0C0";
     nameEl.textContent = scene.name;
     nameEl.style.color = color;
-
     setCharacterStyle(scene.name);
     setTextWithSpeed(scene.text, currentSpeed, () => {
       if (isAuto) {
@@ -113,6 +114,26 @@ async function showScene(scene) {
     });
   }
 
+  // ボイス
+  if (scene.voice) {
+    try {
+      const voice = new Audio(config.voicePath + scene.voice);
+      voice.play();
+    } catch (e) {
+      console.warn("ボイス再生エラー:", scene.voice);
+    }
+  }
+
+  // SE
+  if (scene.se) {
+    try {
+      const se = new Audio(config.sePath + scene.se);
+      se.play();
+    } catch (e) {
+      console.warn("SE再生エラー:", scene.se);
+    }
+  }
+
   // 選択肢
   if (scene.choices) {
     choicesEl.innerHTML = "";
@@ -120,10 +141,13 @@ async function showScene(scene) {
       const btn = document.createElement("button");
       btn.textContent = choice.text;
       btn.onclick = () => {
-        if (choice.jump.startsWith("http")) {
-          window.open(choice.jump, "_blank");
-        } else {
+        textEl.innerHTML = "";
+        nameEl.textContent = "";
+        clearCharacters();
+        if (choice.jump) {
           loadScenario(choice.jump);
+        } else if (choice.url) {
+          location.href = choice.url;
         }
       };
       choicesEl.appendChild(btn);
@@ -147,6 +171,7 @@ function next() {
 function loadScenario(filename) {
   currentScenario = filename;
   currentIndex = 0;
+  clearCharacters();
   fetch(config.scenarioPath + filename)
     .then((res) => res.json())
     .then((data) => {
@@ -154,17 +179,19 @@ function loadScenario(filename) {
     });
 }
 
-// オート切替（背景ダブルクリック）
+// オートプレイ切替（ダブルタップ）
 bgEl.addEventListener("dblclick", () => {
   isAuto = !isAuto;
 });
 
+// クリックで次へ（選択肢表示中を除く）
 document.addEventListener("click", () => {
   if (!isAuto && choicesEl.children.length === 0 && !isPlaying) {
     next();
   }
 });
 
+// 読み込み時
 window.addEventListener("load", () => {
   loadScenario(currentScenario);
   setVhVariable();
@@ -174,5 +201,4 @@ function setVhVariable() {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
-
 window.addEventListener("resize", setVhVariable);
