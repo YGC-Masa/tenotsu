@@ -1,43 +1,66 @@
 {
   "scenes": [
     {
-      "bg": "bg001.png",
-      "bgEffect": "whitein",
-      "bgm": "main.mp3",
+      "bg": "bg_field.jpg",
+      "bgEffect": "fadein",
       "characters": [
-        { "side": "left", "src": "a01002.png", "effect": "fadein" }
+        { "side": "center", "src": "a01002.png", "effect": "fadein" }
       ],
       "name": "緋奈",
-      "text": "おはようございますっ！今日もがんばりましょう〜！",
-      "voice": "h01.mp3",
-      "fontSize": "1.3em",
-      "speed": 30
+      "text": "うわぁー！今日はピクニック日和だね！",
+      "voice": "hina01.mp3"
     },
     {
       "characters": [
-        { "side": "right", "src": "a02002.png", "effect": "slideleft" }
+        { "side": "left", "src": "a02002.png", "effect": "slideleft" }
       ],
       "name": "藍",
-      "text": "……緋奈さん、朝から元気ですね。",
-      "voice": "a01.mp3"
-    },
-    {
-      "se": "bell.mp3",
-      "text": "（キーンコーンカーンコーン……）",
-      "name": ""
+      "text": "緋奈さん、そんなにはしゃぐと転びますよ……。",
+      "voice": "ai01.mp3",
+      "se": "step.mp3"
     },
     {
       "characters": [
-        { "side": "center", "src": "a03002.png", "effect": "blackin" }
+        { "side": "right", "src": "a03002.png", "effect": "slideright" },
       ],
       "name": "翠",
-      "text": "そろそろ会議の時間です。皆さん、準備はよろしいですか？",
-      "voice": "m01.mp3"
+      "text": "私は皆さんの分のお弁当を持ってきました。",
+      "voice": "midori01.mp3"
     },
     {
+      "characters": [
+        { "side": "left", "src": "a04002.png", "effect": "fadein" },
+      ],
+      "name": "こがね",
+      "text": "え、マジ？助かるわー！私お菓子しか持ってきてない！",
+      "voice": "kogane01.mp3"
+    },
+  {
+      "name": "緋奈",
+      "text": "あっはっは！お菓子しか持ってきてないとか。うけるんだけど！"
+    },
+    {
+      "characters": [
+        { "side": "center", "src": "a05002.png", "effect": "slideleft" }
+      ],
+      "name": "琥珀",
+      "text": "みんな元気そうで何よりだね！さて、食べる？走る？",
+      "voice": "kohaku01.mp3",
+      "se": "jump.mp3"
+    },
+    {
+      "text": "どうする？",
       "choices": [
-        { "text": "うん、ばっちり！", "jump": "branch_yes.json" },
-        { "text": "ちょっと待って…", "jump": "branch_wait.json" }
+        {
+          "text": "お弁当を食べる",
+          "jump": "branch_eat.json",
+          "voice": "choice_eat.mp3"
+        },
+        {
+          "text": "運動をする！",
+          "jump": "branch_sports.json",
+          "voice": "choice_run.mp3"
+        }
       ]
     }
   ]
