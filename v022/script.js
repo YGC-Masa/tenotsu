@@ -57,7 +57,7 @@ async function applyEffect(el, effectName) {
 function clearCharacters() {
   for (const pos in charSlots) {
     charSlots[pos].innerHTML = "";
-    charSlots[pos].classList.remove("active");
+    charSlots[pos].style.display = "none";
   }
 }
 
@@ -86,7 +86,7 @@ async function showScene(scene) {
   }
 
   if (scene.characters) {
-    let lastSide = scene.characters[scene.characters.length - 1]?.side;
+    const lastSide = scene.characters[scene.characters.length - 1]?.side;
 
     ["left", "center", "right"].forEach(async (pos) => {
       const slot = charSlots[pos];
@@ -98,15 +98,16 @@ async function showScene(scene) {
         slot.innerHTML = "";
         slot.appendChild(img);
         await applyEffect(img, charData.effect || "fadein");
+
+        // モバイル縦：最後のキャラのみ表示
         if (isMobilePortrait()) {
-          slot.classList.toggle("active", pos === lastSide);
+          slot.style.display = (pos === lastSide) ? "block" : "none";
         } else {
-          slot.classList.remove("active");
           slot.style.display = "block";
         }
       } else if (charData && charData.src === "NULL") {
         slot.innerHTML = "";
-        slot.classList.remove("active");
+        slot.style.display = "none";
       }
     });
   }
