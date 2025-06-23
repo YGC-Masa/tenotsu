@@ -41,14 +41,28 @@ body {
 
 .char-slot {
   position: absolute;
-  bottom: -3%;
+  bottom: -3%; /* デフォルト（PCなど）では少しはみ出す */
   text-align: center;
   pointer-events: none;
-  display: none !important;
 }
 
-.char-slot.active {
-  display: block !important;
+#char-left,
+#char-center,
+#char-right {
+  width: 30%;
+}
+
+#char-left {
+  left: 5%;
+}
+
+#char-center {
+  left: 35%;
+  z-index: 2;
+}
+
+#char-right {
+  left: 65%;
 }
 
 .char-image {
@@ -56,44 +70,6 @@ body {
   height: auto;
   max-height: 90vh;
   object-fit: contain;
-}
-
-/* 縦表示（スマホ）でアクティブなキャラだけを大きく */
-@media screen and (max-width: 768px) and (orientation: portrait) {
-  .char-slot.active {
-    left: 0 !important;
-    width: 100% !important;
-    z-index: 2;
-  }
-
-  .char-image {
-    height: 100vh;
-    max-height: none;
-    object-fit: contain;
-  }
-}
-
-/* 横表示やPC */
-@media screen and (min-width: 769px) {
-  #char-left {
-    left: 5%;
-    width: 30%;
-  }
-
-  #char-center {
-    left: 35%;
-    width: 30%;
-    z-index: 2;
-  }
-
-  #char-right {
-    left: 65%;
-    width: 30%;
-  }
-
-  .char-slot {
-    display: block !important;
-  }
 }
 
 #dialogue-box {
@@ -139,4 +115,65 @@ body {
 
 .choices-area button:hover {
   background-color: #555;
+}
+
+/* モバイル縦表示 - 1キャラのみ表示・画面下合わせ */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  .char-slot {
+    bottom: 0 !important;
+    width: 100% !important;
+    display: none;
+    justify-content: center;
+    align-items: flex-end;
+    text-align: center;
+  }
+
+  .char-slot.active {
+    display: flex;
+  }
+
+  .char-image {
+    max-height: calc(var(--vh, 1vh) * 95);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+}
+
+/* モバイル横表示 */
+@media screen and (max-width: 1024px) and (orientation: landscape) {
+  #char-left {
+    left: 0%;
+    width: 33.33%;
+  }
+
+  #char-center {
+    left: 33.33%;
+    width: 33.33%;
+    z-index: 2;
+  }
+
+  #char-right {
+    left: 66.66%;
+    width: 33.33%;
+  }
+}
+
+/* PC表示 */
+@media screen and (min-width: 1025px) {
+  #char-left {
+    left: 5%;
+    width: 30%;
+  }
+
+  #char-center {
+    left: 35%;
+    width: 30%;
+    z-index: 2;
+  }
+
+  #char-right {
+    left: 65%;
+    width: 30%;
+  }
 }
