@@ -1,4 +1,4 @@
-// script.js - v022 モバイル縦フォーカス対応
+// script.js - v022 モバイル縦フォーカス対応・最新版
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
@@ -57,7 +57,7 @@ async function applyEffect(el, effectName) {
 function clearCharacters() {
   for (const pos in charSlots) {
     charSlots[pos].innerHTML = "";
-    charSlots[pos].style.display = "none";
+    charSlots[pos].classList.remove("active");
   }
 }
 
@@ -86,11 +86,15 @@ async function showScene(scene) {
   }
 
   if (scene.characters) {
-    const lastSide = scene.characters[scene.characters.length - 1]?.side;
+    let lastSide = scene.characters[scene.characters.length - 1]?.side;
 
     ["left", "center", "right"].forEach(async (pos) => {
       const slot = charSlots[pos];
       const charData = scene.characters.find((c) => c.side === pos);
+
+      // 全キャラ非アクティブにしておく
+      slot.classList.remove("active");
+
       if (charData && charData.src && charData.src !== "NULL") {
         const img = document.createElement("img");
         img.src = config.charPath + charData.src;
@@ -99,15 +103,19 @@ async function showScene(scene) {
         slot.appendChild(img);
         await applyEffect(img, charData.effect || "fadein");
 
-        // モバイル縦：最後のキャラのみ表示
+        // モバイル縦画面のときだけ、最後のキャラだけ active に
         if (isMobilePortrait()) {
-          slot.style.display = (pos === lastSide) ? "block" : "none";
+          if (pos === lastSide) {
+            slot.classList.add("active");
+          } else {
+            slot.classList.remove("active");
+          }
         } else {
           slot.style.display = "block";
         }
       } else if (charData && charData.src === "NULL") {
         slot.innerHTML = "";
-        slot.style.display = "none";
+        slot.classList.remove("active");
       }
     });
   }
