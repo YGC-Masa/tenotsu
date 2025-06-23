@@ -24,7 +24,7 @@
      "characters": [   {"side":"center", "src": "a04002.png", "effect": "fadein"  }  ],
    "name":"こがね",
    "text":"え、マジ？助かるわー！私お菓子しか持ってきてない！",
-   "voice":"「ダメ、力が入らない…」.mp3"
+   "voice":"kogane001.mp3"
   },
   {
      "characters": [   {"side":"left", "src": "a01002.png", "effect": "fadein"  }  ],
