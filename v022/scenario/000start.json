@@ -23,7 +23,8 @@
   {
      "characters": [   {"side":"center", "src": "a04002.png", "effect": "fadein"  }  ],
    "name":"こがね",
-   "text":"え、マジ？助かるわー！私お菓子しか持ってきてない！"
+   "text":"え、マジ？助かるわー！私お菓子しか持ってきてない！",
+   "voice":"kogane_001.mp3"
   },
   {
      "characters": [   {"side":"left", "src": "a01002.png", "effect": "fadein"  }  ],
