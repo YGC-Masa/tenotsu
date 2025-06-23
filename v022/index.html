@@ -3,28 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>ノベルゲーム v021</title>
+  <title>ノベルゲーム V022</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="game-container">
+    <!-- 背景画像 -->
     <img id="background" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=" alt="背景画像" />
 
+    <!-- キャラクター表示レイヤー -->
     <div id="char-layer">
       <div id="char-left" class="char-slot"></div>
       <div id="char-right" class="char-slot"></div>
       <div id="char-center" class="char-slot"></div>
     </div>
 
+    <!-- セリフ・名前表示 -->
     <div id="dialogue-box">
       <div id="name" class="name-area"></div>
       <div id="text" class="text-area"></div>
     </div>
 
+    <!-- 選択肢 -->
     <div id="choices" class="choices-area"></div>
   </div>
 
-  <!-- スクリプト読み込み -->
+  <!-- スクリプトの読み込み順に注意 -->
   <script src="config.js"></script>
   <script src="characterColors.js"></script>
   <script src="characterStyles.js"></script>
