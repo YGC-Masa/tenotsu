@@ -12,8 +12,7 @@
     },
     {
       "characters": [
-        { "side": "left", "src": "a02002.png", "effect": "slideleft" },
-        { "side": "center", "src": "a01002.png" }
+        { "side": "left", "src": "a02002.png", "effect": "slideleft" }
       ],
       "name": "藍",
       "text": "緋奈さん、そんなにはしゃぐと転びますよ……。",
@@ -22,9 +21,7 @@
     },
     {
       "characters": [
-        { "side": "right", "src": "a03002.png", "effect": "slideright" },
-        { "side": "center", "src": "a01002.png" },
-        { "side": "left", "src": "a02002.png" }
+        { "side": "right", "src": "a03002.png", "effect": "slideright" }
       ],
       "name": "翠",
       "text": "私は皆さんの分のお弁当を持ってきました。",
@@ -32,9 +29,7 @@
     },
     {
       "characters": [
-        { "side": "left", "src": "a04002.png", "effect": "fadein" },
-        { "side": "right", "src": "a03002.png" },
-        { "side": "center", "src": "a01002.png" }
+        { "side": "left", "src": "a04002.png", "effect": "fadein" }
       ],
       "name": "こがね",
       "text": "え、マジ？助かるわー！私お菓子しか持ってきてない！",
