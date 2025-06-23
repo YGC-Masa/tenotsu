@@ -44,6 +44,7 @@ body {
   bottom: -3%;
   text-align: center;
   pointer-events: none;
+  display: none; /* デフォルト非表示 */
 }
 
 #char-left,
@@ -117,10 +118,14 @@ body {
   background-color: #555;
 }
 
-/* モバイル縦表示：1キャラフォーカス対応 */
+/* モバイル縦表示: 最後のキャラのみ表示・横幅広く */
 @media screen and (max-width: 768px) and (orientation: portrait) {
+  :root {
+    --fontSize: 1.2em;
+  }
+
   .char-slot {
-    display: none !important;
+    display: none;
   }
 
   .char-slot.active {
@@ -131,12 +136,11 @@ body {
   }
 
   .char-image {
-    max-height: 90vh;
-    width: 100%;
+    max-height: 88vh;
   }
 }
 
-/* モバイル横表示 */
+/* モバイル横表示: 各キャラを1/3表示 */
 @media screen and (max-width: 1024px) and (orientation: landscape) {
   #char-left {
     left: 0%;
@@ -152,6 +156,10 @@ body {
   #char-right {
     left: 66.66%;
     width: 33.33%;
+  }
+
+  .char-slot {
+    display: block;
   }
 }
 
@@ -171,5 +179,9 @@ body {
   #char-right {
     left: 65%;
     width: 30%;
+  }
+
+  .char-slot {
+    display: block;
   }
 }
