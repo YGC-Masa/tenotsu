@@ -1,9 +1,10 @@
-// script.js - v022-02 モバイル縦フォーカス + 分岐後のリセット対応
+// script.js - v022-02 モバイル縦切替対応
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
 let autoWait = 2000;
 let bgm = null;
+let lastDisplayedSide = null; // ← 追加：最後に表示されたキャラの位置
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -46,6 +47,25 @@ function isMobilePortrait() {
   return window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
 }
 
+function applyResponsiveCharacterView() {
+  const isPortrait = isMobilePortrait();
+  for (const side of ["left", "center", "right"]) {
+    const slot = charSlots[side];
+    if (isPortrait) {
+      if (side === lastDisplayedSide) {
+        slot.style.display = "flex";
+        slot.classList.add("active");
+      } else {
+        slot.style.display = "none";
+        slot.classList.remove("active");
+      }
+    } else {
+      slot.style.display = "block";
+      slot.classList.remove("active");
+    }
+  }
+}
+
 async function applyEffect(el, effectName) {
   if (window.effects && effectName && window.effects[effectName]) {
     return await window.effects[effectName](el);
@@ -56,17 +76,15 @@ async function applyEffect(el, effectName) {
 
 function clearCharacters() {
   for (const pos in charSlots) {
-    const slot = charSlots[pos];
-    slot.innerHTML = "";
-    slot.classList.remove("active");
-    slot.style.display = ""; // displayも初期化
+    charSlots[pos].innerHTML = "";
+    charSlots[pos].classList.remove("active");
+    charSlots[pos].style.display = "none"; // 初期化時に非表示へ
   }
 }
 
 async function showScene(scene) {
   if (!scene) return;
 
-  // 背景切替（同期）
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
     await new Promise((resolve) => {
@@ -76,7 +94,6 @@ async function showScene(scene) {
     await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
-  // BGM
   if (scene.bgm !== undefined) {
     if (bgm) {
       bgm.pause();
@@ -89,17 +106,13 @@ async function showScene(scene) {
     }
   }
 
-  // キャラクター表示
   if (scene.characters) {
     const lastChar = scene.characters[scene.characters.length - 1];
-    const lastSide = lastChar?.side;
+    lastDisplayedSide = lastChar?.side || null;
 
     for (const pos of ["left", "center", "right"]) {
       const slot = charSlots[pos];
       const charData = scene.characters.find((c) => c.side === pos);
-
-      slot.classList.remove("active");
-      slot.style.display = ""; // 初期化
 
       if (charData && charData.src && charData.src !== "NULL") {
         const img = document.createElement("img");
@@ -108,25 +121,14 @@ async function showScene(scene) {
         slot.innerHTML = "";
         slot.appendChild(img);
         await applyEffect(img, charData.effect || "fadein");
-
-        if (isMobilePortrait()) {
-          if (pos === lastSide) {
-            slot.classList.add("active");
-            slot.style.display = "flex";
-          } else {
-            slot.style.display = "none";
-          }
-        } else {
-          slot.style.display = "block";
-        }
       } else if (charData && charData.src === "NULL") {
         slot.innerHTML = "";
-        slot.style.display = "none";
       }
     }
+
+    applyResponsiveCharacterView(); // ← 表示後に反映
   }
 
-  // セリフと名前
   if (scene.name !== undefined && scene.text !== undefined) {
     const color = characterColors[scene.name] || characterColors[""] || "#C0C0C0";
     nameEl.textContent = scene.name;
@@ -141,7 +143,6 @@ async function showScene(scene) {
     });
   }
 
-  // ボイス
   if (scene.voice) {
     try {
       const voice = new Audio(config.voicePath + scene.voice);
@@ -151,7 +152,6 @@ async function showScene(scene) {
     }
   }
 
-  // SE
   if (scene.se) {
     try {
       const se = new Audio(config.sePath + scene.se);
@@ -161,7 +161,6 @@ async function showScene(scene) {
     }
   }
 
-  // 選択肢
   if (scene.choices) {
     choicesEl.innerHTML = "";
     scene.choices.forEach((choice) => {
@@ -206,19 +205,16 @@ function loadScenario(filename) {
     });
 }
 
-// オートモード切替
 bgEl.addEventListener("dblclick", () => {
   isAuto = !isAuto;
 });
 
-// クリックで次へ（選択肢がない場合）
 document.addEventListener("click", () => {
   if (!isAuto && choicesEl.children.length === 0 && !isPlaying) {
     next();
   }
 });
 
-// 初期化
 window.addEventListener("load", () => {
   loadScenario(currentScenario);
   setVhVariable();
@@ -228,4 +224,8 @@ function setVhVariable() {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
-window.addEventListener("resize", setVhVariable);
+
+window.addEventListener("resize", () => {
+  setVhVariable();
+  applyResponsiveCharacterView(); // ← 追加：縦画面切替時の再反映
+});
