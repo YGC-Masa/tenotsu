@@ -1,9 +1,10 @@
-// script.js - v021+ 完全同期版
+// script.js - v022 音声再生初回クリック対応＋完全同期対応
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
 let autoWait = 2000;
 let bgm = null;
+let isFirstInteraction = true;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -77,13 +78,13 @@ async function showScene(scene) {
     if (scene.bgm) {
       bgm = new Audio(config.bgmPath + scene.bgm);
       bgm.loop = true;
-      bgm.play();
+      bgm.play().catch(() => {}); // ユーザー操作が必要な場合に備える
     }
   }
 
   // キャラ表示処理
   if (scene.characters) {
-    ["left", "center", "right"].forEach(async (pos) => {
+    for (const pos of ["left", "center", "right"]) {
       const slot = charSlots[pos];
       const charData = scene.characters.find((c) => c.side === pos);
       if (charData && charData.src && charData.src !== "NULL") {
@@ -96,7 +97,7 @@ async function showScene(scene) {
       } else if (charData && charData.src === "NULL") {
         slot.innerHTML = "";
       }
-    });
+    }
   }
 
   // 名前とセリフ
@@ -118,7 +119,7 @@ async function showScene(scene) {
   if (scene.voice) {
     try {
       const voice = new Audio(config.voicePath + scene.voice);
-      voice.play();
+      voice.play().catch(() => {});
     } catch (e) {
       console.warn("ボイス再生エラー:", scene.voice);
     }
@@ -128,7 +129,7 @@ async function showScene(scene) {
   if (scene.se) {
     try {
       const se = new Audio(config.sePath + scene.se);
-      se.play();
+      se.play().catch(() => {});
     } catch (e) {
       console.warn("SE再生エラー:", scene.se);
     }
@@ -190,6 +191,18 @@ document.addEventListener("click", () => {
     next();
   }
 });
+
+// 初回クリックで音声再生許可を取得（スマホ対策）
+document.addEventListener("click", () => {
+  if (isFirstInteraction) {
+    isFirstInteraction = false;
+    const dummy = new Audio();
+    dummy.play().catch(() => {});
+    if (bgm) {
+      bgm.play().catch(() => {});
+    }
+  }
+}, { once: true });
 
 // 読み込み時
 window.addEventListener("load", () => {
