@@ -41,9 +41,16 @@ body {
 
 .char-slot {
   position: absolute;
-  bottom: -3%;
+  bottom: 0;
   text-align: center;
-  pointer-events: none;
+  display: none; /* ← 初期状態では非表示（script.jsが制御） */
+}
+
+.char-slot.active {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 2;
 }
 
 #char-left,
@@ -58,7 +65,6 @@ body {
 
 #char-center {
   left: 35%;
-  z-index: 2;
 }
 
 #char-right {
@@ -117,26 +123,19 @@ body {
   background-color: #555;
 }
 
-/* モバイル縦表示 - 最後のキャラだけ中央表示し他は完全非表示 */
+/* モバイル縦表示時のキャラ表示最適化 */
 @media screen and (max-width: 768px) and (orientation: portrait) {
-  .char-slot {
-    display: none !important;  /* 全て非表示に */
+  :root {
+    --fontSize: 1.2em;
   }
 
   .char-slot.active {
-    display: flex !important;  /* 最後のキャラのみ表示 */
-    justify-content: center;
-    align-items: flex-end;
-    bottom: 0 !important;
-    width: 100% !important;
     left: 0 !important;
+    width: 100% !important;
   }
 
   .char-image {
-    max-height: calc(var(--vh, 1vh) * 95);
-    width: auto;
-    height: auto;
-    object-fit: contain;
+    max-height: 88vh;
   }
 }
 
@@ -150,7 +149,6 @@ body {
   #char-center {
     left: 33.33%;
     width: 33.33%;
-    z-index: 2;
   }
 
   #char-right {
@@ -169,7 +167,6 @@ body {
   #char-center {
     left: 35%;
     width: 30%;
-    z-index: 2;
   }
 
   #char-right {
