@@ -41,7 +41,7 @@ body {
 
 .char-slot {
   position: absolute;
-  bottom: -3%; /* 下に少しはみ出す */
+  bottom: -3%;
   text-align: center;
   pointer-events: none;
 }
@@ -123,24 +123,21 @@ body {
     --fontSize: 1.2em;
   }
 
-  .char-image {
-    max-height: 88vh;
-  }
-
-  #char-left {
-    left: 0%;
-    width: 50%;
+  #char-left,
+  #char-right {
+    display: none;
   }
 
   #char-center {
-    left: 25%;
-    width: 50%;
+    left: 0;
+    width: 100%;
     z-index: 2;
   }
 
-  #char-right {
-    left: 50%;
-    width: 50%;
+  .char-image {
+    max-height: 88vh;
+    width: auto;
+    margin: 0 auto;
   }
 }
 
