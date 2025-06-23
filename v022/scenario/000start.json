@@ -8,7 +8,7 @@
       ],
       "name": "緋奈",
       "text": "うわぁー！今日はピクニック日和だね！",
-      "voice": "hina01.mp3"
+      "voice": "hina_001.mp3"
     },
     {
       "characters": [
@@ -16,8 +16,7 @@
       ],
       "name": "藍",
       "text": "緋奈さん、そんなにはしゃぐと転びますよ……。",
-      "voice": "ai01.mp3",
-      "se": "step.mp3"
+      "se": "ding.mp3"
     },
     {
       "characters": [
@@ -25,15 +24,14 @@
       ],
       "name": "翠",
       "text": "私は皆さんの分のお弁当を持ってきました。",
-      "voice": "midori01.mp3"
+      "voice": "ai_001.mp3"
     },
     {
       "characters": [
         { "side": "left", "src": "a04002.png", "effect": "fadein" },
       ],
       "name": "こがね",
-      "text": "え、マジ？助かるわー！私お菓子しか持ってきてない！",
-      "voice": "kogane01.mp3"
+      "text": "え、マジ？助かるわー！私お菓子しか持ってきてない！"
     },
   {
       "name": "緋奈",
@@ -44,22 +42,18 @@
         { "side": "center", "src": "a05002.png", "effect": "slideleft" }
       ],
       "name": "琥珀",
-      "text": "みんな元気そうで何よりだね！さて、食べる？走る？",
-      "voice": "kohaku01.mp3",
-      "se": "jump.mp3"
+      "text": "みんな元気そうで何よりだね！さて、食べる？走る？"
     },
     {
       "text": "どうする？",
       "choices": [
         {
           "text": "お弁当を食べる",
-          "jump": "branch_eat.json",
-          "voice": "choice_eat.mp3"
+          "jump": "branch_eat.json"
         },
         {
           "text": "運動をする！",
-          "jump": "branch_sports.json",
-          "voice": "choice_run.mp3"
+          "jump": "branch_sports.json"
         }
       ]
     }
