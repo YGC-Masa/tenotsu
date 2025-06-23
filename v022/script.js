@@ -1,4 +1,4 @@
-// script.js - v022 モバイル縦1キャラ対応 + 同期演出
+// script.js - v022 モバイル縦フォーカス対応
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
@@ -21,10 +21,6 @@ let defaultSpeed = 40;
 let currentSpeed = defaultSpeed;
 let isPlaying = false;
 
-function isPortraitMobile() {
-  return window.innerWidth < window.innerHeight && window.innerWidth <= 768;
-}
-
 function setTextWithSpeed(text, speed, callback) {
   isPlaying = true;
   textEl.innerHTML = "";
@@ -39,10 +35,15 @@ function setTextWithSpeed(text, speed, callback) {
   }, speed);
 }
 
-function setCharacterStyle(name) {
+function setCharacterStyle(name, scene = {}) {
   const style = characterStyles[name] || characterStyles[""];
-  document.documentElement.style.setProperty("--fontSize", style.fontSize || defaultFontSize);
-  currentSpeed = style.speed || defaultSpeed;
+  const fontSize = scene.fontSize || style.fontSize || defaultFontSize;
+  currentSpeed = scene.speed || style.speed || defaultSpeed;
+  document.documentElement.style.setProperty("--fontSize", fontSize);
+}
+
+function isMobilePortrait() {
+  return window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
 }
 
 async function applyEffect(el, effectName) {
@@ -56,6 +57,7 @@ async function applyEffect(el, effectName) {
 function clearCharacters() {
   for (const pos in charSlots) {
     charSlots[pos].innerHTML = "";
+    charSlots[pos].classList.remove("active");
   }
 }
 
@@ -84,12 +86,11 @@ async function showScene(scene) {
   }
 
   if (scene.characters) {
-    const isMobilePortrait = isPortraitMobile();
-    const visibleChars = isMobilePortrait ? [scene.characters[scene.characters.length - 1]] : scene.characters;
+    let lastSide = scene.characters[scene.characters.length - 1]?.side;
 
     ["left", "center", "right"].forEach(async (pos) => {
       const slot = charSlots[pos];
-      const charData = visibleChars.find((c) => c.side === pos);
+      const charData = scene.characters.find((c) => c.side === pos);
       if (charData && charData.src && charData.src !== "NULL") {
         const img = document.createElement("img");
         img.src = config.charPath + charData.src;
@@ -97,8 +98,15 @@ async function showScene(scene) {
         slot.innerHTML = "";
         slot.appendChild(img);
         await applyEffect(img, charData.effect || "fadein");
-      } else {
+        if (isMobilePortrait()) {
+          slot.classList.toggle("active", pos === lastSide);
+        } else {
+          slot.classList.remove("active");
+          slot.style.display = "block";
+        }
+      } else if (charData && charData.src === "NULL") {
         slot.innerHTML = "";
+        slot.classList.remove("active");
       }
     });
   }
@@ -107,7 +115,7 @@ async function showScene(scene) {
     const color = characterColors[scene.name] || characterColors[""] || "#C0C0C0";
     nameEl.textContent = scene.name;
     nameEl.style.color = color;
-    setCharacterStyle(scene.name);
+    setCharacterStyle(scene.name, scene);
     setTextWithSpeed(scene.text, currentSpeed, () => {
       if (isAuto) {
         setTimeout(() => {
@@ -198,5 +206,4 @@ function setVhVariable() {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
-
 window.addEventListener("resize", setVhVariable);
