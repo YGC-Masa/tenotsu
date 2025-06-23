@@ -1,10 +1,9 @@
-// script.js - v022 音声再生初回クリック対応＋完全同期対応
+// script.js - v022 モバイル縦1キャラ対応 + 同期演出
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
 let autoWait = 2000;
 let bgm = null;
-let isFirstInteraction = true;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -21,6 +20,10 @@ let defaultFontSize = "1em";
 let defaultSpeed = 40;
 let currentSpeed = defaultSpeed;
 let isPlaying = false;
+
+function isPortraitMobile() {
+  return window.innerWidth < window.innerHeight && window.innerWidth <= 768;
+}
 
 function setTextWithSpeed(text, speed, callback) {
   isPlaying = true;
@@ -59,7 +62,6 @@ function clearCharacters() {
 async function showScene(scene) {
   if (!scene) return;
 
-  // 背景表示（完全同期）
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
     await new Promise((resolve) => {
@@ -69,7 +71,6 @@ async function showScene(scene) {
     await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
-  // BGM再生
   if (scene.bgm !== undefined) {
     if (bgm) {
       bgm.pause();
@@ -78,15 +79,17 @@ async function showScene(scene) {
     if (scene.bgm) {
       bgm = new Audio(config.bgmPath + scene.bgm);
       bgm.loop = true;
-      bgm.play().catch(() => {}); // ユーザー操作が必要な場合に備える
+      bgm.play();
     }
   }
 
-  // キャラ表示処理
   if (scene.characters) {
-    for (const pos of ["left", "center", "right"]) {
+    const isMobilePortrait = isPortraitMobile();
+    const visibleChars = isMobilePortrait ? [scene.characters[scene.characters.length - 1]] : scene.characters;
+
+    ["left", "center", "right"].forEach(async (pos) => {
       const slot = charSlots[pos];
-      const charData = scene.characters.find((c) => c.side === pos);
+      const charData = visibleChars.find((c) => c.side === pos);
       if (charData && charData.src && charData.src !== "NULL") {
         const img = document.createElement("img");
         img.src = config.charPath + charData.src;
@@ -94,13 +97,12 @@ async function showScene(scene) {
         slot.innerHTML = "";
         slot.appendChild(img);
         await applyEffect(img, charData.effect || "fadein");
-      } else if (charData && charData.src === "NULL") {
+      } else {
         slot.innerHTML = "";
       }
-    }
+    });
   }
 
-  // 名前とセリフ
   if (scene.name !== undefined && scene.text !== undefined) {
     const color = characterColors[scene.name] || characterColors[""] || "#C0C0C0";
     nameEl.textContent = scene.name;
@@ -115,27 +117,24 @@ async function showScene(scene) {
     });
   }
 
-  // ボイス
   if (scene.voice) {
     try {
       const voice = new Audio(config.voicePath + scene.voice);
-      voice.play().catch(() => {});
+      voice.play();
     } catch (e) {
       console.warn("ボイス再生エラー:", scene.voice);
     }
   }
 
-  // SE
   if (scene.se) {
     try {
       const se = new Audio(config.sePath + scene.se);
-      se.play().catch(() => {});
+      se.play();
     } catch (e) {
       console.warn("SE再生エラー:", scene.se);
     }
   }
 
-  // 選択肢
   if (scene.choices) {
     choicesEl.innerHTML = "";
     scene.choices.forEach((choice) => {
@@ -180,31 +179,16 @@ function loadScenario(filename) {
     });
 }
 
-// オートプレイ切替（ダブルタップ）
 bgEl.addEventListener("dblclick", () => {
   isAuto = !isAuto;
 });
 
-// クリックで次へ（選択肢表示中を除く）
 document.addEventListener("click", () => {
   if (!isAuto && choicesEl.children.length === 0 && !isPlaying) {
     next();
   }
 });
 
-// 初回クリックで音声再生許可を取得（スマホ対策）
-document.addEventListener("click", () => {
-  if (isFirstInteraction) {
-    isFirstInteraction = false;
-    const dummy = new Audio();
-    dummy.play().catch(() => {});
-    if (bgm) {
-      bgm.play().catch(() => {});
-    }
-  }
-}, { once: true });
-
-// 読み込み時
 window.addEventListener("load", () => {
   loadScenario(currentScenario);
   setVhVariable();
@@ -214,4 +198,5 @@ function setVhVariable() {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
+
 window.addEventListener("resize", setVhVariable);
