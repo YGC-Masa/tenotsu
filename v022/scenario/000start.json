@@ -39,7 +39,19 @@
    "text":"みんな元気そうで何よりだね！さて、食べる？走る？"
   },
   {
-   "text":"どうする？"
-  }
+      "text": "どうする？",
+      "choices": [
+        {
+          "text": "お弁当を食べる",
+          "jump": "branch_eat.json",
+          "voice": "choice_eat.mp3"
+        },
+        {
+          "text": "運動をする！",
+          "jump": "branch_sports.json",
+          "voice": "choice_run.mp3"
+        }
+      ]
+    }
  ]
 }
