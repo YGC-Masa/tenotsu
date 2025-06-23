@@ -1,4 +1,4 @@
-// script.js - v022 モバイル縦フォーカス対応・最新版
+// script.js - v022-02 モバイル縦フォーカス + 分岐後のリセット対応
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
@@ -56,14 +56,17 @@ async function applyEffect(el, effectName) {
 
 function clearCharacters() {
   for (const pos in charSlots) {
-    charSlots[pos].innerHTML = "";
-    charSlots[pos].classList.remove("active");
+    const slot = charSlots[pos];
+    slot.innerHTML = "";
+    slot.classList.remove("active");
+    slot.style.display = ""; // displayも初期化
   }
 }
 
 async function showScene(scene) {
   if (!scene) return;
 
+  // 背景切替（同期）
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
     await new Promise((resolve) => {
@@ -73,6 +76,7 @@ async function showScene(scene) {
     await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
+  // BGM
   if (scene.bgm !== undefined) {
     if (bgm) {
       bgm.pause();
@@ -85,15 +89,17 @@ async function showScene(scene) {
     }
   }
 
+  // キャラクター表示
   if (scene.characters) {
-    let lastSide = scene.characters[scene.characters.length - 1]?.side;
+    const lastChar = scene.characters[scene.characters.length - 1];
+    const lastSide = lastChar?.side;
 
-    ["left", "center", "right"].forEach(async (pos) => {
+    for (const pos of ["left", "center", "right"]) {
       const slot = charSlots[pos];
       const charData = scene.characters.find((c) => c.side === pos);
 
-      // 全キャラ非アクティブにしておく
       slot.classList.remove("active");
+      slot.style.display = ""; // 初期化
 
       if (charData && charData.src && charData.src !== "NULL") {
         const img = document.createElement("img");
@@ -103,23 +109,24 @@ async function showScene(scene) {
         slot.appendChild(img);
         await applyEffect(img, charData.effect || "fadein");
 
-        // モバイル縦画面のときだけ、最後のキャラだけ active に
         if (isMobilePortrait()) {
           if (pos === lastSide) {
             slot.classList.add("active");
+            slot.style.display = "flex";
           } else {
-            slot.classList.remove("active");
+            slot.style.display = "none";
           }
         } else {
           slot.style.display = "block";
         }
       } else if (charData && charData.src === "NULL") {
         slot.innerHTML = "";
-        slot.classList.remove("active");
+        slot.style.display = "none";
       }
-    });
+    }
   }
 
+  // セリフと名前
   if (scene.name !== undefined && scene.text !== undefined) {
     const color = characterColors[scene.name] || characterColors[""] || "#C0C0C0";
     nameEl.textContent = scene.name;
@@ -134,6 +141,7 @@ async function showScene(scene) {
     });
   }
 
+  // ボイス
   if (scene.voice) {
     try {
       const voice = new Audio(config.voicePath + scene.voice);
@@ -143,6 +151,7 @@ async function showScene(scene) {
     }
   }
 
+  // SE
   if (scene.se) {
     try {
       const se = new Audio(config.sePath + scene.se);
@@ -152,6 +161,7 @@ async function showScene(scene) {
     }
   }
 
+  // 選択肢
   if (scene.choices) {
     choicesEl.innerHTML = "";
     scene.choices.forEach((choice) => {
@@ -196,16 +206,19 @@ function loadScenario(filename) {
     });
 }
 
+// オートモード切替
 bgEl.addEventListener("dblclick", () => {
   isAuto = !isAuto;
 });
 
+// クリックで次へ（選択肢がない場合）
 document.addEventListener("click", () => {
   if (!isAuto && choicesEl.children.length === 0 && !isPlaying) {
     next();
   }
 });
 
+// 初期化
 window.addEventListener("load", () => {
   loadScenario(currentScenario);
   setVhVariable();
