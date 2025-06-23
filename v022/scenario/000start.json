@@ -20,7 +20,7 @@
     },
     {
       "characters": [
-        { "side": "right", "src": "a03002.png", "effect": "slideright" },
+        { "side": "right", "src": "a03002.png", "effect": "slideright" }
       ],
       "name": "翠",
       "text": "私は皆さんの分のお弁当を持ってきました。",
@@ -28,7 +28,7 @@
     },
     {
       "characters": [
-        { "side": "left", "src": "a04002.png", "effect": "fadein" },
+        { "side": "left", "src": "a04002.png", "effect": "fadein" }
       ],
       "name": "こがね",
       "text": "え、マジ？助かるわー！私お菓子しか持ってきてない！"
