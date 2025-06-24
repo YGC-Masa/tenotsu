@@ -1,0 +1,27 @@
+{
+  "items": [
+    {
+      "text": "オートモード開始",
+      "action": "auto"
+    },
+    {
+      "text": "全音声ミュート",
+      "action": "mute"
+    },
+    {
+      "text": "シナリオBへジャンプ",
+      "action": "jump",
+      "jump": "branchB.json"
+    },
+    {
+      "text": "別メニューを開く",
+      "action": "menu",
+      "menu": "menu01.json"
+    },
+    {
+      "text": "公式サイトへ",
+      "action": "url",
+      "url": "https://example.com"
+    }
+  ]
+}

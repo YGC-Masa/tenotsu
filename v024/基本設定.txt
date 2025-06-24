@@ -1,0 +1,37 @@
+以下を踏まえてサンプル作成
+
+最初に読み込まれるシナリオファイル　000start.json
+
+bgm: main.mp3
+
+キャラ一覧
+名前	画像ファイル名	性格・特徴	色コード
+緋奈	a01002.png	明るく楽しい・食べるの大好き	#d3381c
+藍	a02002.png	おとなしく控えめ・暗くはない	#0067C0
+翠	a03002.png	まじめ・敬語・キャリアウーマン	#005931
+こがね	a04002.png	フランク・ややけだるそう・ギャル	#FFF450
+琥珀	a05002.png	元気いっぱい・アスリート	#F68B1F
+
+背景一覧
+ファイル名	シチュエーション
+STORE_NON.png	電機店
+WALL.png	緋奈イベント
+a03ev01.png	翠イベント
+a04ev01.png	こがねイベント
+bg001.png	事務所
+bg010.jpg	オフィス夕方
+bg011.jpg	オフィス昼間
+bg012.jpg	オフィス夜
+bg013.jpg	オフィス深夜
+bg020.jpg	自宅昼
+bg021.jpg	自宅夕方
+bg022.jpg	自宅夜
+bg023.jpg	自宅深夜
+bg024.jpg	自宅深夜パソコンつける
+bg_beach.jpg	海
+bg_field.jpg	公園
+bg_forest.jpg	森
+bg_mountain.jpg	山
+bg_room.jpg	部屋
+ev001.png	緋奈イベント
+ev002.png	緋奈イベント
