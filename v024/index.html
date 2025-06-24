@@ -8,30 +8,33 @@
 </head>
 <body>
   <div id="game-container">
-    <img id="background" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=" alt="背景画像" />
+    <!-- 背景画像 -->
+    <img id="background" src="" alt="背景" />
 
+    <!-- キャラクター表示レイヤー -->
     <div id="char-layer">
       <div id="char-left" class="char-slot"></div>
-      <div id="char-right" class="char-slot"></div>
       <div id="char-center" class="char-slot"></div>
+      <div id="char-right" class="char-slot"></div>
     </div>
 
+    <!-- セリフ表示ボックス -->
     <div id="dialogue-box">
-      <div id="name" class="name-area"></div>
-      <div id="text" class="text-area"></div>
+      <div class="name-area" id="name"></div>
+      <div class="text-area" id="text"></div>
     </div>
 
-    <div id="choices" class="choices-area"></div>
-
-    <!-- メニュー表示パネル -->
-    <div id="menu-panel" class="menu-panel hidden"></div>
+    <!-- 選択肢エリア -->
+    <div class="choices-area" id="choices"></div>
   </div>
 
-  <!-- スクリプト群 -->
+  <!-- 各種設定ファイル -->
   <script src="config.js"></script>
   <script src="characterColors.js"></script>
   <script src="characterStyles.js"></script>
   <script src="effect.js"></script>
+
+  <!-- メインスクリプト -->
   <script src="script.js"></script>
 </body>
 </html>
