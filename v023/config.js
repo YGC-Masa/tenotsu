@@ -5,4 +5,5 @@ const config = {
   sePath: "../assets2/se/",           // 効果音パス
   voicePath: "../assets2/voice/",     // ボイスパス
   scenarioPath: "./scenario/"
+  menuPath: "./menu/"  // メニューファイル格納先
 };

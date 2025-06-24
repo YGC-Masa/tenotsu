@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>ノベルゲーム v022-02</title>
+  <title>ノベルゲーム v023</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -22,22 +22,16 @@
     </div>
 
     <div id="choices" class="choices-area"></div>
+
+    <!-- メニュー表示パネル -->
+    <div id="menu-panel" class="menu-panel hidden"></div>
   </div>
 
-  <!-- 各種設定およびメインスクリプト読み込み -->
+  <!-- スクリプト群 -->
   <script src="config.js"></script>
   <script src="characterColors.js"></script>
   <script src="characterStyles.js"></script>
   <script src="effect.js"></script>
   <script src="script.js"></script>
-
-  <!-- iOSなどで音声再生を有効にする初回ユーザーアクション -->
-  <script>
-    window.addEventListener("click", function initAudioOnce() {
-      const silent = new Audio();
-      silent.play().catch(() => {});
-      window.removeEventListener("click", initAudioOnce);
-    }, { once: true });
-  </script>
 </body>
 </html>

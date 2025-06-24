@@ -1,0 +1,27 @@
+{
+  "items": [
+    {
+      "text": "▶ オート開始",
+      "action": "auto"
+    },
+    {
+      "text": "📢 シナリオ分岐へ",
+      "action": "jump",
+      "jump": "branchA.json"
+    },
+    {
+      "text": "📁 メニュー切替",
+      "action": "menu",
+      "menu": "menu02.json"
+    },
+    {
+      "text": "🌐 サイトに移動",
+      "action": "url",
+      "url": "https://example.com"
+    },
+    {
+      "text": "🔄 キャンセル",
+      "action": "none"
+    }
+  ]
+}

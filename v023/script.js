@@ -1,10 +1,10 @@
-// script.js - v022-02 モバイル縦切替対応
+// script.js - v023 メニュー機能搭載版（mute 対応）
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
 let autoWait = 2000;
 let bgm = null;
-let lastDisplayedSide = null; // ← 追加：最後に表示されたキャラの位置
+let lastActiveSide = null;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -16,6 +16,10 @@ const charSlots = {
   center: document.getElementById("char-center"),
   right: document.getElementById("char-right"),
 };
+
+const menuContainer = document.createElement("div");
+menuContainer.className = "menu-panel hidden";
+document.body.appendChild(menuContainer);
 
 let defaultFontSize = "1em";
 let defaultSpeed = 40;
@@ -47,25 +51,6 @@ function isMobilePortrait() {
   return window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
 }
 
-function applyResponsiveCharacterView() {
-  const isPortrait = isMobilePortrait();
-  for (const side of ["left", "center", "right"]) {
-    const slot = charSlots[side];
-    if (isPortrait) {
-      if (side === lastDisplayedSide) {
-        slot.style.display = "flex";
-        slot.classList.add("active");
-      } else {
-        slot.style.display = "none";
-        slot.classList.remove("active");
-      }
-    } else {
-      slot.style.display = "block";
-      slot.classList.remove("active");
-    }
-  }
-}
-
 async function applyEffect(el, effectName) {
   if (window.effects && effectName && window.effects[effectName]) {
     return await window.effects[effectName](el);
@@ -78,8 +63,8 @@ function clearCharacters() {
   for (const pos in charSlots) {
     charSlots[pos].innerHTML = "";
     charSlots[pos].classList.remove("active");
-    charSlots[pos].style.display = "none"; // 初期化時に非表示へ
   }
+  lastActiveSide = null;
 }
 
 async function showScene(scene) {
@@ -107,13 +92,10 @@ async function showScene(scene) {
   }
 
   if (scene.characters) {
-    const lastChar = scene.characters[scene.characters.length - 1];
-    lastDisplayedSide = lastChar?.side || null;
-
-    for (const pos of ["left", "center", "right"]) {
+    lastActiveSide = scene.characters[scene.characters.length - 1]?.side || null;
+    ["left", "center", "right"].forEach(async (pos) => {
       const slot = charSlots[pos];
       const charData = scene.characters.find((c) => c.side === pos);
-
       if (charData && charData.src && charData.src !== "NULL") {
         const img = document.createElement("img");
         img.src = config.charPath + charData.src;
@@ -121,12 +103,16 @@ async function showScene(scene) {
         slot.innerHTML = "";
         slot.appendChild(img);
         await applyEffect(img, charData.effect || "fadein");
+        if (isMobilePortrait()) {
+          slot.classList.toggle("active", pos === lastActiveSide);
+        } else {
+          slot.classList.add("active");
+        }
       } else if (charData && charData.src === "NULL") {
         slot.innerHTML = "";
+        slot.classList.remove("active");
       }
-    }
-
-    applyResponsiveCharacterView(); // ← 表示後に反映
+    });
   }
 
   if (scene.name !== undefined && scene.text !== undefined) {
@@ -206,7 +192,7 @@ function loadScenario(filename) {
 }
 
 bgEl.addEventListener("dblclick", () => {
-  isAuto = !isAuto;
+  loadMenu("menu01.json");
 });
 
 document.addEventListener("click", () => {
@@ -224,8 +210,45 @@ function setVhVariable() {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
+window.addEventListener("resize", setVhVariable);
 
-window.addEventListener("resize", () => {
-  setVhVariable();
-  applyResponsiveCharacterView(); // ← 追加：縦画面切替時の再反映
-});
+// ▼▼▼ メニュー読み込み＆表示処理 ▼▼▼
+async function loadMenu(filename = "menu01.json") {
+  try {
+    const res = await fetch(config.menuPath + filename);
+    const data = await res.json();
+    showMenu(data);
+  } catch (e) {
+    console.error("メニュー読み込みエラー:", e);
+  }
+}
+
+function showMenu(menuData) {
+  menuContainer.innerHTML = "";
+  menuContainer.classList.remove("hidden");
+  menuData.items.forEach((item) => {
+    const btn = document.createElement("button");
+    btn.textContent = item.text;
+    btn.onclick = () => {
+      menuContainer.classList.add("hidden");
+      handleMenuAction(item);
+    };
+    menuContainer.appendChild(btn);
+  });
+  setTimeout(() => menuContainer.classList.add("hidden"), 5000);
+}
+
+function handleMenuAction(item) {
+  if (item.action === "auto") {
+    setTimeout(() => { isAuto = true; }, 1750);
+  } else if (item.action === "mute") {
+    if (bgm) bgm.muted = true;
+    // 他の音声系をミュートしたい場合はここに追加（例：SEやVoice）
+  } else if (item.action === "jump" && item.jump) {
+    loadScenario(item.jump);
+  } else if (item.action === "menu" && item.menu) {
+    loadMenu(item.menu);
+  } else if (item.action === "url" && item.url) {
+    location.href = item.url;
+  }
+}

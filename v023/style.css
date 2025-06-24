@@ -43,14 +43,14 @@ body {
   position: absolute;
   bottom: 0;
   text-align: center;
-  display: none; /* ← 初期状態では非表示（script.jsが制御） */
+  pointer-events: none;
+  display: none;
 }
 
 .char-slot.active {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  z-index: 2;
 }
 
 #char-left,
@@ -65,6 +65,7 @@ body {
 
 #char-center {
   left: 35%;
+  z-index: 2;
 }
 
 #char-right {
@@ -123,18 +124,58 @@ body {
   background-color: #555;
 }
 
-/* モバイル縦表示時のキャラ表示最適化 */
+/* ▼▼▼ メニュー表示パネル ▼▼▼ */
+.menu-panel {
+  position: absolute;
+  right: 0;
+  top: 20%;
+  width: 20%;
+  max-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  z-index: 10;
+}
+
+.menu-panel button {
+  padding: 0.7em 0.5em;
+  font-size: 0.9em;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border: 1px solid #666;
+  border-radius: 0.5em;
+  cursor: pointer;
+}
+
+.menu-panel button:hover {
+  background: #444;
+}
+
+.hidden {
+  display: none !important;
+}
+/* ▲▲▲ メニュー表示パネル ▲▲▲ */
+
+/* モバイル縦表示 */
 @media screen and (max-width: 768px) and (orientation: portrait) {
   :root {
     --fontSize: 1.2em;
   }
 
+  .char-slot {
+    display: none;
+  }
+
   .char-slot.active {
-    left: 0 !important;
-    width: 100% !important;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    width: 100%;
+    left: 0;
   }
 
   .char-image {
+    width: 80%;
     max-height: 88vh;
   }
 }
@@ -149,6 +190,7 @@ body {
   #char-center {
     left: 33.33%;
     width: 33.33%;
+    z-index: 2;
   }
 
   #char-right {
@@ -157,7 +199,7 @@ body {
   }
 }
 
-/* PC表示 */
+/* PC 表示 */
 @media screen and (min-width: 1025px) {
   #char-left {
     left: 5%;
@@ -167,6 +209,7 @@ body {
   #char-center {
     left: 35%;
     width: 30%;
+    z-index: 2;
   }
 
   #char-right {
