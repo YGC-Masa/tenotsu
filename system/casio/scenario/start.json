@@ -36,6 +36,8 @@
   {
     "name": "緋奈",
     "text": "だって、シャープはさくらみこの空気清浄機とかも売ってるし",
+    "character": "./../../assets/char/000.png",
+    "side": "center",
     "background": "./../../assets/bgev/ev002.png"
   },
   {
@@ -45,12 +47,15 @@
   {
     "name": "緋奈",
     "text": "あ、いまどこ見てました？",
+    "background": "./../../assets/bgev/STORE_NON.png",
     "character": "./../../assets/char/a01003.png",
     "side": "center"
   },
   {
     "name": "緋奈",
     "text": "少しでも面白いと思ったら、もう、それが”価値”ですよ。",
+    "character": "./../../assets/char/000.png",
+    "side": "center",
     "background": "./../../assets/bgev/WALL.png"
   },
   {
