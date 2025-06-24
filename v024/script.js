@@ -1,4 +1,4 @@
-// script.js - v024 長押しでメニュー表示対応 + オートモードON/OFF 明確化
+// script.js - v023 メニュー機能搭載版（mute 対応）
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
@@ -191,34 +191,16 @@ function loadScenario(filename) {
     });
 }
 
-// ▼▼▼ 長押しでメニュー表示 ▼▼▼
-let holdTimer = null;
-const holdThreshold = 600;
+bgEl.addEventListener("dblclick", () => {
+  loadMenu("menu01.json");
+});
 
-function startHoldTimer() {
-  holdTimer = setTimeout(() => {
-    loadMenu("menu01.json");
-  }, holdThreshold);
-}
-
-function clearHoldTimer() {
-  if (holdTimer) {
-    clearTimeout(holdTimer);
-    holdTimer = null;
-  }
-}
-
-bgEl.addEventListener("mousedown", startHoldTimer);
-bgEl.addEventListener("touchstart", startHoldTimer);
-bgEl.addEventListener("mouseup", clearHoldTimer);
-bgEl.addEventListener("mouseleave", clearHoldTimer);
-bgEl.addEventListener("touchend", clearHoldTimer);
-
-// ▼▼▼ 通常クリックで次へ or オート解除 ▼▼▼
 document.addEventListener("click", () => {
   if (isAuto) {
-    isAuto = false;
-  } else if (choicesEl.children.length === 0 && !isPlaying) {
+    isAuto = false; // オートモード中のクリックで解除
+    return;
+  }
+  if (choicesEl.children.length === 0 && !isPlaying) {
     next();
   }
 });
@@ -265,7 +247,10 @@ function handleMenuAction(item) {
     setTimeout(() => { isAuto = true; }, 1750);
 
   } else if (item.action === "mute") {
+    // BGMをミュート
     if (bgm) bgm.muted = true;
+
+    // ページ内で再生されたすべてのAudioタグを対象にミュート（SE, Voice 含む）
     document.querySelectorAll("audio").forEach(audio => {
       audio.muted = true;
     });
