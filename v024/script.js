@@ -1,4 +1,5 @@
-// script.js - v023 メニュー機能搭載版（mute 対応）
+// script.js - v023 修正版（モバイル縦キャラ表示調整 & メニュー機能/mute対応）
+
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
@@ -93,7 +94,7 @@ async function showScene(scene) {
 
   if (scene.characters) {
     lastActiveSide = scene.characters[scene.characters.length - 1]?.side || null;
-    ["left", "center", "right"].forEach(async (pos) => {
+    for (const pos of ["left", "center", "right"]) {
       const slot = charSlots[pos];
       const charData = scene.characters.find((c) => c.side === pos);
       if (charData && charData.src && charData.src !== "NULL") {
@@ -103,16 +104,25 @@ async function showScene(scene) {
         slot.innerHTML = "";
         slot.appendChild(img);
         await applyEffect(img, charData.effect || "fadein");
+
         if (isMobilePortrait()) {
-          slot.classList.toggle("active", pos === lastActiveSide);
+          // モバイル縦表示時は全slotのactiveを一度消し、最後のキャラのみactive
+          slot.classList.remove("active");
+          if (pos === lastActiveSide) {
+            slot.classList.add("active");
+          }
         } else {
           slot.classList.add("active");
         }
+
       } else if (charData && charData.src === "NULL") {
         slot.innerHTML = "";
         slot.classList.remove("active");
+      } else {
+        // 表示対象でないときも非表示に
+        slot.classList.remove("active");
       }
-    });
+    }
   }
 
   if (scene.name !== undefined && scene.text !== undefined) {
@@ -197,7 +207,7 @@ bgEl.addEventListener("dblclick", () => {
 
 document.addEventListener("click", () => {
   if (isAuto) {
-    isAuto = false; // オートモード中のクリックで解除
+    isAuto = false;
     return;
   }
   if (choicesEl.children.length === 0 && !isPlaying) {
@@ -245,22 +255,15 @@ function showMenu(menuData) {
 function handleMenuAction(item) {
   if (item.action === "auto") {
     setTimeout(() => { isAuto = true; }, 1750);
-
   } else if (item.action === "mute") {
-    // BGMをミュート
     if (bgm) bgm.muted = true;
-
-    // ページ内で再生されたすべてのAudioタグを対象にミュート（SE, Voice 含む）
     document.querySelectorAll("audio").forEach(audio => {
       audio.muted = true;
     });
-
   } else if (item.action === "jump" && item.jump) {
     loadScenario(item.jump);
-
   } else if (item.action === "menu" && item.menu) {
     loadMenu(item.menu);
-
   } else if (item.action === "url" && item.url) {
     location.href = item.url;
   }
