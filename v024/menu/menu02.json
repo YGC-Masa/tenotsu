@@ -1,27 +1,9 @@
 {
   "items": [
-    {
-      "text": "オートモード開始",
-      "action": "auto"
-    },
-    {
-      "text": "全音声ミュート",
-      "action": "mute"
-    },
-    {
-      "text": "シナリオBへジャンプ",
-      "action": "jump",
-      "jump": "branchB.json"
-    },
-    {
-      "text": "別メニューを開く",
-      "action": "menu",
-      "menu": "menu01.json"
-    },
-    {
-      "text": "公式サイトへ",
-      "action": "url",
-      "url": "https://example.com"
-    }
+    { "text": "⑥ 藍と遊ぶ", "action": "jump", "jump": "b00000.json" },
+    { "text": "⑦ 翠と遊ぶ", "action": "jump", "jump": "c00000.json" },
+    { "text": "⑧ こがねと遊ぶ", "action": "jump", "jump": "d00000.json" },
+    { "text": "⑨ 琥珀と遊ぶ", "action": "jump", "jump": "e00000.json" },
+    { "text": "⑩ タイトルへ戻る", "action": "url", "url": "https://ygc-masa.github.io/ten_otsu/" }
   ]
 }
