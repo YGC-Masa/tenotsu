@@ -241,13 +241,22 @@ function showMenu(menuData) {
 function handleMenuAction(item) {
   if (item.action === "auto") {
     setTimeout(() => { isAuto = true; }, 1750);
+
   } else if (item.action === "mute") {
+    // BGMをミュート
     if (bgm) bgm.muted = true;
-    // 他の音声系をミュートしたい場合はここに追加（例：SEやVoice）
+
+    // ページ内で再生されたすべてのAudioタグを対象にミュート（SE, Voice 含む）
+    document.querySelectorAll("audio").forEach(audio => {
+      audio.muted = true;
+    });
+
   } else if (item.action === "jump" && item.jump) {
     loadScenario(item.jump);
+
   } else if (item.action === "menu" && item.menu) {
     loadMenu(item.menu);
+
   } else if (item.action === "url" && item.url) {
     location.href = item.url;
   }
