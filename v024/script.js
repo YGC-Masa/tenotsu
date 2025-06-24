@@ -1,4 +1,4 @@
-// script.js - v023 メニュー機能搭載版（mute 対応）
+// script.js - v024 オートモード OFF 対応
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
@@ -196,7 +196,12 @@ bgEl.addEventListener("dblclick", () => {
 });
 
 document.addEventListener("click", () => {
-  if (!isAuto && choicesEl.children.length === 0 && !isPlaying) {
+  if (isAuto) {
+    isAuto = false;
+    console.log("Auto mode off");
+    return;
+  }
+  if (choicesEl.children.length === 0 && !isPlaying) {
     next();
   }
 });
@@ -243,10 +248,7 @@ function handleMenuAction(item) {
     setTimeout(() => { isAuto = true; }, 1750);
 
   } else if (item.action === "mute") {
-    // BGMをミュート
     if (bgm) bgm.muted = true;
-
-    // ページ内で再生されたすべてのAudioタグを対象にミュート（SE, Voice 含む）
     document.querySelectorAll("audio").forEach(audio => {
       audio.muted = true;
     });
