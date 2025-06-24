@@ -1,4 +1,4 @@
-// script.js - v024 オートモード OFF 対応
+// script.js - v024 長押しでメニュー表示対応 + オートモードON/OFF 明確化
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
@@ -191,17 +191,34 @@ function loadScenario(filename) {
     });
 }
 
-bgEl.addEventListener("dblclick", () => {
-  loadMenu("menu01.json");
-});
+// ▼▼▼ 長押しでメニュー表示 ▼▼▼
+let holdTimer = null;
+const holdThreshold = 600;
 
+function startHoldTimer() {
+  holdTimer = setTimeout(() => {
+    loadMenu("menu01.json");
+  }, holdThreshold);
+}
+
+function clearHoldTimer() {
+  if (holdTimer) {
+    clearTimeout(holdTimer);
+    holdTimer = null;
+  }
+}
+
+bgEl.addEventListener("mousedown", startHoldTimer);
+bgEl.addEventListener("touchstart", startHoldTimer);
+bgEl.addEventListener("mouseup", clearHoldTimer);
+bgEl.addEventListener("mouseleave", clearHoldTimer);
+bgEl.addEventListener("touchend", clearHoldTimer);
+
+// ▼▼▼ 通常クリックで次へ or オート解除 ▼▼▼
 document.addEventListener("click", () => {
   if (isAuto) {
     isAuto = false;
-    console.log("Auto mode off");
-    return;
-  }
-  if (choicesEl.children.length === 0 && !isPlaying) {
+  } else if (choicesEl.children.length === 0 && !isPlaying) {
     next();
   }
 });
