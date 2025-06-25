@@ -1,5 +1,3 @@
-/* style.css - v024 モバイル縦は v022 を踏襲しキャラ1人表示（画面下端揃え）*/
-
 :root {
   --fontSize: 1em;
   --vh: 1vh;
@@ -126,6 +124,7 @@ body {
   background-color: #555;
 }
 
+/* ▼▼▼ メニュー表示パネル ▼▼▼ */
 .menu-panel {
   position: absolute;
   right: 0;
@@ -155,19 +154,26 @@ body {
 .hidden {
   display: none !important;
 }
+/* ▲▲▲ メニュー表示パネル ▲▲▲ */
 
-/* ▼ モバイル縦画面は最後のキャラのみ表示、中央下寄せに拡大 */
+/* モバイル縦表示 */
 @media screen and (max-width: 768px) and (orientation: portrait) {
+  :root {
+    --fontSize: 1.2em;
+  }
+
   .char-slot {
     display: none;
+    position: absolute;
+    bottom: 0;
+    width: 94%;
+    left: 3%;
+    justify-content: center;
+    align-items: flex-end;
   }
 
   .char-slot.active {
     display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    width: 94%;
-    left: 3%;
   }
 
   .char-image {
@@ -176,7 +182,7 @@ body {
   }
 }
 
-/* モバイル横画面 */
+/* モバイル横表示 */
 @media screen and (max-width: 1024px) and (orientation: landscape) {
   #char-left {
     left: 0%;
@@ -195,7 +201,7 @@ body {
   }
 }
 
-/* PC画面 */
+/* PC 表示 */
 @media screen and (min-width: 1025px) {
   #char-left {
     left: 5%;
