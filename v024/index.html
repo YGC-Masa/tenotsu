@@ -8,8 +8,12 @@
 </head>
 <body>
   <div id="game-container">
-    <!-- 背景 -->
-    <img id="background" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=" alt="背景画像" />
+
+    <!-- 背景画像 -->
+    <img
+      id="background"
+      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
+      alt="背景画像" />
 
     <!-- キャラクター表示レイヤー -->
     <div id="char-layer">
@@ -18,17 +22,18 @@
       <div id="char-center" class="char-slot"></div>
     </div>
 
-    <!-- セリフボックス -->
+    <!-- セリフ・名前 -->
     <div id="dialogue-box">
       <div id="name" class="name-area"></div>
       <div id="text" class="text-area"></div>
     </div>
 
-    <!-- 選択肢 -->
+    <!-- 選択肢表示 -->
     <div id="choices" class="choices-area"></div>
 
-    <!-- メニューパネル -->
+    <!-- メニューパネル（5段） -->
     <div id="menu-panel" class="menu-panel hidden"></div>
+
   </div>
 
   <!-- スクリプト群 -->
