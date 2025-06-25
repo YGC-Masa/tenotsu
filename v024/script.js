@@ -1,10 +1,12 @@
-// script.js - v023 メニュー機能搭載版（mute 対応）
+// script.js - v023 メニュー対応版（audioMuted 全種適用）
+
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
 let autoWait = 2000;
 let bgm = null;
 let lastActiveSide = null;
+let audioMuted = true; // 初期状態で全オーディオをミュート
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -18,7 +20,7 @@ const charSlots = {
 };
 
 const menuContainer = document.createElement("div");
-menuContainer.className = "menu-panel hidden";
+menuContainer.className = "menu-panel";
 document.body.appendChild(menuContainer);
 
 let defaultFontSize = "1em";
@@ -54,7 +56,7 @@ function isMobilePortrait() {
 async function applyEffect(el, effectName) {
   if (window.effects && effectName && window.effects[effectName]) {
     return await window.effects[effectName](el);
-  } else if (window.effects?.fadein) {
+  } else {
     return await window.effects.fadein(el);
   }
 }
@@ -70,15 +72,17 @@ function clearCharacters() {
 async function showScene(scene) {
   if (!scene) return;
 
+  // 背景
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
-    await new Promise((resolve) => {
+    await new Promise(resolve => {
       bgEl.onload = resolve;
       bgEl.src = config.bgPath + scene.bg;
     });
     await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
+  // BGM
   if (scene.bgm !== undefined) {
     if (bgm) {
       bgm.pause();
@@ -87,15 +91,17 @@ async function showScene(scene) {
     if (scene.bgm) {
       bgm = new Audio(config.bgmPath + scene.bgm);
       bgm.loop = true;
+      bgm.muted = audioMuted;
       bgm.play();
     }
   }
 
+  // キャラ表示
   if (scene.characters) {
     lastActiveSide = scene.characters[scene.characters.length - 1]?.side || null;
-    ["left", "center", "right"].forEach(async (pos) => {
+    for (const pos of ["left", "center", "right"]) {
       const slot = charSlots[pos];
-      const charData = scene.characters.find((c) => c.side === pos);
+      const charData = scene.characters.find(c => c.side === pos);
       if (charData && charData.src && charData.src !== "NULL") {
         const img = document.createElement("img");
         img.src = config.charPath + charData.src;
@@ -108,13 +114,14 @@ async function showScene(scene) {
         } else {
           slot.classList.add("active");
         }
-      } else if (charData && charData.src === "NULL") {
+      } else {
         slot.innerHTML = "";
         slot.classList.remove("active");
       }
-    });
+    }
   }
 
+  // 名前とテキスト
   if (scene.name !== undefined && scene.text !== undefined) {
     const color = characterColors[scene.name] || characterColors[""] || "#C0C0C0";
     nameEl.textContent = scene.name;
@@ -129,38 +136,40 @@ async function showScene(scene) {
     });
   }
 
+  // Voice
   if (scene.voice) {
     try {
       const voice = new Audio(config.voicePath + scene.voice);
+      voice.muted = audioMuted;
       voice.play();
     } catch (e) {
       console.warn("ボイス再生エラー:", scene.voice);
     }
   }
 
+  // SE
   if (scene.se) {
     try {
       const se = new Audio(config.sePath + scene.se);
+      se.muted = audioMuted;
       se.play();
     } catch (e) {
       console.warn("SE再生エラー:", scene.se);
     }
   }
 
+  // 選択肢
   if (scene.choices) {
     choicesEl.innerHTML = "";
-    scene.choices.forEach((choice) => {
+    scene.choices.forEach(choice => {
       const btn = document.createElement("button");
       btn.textContent = choice.text;
       btn.onclick = () => {
         textEl.innerHTML = "";
         nameEl.textContent = "";
         clearCharacters();
-        if (choice.jump) {
-          loadScenario(choice.jump);
-        } else if (choice.url) {
-          location.href = choice.url;
-        }
+        if (choice.jump) loadScenario(choice.jump);
+        else if (choice.url) location.href = choice.url;
       };
       choicesEl.appendChild(btn);
     });
@@ -171,8 +180,8 @@ async function showScene(scene) {
 
 function next() {
   fetch(config.scenarioPath + currentScenario)
-    .then((res) => res.json())
-    .then((data) => {
+    .then(res => res.json())
+    .then(data => {
       currentIndex++;
       if (currentIndex < data.scenes.length) {
         showScene(data.scenes[currentIndex]);
@@ -185,19 +194,19 @@ function loadScenario(filename) {
   currentIndex = 0;
   clearCharacters();
   fetch(config.scenarioPath + filename)
-    .then((res) => res.json())
-    .then((data) => {
-      showScene(data.scenes[0]);
-    });
+    .then(res => res.json())
+    .then(data => showScene(data.scenes[0]));
 }
 
-bgEl.addEventListener("dblclick", () => {
-  loadMenu("menu01.json");
-});
+// ダブルクリックでメニュー
+bgEl.addEventListener("dblclick", () => loadMenu("menu01.json"));
 
+// シングルクリックで進行/オートOFF
 document.addEventListener("click", () => {
   if (!isAuto && choicesEl.children.length === 0 && !isPlaying) {
     next();
+  } else if (isAuto && choicesEl.children.length === 0 && !isPlaying) {
+    isAuto = false;
   }
 });
 
@@ -212,7 +221,7 @@ function setVhVariable() {
 }
 window.addEventListener("resize", setVhVariable);
 
-// ▼▼▼ メニュー読み込み＆表示処理 ▼▼▼
+// メニュー読み込み＆表示
 async function loadMenu(filename = "menu01.json") {
   try {
     const res = await fetch(config.menuPath + filename);
@@ -225,38 +234,30 @@ async function loadMenu(filename = "menu01.json") {
 
 function showMenu(menuData) {
   menuContainer.innerHTML = "";
-  menuContainer.classList.remove("hidden");
-  menuData.items.forEach((item) => {
+  menuData.items.forEach(item => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
     btn.onclick = () => {
-      menuContainer.classList.add("hidden");
       handleMenuAction(item);
+      // メニューは常時表示中
     };
     menuContainer.appendChild(btn);
   });
-  setTimeout(() => menuContainer.classList.add("hidden"), 5000);
 }
 
 function handleMenuAction(item) {
   if (item.action === "auto") {
-    setTimeout(() => { isAuto = true; }, 1750);
-
+    isAuto = true;
   } else if (item.action === "mute") {
-    // BGMをミュート
+    audioMuted = true;
     if (bgm) bgm.muted = true;
-
-    // ページ内で再生されたすべてのAudioタグを対象にミュート（SE, Voice 含む）
-    document.querySelectorAll("audio").forEach(audio => {
-      audio.muted = true;
-    });
-
+  } else if (item.action === "unmute") {
+    audioMuted = false;
+    if (bgm) bgm.muted = false;
   } else if (item.action === "jump" && item.jump) {
     loadScenario(item.jump);
-
   } else if (item.action === "menu" && item.menu) {
     loadMenu(item.menu);
-
   } else if (item.action === "url" && item.url) {
     location.href = item.url;
   }
