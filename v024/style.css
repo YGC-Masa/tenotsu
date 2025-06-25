@@ -1,3 +1,5 @@
+/* style.css – V023 メニュー対応版 + モバイル縦最適化 */
+
 :root {
   --fontSize: 1em;
   --vh: 1vh;
@@ -156,7 +158,7 @@ body {
 }
 /* ▲▲▲ メニュー表示パネル ▲▲▲ */
 
-/* モバイル縦表示（重なり優先・最後のキャラのみ表示・幅94%） */
+/* モバイル縦表示（画面幅94％・左右3％余白・最後のキャラのみ表示） */
 @media screen and (max-width: 768px) and (orientation: portrait) {
   :root {
     --fontSize: 1.2em;
@@ -164,6 +166,7 @@ body {
 
   .char-slot {
     display: none;
+    /* 幅と余白は .active のみ適用 */
   }
 
   .char-slot.active {
@@ -187,13 +190,11 @@ body {
     left: 0%;
     width: 33.33%;
   }
-
   #char-center {
     left: 33.33%;
     width: 33.33%;
     z-index: 2;
   }
-
   #char-right {
     left: 66.66%;
     width: 33.33%;
@@ -206,13 +207,11 @@ body {
     left: 5%;
     width: 30%;
   }
-
   #char-center {
     left: 35%;
     width: 30%;
     z-index: 2;
   }
-
   #char-right {
     left: 65%;
     width: 30%;
