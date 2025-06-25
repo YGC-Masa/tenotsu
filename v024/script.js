@@ -1,26 +1,23 @@
-// script.js - v023 修正版（モバイル縦キャラ表示調整 & メニュー機能/mute対応）
+// script.js - v024 フル機能対応＋モバイル縦最適化
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
 let autoWait = 2000;
 let bgm = null;
-let lastActiveSide = null;
+let lastCharSlot = null;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
 const textEl = document.getElementById("text");
 const choicesEl = document.getElementById("choices");
+const menuPanel = document.getElementById("menu-panel");
 
 const charSlots = {
   left: document.getElementById("char-left"),
   center: document.getElementById("char-center"),
   right: document.getElementById("char-right"),
 };
-
-const menuContainer = document.createElement("div");
-menuContainer.className = "menu-panel hidden";
-document.body.appendChild(menuContainer);
 
 let defaultFontSize = "1em";
 let defaultSpeed = 40;
@@ -41,15 +38,10 @@ function setTextWithSpeed(text, speed, callback) {
   }, speed);
 }
 
-function setCharacterStyle(name, scene = {}) {
+function setCharacterStyle(name) {
   const style = characterStyles[name] || characterStyles[""];
-  const fontSize = scene.fontSize || style.fontSize || defaultFontSize;
-  currentSpeed = scene.speed || style.speed || defaultSpeed;
-  document.documentElement.style.setProperty("--fontSize", fontSize);
-}
-
-function isMobilePortrait() {
-  return window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
+  document.documentElement.style.setProperty("--fontSize", style.fontSize || defaultFontSize);
+  currentSpeed = style.speed || defaultSpeed;
 }
 
 async function applyEffect(el, effectName) {
@@ -65,12 +57,33 @@ function clearCharacters() {
     charSlots[pos].innerHTML = "";
     charSlots[pos].classList.remove("active");
   }
-  lastActiveSide = null;
+  lastCharSlot = null;
+}
+
+function setActiveCharacterSlot(slotKey) {
+  for (const key in charSlots) {
+    charSlots[key].classList.remove("active");
+  }
+  if (charSlots[slotKey]) {
+    charSlots[slotKey].classList.add("active");
+    lastCharSlot = slotKey;
+  }
+}
+
+function updateActiveSlotResponsive() {
+  if (window.innerWidth <= 768 && window.innerHeight > window.innerWidth) {
+    setActiveCharacterSlot(lastCharSlot);
+  } else {
+    for (const key in charSlots) {
+      charSlots[key].classList.add("active");
+    }
+  }
 }
 
 async function showScene(scene) {
   if (!scene) return;
 
+  // 背景
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
     await new Promise((resolve) => {
@@ -80,6 +93,7 @@ async function showScene(scene) {
     await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
+  // BGM
   if (scene.bgm !== undefined) {
     if (bgm) {
       bgm.pause();
@@ -92,8 +106,8 @@ async function showScene(scene) {
     }
   }
 
+  // キャラ表示
   if (scene.characters) {
-    lastActiveSide = scene.characters[scene.characters.length - 1]?.side || null;
     for (const pos of ["left", "center", "right"]) {
       const slot = charSlots[pos];
       const charData = scene.characters.find((c) => c.side === pos);
@@ -104,32 +118,20 @@ async function showScene(scene) {
         slot.innerHTML = "";
         slot.appendChild(img);
         await applyEffect(img, charData.effect || "fadein");
-
-        if (isMobilePortrait()) {
-          // モバイル縦表示時は全slotのactiveを一度消し、最後のキャラのみactive
-          slot.classList.remove("active");
-          if (pos === lastActiveSide) {
-            slot.classList.add("active");
-          }
-        } else {
-          slot.classList.add("active");
-        }
-
+        lastCharSlot = pos;
       } else if (charData && charData.src === "NULL") {
         slot.innerHTML = "";
-        slot.classList.remove("active");
-      } else {
-        // 表示対象でないときも非表示に
-        slot.classList.remove("active");
       }
     }
+    updateActiveSlotResponsive();
   }
 
+  // 名前とセリフ
   if (scene.name !== undefined && scene.text !== undefined) {
     const color = characterColors[scene.name] || characterColors[""] || "#C0C0C0";
     nameEl.textContent = scene.name;
     nameEl.style.color = color;
-    setCharacterStyle(scene.name, scene);
+    setCharacterStyle(scene.name);
     setTextWithSpeed(scene.text, currentSpeed, () => {
       if (isAuto) {
         setTimeout(() => {
@@ -139,6 +141,7 @@ async function showScene(scene) {
     });
   }
 
+  // Voice
   if (scene.voice) {
     try {
       const voice = new Audio(config.voicePath + scene.voice);
@@ -148,6 +151,7 @@ async function showScene(scene) {
     }
   }
 
+  // SE
   if (scene.se) {
     try {
       const se = new Audio(config.sePath + scene.se);
@@ -157,6 +161,7 @@ async function showScene(scene) {
     }
   }
 
+  // 選択肢
   if (scene.choices) {
     choicesEl.innerHTML = "";
     scene.choices.forEach((choice) => {
@@ -201,16 +206,11 @@ function loadScenario(filename) {
     });
 }
 
-bgEl.addEventListener("dblclick", () => {
-  loadMenu("menu01.json");
-});
-
+// オートモード切替（クリック）
 document.addEventListener("click", () => {
-  if (isAuto) {
+  if (isAuto && choicesEl.children.length === 0 && !isPlaying) {
     isAuto = false;
-    return;
-  }
-  if (choicesEl.children.length === 0 && !isPlaying) {
+  } else if (!isAuto && choicesEl.children.length === 0 && !isPlaying) {
     next();
   }
 });
@@ -224,47 +224,7 @@ function setVhVariable() {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
-window.addEventListener("resize", setVhVariable);
-
-// ▼▼▼ メニュー読み込み＆表示処理 ▼▼▼
-async function loadMenu(filename = "menu01.json") {
-  try {
-    const res = await fetch(config.menuPath + filename);
-    const data = await res.json();
-    showMenu(data);
-  } catch (e) {
-    console.error("メニュー読み込みエラー:", e);
-  }
-}
-
-function showMenu(menuData) {
-  menuContainer.innerHTML = "";
-  menuContainer.classList.remove("hidden");
-  menuData.items.forEach((item) => {
-    const btn = document.createElement("button");
-    btn.textContent = item.text;
-    btn.onclick = () => {
-      menuContainer.classList.add("hidden");
-      handleMenuAction(item);
-    };
-    menuContainer.appendChild(btn);
-  });
-  setTimeout(() => menuContainer.classList.add("hidden"), 5000);
-}
-
-function handleMenuAction(item) {
-  if (item.action === "auto") {
-    setTimeout(() => { isAuto = true; }, 1750);
-  } else if (item.action === "mute") {
-    if (bgm) bgm.muted = true;
-    document.querySelectorAll("audio").forEach(audio => {
-      audio.muted = true;
-    });
-  } else if (item.action === "jump" && item.jump) {
-    loadScenario(item.jump);
-  } else if (item.action === "menu" && item.menu) {
-    loadMenu(item.menu);
-  } else if (item.action === "url" && item.url) {
-    location.href = item.url;
-  }
-}
+window.addEventListener("resize", () => {
+  setVhVariable();
+  updateActiveSlotResponsive();
+});
