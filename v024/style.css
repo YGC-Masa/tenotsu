@@ -1,5 +1,3 @@
-/* style.css – V023 メニュー対応版 + モバイル縦最適化 */
-
 :root {
   --fontSize: 1em;
   --vh: 1vh;
@@ -158,7 +156,7 @@ body {
 }
 /* ▲▲▲ メニュー表示パネル ▲▲▲ */
 
-/* モバイル縦表示（画面幅94％・左右3％余白・最後のキャラのみ表示） */
+/* ▼▼▼ モバイル縦表示専用 ▼▼▼ */
 @media screen and (max-width: 768px) and (orientation: portrait) {
   :root {
     --fontSize: 1.2em;
@@ -166,54 +164,70 @@ body {
 
   .char-slot {
     display: none;
-    /* 幅と余白は .active のみ適用 */
   }
 
   .char-slot.active {
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    width: 94%;
-    left: 3%;
-    z-index: 10;
+    position: absolute;
+    width: 96%;
+    left: 2%;
+    bottom: -3%;
+    z-index: 2;
   }
 
   .char-image {
     width: 100%;
-    max-height: 88vh;
+    max-height: 92vh;
+    object-fit: contain;
+  }
+
+  #char-left,
+  #char-center,
+  #char-right {
+    left: 0;
+    width: 100%;
   }
 }
+/* ▲▲▲ モバイル縦表示専用 ▲▲▲ */
 
-/* モバイル横表示（3分割） */
+/* ▼▼▼ モバイル横表示 ▼▼▼ */
 @media screen and (max-width: 1024px) and (orientation: landscape) {
   #char-left {
     left: 0%;
     width: 33.33%;
   }
+
   #char-center {
     left: 33.33%;
     width: 33.33%;
     z-index: 2;
   }
+
   #char-right {
     left: 66.66%;
     width: 33.33%;
   }
 }
+/* ▲▲▲ モバイル横表示 ▲▲▲ */
 
-/* PC 表示 */
+/* ▼▼▼ PC 表示 ▼▼▼ */
 @media screen and (min-width: 1025px) {
   #char-left {
     left: 5%;
     width: 30%;
   }
+
   #char-center {
     left: 35%;
     width: 30%;
     z-index: 2;
   }
+
   #char-right {
     left: 65%;
     width: 30%;
   }
 }
+/* ▲▲▲ PC 表示 ▲▲▲ */
