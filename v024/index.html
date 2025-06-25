@@ -3,37 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>ノベルゲーム v024</title>
+  <title>ノベルゲーム v023</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="game-container">
+    <img id="background" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=" alt="背景画像" />
 
-    <!-- 背景画像 -->
-    <img
-      id="background"
-      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
-      alt="背景画像" />
-
-    <!-- キャラクター表示レイヤー -->
     <div id="char-layer">
       <div id="char-left" class="char-slot"></div>
       <div id="char-right" class="char-slot"></div>
       <div id="char-center" class="char-slot"></div>
     </div>
 
-    <!-- セリフ・名前 -->
     <div id="dialogue-box">
       <div id="name" class="name-area"></div>
       <div id="text" class="text-area"></div>
     </div>
 
-    <!-- 選択肢表示 -->
     <div id="choices" class="choices-area"></div>
 
-    <!-- メニューパネル（5段） -->
-    <div id="menu-panel" class="menu-panel hidden"></div>
-
+    <!-- メニュー表示パネル -->
+    <div id="menu-panel" class="menu-panel"></div>
   </div>
 
   <!-- スクリプト群 -->
