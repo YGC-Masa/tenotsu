@@ -1,4 +1,4 @@
-// script.js - v024 フル機能対応＋モバイル縦最適化
+// script.js - v024 フル機能対応＋モバイル縦最適化＋初期ミュート対応
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
@@ -6,6 +6,7 @@ let isAuto = false;
 let autoWait = 2000;
 let bgm = null;
 let lastCharSlot = null;
+let audioMuted = true; // 初期状態でミュートON
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -102,6 +103,7 @@ async function showScene(scene) {
     if (scene.bgm) {
       bgm = new Audio(config.bgmPath + scene.bgm);
       bgm.loop = true;
+      bgm.muted = audioMuted;
       bgm.play();
     }
   }
@@ -145,6 +147,7 @@ async function showScene(scene) {
   if (scene.voice) {
     try {
       const voice = new Audio(config.voicePath + scene.voice);
+      voice.muted = audioMuted;
       voice.play();
     } catch (e) {
       console.warn("ボイス再生エラー:", scene.voice);
@@ -155,6 +158,7 @@ async function showScene(scene) {
   if (scene.se) {
     try {
       const se = new Audio(config.sePath + scene.se);
+      se.muted = audioMuted;
       se.play();
     } catch (e) {
       console.warn("SE再生エラー:", scene.se);
