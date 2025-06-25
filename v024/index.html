@@ -3,38 +3,39 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>ノベルゲーム v023</title>
+  <title>ノベルゲーム v024</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="game-container">
-    <!-- 背景画像 -->
-    <img id="background" src="" alt="背景" />
+    <!-- 背景 -->
+    <img id="background" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=" alt="背景画像" />
 
     <!-- キャラクター表示レイヤー -->
     <div id="char-layer">
       <div id="char-left" class="char-slot"></div>
-      <div id="char-center" class="char-slot"></div>
       <div id="char-right" class="char-slot"></div>
+      <div id="char-center" class="char-slot"></div>
     </div>
 
-    <!-- セリフ表示ボックス -->
+    <!-- セリフボックス -->
     <div id="dialogue-box">
-      <div class="name-area" id="name"></div>
-      <div class="text-area" id="text"></div>
+      <div id="name" class="name-area"></div>
+      <div id="text" class="text-area"></div>
     </div>
 
-    <!-- 選択肢エリア -->
-    <div class="choices-area" id="choices"></div>
+    <!-- 選択肢 -->
+    <div id="choices" class="choices-area"></div>
+
+    <!-- メニューパネル -->
+    <div id="menu-panel" class="menu-panel hidden"></div>
   </div>
 
-  <!-- 各種設定ファイル -->
+  <!-- スクリプト群 -->
   <script src="config.js"></script>
   <script src="characterColors.js"></script>
   <script src="characterStyles.js"></script>
   <script src="effect.js"></script>
-
-  <!-- メインスクリプト -->
   <script src="script.js"></script>
 </body>
 </html>
