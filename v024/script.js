@@ -1,18 +1,18 @@
-// script.js - v023+menu-toggle・mute・click制御・テキスト初期化対応
-
+// script.js - v023 拡張：メニュー・オート・モバイル縦対応・テキストクリック進行対応
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isAuto = false;
 let autoWait = 2000;
 let bgm = null;
 let lastActiveSide = null;
-let menuHideTimeout = null;
+let isPlaying = false;
+let textInterval = null;
+let autoTimerID = null;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
 const textEl = document.getElementById("text");
 const choicesEl = document.getElementById("choices");
-const menuContainer = document.getElementById("menu-panel");
 
 const charSlots = {
   left: document.getElementById("char-left"),
@@ -20,19 +20,22 @@ const charSlots = {
   right: document.getElementById("char-right"),
 };
 
+const menuContainer = document.getElementById("menu-panel");
+
 let defaultFontSize = "1em";
 let defaultSpeed = 40;
 let currentSpeed = defaultSpeed;
-let isPlaying = false;
 
 function setTextWithSpeed(text, speed, callback) {
   isPlaying = true;
   textEl.innerHTML = "";
+  textEl.dataset.fullText = text;
   let i = 0;
-  const interval = setInterval(() => {
+  clearInterval(textInterval);
+  textInterval = setInterval(() => {
     textEl.innerHTML += text[i++];
     if (i >= text.length) {
-      clearInterval(interval);
+      clearInterval(textInterval);
       isPlaying = false;
       if (callback) callback();
     }
@@ -68,6 +71,11 @@ function clearCharacters() {
 
 async function showScene(scene) {
   if (!scene) return;
+
+  clearInterval(textInterval);
+  isPlaying = false;
+  nameEl.textContent = "";
+  textEl.innerHTML = "";
 
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
@@ -122,7 +130,7 @@ async function showScene(scene) {
     setCharacterStyle(scene.name, scene);
     setTextWithSpeed(scene.text, currentSpeed, () => {
       if (isAuto) {
-        setTimeout(() => {
+        autoTimerID = setTimeout(() => {
           if (!isPlaying) next();
         }, autoWait);
       }
@@ -132,7 +140,7 @@ async function showScene(scene) {
   if (scene.voice) {
     try {
       const voice = new Audio(config.voicePath + scene.voice);
-      voice.muted = true;
+      voice.muted = true; // 初期はミュート
       voice.play();
     } catch (e) {
       console.warn("ボイス再生エラー:", scene.voice);
@@ -142,7 +150,7 @@ async function showScene(scene) {
   if (scene.se) {
     try {
       const se = new Audio(config.sePath + scene.se);
-      se.muted = true;
+      se.muted = true; // 初期はミュート
       se.play();
     } catch (e) {
       console.warn("SE再生エラー:", scene.se);
@@ -186,9 +194,6 @@ function loadScenario(filename) {
   currentScenario = filename;
   currentIndex = 0;
   clearCharacters();
-  textEl.innerHTML = "";
-  nameEl.textContent = "";
-  choicesEl.innerHTML = "";
   fetch(config.scenarioPath + filename)
     .then((res) => res.json())
     .then((data) => {
@@ -196,21 +201,26 @@ function loadScenario(filename) {
     });
 }
 
+// ダブルクリックでメニューON/OFFトグル
 bgEl.addEventListener("dblclick", () => {
-  if (!menuContainer.classList.contains("hidden")) {
-    menuContainer.classList.add("hidden");
-    if (menuHideTimeout) clearTimeout(menuHideTimeout);
-  } else {
+  if (menuContainer.classList.contains("hidden")) {
     loadMenu("menu01.json");
+  } else {
+    menuContainer.classList.add("hidden");
   }
 });
 
-document.addEventListener("click", () => {
+document.getElementById("dialogue-box").addEventListener("click", () => {
   if (!menuContainer.classList.contains("hidden")) return;
 
-  if (isAuto) {
-    isAuto = false;
-  } else if (choicesEl.children.length === 0 && !isPlaying) {
+  if (isPlaying) {
+    clearInterval(textInterval);
+    const fullText = textEl.dataset.fullText || "";
+    textEl.innerHTML = fullText;
+    isPlaying = false;
+  } else if (choicesEl.children.length === 0) {
+    nameEl.textContent = "";
+    textEl.innerHTML = "";
     next();
   }
 });
@@ -238,26 +248,19 @@ async function loadMenu(filename = "menu01.json") {
 }
 
 function showMenu(menuData) {
+  clearTimeout(autoTimerID);
   menuContainer.innerHTML = "";
   menuContainer.classList.remove("hidden");
-
-  if (menuHideTimeout) clearTimeout(menuHideTimeout);
-
   menuData.items.forEach((item) => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
     btn.onclick = () => {
       menuContainer.classList.add("hidden");
-      if (menuHideTimeout) clearTimeout(menuHideTimeout);
       handleMenuAction(item);
     };
     menuContainer.appendChild(btn);
   });
-
-  menuHideTimeout = setTimeout(() => {
-    menuContainer.classList.add("hidden");
-    menuHideTimeout = null;
-  }, 5000);
+  setTimeout(() => menuContainer.classList.add("hidden"), 5000);
 }
 
 function handleMenuAction(item) {
