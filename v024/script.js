@@ -1,4 +1,4 @@
-// script.js - v023 メニュー対応版（audioMuted 全種適用）
+// script.js - v023 ダブルクリックメニューON/OFF・mute対応・モバイル縦/横表示対応
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
@@ -6,22 +6,19 @@ let isAuto = false;
 let autoWait = 2000;
 let bgm = null;
 let lastActiveSide = null;
-let audioMuted = true; // 初期状態で全オーディオをミュート
+let menuHideTimeout = null;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
 const textEl = document.getElementById("text");
 const choicesEl = document.getElementById("choices");
+const menuContainer = document.getElementById("menu-panel");
 
 const charSlots = {
   left: document.getElementById("char-left"),
   center: document.getElementById("char-center"),
   right: document.getElementById("char-right"),
 };
-
-const menuContainer = document.createElement("div");
-menuContainer.className = "menu-panel";
-document.body.appendChild(menuContainer);
 
 let defaultFontSize = "1em";
 let defaultSpeed = 40;
@@ -56,7 +53,7 @@ function isMobilePortrait() {
 async function applyEffect(el, effectName) {
   if (window.effects && effectName && window.effects[effectName]) {
     return await window.effects[effectName](el);
-  } else {
+  } else if (window.effects?.fadein) {
     return await window.effects.fadein(el);
   }
 }
@@ -72,17 +69,15 @@ function clearCharacters() {
 async function showScene(scene) {
   if (!scene) return;
 
-  // 背景
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       bgEl.onload = resolve;
       bgEl.src = config.bgPath + scene.bg;
     });
     await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
-  // BGM
   if (scene.bgm !== undefined) {
     if (bgm) {
       bgm.pause();
@@ -91,17 +86,16 @@ async function showScene(scene) {
     if (scene.bgm) {
       bgm = new Audio(config.bgmPath + scene.bgm);
       bgm.loop = true;
-      bgm.muted = audioMuted;
+      bgm.muted = true; // 初期はミュート
       bgm.play();
     }
   }
 
-  // キャラ表示
   if (scene.characters) {
     lastActiveSide = scene.characters[scene.characters.length - 1]?.side || null;
-    for (const pos of ["left", "center", "right"]) {
+    ["left", "center", "right"].forEach(async (pos) => {
       const slot = charSlots[pos];
-      const charData = scene.characters.find(c => c.side === pos);
+      const charData = scene.characters.find((c) => c.side === pos);
       if (charData && charData.src && charData.src !== "NULL") {
         const img = document.createElement("img");
         img.src = config.charPath + charData.src;
@@ -114,14 +108,13 @@ async function showScene(scene) {
         } else {
           slot.classList.add("active");
         }
-      } else {
+      } else if (charData && charData.src === "NULL") {
         slot.innerHTML = "";
         slot.classList.remove("active");
       }
-    }
+    });
   }
 
-  // 名前とテキスト
   if (scene.name !== undefined && scene.text !== undefined) {
     const color = characterColors[scene.name] || characterColors[""] || "#C0C0C0";
     nameEl.textContent = scene.name;
@@ -136,40 +129,40 @@ async function showScene(scene) {
     });
   }
 
-  // Voice
   if (scene.voice) {
     try {
       const voice = new Audio(config.voicePath + scene.voice);
-      voice.muted = audioMuted;
+      voice.muted = true; // 初期ミュート
       voice.play();
     } catch (e) {
       console.warn("ボイス再生エラー:", scene.voice);
     }
   }
 
-  // SE
   if (scene.se) {
     try {
       const se = new Audio(config.sePath + scene.se);
-      se.muted = audioMuted;
+      se.muted = true; // 初期ミュート
       se.play();
     } catch (e) {
       console.warn("SE再生エラー:", scene.se);
     }
   }
 
-  // 選択肢
   if (scene.choices) {
     choicesEl.innerHTML = "";
-    scene.choices.forEach(choice => {
+    scene.choices.forEach((choice) => {
       const btn = document.createElement("button");
       btn.textContent = choice.text;
       btn.onclick = () => {
         textEl.innerHTML = "";
         nameEl.textContent = "";
         clearCharacters();
-        if (choice.jump) loadScenario(choice.jump);
-        else if (choice.url) location.href = choice.url;
+        if (choice.jump) {
+          loadScenario(choice.jump);
+        } else if (choice.url) {
+          location.href = choice.url;
+        }
       };
       choicesEl.appendChild(btn);
     });
@@ -180,8 +173,8 @@ async function showScene(scene) {
 
 function next() {
   fetch(config.scenarioPath + currentScenario)
-    .then(res => res.json())
-    .then(data => {
+    .then((res) => res.json())
+    .then((data) => {
       currentIndex++;
       if (currentIndex < data.scenes.length) {
         showScene(data.scenes[currentIndex]);
@@ -194,19 +187,29 @@ function loadScenario(filename) {
   currentIndex = 0;
   clearCharacters();
   fetch(config.scenarioPath + filename)
-    .then(res => res.json())
-    .then(data => showScene(data.scenes[0]));
+    .then((res) => res.json())
+    .then((data) => {
+      showScene(data.scenes[0]);
+    });
 }
 
-// ダブルクリックでメニュー
-bgEl.addEventListener("dblclick", () => loadMenu("menu01.json"));
+bgEl.addEventListener("dblclick", () => {
+  if (!menuContainer.classList.contains("hidden")) {
+    menuContainer.classList.add("hidden");
+    if (menuHideTimeout) {
+      clearTimeout(menuHideTimeout);
+      menuHideTimeout = null;
+    }
+  } else {
+    loadMenu("menu01.json");
+  }
+});
 
-// シングルクリックで進行/オートOFF
 document.addEventListener("click", () => {
-  if (!isAuto && choicesEl.children.length === 0 && !isPlaying) {
+  if (isAuto) {
+    isAuto = false; // オートモードをクリックで解除
+  } else if (choicesEl.children.length === 0 && !isPlaying) {
     next();
-  } else if (isAuto && choicesEl.children.length === 0 && !isPlaying) {
-    isAuto = false;
   }
 });
 
@@ -221,7 +224,7 @@ function setVhVariable() {
 }
 window.addEventListener("resize", setVhVariable);
 
-// メニュー読み込み＆表示
+// ▼▼▼ メニュー読み込み＆表示処理 ▼▼▼
 async function loadMenu(filename = "menu01.json") {
   try {
     const res = await fetch(config.menuPath + filename);
@@ -234,26 +237,38 @@ async function loadMenu(filename = "menu01.json") {
 
 function showMenu(menuData) {
   menuContainer.innerHTML = "";
-  menuData.items.forEach(item => {
+  menuContainer.classList.remove("hidden");
+
+  if (menuHideTimeout) {
+    clearTimeout(menuHideTimeout);
+    menuHideTimeout = null;
+  }
+
+  menuData.items.forEach((item) => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
     btn.onclick = () => {
+      menuContainer.classList.add("hidden");
+      if (menuHideTimeout) clearTimeout(menuHideTimeout);
       handleMenuAction(item);
-      // メニューは常時表示中
     };
     menuContainer.appendChild(btn);
   });
+
+  menuHideTimeout = setTimeout(() => {
+    menuContainer.classList.add("hidden");
+    menuHideTimeout = null;
+  }, 5000);
 }
 
 function handleMenuAction(item) {
   if (item.action === "auto") {
-    isAuto = true;
+    setTimeout(() => { isAuto = true; }, 1750);
   } else if (item.action === "mute") {
-    audioMuted = true;
     if (bgm) bgm.muted = true;
-  } else if (item.action === "unmute") {
-    audioMuted = false;
-    if (bgm) bgm.muted = false;
+    document.querySelectorAll("audio").forEach(audio => {
+      audio.muted = true;
+    });
   } else if (item.action === "jump" && item.jump) {
     loadScenario(item.jump);
   } else if (item.action === "menu" && item.menu) {
