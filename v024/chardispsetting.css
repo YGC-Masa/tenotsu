@@ -1,4 +1,4 @@
-/* モバイル縦表示専用キャラ表示設定 */
+/* ▼▼▼ モバイル縦表示専用 ▼▼▼ */
 @media screen and (max-width: 768px) and (orientation: portrait) {
   :root {
     --fontSize: 1.2em;
@@ -32,3 +32,44 @@
     width: 100%;
   }
 }
+/* ▲▲▲ モバイル縦表示専用 ▲▲▲ */
+
+/* ▼▼▼ モバイル横表示 ▼▼▼ */
+@media screen and (max-width: 1024px) and (orientation: landscape) {
+  #char-left {
+    left: 0%;
+    width: 33.33%;
+  }
+
+  #char-center {
+    left: 33.33%;
+    width: 33.33%;
+    z-index: 2;
+  }
+
+  #char-right {
+    left: 66.66%;
+    width: 33.33%;
+  }
+}
+/* ▲▲▲ モバイル横表示 ▲▲▲ */
+
+/* ▼▼▼ PC 表示 ▼▼▼ */
+@media screen and (min-width: 1025px) {
+  #char-left {
+    left: 5%;
+    width: 30%;
+  }
+
+  #char-center {
+    left: 35%;
+    width: 30%;
+    z-index: 2;
+  }
+
+  #char-right {
+    left: 65%;
+    width: 30%;
+  }
+}
+/* ▲▲▲ PC 表示 ▲▲▲ */
