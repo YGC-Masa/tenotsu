@@ -53,25 +53,6 @@ body {
   align-items: flex-end;
 }
 
-#char-left,
-#char-center,
-#char-right {
-  width: 30%;
-}
-
-#char-left {
-  left: 5%;
-}
-
-#char-center {
-  left: 35%;
-  z-index: 2;
-}
-
-#char-right {
-  left: 65%;
-}
-
 .char-image {
   width: 100%;
   height: auto;
@@ -88,6 +69,7 @@ body {
   padding: 1em;
   z-index: 3;
   box-sizing: border-box;
+  cursor: pointer;
 }
 
 .name-area {
@@ -154,5 +136,3 @@ body {
 .hidden {
   display: none !important;
 }
-/* ▲▲▲ メニュー表示パネル ▲▲▲ */
-
