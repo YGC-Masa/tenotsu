@@ -5,11 +5,11 @@
   }
 
   .char-slot {
-    display: none;
+    display: none !important;
   }
 
   .char-slot.active {
-    display: flex;
+    display: flex !important;
     justify-content: center;
     align-items: flex-end;
     position: absolute;
@@ -25,9 +25,7 @@
     object-fit: contain;
   }
 
-  #char-left,
-  #char-center,
-  #char-right {
+  #char-left, #char-center, #char-right {
     left: 0;
     width: 100%;
   }
