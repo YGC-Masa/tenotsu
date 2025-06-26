@@ -1,4 +1,4 @@
-// script.js - v023 ダブルクリックメニューON/OFF・mute対応・モバイル縦/横表示対応
+// script.js - v023+menu-toggle・mute・click制御・テキスト初期化対応
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
@@ -132,7 +132,7 @@ async function showScene(scene) {
   if (scene.voice) {
     try {
       const voice = new Audio(config.voicePath + scene.voice);
-      voice.muted = true; // 初期ミュート
+      voice.muted = true;
       voice.play();
     } catch (e) {
       console.warn("ボイス再生エラー:", scene.voice);
@@ -142,7 +142,7 @@ async function showScene(scene) {
   if (scene.se) {
     try {
       const se = new Audio(config.sePath + scene.se);
-      se.muted = true; // 初期ミュート
+      se.muted = true;
       se.play();
     } catch (e) {
       console.warn("SE再生エラー:", scene.se);
@@ -186,6 +186,9 @@ function loadScenario(filename) {
   currentScenario = filename;
   currentIndex = 0;
   clearCharacters();
+  textEl.innerHTML = "";
+  nameEl.textContent = "";
+  choicesEl.innerHTML = "";
   fetch(config.scenarioPath + filename)
     .then((res) => res.json())
     .then((data) => {
@@ -196,18 +199,17 @@ function loadScenario(filename) {
 bgEl.addEventListener("dblclick", () => {
   if (!menuContainer.classList.contains("hidden")) {
     menuContainer.classList.add("hidden");
-    if (menuHideTimeout) {
-      clearTimeout(menuHideTimeout);
-      menuHideTimeout = null;
-    }
+    if (menuHideTimeout) clearTimeout(menuHideTimeout);
   } else {
     loadMenu("menu01.json");
   }
 });
 
 document.addEventListener("click", () => {
+  if (!menuContainer.classList.contains("hidden")) return;
+
   if (isAuto) {
-    isAuto = false; // オートモードをクリックで解除
+    isAuto = false;
   } else if (choicesEl.children.length === 0 && !isPlaying) {
     next();
   }
@@ -239,10 +241,7 @@ function showMenu(menuData) {
   menuContainer.innerHTML = "";
   menuContainer.classList.remove("hidden");
 
-  if (menuHideTimeout) {
-    clearTimeout(menuHideTimeout);
-    menuHideTimeout = null;
-  }
+  if (menuHideTimeout) clearTimeout(menuHideTimeout);
 
   menuData.items.forEach((item) => {
     const btn = document.createElement("button");
