@@ -39,7 +39,6 @@ body {
   pointer-events: none;
 }
 
-/* ▼ char-slot 表示制御は chardispsetting.css に移行済み ▼ */
 .char-slot {
   position: absolute;
   bottom: 0;
@@ -48,8 +47,11 @@ body {
   display: none;
 }
 
-/* 削除： .char-slot.active の display 制御（移行済） */
-/* 削除： #char-left / center / right の幅・位置制御（移行済） */
+.char-slot.active {
+  display: flex !important;
+  justify-content: center;
+  align-items: flex-end;
+}
 
 .char-image {
   width: 100%;
