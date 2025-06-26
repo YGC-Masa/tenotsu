@@ -13,24 +13,23 @@
     justify-content: center;
     align-items: flex-end;
     position: absolute;
-    width: 94%;
-    left: 3%;
+    width: 96%;
+    left: 2%;
     bottom: -3%;
     z-index: 2;
   }
 
   .char-image {
     width: 100%;
-    max-height: 90vh;
+    max-height: 92vh;
     object-fit: contain;
   }
 
-  /* 全スロットの幅は 100% 扱い、left は script 側で制御不要 */
   #char-left,
   #char-center,
   #char-right {
-    left: 0 !important;
-    width: 100% !important;
+    left: 0;
+    width: 100%;
   }
 }
 /* ▲▲▲ モバイル縦表示専用 ▲▲▲ */
