@@ -9,7 +9,7 @@
   }
 
   .char-slot.active {
-    display: flex !important;
+    display: flex;
     justify-content: center;
     align-items: flex-end;
     position: absolute;
