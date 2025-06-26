@@ -5,7 +5,7 @@
   }
 
   .char-slot {
-    display: none !important;
+    display: none;
   }
 
   .char-slot.active {
