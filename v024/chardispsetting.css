@@ -1,7 +1,7 @@
 /* ▼▼▼ モバイル縦表示 ▼▼▼ */
 @media screen and (max-width: 768px) and (orientation: portrait) {
   .char-slot {
-    display: none;
+    display: none !important;
   }
 
   .char-slot.active {
@@ -46,9 +46,13 @@
     left: 66.66%;
     width: 33.33%;
   }
+
+  .char-slot {
+    display: flex !important;
+  }
 }
 
-/* ▼▼▼ PC 表示 ▼▼▼ */
+/* ▼▼▼ PC表示 ▼▼▼ */
 @media screen and (min-width: 1025px) {
   #char-left {
     left: 5%;
@@ -64,5 +68,9 @@
   #char-right {
     left: 65%;
     width: 30%;
+  }
+
+  .char-slot {
+    display: flex !important;
   }
 }
