@@ -45,20 +45,21 @@
   }
 
   #char-left {
-    left: 0%;
-    width: 33.33%;
+    left: 5%;
+    width: 30%;
   }
 
   #char-center {
-    left: 33.33%;
-    width: 33.33%;
+    left: 35%;
+    width: 30%;
     z-index: 2;
   }
 
   #char-right {
-    left: 66.66%;
-    width: 33.33%;
+    left: 65%;
+    width: 30%;
   }
+
 
   .char-image {
     width: 100%;
