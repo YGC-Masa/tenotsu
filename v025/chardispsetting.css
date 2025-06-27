@@ -40,8 +40,8 @@
     display: flex !important;
     justify-content: center;
     align-items: flex-end;
-    position: absolute;
     bottom: 0;
+    position: absolute;
   }
 
   #char-left {
@@ -59,13 +59,6 @@
     left: 66.66%;
     width: 33.33%;
   }
-
-
-  .char-image {
-    width: 100%;
-    max-height: 90vh;
-    object-fit: contain;
-  }
 }
 /* ▲▲▲ モバイル横表示 ▲▲▲ */
 
@@ -75,8 +68,8 @@
     display: flex !important;
     justify-content: center;
     align-items: flex-end;
-    position: absolute;
     bottom: 0;
+    position: absolute;
   }
 
   #char-left {
@@ -93,12 +86,6 @@
   #char-right {
     left: 65%;
     width: 30%;
-  }
-
-  .char-image {
-    width: 100%;
-    max-height: 90vh;
-    object-fit: contain;
   }
 }
 /* ▲▲▲ PC 表示 ▲▲▲ */
