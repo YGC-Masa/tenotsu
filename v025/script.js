@@ -243,10 +243,18 @@ function showMenu(menuData) {
   menuPanel.innerHTML = "";
   menuPanel.classList.remove("hidden");
 
-  const status = document.createElement("div");
-  status.textContent = isMuted ? "サウンドOFF" : "サウンドON";
-  status.className = "menu-status";
-  menuPanel.appendChild(status);
+  const soundBtn = document.createElement("button");
+  soundBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
+  soundBtn.className = "menu-sound-toggle";
+  soundBtn.onclick = () => {
+    isMuted = !isMuted;
+    if (bgm) bgm.muted = isMuted;
+    document.querySelectorAll("audio").forEach((audio) => {
+      audio.muted = isMuted;
+    });
+    menuPanel.classList.add("hidden");
+  };
+  menuPanel.appendChild(soundBtn);
 
   menuData.items.forEach((item) => {
     const btn = document.createElement("button");
@@ -260,13 +268,7 @@ function showMenu(menuData) {
 }
 
 function handleMenuAction(item) {
-  if (item.action === "mute") {
-    isMuted = !isMuted;
-    if (bgm) bgm.muted = isMuted;
-    document.querySelectorAll("audio").forEach((audio) => {
-      audio.muted = isMuted;
-    });
-  } else if (item.action === "jump" && item.jump) {
+  if (item.action === "jump" && item.jump) {
     loadScenario(item.jump);
   } else if (item.action === "menu" && item.menu) {
     loadMenu(item.menu);
