@@ -2,17 +2,12 @@ let currentScenario = "000start.json";
 let currentIndex = 0;
 let bgm = null;
 let lastActiveSide = null;
-let isPlaying = false;
-let currentSpeed = 40;
-let defaultFontSize = "1em";
-let defaultSpeed = 40;
-let isMuted = true; // ← 起動時はミュート
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
 const textEl = document.getElementById("text");
 const choicesEl = document.getElementById("choices");
-const dialogueBox = document.getElementById("dialogue-box");
+const menuPanel = document.getElementById("menu-panel");
 
 const charSlots = {
   left: document.getElementById("char-left"),
@@ -20,13 +15,40 @@ const charSlots = {
   right: document.getElementById("char-right"),
 };
 
-const menuContainer = document.getElementById("menu-panel");
+let currentSpeed = 40;
+let isPlaying = false;
+let timeoutID = null;
+let audioMuted = true;
 
-function setVhVariable() {
-  let vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty("--vh", `${vh}px`);
+// 📱 モバイル縦表示かどうか判定
+function isMobilePortrait() {
+  return window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
 }
-window.addEventListener("resize", setVhVariable);
+
+// キャラ表示状態を更新（縦：最後の一人／横：全員）
+function updateCharacterDisplay() {
+  const isPortrait = isMobilePortrait();
+  for (const pos in charSlots) {
+    const slot = charSlots[pos];
+    const hasImage = slot.querySelector("img") !== null;
+    if (isPortrait) {
+      slot.classList.toggle("active", hasImage && pos === lastActiveSide);
+    } else {
+      slot.classList.toggle("active", hasImage);
+    }
+  }
+}
+
+window.addEventListener("resize", updateCharacterDisplay);
+
+function clearCharacters() {
+  for (const pos in charSlots) {
+    const slot = charSlots[pos];
+    slot.innerHTML = "";
+    slot.classList.remove("active");
+  }
+  lastActiveSide = null;
+}
 
 function setTextWithSpeed(text, speed, callback) {
   isPlaying = true;
@@ -43,30 +65,18 @@ function setTextWithSpeed(text, speed, callback) {
 }
 
 function setCharacterStyle(name, scene = {}) {
-  const style = characterStyles[name] || characterStyles[""];
-  const fontSize = scene.fontSize || style.fontSize || defaultFontSize;
-  currentSpeed = scene.speed || style.speed || defaultSpeed;
+  const style = characterStyles[name] || {};
+  const fontSize = scene.fontSize || style.fontSize || "1em";
+  currentSpeed = scene.speed || style.speed || 40;
   document.documentElement.style.setProperty("--fontSize", fontSize);
 }
 
-function isMobilePortrait() {
-  return window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
-}
-
 async function applyEffect(el, effectName) {
-  if (window.effects && effectName && window.effects[effectName]) {
+  if (window.effects?.[effectName]) {
     return await window.effects[effectName](el);
   } else if (window.effects?.fadein) {
     return await window.effects.fadein(el);
   }
-}
-
-function clearCharacters() {
-  for (const pos in charSlots) {
-    charSlots[pos].innerHTML = "";
-    charSlots[pos].classList.remove("active");
-  }
-  lastActiveSide = null;
 }
 
 async function showScene(scene) {
@@ -89,14 +99,15 @@ async function showScene(scene) {
     if (scene.bgm) {
       bgm = new Audio(config.bgmPath + scene.bgm);
       bgm.loop = true;
-      bgm.muted = isMuted;
+      bgm.muted = audioMuted;
       bgm.play();
     }
   }
 
   if (scene.characters) {
     lastActiveSide = scene.characters[scene.characters.length - 1]?.side || null;
-    ["left", "center", "right"].forEach(async (pos) => {
+
+    for (const pos in charSlots) {
       const slot = charSlots[pos];
       const charData = scene.characters.find((c) => c.side === pos);
       if (charData && charData.src && charData.src !== "NULL") {
@@ -106,20 +117,16 @@ async function showScene(scene) {
         slot.innerHTML = "";
         slot.appendChild(img);
         await applyEffect(img, charData.effect || "fadein");
-        if (isMobilePortrait()) {
-          slot.classList.toggle("active", pos === lastActiveSide);
-        } else {
-          slot.classList.add("active");
-        }
-      } else if (charData && charData.src === "NULL") {
+      } else {
         slot.innerHTML = "";
-        slot.classList.remove("active");
       }
-    });
+    }
+
+    updateCharacterDisplay();
   }
 
   if (scene.name !== undefined && scene.text !== undefined) {
-    const color = characterColors[scene.name] || characterColors[""] || "#C0C0C0";
+    const color = characterColors[scene.name] || "#C0C0C0";
     nameEl.textContent = scene.name;
     nameEl.style.color = color;
     setCharacterStyle(scene.name, scene);
@@ -129,7 +136,7 @@ async function showScene(scene) {
   if (scene.voice) {
     try {
       const voice = new Audio(config.voicePath + scene.voice);
-      voice.muted = isMuted;
+      voice.muted = audioMuted;
       voice.play();
     } catch (e) {
       console.warn("ボイス再生エラー:", scene.voice);
@@ -139,7 +146,7 @@ async function showScene(scene) {
   if (scene.se) {
     try {
       const se = new Audio(config.sePath + scene.se);
-      se.muted = isMuted;
+      se.muted = audioMuted;
       se.play();
     } catch (e) {
       console.warn("SE再生エラー:", scene.se);
@@ -152,8 +159,8 @@ async function showScene(scene) {
       const btn = document.createElement("button");
       btn.textContent = choice.text;
       btn.onclick = () => {
-        textEl.innerHTML = "";
         nameEl.textContent = "";
+        textEl.innerHTML = "";
         clearCharacters();
         if (choice.jump) {
           loadScenario(choice.jump);
@@ -182,6 +189,8 @@ function next() {
 function loadScenario(filename) {
   currentScenario = filename;
   currentIndex = 0;
+  nameEl.textContent = "";
+  textEl.innerHTML = "";
   clearCharacters();
   fetch(config.scenarioPath + filename)
     .then((res) => res.json())
@@ -190,14 +199,14 @@ function loadScenario(filename) {
     });
 }
 
+// ▼▼▼ メニュー処理 ▼▼▼
 function handleMenuAction(item) {
-  menuContainer.classList.add("hidden");
-
   if (item.action === "mute") {
-    isMuted = true;
+    audioMuted = true;
     if (bgm) bgm.muted = true;
+    document.querySelectorAll("audio").forEach((a) => (a.muted = true));
   } else if (item.action === "unmute") {
-    isMuted = false;
+    audioMuted = false;
     if (bgm) bgm.muted = false;
   } else if (item.action === "jump" && item.jump) {
     loadScenario(item.jump);
@@ -219,37 +228,47 @@ async function loadMenu(filename = "menu01.json") {
 }
 
 function showMenu(menuData) {
-  menuContainer.innerHTML = "";
+  clearTimeout(timeoutID);
+  menuPanel.innerHTML = "";
+  menuPanel.classList.remove("hidden");
   menuData.items.forEach((item) => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
-    btn.onclick = () => handleMenuAction(item);
-    menuContainer.appendChild(btn);
+    btn.onclick = () => {
+      menuPanel.classList.add("hidden");
+      handleMenuAction(item);
+    };
+    menuPanel.appendChild(btn);
   });
-  menuContainer.classList.remove("hidden");
-  setTimeout(() => menuContainer.classList.add("hidden"), 5000);
+  timeoutID = setTimeout(() => menuPanel.classList.add("hidden"), 5000);
 }
 
-let lastTap = 0;
+// ▼▼▼ イベント ▼▼▼
 bgEl.addEventListener("click", () => {
-  const now = Date.now();
-  if (now - lastTap < 300) {
-    loadMenu("menu01.json");
-  }
-  lastTap = now;
+  next();
 });
 
-dialogueBox.addEventListener("click", () => {
+bgEl.addEventListener("dblclick", () => {
+  showMenuFromToggle();
+});
+
+function showMenuFromToggle() {
+  if (!menuPanel.classList.contains("hidden")) {
+    menuPanel.classList.add("hidden");
+    clearTimeout(timeoutID);
+  } else {
+    loadMenu("menu01.json");
+  }
+}
+
+document.getElementById("dialogue-box").addEventListener("click", () => {
   if (isPlaying) {
-    isPlaying = false;
-    const text = textEl.textContent;
-    setTextWithSpeed(text, 0);
-  } else if (choicesEl.children.length === 0) {
+    currentSpeed = 0;
+  } else {
     next();
   }
 });
 
 window.addEventListener("load", () => {
   loadScenario(currentScenario);
-  setVhVariable();
 });
