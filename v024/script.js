@@ -3,15 +3,13 @@ let currentIndex = 0;
 let bgm = null;
 let lastActiveSide = null;
 let isPlaying = false;
+let currentSpeed = 40;
 let defaultFontSize = "1em";
-let defaultSpeed = 40;
-let currentSpeed = defaultSpeed;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
 const textEl = document.getElementById("text");
 const choicesEl = document.getElementById("choices");
-const menuContainer = document.getElementById("menu-panel");
 
 const charSlots = {
   left: document.getElementById("char-left"),
@@ -19,34 +17,40 @@ const charSlots = {
   right: document.getElementById("char-right"),
 };
 
-function setTextWithSpeed(text, speed, callback) {
-  isPlaying = true;
-  textEl.innerHTML = "";
-  let i = 0;
-  const interval = setInterval(() => {
-    textEl.innerHTML += text[i++];
-    if (i >= text.length) {
-      clearInterval(interval);
-      isPlaying = false;
-      if (callback) callback();
-    }
-  }, speed);
+function setVhVariable() {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
+window.addEventListener("resize", () => {
+  setVhVariable();
+  updateCharacterDisplay();
+});
 
-function setCharacterStyle(name, scene = {}) {
-  const style = characterStyles[name] || characterStyles[""];
-  const fontSize = scene.fontSize || style.fontSize || defaultFontSize;
-  currentSpeed = scene.speed || style.speed || defaultSpeed;
-  document.documentElement.style.setProperty("--fontSize", fontSize);
+function updateCharacterDisplay() {
+  const isPortrait = isMobilePortrait();
+  for (const pos in charSlots) {
+    const slot = charSlots[pos];
+    if (isPortrait) {
+      slot.classList.toggle("active", pos === lastActiveSide);
+    } else {
+      if (slot.children.length > 0) {
+        slot.classList.add("active");
+      } else {
+        slot.classList.remove("active");
+      }
+    }
+  }
 }
 
 function isMobilePortrait() {
   return window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
 }
 
-async function applyEffect(el, effectName) {
-  if (window.effects?.[effectName]) return await window.effects[effectName](el);
-  if (window.effects?.fadein) return await window.effects.fadein(el);
+function setCharacterStyle(name, scene = {}) {
+  const style = characterStyles[name] || characterStyles[""];
+  const fontSize = scene.fontSize || style.fontSize || defaultFontSize;
+  currentSpeed = scene.speed || style.speed || 40;
+  document.documentElement.style.setProperty("--fontSize", fontSize);
 }
 
 function clearCharacters() {
@@ -57,9 +61,18 @@ function clearCharacters() {
   lastActiveSide = null;
 }
 
+async function applyEffect(el, effectName) {
+  if (window.effects && effectName && window.effects[effectName]) {
+    return await window.effects[effectName](el);
+  } else if (window.effects?.fadein) {
+    return await window.effects.fadein(el);
+  }
+}
+
 async function showScene(scene) {
   if (!scene) return;
 
+  // 背景
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
     await new Promise((resolve) => {
@@ -69,39 +82,44 @@ async function showScene(scene) {
     await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
+  // BGM
   if (scene.bgm !== undefined) {
-    if (bgm) bgm.pause();
-    bgm = scene.bgm ? new Audio(config.bgmPath + scene.bgm) : null;
     if (bgm) {
+      bgm.pause();
+      bgm = null;
+    }
+    if (scene.bgm) {
+      bgm = new Audio(config.bgmPath + scene.bgm);
       bgm.loop = true;
       bgm.play();
     }
   }
 
+  // キャラ表示
   if (scene.characters) {
     lastActiveSide = scene.characters[scene.characters.length - 1]?.side || null;
-    ["left", "center", "right"].forEach(async (pos) => {
+
+    for (const pos of ["left", "center", "right"]) {
       const slot = charSlots[pos];
       const charData = scene.characters.find((c) => c.side === pos);
-      if (charData?.src && charData.src !== "NULL") {
+      if (charData && charData.src && charData.src !== "NULL") {
         const img = document.createElement("img");
         img.src = config.charPath + charData.src;
-        img.classList.add("char-image");
+        img.className = "char-image";
         slot.innerHTML = "";
         slot.appendChild(img);
         await applyEffect(img, charData.effect || "fadein");
-        if (isMobilePortrait()) {
-          slot.classList.toggle("active", pos === lastActiveSide);
-        } else {
-          slot.classList.add("active");
-        }
+
+        const isPortrait = isMobilePortrait();
+        slot.classList.toggle("active", isPortrait ? pos === lastActiveSide : true);
       } else {
         slot.innerHTML = "";
         slot.classList.remove("active");
       }
-    });
+    }
   }
 
+  // セリフ
   if (scene.name !== undefined && scene.text !== undefined) {
     const color = characterColors[scene.name] || "#C0C0C0";
     nameEl.textContent = scene.name;
@@ -110,39 +128,58 @@ async function showScene(scene) {
     setTextWithSpeed(scene.text, currentSpeed);
   }
 
+  // ボイス・SE
   if (scene.voice) {
     try {
-      new Audio(config.voicePath + scene.voice).play();
+      const voice = new Audio(config.voicePath + scene.voice);
+      voice.play();
     } catch (e) {
-      console.warn("ボイス再生エラー:", scene.voice);
+      console.warn("ボイスエラー:", e);
     }
   }
-
   if (scene.se) {
     try {
-      new Audio(config.sePath + scene.se).play();
+      const se = new Audio(config.sePath + scene.se);
+      se.play();
     } catch (e) {
-      console.warn("SE再生エラー:", scene.se);
+      console.warn("SEエラー:", e);
     }
   }
 
+  // 選択肢
   if (scene.choices) {
     choicesEl.innerHTML = "";
     scene.choices.forEach((choice) => {
       const btn = document.createElement("button");
       btn.textContent = choice.text;
       btn.onclick = () => {
-        textEl.innerHTML = "";
-        nameEl.textContent = "";
         clearCharacters();
-        if (choice.jump) loadScenario(choice.jump);
-        else if (choice.url) location.href = choice.url;
+        nameEl.textContent = "";
+        textEl.textContent = "";
+        if (choice.jump) {
+          loadScenario(choice.jump);
+        } else if (choice.url) {
+          location.href = choice.url;
+        }
       };
       choicesEl.appendChild(btn);
     });
   } else {
     choicesEl.innerHTML = "";
   }
+}
+
+function setTextWithSpeed(text, speed) {
+  isPlaying = true;
+  textEl.innerHTML = "";
+  let i = 0;
+  const interval = setInterval(() => {
+    textEl.innerHTML += text[i++];
+    if (i >= text.length) {
+      clearInterval(interval);
+      isPlaying = false;
+    }
+  }, speed);
 }
 
 function next() {
@@ -167,33 +204,24 @@ function loadScenario(filename) {
     });
 }
 
-function setVhVariable() {
-  document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
-}
+document.addEventListener("click", () => {
+  if (!isPlaying && choicesEl.children.length === 0) {
+    next();
+  }
+});
+
+bgEl.addEventListener("dblclick", () => {
+  loadMenu("menu01.json");
+});
 
 window.addEventListener("load", () => {
   setVhVariable();
   loadScenario(currentScenario);
 });
 
-window.addEventListener("resize", setVhVariable);
-
-// メニュー表示切替
-bgEl.addEventListener("dblclick", () => {
-  if (menuContainer.classList.contains("hidden")) {
-    loadMenu("menu01.json");
-  } else {
-    menuContainer.classList.add("hidden");
-  }
-});
-
-document.addEventListener("click", () => {
-  if (menuContainer.classList.contains("hidden") && !isPlaying && choicesEl.children.length === 0) {
-    next();
-  }
-});
-
 // メニュー処理
+const menuContainer = document.getElementById("menu-panel");
+
 async function loadMenu(filename = "menu01.json") {
   try {
     const res = await fetch(config.menuPath + filename);
@@ -219,14 +247,16 @@ function showMenu(menuData) {
 }
 
 function handleMenuAction(item) {
-  if (item.action === "mute") {
-    if (bgm) bgm.muted = true;
-    document.querySelectorAll("audio").forEach((audio) => (audio.muted = true));
-  } else if (item.action === "jump" && item.jump) {
+  if (item.action === "jump" && item.jump) {
     loadScenario(item.jump);
   } else if (item.action === "menu" && item.menu) {
     loadMenu(item.menu);
   } else if (item.action === "url" && item.url) {
     location.href = item.url;
+  } else if (item.action === "mute") {
+    if (bgm) bgm.muted = true;
+    document.querySelectorAll("audio").forEach((audio) => {
+      audio.muted = true;
+    });
   }
 }
