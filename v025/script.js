@@ -1,10 +1,8 @@
-// script.js - v024 修正版
 let currentScenario = "000start.json";
 let currentIndex = 0;
-let isPlaying = false;
 let bgm = null;
-let isMuted = true;
 let lastActiveSide = null;
+let isMuted = true; // 起動時はミュート状態
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -18,24 +16,14 @@ const charSlots = {
 };
 
 const menuPanel = document.getElementById("menu-panel");
-let tapCount = 0;
-let tapTimer = null;
+
+let defaultFontSize = "1em";
+let defaultSpeed = 40;
+let currentSpeed = defaultSpeed;
+let isPlaying = false;
 
 function isMobilePortrait() {
   return window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
-}
-
-function updateCharacterDisplay() {
-  const isPortrait = isMobilePortrait();
-  for (const pos in charSlots) {
-    const slot = charSlots[pos];
-    const hasImage = slot.querySelector("img") !== null;
-    if (isPortrait) {
-      slot.classList.toggle("active", hasImage && pos === lastActiveSide);
-    } else {
-      slot.classList.toggle("active", hasImage);
-    }
-  }
 }
 
 function setTextWithSpeed(text, speed, callback) {
@@ -54,16 +42,9 @@ function setTextWithSpeed(text, speed, callback) {
 
 function setCharacterStyle(name, scene = {}) {
   const style = characterStyles[name] || characterStyles[""];
-  const fontSize = scene.fontSize || style.fontSize || "1em";
+  const fontSize = scene.fontSize || style.fontSize || defaultFontSize;
+  currentSpeed = scene.speed || style.speed || defaultSpeed;
   document.documentElement.style.setProperty("--fontSize", fontSize);
-}
-
-async function applyEffect(el, effectName) {
-  if (window.effects && effectName && window.effects[effectName]) {
-    return await window.effects[effectName](el);
-  } else if (window.effects?.fadein) {
-    return await window.effects.fadein(el);
-  }
 }
 
 function clearCharacters() {
@@ -72,7 +53,32 @@ function clearCharacters() {
     charSlots[pos].classList.remove("active");
   }
   lastActiveSide = null;
-  updateCharacterDisplay();
+}
+
+function updateCharacterDisplay() {
+  const isPortrait = isMobilePortrait();
+  for (const pos in charSlots) {
+    const slot = charSlots[pos];
+    const hasCharacter = slot.children.length > 0;
+
+    if (isPortrait) {
+      slot.classList.toggle("active", pos === lastActiveSide && hasCharacter);
+    } else {
+      if (hasCharacter) {
+        slot.classList.add("active");
+      } else {
+        slot.classList.remove("active");
+      }
+    }
+  }
+}
+
+async function applyEffect(el, effectName) {
+  if (window.effects && effectName && window.effects[effectName]) {
+    return await window.effects[effectName](el);
+  } else if (window.effects?.fadein) {
+    return await window.effects.fadein(el);
+  }
 }
 
 async function showScene(scene) {
@@ -102,8 +108,7 @@ async function showScene(scene) {
 
   if (scene.characters) {
     lastActiveSide = scene.characters[scene.characters.length - 1]?.side || null;
-
-    for (const pos in charSlots) {
+    ["left", "center", "right"].forEach(async (pos) => {
       const slot = charSlots[pos];
       const charData = scene.characters.find((c) => c.side === pos);
       if (charData && charData.src && charData.src !== "NULL") {
@@ -113,29 +118,40 @@ async function showScene(scene) {
         slot.innerHTML = "";
         slot.appendChild(img);
         await applyEffect(img, charData.effect || "fadein");
-      } else {
+      } else if (charData && charData.src === "NULL") {
         slot.innerHTML = "";
       }
-    }
-    updateCharacterDisplay();
+    });
   }
 
+  updateCharacterDisplay();
+
   if (scene.name !== undefined && scene.text !== undefined) {
-    const color = characterColors[scene.name] || characterColors[""] || "#C0C0C0";
+    const color = characterColors[scene.name] || "#C0C0C0";
     nameEl.textContent = scene.name;
     nameEl.style.color = color;
     setCharacterStyle(scene.name, scene);
-    setTextWithSpeed(scene.text, characterStyles[scene.name]?.speed || 40);
+    setTextWithSpeed(scene.text, currentSpeed);
   }
 
-  if (scene.voice && !isMuted) {
-    const voice = new Audio(config.voicePath + scene.voice);
-    voice.play();
+  if (scene.voice) {
+    try {
+      const voice = new Audio(config.voicePath + scene.voice);
+      voice.muted = isMuted;
+      voice.play();
+    } catch (e) {
+      console.warn("ボイス再生エラー:", scene.voice);
+    }
   }
 
-  if (scene.se && !isMuted) {
-    const se = new Audio(config.sePath + scene.se);
-    se.play();
+  if (scene.se) {
+    try {
+      const se = new Audio(config.sePath + scene.se);
+      se.muted = isMuted;
+      se.play();
+    } catch (e) {
+      console.warn("SE再生エラー:", scene.se);
+    }
   }
 
   if (scene.choices) {
@@ -182,35 +198,26 @@ function loadScenario(filename) {
     });
 }
 
-function toggleMenu() {
-  if (menuPanel.classList.contains("hidden")) {
-    loadMenu("menu01.json");
-  } else {
-    menuPanel.classList.add("hidden");
-  }
-}
-
-bgEl.addEventListener("click", () => {
-  tapCount++;
-  if (tapTimer) clearTimeout(tapTimer);
-  tapTimer = setTimeout(() => {
-    if (tapCount >= 2) toggleMenu();
-    else if (!isPlaying && choicesEl.children.length === 0) next();
-    tapCount = 0;
-  }, 300);
+bgEl.addEventListener("dblclick", () => {
+  loadMenu("menu01.json");
 });
 
-document.getElementById("dialogue-box").addEventListener("click", () => {
-  if (isPlaying) {
-    isPlaying = false;
-    const fullText = textEl.textContent;
-    textEl.textContent = fullText;
-  } else if (choicesEl.children.length === 0) {
+document.addEventListener("click", (e) => {
+  if (menuPanel && !menuPanel.classList.contains("hidden")) {
+    menuPanel.classList.add("hidden");
+    return;
+  }
+
+  if (!isPlaying && choicesEl.children.length === 0) {
     next();
   }
 });
 
-window.addEventListener("resize", updateCharacterDisplay);
+window.addEventListener("resize", () => {
+  setVhVariable();
+  updateCharacterDisplay();
+});
+
 window.addEventListener("load", () => {
   setVhVariable();
   loadScenario(currentScenario);
@@ -221,7 +228,8 @@ function setVhVariable() {
   document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
 
-async function loadMenu(filename) {
+// ▼▼▼ メニュー表示処理 ▼▼▼
+async function loadMenu(filename = "menu01.json") {
   try {
     const res = await fetch(config.menuPath + filename);
     const data = await res.json();
@@ -243,18 +251,21 @@ function showMenu(menuData) {
     };
     menuPanel.appendChild(btn);
   });
-  setTimeout(() => menuPanel.classList.add("hidden"), 5000);
 }
 
 function handleMenuAction(item) {
   if (item.action === "mute") {
     isMuted = true;
     if (bgm) bgm.muted = true;
-    document.querySelectorAll("audio").forEach(a => a.muted = true);
+    document.querySelectorAll("audio").forEach((audio) => {
+      audio.muted = true;
+    });
   } else if (item.action === "unmute") {
     isMuted = false;
     if (bgm) bgm.muted = false;
-    document.querySelectorAll("audio").forEach(a => a.muted = false);
+    document.querySelectorAll("audio").forEach((audio) => {
+      audio.muted = false;
+    });
   } else if (item.action === "jump" && item.jump) {
     loadScenario(item.jump);
   } else if (item.action === "menu" && item.menu) {
