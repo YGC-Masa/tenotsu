@@ -1,13 +1,15 @@
+// script.js - v024 修正版
 let currentScenario = "000start.json";
 let currentIndex = 0;
+let isPlaying = false;
 let bgm = null;
+let isMuted = true;
 let lastActiveSide = null;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
 const textEl = document.getElementById("text");
 const choicesEl = document.getElementById("choices");
-const menuPanel = document.getElementById("menu-panel");
 
 const charSlots = {
   left: document.getElementById("char-left"),
@@ -15,17 +17,14 @@ const charSlots = {
   right: document.getElementById("char-right"),
 };
 
-let currentSpeed = 40;
-let isPlaying = false;
-let timeoutID = null;
-let audioMuted = true;
+const menuPanel = document.getElementById("menu-panel");
+let tapCount = 0;
+let tapTimer = null;
 
-// 📱 モバイル縦表示かどうか判定
 function isMobilePortrait() {
   return window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
 }
 
-// キャラ表示状態を更新（縦：最後の一人／横：全員）
 function updateCharacterDisplay() {
   const isPortrait = isMobilePortrait();
   for (const pos in charSlots) {
@@ -37,17 +36,6 @@ function updateCharacterDisplay() {
       slot.classList.toggle("active", hasImage);
     }
   }
-}
-
-window.addEventListener("resize", updateCharacterDisplay);
-
-function clearCharacters() {
-  for (const pos in charSlots) {
-    const slot = charSlots[pos];
-    slot.innerHTML = "";
-    slot.classList.remove("active");
-  }
-  lastActiveSide = null;
 }
 
 function setTextWithSpeed(text, speed, callback) {
@@ -65,18 +53,26 @@ function setTextWithSpeed(text, speed, callback) {
 }
 
 function setCharacterStyle(name, scene = {}) {
-  const style = characterStyles[name] || {};
+  const style = characterStyles[name] || characterStyles[""];
   const fontSize = scene.fontSize || style.fontSize || "1em";
-  currentSpeed = scene.speed || style.speed || 40;
   document.documentElement.style.setProperty("--fontSize", fontSize);
 }
 
 async function applyEffect(el, effectName) {
-  if (window.effects?.[effectName]) {
+  if (window.effects && effectName && window.effects[effectName]) {
     return await window.effects[effectName](el);
   } else if (window.effects?.fadein) {
     return await window.effects.fadein(el);
   }
+}
+
+function clearCharacters() {
+  for (const pos in charSlots) {
+    charSlots[pos].innerHTML = "";
+    charSlots[pos].classList.remove("active");
+  }
+  lastActiveSide = null;
+  updateCharacterDisplay();
 }
 
 async function showScene(scene) {
@@ -99,7 +95,7 @@ async function showScene(scene) {
     if (scene.bgm) {
       bgm = new Audio(config.bgmPath + scene.bgm);
       bgm.loop = true;
-      bgm.muted = audioMuted;
+      bgm.muted = isMuted;
       bgm.play();
     }
   }
@@ -121,36 +117,25 @@ async function showScene(scene) {
         slot.innerHTML = "";
       }
     }
-
     updateCharacterDisplay();
   }
 
   if (scene.name !== undefined && scene.text !== undefined) {
-    const color = characterColors[scene.name] || "#C0C0C0";
+    const color = characterColors[scene.name] || characterColors[""] || "#C0C0C0";
     nameEl.textContent = scene.name;
     nameEl.style.color = color;
     setCharacterStyle(scene.name, scene);
-    setTextWithSpeed(scene.text, currentSpeed);
+    setTextWithSpeed(scene.text, characterStyles[scene.name]?.speed || 40);
   }
 
-  if (scene.voice) {
-    try {
-      const voice = new Audio(config.voicePath + scene.voice);
-      voice.muted = audioMuted;
-      voice.play();
-    } catch (e) {
-      console.warn("ボイス再生エラー:", scene.voice);
-    }
+  if (scene.voice && !isMuted) {
+    const voice = new Audio(config.voicePath + scene.voice);
+    voice.play();
   }
 
-  if (scene.se) {
-    try {
-      const se = new Audio(config.sePath + scene.se);
-      se.muted = audioMuted;
-      se.play();
-    } catch (e) {
-      console.warn("SE再生エラー:", scene.se);
-    }
+  if (scene.se && !isMuted) {
+    const se = new Audio(config.sePath + scene.se);
+    se.play();
   }
 
   if (scene.choices) {
@@ -159,8 +144,8 @@ async function showScene(scene) {
       const btn = document.createElement("button");
       btn.textContent = choice.text;
       btn.onclick = () => {
-        nameEl.textContent = "";
         textEl.innerHTML = "";
+        nameEl.textContent = "";
         clearCharacters();
         if (choice.jump) {
           loadScenario(choice.jump);
@@ -189,8 +174,6 @@ function next() {
 function loadScenario(filename) {
   currentScenario = filename;
   currentIndex = 0;
-  nameEl.textContent = "";
-  textEl.innerHTML = "";
   clearCharacters();
   fetch(config.scenarioPath + filename)
     .then((res) => res.json())
@@ -199,25 +182,46 @@ function loadScenario(filename) {
     });
 }
 
-// ▼▼▼ メニュー処理 ▼▼▼
-function handleMenuAction(item) {
-  if (item.action === "mute") {
-    audioMuted = true;
-    if (bgm) bgm.muted = true;
-    document.querySelectorAll("audio").forEach((a) => (a.muted = true));
-  } else if (item.action === "unmute") {
-    audioMuted = false;
-    if (bgm) bgm.muted = false;
-  } else if (item.action === "jump" && item.jump) {
-    loadScenario(item.jump);
-  } else if (item.action === "menu" && item.menu) {
-    loadMenu(item.menu);
-  } else if (item.action === "url" && item.url) {
-    location.href = item.url;
+function toggleMenu() {
+  if (menuPanel.classList.contains("hidden")) {
+    loadMenu("menu01.json");
+  } else {
+    menuPanel.classList.add("hidden");
   }
 }
 
-async function loadMenu(filename = "menu01.json") {
+bgEl.addEventListener("click", () => {
+  tapCount++;
+  if (tapTimer) clearTimeout(tapTimer);
+  tapTimer = setTimeout(() => {
+    if (tapCount >= 2) toggleMenu();
+    else if (!isPlaying && choicesEl.children.length === 0) next();
+    tapCount = 0;
+  }, 300);
+});
+
+document.getElementById("dialogue-box").addEventListener("click", () => {
+  if (isPlaying) {
+    isPlaying = false;
+    const fullText = textEl.textContent;
+    textEl.textContent = fullText;
+  } else if (choicesEl.children.length === 0) {
+    next();
+  }
+});
+
+window.addEventListener("resize", updateCharacterDisplay);
+window.addEventListener("load", () => {
+  setVhVariable();
+  loadScenario(currentScenario);
+});
+
+function setVhVariable() {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
+}
+
+async function loadMenu(filename) {
   try {
     const res = await fetch(config.menuPath + filename);
     const data = await res.json();
@@ -228,7 +232,6 @@ async function loadMenu(filename = "menu01.json") {
 }
 
 function showMenu(menuData) {
-  clearTimeout(timeoutID);
   menuPanel.innerHTML = "";
   menuPanel.classList.remove("hidden");
   menuData.items.forEach((item) => {
@@ -240,35 +243,23 @@ function showMenu(menuData) {
     };
     menuPanel.appendChild(btn);
   });
-  timeoutID = setTimeout(() => menuPanel.classList.add("hidden"), 5000);
+  setTimeout(() => menuPanel.classList.add("hidden"), 5000);
 }
 
-// ▼▼▼ イベント ▼▼▼
-bgEl.addEventListener("click", () => {
-  next();
-});
-
-bgEl.addEventListener("dblclick", () => {
-  showMenuFromToggle();
-});
-
-function showMenuFromToggle() {
-  if (!menuPanel.classList.contains("hidden")) {
-    menuPanel.classList.add("hidden");
-    clearTimeout(timeoutID);
-  } else {
-    loadMenu("menu01.json");
+function handleMenuAction(item) {
+  if (item.action === "mute") {
+    isMuted = true;
+    if (bgm) bgm.muted = true;
+    document.querySelectorAll("audio").forEach(a => a.muted = true);
+  } else if (item.action === "unmute") {
+    isMuted = false;
+    if (bgm) bgm.muted = false;
+    document.querySelectorAll("audio").forEach(a => a.muted = false);
+  } else if (item.action === "jump" && item.jump) {
+    loadScenario(item.jump);
+  } else if (item.action === "menu" && item.menu) {
+    loadMenu(item.menu);
+  } else if (item.action === "url" && item.url) {
+    location.href = item.url;
   }
 }
-
-document.getElementById("dialogue-box").addEventListener("click", () => {
-  if (isPlaying) {
-    currentSpeed = 0;
-  } else {
-    next();
-  }
-});
-
-window.addEventListener("load", () => {
-  loadScenario(currentScenario);
-});
