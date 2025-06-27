@@ -2,9 +2,6 @@ let currentScenario = "000start.json";
 let currentIndex = 0;
 let bgm = null;
 let lastActiveSide = null;
-let isPlaying = false;
-let currentSpeed = 40;
-let defaultFontSize = "1em";
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -17,39 +14,35 @@ const charSlots = {
   right: document.getElementById("char-right"),
 };
 
-function setVhVariable() {
-  let vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty("--vh", `${vh}px`);
-}
-window.addEventListener("resize", () => {
-  setVhVariable();
-  updateCharacterDisplay();
-});
+const menuPanel = document.getElementById("menu-panel");
 
-function updateCharacterDisplay() {
-  const isPortrait = isMobilePortrait();
-  for (const pos in charSlots) {
-    const slot = charSlots[pos];
-    if (isPortrait) {
-      slot.classList.toggle("active", pos === lastActiveSide);
-    } else {
-      if (slot.children.length > 0) {
-        slot.classList.add("active");
-      } else {
-        slot.classList.remove("active");
-      }
-    }
-  }
-}
+let defaultFontSize = "1em";
+let defaultSpeed = 40;
+let currentSpeed = defaultSpeed;
+let isPlaying = false;
 
 function isMobilePortrait() {
   return window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
 }
 
+function setTextWithSpeed(text, speed, callback) {
+  isPlaying = true;
+  textEl.innerHTML = "";
+  let i = 0;
+  const interval = setInterval(() => {
+    textEl.innerHTML += text[i++];
+    if (i >= text.length) {
+      clearInterval(interval);
+      isPlaying = false;
+      if (callback) callback();
+    }
+  }, speed);
+}
+
 function setCharacterStyle(name, scene = {}) {
   const style = characterStyles[name] || characterStyles[""];
   const fontSize = scene.fontSize || style.fontSize || defaultFontSize;
-  currentSpeed = scene.speed || style.speed || 40;
+  currentSpeed = scene.speed || style.speed || defaultSpeed;
   document.documentElement.style.setProperty("--fontSize", fontSize);
 }
 
@@ -59,6 +52,24 @@ function clearCharacters() {
     charSlots[pos].classList.remove("active");
   }
   lastActiveSide = null;
+}
+
+function updateCharacterDisplay() {
+  const isPortrait = isMobilePortrait();
+  for (const pos in charSlots) {
+    const slot = charSlots[pos];
+    const hasCharacter = slot.children.length > 0;
+
+    if (isPortrait) {
+      slot.classList.toggle("active", pos === lastActiveSide && hasCharacter);
+    } else {
+      if (hasCharacter) {
+        slot.classList.add("active");
+      } else {
+        slot.classList.remove("active");
+      }
+    }
+  }
 }
 
 async function applyEffect(el, effectName) {
@@ -72,7 +83,6 @@ async function applyEffect(el, effectName) {
 async function showScene(scene) {
   if (!scene) return;
 
-  // 背景
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
     await new Promise((resolve) => {
@@ -82,7 +92,6 @@ async function showScene(scene) {
     await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
-  // BGM
   if (scene.bgm !== undefined) {
     if (bgm) {
       bgm.pause();
@@ -95,31 +104,26 @@ async function showScene(scene) {
     }
   }
 
-  // キャラ表示
   if (scene.characters) {
     lastActiveSide = scene.characters[scene.characters.length - 1]?.side || null;
-
-    for (const pos of ["left", "center", "right"]) {
+    ["left", "center", "right"].forEach(async (pos) => {
       const slot = charSlots[pos];
       const charData = scene.characters.find((c) => c.side === pos);
       if (charData && charData.src && charData.src !== "NULL") {
         const img = document.createElement("img");
         img.src = config.charPath + charData.src;
-        img.className = "char-image";
+        img.classList.add("char-image");
         slot.innerHTML = "";
         slot.appendChild(img);
         await applyEffect(img, charData.effect || "fadein");
-
-        const isPortrait = isMobilePortrait();
-        slot.classList.toggle("active", isPortrait ? pos === lastActiveSide : true);
-      } else {
+      } else if (charData && charData.src === "NULL") {
         slot.innerHTML = "";
-        slot.classList.remove("active");
       }
-    }
+    });
   }
 
-  // セリフ
+  updateCharacterDisplay();
+
   if (scene.name !== undefined && scene.text !== undefined) {
     const color = characterColors[scene.name] || "#C0C0C0";
     nameEl.textContent = scene.name;
@@ -128,34 +132,33 @@ async function showScene(scene) {
     setTextWithSpeed(scene.text, currentSpeed);
   }
 
-  // ボイス・SE
   if (scene.voice) {
     try {
       const voice = new Audio(config.voicePath + scene.voice);
       voice.play();
     } catch (e) {
-      console.warn("ボイスエラー:", e);
+      console.warn("ボイス再生エラー:", scene.voice);
     }
   }
+
   if (scene.se) {
     try {
       const se = new Audio(config.sePath + scene.se);
       se.play();
     } catch (e) {
-      console.warn("SEエラー:", e);
+      console.warn("SE再生エラー:", scene.se);
     }
   }
 
-  // 選択肢
   if (scene.choices) {
     choicesEl.innerHTML = "";
     scene.choices.forEach((choice) => {
       const btn = document.createElement("button");
       btn.textContent = choice.text;
       btn.onclick = () => {
-        clearCharacters();
+        textEl.innerHTML = "";
         nameEl.textContent = "";
-        textEl.textContent = "";
+        clearCharacters();
         if (choice.jump) {
           loadScenario(choice.jump);
         } else if (choice.url) {
@@ -167,19 +170,6 @@ async function showScene(scene) {
   } else {
     choicesEl.innerHTML = "";
   }
-}
-
-function setTextWithSpeed(text, speed) {
-  isPlaying = true;
-  textEl.innerHTML = "";
-  let i = 0;
-  const interval = setInterval(() => {
-    textEl.innerHTML += text[i++];
-    if (i >= text.length) {
-      clearInterval(interval);
-      isPlaying = false;
-    }
-  }, speed);
 }
 
 function next() {
@@ -204,14 +194,24 @@ function loadScenario(filename) {
     });
 }
 
-document.addEventListener("click", () => {
+bgEl.addEventListener("dblclick", () => {
+  loadMenu("menu01.json");
+});
+
+document.addEventListener("click", (e) => {
+  if (menuPanel && !menuPanel.classList.contains("hidden")) {
+    menuPanel.classList.add("hidden");
+    return;
+  }
+
   if (!isPlaying && choicesEl.children.length === 0) {
     next();
   }
 });
 
-bgEl.addEventListener("dblclick", () => {
-  loadMenu("menu01.json");
+window.addEventListener("resize", () => {
+  setVhVariable();
+  updateCharacterDisplay();
 });
 
 window.addEventListener("load", () => {
@@ -219,9 +219,12 @@ window.addEventListener("load", () => {
   loadScenario(currentScenario);
 });
 
-// メニュー処理
-const menuContainer = document.getElementById("menu-panel");
+function setVhVariable() {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
+}
 
+// ▼▼▼ メニュー表示処理 ▼▼▼
 async function loadMenu(filename = "menu01.json") {
   try {
     const res = await fetch(config.menuPath + filename);
@@ -233,30 +236,30 @@ async function loadMenu(filename = "menu01.json") {
 }
 
 function showMenu(menuData) {
-  menuContainer.innerHTML = "";
-  menuContainer.classList.remove("hidden");
+  menuPanel.innerHTML = "";
+  menuPanel.classList.remove("hidden");
   menuData.items.forEach((item) => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
     btn.onclick = () => {
-      menuContainer.classList.add("hidden");
+      menuPanel.classList.add("hidden");
       handleMenuAction(item);
     };
-    menuContainer.appendChild(btn);
+    menuPanel.appendChild(btn);
   });
 }
 
 function handleMenuAction(item) {
-  if (item.action === "jump" && item.jump) {
+  if (item.action === "mute") {
+    if (bgm) bgm.muted = true;
+    document.querySelectorAll("audio").forEach((audio) => {
+      audio.muted = true;
+    });
+  } else if (item.action === "jump" && item.jump) {
     loadScenario(item.jump);
   } else if (item.action === "menu" && item.menu) {
     loadMenu(item.menu);
   } else if (item.action === "url" && item.url) {
     location.href = item.url;
-  } else if (item.action === "mute") {
-    if (bgm) bgm.muted = true;
-    document.querySelectorAll("audio").forEach((audio) => {
-      audio.muted = true;
-    });
   }
 }
