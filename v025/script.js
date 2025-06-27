@@ -242,6 +242,12 @@ async function loadMenu(filename = "menu01.json") {
 function showMenu(menuData) {
   menuPanel.innerHTML = "";
   menuPanel.classList.remove("hidden");
+
+  const status = document.createElement("div");
+  status.textContent = isMuted ? "サウンドOFF" : "サウンドON";
+  status.className = "menu-status";
+  menuPanel.appendChild(status);
+
   menuData.items.forEach((item) => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
@@ -255,16 +261,10 @@ function showMenu(menuData) {
 
 function handleMenuAction(item) {
   if (item.action === "mute") {
-    isMuted = true;
-    if (bgm) bgm.muted = true;
+    isMuted = !isMuted;
+    if (bgm) bgm.muted = isMuted;
     document.querySelectorAll("audio").forEach((audio) => {
-      audio.muted = true;
-    });
-  } else if (item.action === "unmute") {
-    isMuted = false;
-    if (bgm) bgm.muted = false;
-    document.querySelectorAll("audio").forEach((audio) => {
-      audio.muted = false;
+      audio.muted = isMuted;
     });
   } else if (item.action === "jump" && item.jump) {
     loadScenario(item.jump);
