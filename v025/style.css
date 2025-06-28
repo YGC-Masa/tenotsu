@@ -1,72 +1,59 @@
-:root {
-  --fontSize: 1em;
-  --vh: 1vh;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  background: black;
-  font-family: "Arial", sans-serif;
-  font-size: var(--fontSize);
-  overflow: hidden;
-}
-
+/* 背景とキャラレイヤー */
 #game-container {
   position: relative;
   width: 100vw;
-  height: calc(var(--vh, 1vh) * 100);
+  height: 100vh;
   overflow: hidden;
 }
 
-#background,
-#bg-touch-surface {
+#background {
+  position: absolute;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  position: absolute;
-  top: 0;
-  left: 0;
   z-index: 0;
 }
 
+/* 背景タッチサーフェス（画像長押し対策） */
 #bg-touch-surface {
+  position: absolute;
+  width: 100%;
+  height: 100%;
   z-index: 1;
   background: transparent;
 }
 
+/* キャラクター表示 */
 #char-layer {
   position: absolute;
   width: 100%;
   height: 100%;
-  top: 0;
-  left: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
   z-index: 2;
   pointer-events: none;
 }
 
 .char-slot {
-  position: absolute;
-  bottom: 0;
-  text-align: center;
-  pointer-events: none;
+  flex: 1;
   display: none;
+  justify-content: center;
+  align-items: flex-end;
+  pointer-events: none;
 }
 
 .char-slot.active {
   display: flex !important;
-  justify-content: center;
-  align-items: flex-end;
 }
 
 .char-image {
-  width: 100%;
-  height: auto;
-  max-height: 90vh;
+  max-height: 100%;
+  max-width: 100%;
   object-fit: contain;
 }
 
-/* ▼ セリフ表示 */
+/* セリフボックス */
 #dialogue-box {
   position: absolute;
   bottom: 0;
@@ -90,79 +77,76 @@ body {
   min-height: 3em;
 }
 
-/* ▼ 選択肢 */
+/* 選択肢ボタン */
 .choices-area {
   position: absolute;
-  top: 60%;
-  width: 100%;
-  text-align: center;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 4;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
 }
 
 .choices-area button {
-  margin: 0.5em;
-  padding: 0.5em 1em;
+  padding: 0.8em 1.2em;
   font-size: 1em;
-  background-color: #333;
+  background: rgba(255, 255, 255, 0.2);
   color: white;
   border: none;
-  border-radius: 0.3em;
+  border-radius: 0.5em;
   cursor: pointer;
 }
 
-.choices-area button:hover {
-  background-color: #555;
-}
-
-/* ▼ メニューパネル */
+/* メニューパネル */
 .menu-panel {
   position: absolute;
-  z-index: 10;
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: space-around;
   align-items: center;
-  background: rgba(0, 0, 0, 0.8);
+  z-index: 10;
+  box-sizing: border-box;
+  border-radius: 0.5em;
+  pointer-events: auto;
+  overflow: hidden;
   padding: 1em;
-  border-radius: 0.5em;
+  font-size: 1em;
 }
 
-.menu-panel.hidden {
-  display: none !important;
-}
-
-.menu-panel button {
-  width: 90%;
-  padding: 0.7em;
-  font-size: 0.95em;
-  background: rgba(255, 255, 255, 0.05);
-  color: white;
-  border: 1px solid #888;
-  border-radius: 0.5em;
-  cursor: pointer;
-}
-
-.menu-panel button:hover {
-  background: #444;
-}
-
-/* ▼ メニューの配置：モバイル縦 */
+/* モバイル縦向き */
 @media screen and (orientation: portrait) {
   .menu-panel {
-    left: 50%;
-    top: 25%;
-    width: 48%;
-    height: 50%;
-    transform: translateX(-50%);
+    top: 25vh;
+    bottom: 25vh;
+    left: 50vw;
+    right: 0;
   }
 }
 
-/* ▼ メニューの配置：モバイル横・PC */
+/* モバイル横向き・PC */
 @media screen and (orientation: landscape) {
   .menu-panel {
-    left: 70%;
-    top: 5%;
-    width: 28%;
-    height: 55%;
+    top: 25vh;
+    bottom: 25vh;
+    left: 70vw;
+    right: 0;
   }
+}
+
+/* メニューボタン */
+.menu-panel button {
+  width: 90%;
+  padding: 0.7em 1em;
+  font-size: 1em;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid #ccc;
+  border-radius: 0.5em;
+  cursor: pointer;
+  text-align: center;
+  box-sizing: border-box;
 }
