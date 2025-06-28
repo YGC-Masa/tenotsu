@@ -2,19 +2,20 @@ let currentScenario = "000start.json";
 let currentIndex = 0;
 let bgm = null;
 let lastActiveSide = null;
-let isMuted = true; // 初期はミュート状態
+let isMuted = true; // 起動時はミュート状態
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
 const textEl = document.getElementById("text");
 const choicesEl = document.getElementById("choices");
-const menuPanel = document.getElementById("menu-panel");
 
 const charSlots = {
   left: document.getElementById("char-left"),
   center: document.getElementById("char-center"),
   right: document.getElementById("char-right"),
 };
+
+const menuPanel = document.getElementById("menu-panel");
 
 let defaultFontSize = "1em";
 let defaultSpeed = 40;
@@ -59,6 +60,7 @@ function updateCharacterDisplay() {
   for (const pos in charSlots) {
     const slot = charSlots[pos];
     const hasCharacter = slot.children.length > 0;
+
     if (isPortrait) {
       slot.classList.toggle("active", pos === lastActiveSide && hasCharacter);
     } else {
@@ -240,17 +242,6 @@ async function loadMenu(filename = "menu01.json") {
 function showMenu(menuData) {
   menuPanel.innerHTML = "";
   menuPanel.classList.remove("hidden");
-
-  const audioStateBtn = document.createElement("button");
-  audioStateBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
-  audioStateBtn.onclick = () => {
-    isMuted = !isMuted;
-    if (bgm) bgm.muted = isMuted;
-    document.querySelectorAll("audio").forEach(audio => audio.muted = isMuted);
-    menuPanel.classList.add("hidden");
-  };
-  menuPanel.appendChild(audioStateBtn);
-
   menuData.items.forEach((item) => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
@@ -263,7 +254,19 @@ function showMenu(menuData) {
 }
 
 function handleMenuAction(item) {
-  if (item.action === "jump" && item.jump) {
+  if (item.action === "mute") {
+    isMuted = true;
+    if (bgm) bgm.muted = true;
+    document.querySelectorAll("audio").forEach((audio) => {
+      audio.muted = true;
+    });
+  } else if (item.action === "unmute") {
+    isMuted = false;
+    if (bgm) bgm.muted = false;
+    document.querySelectorAll("audio").forEach((audio) => {
+      audio.muted = false;
+    });
+  } else if (item.action === "jump" && item.jump) {
     loadScenario(item.jump);
   } else if (item.action === "menu" && item.menu) {
     loadMenu(item.menu);
