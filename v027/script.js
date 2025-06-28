@@ -125,7 +125,6 @@ async function showScene(scene) {
   updateCharacterDisplay();
 
   if (scene.name !== undefined && scene.text !== undefined) {
-    // ▼▼ テキスト・名前の一時クリア ▼▼
     nameEl.textContent = "";
     textEl.innerHTML = "";
 
@@ -179,7 +178,7 @@ async function showScene(scene) {
 }
 
 function next() {
-  fetch(config.scenarioPath + currentScenario)
+  fetch(config.scenarioPath + currentScenario + "?t=" + Date.now())
     .then((res) => res.json())
     .then((data) => {
       currentIndex++;
@@ -193,12 +192,10 @@ function loadScenario(filename) {
   currentScenario = filename;
   currentIndex = 0;
   clearCharacters();
-
-  // ▼▼ テキスト・名前の初期クリア ▼▼
   textEl.innerHTML = "";
   nameEl.textContent = "";
 
-  fetch(config.scenarioPath + filename)
+  fetch(config.scenarioPath + filename + "?t=" + Date.now())
     .then((res) => res.json())
     .then((data) => {
       showScene(data.scenes[0]);
@@ -235,10 +232,9 @@ function setVhVariable() {
   document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
 
-// ▼▼▼ メニュー表示処理 ▼▼▼
 async function loadMenu(filename = "menu01.json") {
   try {
-    const res = await fetch(config.menuPath + filename);
+    const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
     const data = await res.json();
     showMenu(data);
   } catch (e) {
