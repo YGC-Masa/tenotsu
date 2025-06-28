@@ -1,16 +1,10 @@
-:root {
-  --fontSize: 1em;
-  --vh: 1vh;
-}
-
-body, html {
+html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  width: 100%;
   font-family: sans-serif;
   background-color: black;
-  overflow: hidden;
+  overscroll-behavior: none;
   touch-action: manipulation;
 }
 
@@ -21,16 +15,16 @@ body, html {
   overflow: hidden;
 }
 
-/* 背景画像 */
 #background {
-  position: absolute;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  position: absolute;
   z-index: 0;
+  touch-action: manipulation;
 }
 
-/* キャラ表示レイヤー */
+/* キャラ表示 */
 #char-layer {
   position: absolute;
   width: 100%;
@@ -39,18 +33,16 @@ body, html {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  padding: 0 5%;
-  box-sizing: border-box;
   pointer-events: none;
+  padding: 0 1em;
+  box-sizing: border-box;
 }
 
 .char-slot {
-  flex: 1;
+  width: 30%;
   display: none;
   justify-content: center;
   align-items: flex-end;
-  height: 100%;
-  pointer-events: none;
 }
 
 .char-slot.active {
@@ -58,13 +50,12 @@ body, html {
 }
 
 .char-image {
-  max-height: 100%;
+  max-height: 90%;
   max-width: 100%;
   object-fit: contain;
-  pointer-events: none;
 }
 
-/* セリフボックス */
+/* テキストボックス */
 #dialogue-box {
   position: absolute;
   bottom: 0;
@@ -89,92 +80,60 @@ body, html {
 }
 
 /* 選択肢 */
-#choices {
+.choices-area {
   position: absolute;
-  bottom: 8em;
-  left: 0;
+  bottom: 10%;
   width: 100%;
   display: flex;
-  flex-direction: column;
-  gap: 0.5em;
-  align-items: center;
-  z-index: 4;
+  justify-content: center;
+  gap: 1em;
+  z-index: 3;
+  flex-wrap: wrap;
 }
 
-#choices button {
-  padding: 0.5em 1em;
-  font-size: 1em;
-  background: #333;
-  color: white;
-  border: none;
-  border-radius: 0.5em;
-  cursor: pointer;
-}
-
-/* メニュー */
+/* メニューパネル */
 .menu-panel {
   position: absolute;
-  background: rgba(0, 0, 0, 0.8);
   z-index: 5;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
+  background: rgba(0, 0, 0, 0.8);
   padding: 1em;
   box-sizing: border-box;
-  width: 50%;
-  height: 50%;
-  left: 50%;
-  top: 25%;
-  transform: translateX(-50%);
+}
+
+.menu-panel button {
+  width: 90%;
+  max-width: 400px;
+  padding: 1em;
+  font-size: 1.2em;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 8px;
 }
 
 .menu-panel.hidden {
   display: none;
 }
 
-.menu-panel button {
-  width: 90%;
-  padding: 0.8em;
-  font-size: 1.1em;
-  color: white;
-  background: #555;
-  border: none;
-  border-radius: 0.5em;
-  cursor: pointer;
-}
-
-/* モバイル向け縦横レスポンシブ */
-@media (orientation: portrait) and (max-width: 768px) {
-  .char-slot {
-    display: none !important;
-  }
-
-  .char-slot.active {
-    display: flex !important;
-    justify-content: center;
-    align-items: flex-end;
-  }
-
+/* メニュー表示位置（レスポンシブ） */
+@media (orientation: portrait) {
   .menu-panel {
-    width: 50%;
-    left: 50%;
-    top: 25%;
-    height: 50%;
-    transform: translateX(-50%);
+    top: 25vh;
+    left: 50vw;
+    width: 50vw;
+    height: 50vh;
   }
 }
 
-@media (orientation: landscape) and (max-width: 768px) {
-  .char-slot {
-    display: flex !important;
-  }
-
+@media (orientation: landscape) {
   .menu-panel {
-    width: 30%;
-    left: 65%;
-    top: 25%;
-    height: 45%;
-    transform: translateX(0%);
+    top: 25vh;
+    left: 750px;
+    width: calc(100vw - 750px);
+    height: 50vh;
   }
 }
