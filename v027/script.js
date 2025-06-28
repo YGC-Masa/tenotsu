@@ -125,6 +125,10 @@ async function showScene(scene) {
   updateCharacterDisplay();
 
   if (scene.name !== undefined && scene.text !== undefined) {
+    // ▼▼ テキスト・名前の一時クリア ▼▼
+    nameEl.textContent = "";
+    textEl.innerHTML = "";
+
     const color = characterColors[scene.name] || "#C0C0C0";
     nameEl.textContent = scene.name;
     nameEl.style.color = color;
@@ -189,6 +193,11 @@ function loadScenario(filename) {
   currentScenario = filename;
   currentIndex = 0;
   clearCharacters();
+
+  // ▼▼ テキスト・名前の初期クリア ▼▼
+  textEl.innerHTML = "";
+  nameEl.textContent = "";
+
   fetch(config.scenarioPath + filename)
     .then((res) => res.json())
     .then((data) => {
