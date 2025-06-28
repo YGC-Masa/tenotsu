@@ -5,7 +5,6 @@ let lastActiveSide = null;
 let isMuted = true; // 初期はミュート状態
 
 const bgEl = document.getElementById("background");
-const bgTouchSurface = document.getElementById("bg-touch-surface");
 const nameEl = document.getElementById("name");
 const textEl = document.getElementById("text");
 const choicesEl = document.getElementById("choices");
@@ -197,18 +196,8 @@ function loadScenario(filename) {
     });
 }
 
-bgTouchSurface.addEventListener("dblclick", () => {
+bgEl.addEventListener("dblclick", () => {
   loadMenu("menu01.json");
-});
-
-window.addEventListener("resize", () => {
-  setVhVariable();
-  updateCharacterDisplay();
-});
-
-window.addEventListener("load", () => {
-  setVhVariable();
-  loadScenario(currentScenario);
 });
 
 document.addEventListener("click", (e) => {
@@ -222,12 +211,22 @@ document.addEventListener("click", (e) => {
   }
 });
 
+window.addEventListener("resize", () => {
+  setVhVariable();
+  updateCharacterDisplay();
+});
+
+window.addEventListener("load", () => {
+  setVhVariable();
+  loadScenario(currentScenario);
+});
+
 function setVhVariable() {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
 
-// ▼▼▼ メニュー処理 ▼▼▼
+// ▼▼▼ メニュー表示処理 ▼▼▼
 async function loadMenu(filename = "menu01.json") {
   try {
     const res = await fetch(config.menuPath + filename);
