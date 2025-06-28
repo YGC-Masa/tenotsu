@@ -1,21 +1,20 @@
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let bgm = null;
+let isMuted = true;
 let lastActiveSide = null;
-let isMuted = true; // 起動時はミュート状態
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
 const textEl = document.getElementById("text");
 const choicesEl = document.getElementById("choices");
+const menuPanel = document.getElementById("menu-panel");
 
 const charSlots = {
   left: document.getElementById("char-left"),
   center: document.getElementById("char-center"),
   right: document.getElementById("char-right"),
 };
-
-const menuPanel = document.getElementById("menu-panel");
 
 let defaultFontSize = "1em";
 let defaultSpeed = 40;
@@ -64,17 +63,13 @@ function updateCharacterDisplay() {
     if (isPortrait) {
       slot.classList.toggle("active", pos === lastActiveSide && hasCharacter);
     } else {
-      if (hasCharacter) {
-        slot.classList.add("active");
-      } else {
-        slot.classList.remove("active");
-      }
+      slot.classList.toggle("active", hasCharacter);
     }
   }
 }
 
 async function applyEffect(el, effectName) {
-  if (window.effects && effectName && window.effects[effectName]) {
+  if (window.effects?.[effectName]) {
     return await window.effects[effectName](el);
   } else if (window.effects?.fadein) {
     return await window.effects.fadein(el);
@@ -135,23 +130,15 @@ async function showScene(scene) {
   }
 
   if (scene.voice) {
-    try {
-      const voice = new Audio(config.voicePath + scene.voice);
-      voice.muted = isMuted;
-      voice.play();
-    } catch (e) {
-      console.warn("ボイス再生エラー:", scene.voice);
-    }
+    const voice = new Audio(config.voicePath + scene.voice);
+    voice.muted = isMuted;
+    voice.play();
   }
 
   if (scene.se) {
-    try {
-      const se = new Audio(config.sePath + scene.se);
-      se.muted = isMuted;
-      se.play();
-    } catch (e) {
-      console.warn("SE再生エラー:", scene.se);
-    }
+    const se = new Audio(config.sePath + scene.se);
+    se.muted = isMuted;
+    se.play();
   }
 
   if (scene.choices) {
@@ -198,7 +185,7 @@ function loadScenario(filename) {
     });
 }
 
-bgEl.addEventListener("dblclick", () => {
+document.getElementById("bg-touch-surface").addEventListener("dblclick", () => {
   loadMenu("menu01.json");
 });
 
@@ -228,7 +215,7 @@ function setVhVariable() {
   document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
 
-// ▼▼▼ メニュー表示処理 ▼▼▼
+// ▼ メニュー機能
 async function loadMenu(filename = "menu01.json") {
   try {
     const res = await fetch(config.menuPath + filename);
@@ -241,8 +228,8 @@ async function loadMenu(filename = "menu01.json") {
 
 function showMenu(menuData) {
   menuPanel.innerHTML = "";
-  menuPanel.classList.remove("hidden");
 
+  // 1: 音声状態切替ボタンを上部に追加
   const soundBtn = document.createElement("button");
   soundBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
   soundBtn.onclick = () => {
@@ -255,6 +242,7 @@ function showMenu(menuData) {
   };
   menuPanel.appendChild(soundBtn);
 
+  // 2: 残りのメニュー
   menuData.items.forEach((item) => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
@@ -264,6 +252,8 @@ function showMenu(menuData) {
     };
     menuPanel.appendChild(btn);
   });
+
+  menuPanel.classList.remove("hidden");
 }
 
 function handleMenuAction(item) {
