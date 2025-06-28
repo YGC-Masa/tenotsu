@@ -172,3 +172,22 @@ body {
 .hidden {
   display: none !important;
 }
+
+/* 音声ON/OFF切り替えボタンのスタイル */
+.menu-sound-toggle {
+  font-weight: bold;
+  font-size: 1em;
+  padding: 0.8em 0.5em;
+  margin-bottom: 0.5em;
+  background: #222;
+  color: #fff;
+  border: 2px solid #888;
+  border-radius: 0.5em;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+.menu-sound-toggle:hover {
+  background: #444;
+  color: #fff;
+}
