@@ -1,23 +1,27 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+:root {
+  --fontSize: 1em;
+  --vh: 1vh;
 }
 
 body, html {
-  width: 100%;
+  margin: 0;
+  padding: 0;
   height: 100%;
-  overflow: hidden;
+  width: 100%;
   font-family: sans-serif;
   background-color: black;
+  overflow: hidden;
+  touch-action: manipulation;
 }
 
 #game-container {
   position: relative;
   width: 100%;
   height: 100%;
+  overflow: hidden;
 }
 
+/* 背景画像 */
 #background {
   position: absolute;
   width: 100%;
@@ -26,6 +30,7 @@ body, html {
   z-index: 0;
 }
 
+/* キャラ表示レイヤー */
 #char-layer {
   position: absolute;
   width: 100%;
@@ -34,6 +39,8 @@ body, html {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  padding: 0 5%;
+  box-sizing: border-box;
   pointer-events: none;
 }
 
@@ -43,6 +50,7 @@ body, html {
   justify-content: center;
   align-items: flex-end;
   height: 100%;
+  pointer-events: none;
 }
 
 .char-slot.active {
@@ -56,7 +64,7 @@ body, html {
   pointer-events: none;
 }
 
-/* ▼ テキストボックス関連（前回仕様） */
+/* セリフボックス */
 #dialogue-box {
   position: absolute;
   bottom: 0;
@@ -80,41 +88,45 @@ body, html {
   min-height: 3em;
 }
 
-.choices-area {
+/* 選択肢 */
+#choices {
   position: absolute;
-  bottom: 25%;
+  bottom: 8em;
+  left: 0;
   width: 100%;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  align-items: center;
   z-index: 4;
 }
 
-.choices-area button {
-  margin: 0.5em;
-  padding: 0.75em 1.5em;
+#choices button {
+  padding: 0.5em 1em;
   font-size: 1em;
+  background: #333;
+  color: white;
   border: none;
   border-radius: 0.5em;
-  background-color: #333;
-  color: white;
   cursor: pointer;
 }
 
-.choices-area button:hover {
-  background-color: #555;
-}
-
-/* ▼ メニュー表示共通スタイル */
+/* メニュー */
 .menu-panel {
   position: absolute;
-  z-index: 999;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 5;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.85);
-  padding: 0.5em;
-  border-radius: 1em;
-  color: white;
+  padding: 1em;
+  box-sizing: border-box;
+  width: 50%;
+  height: 50%;
+  left: 50%;
+  top: 25%;
+  transform: translateX(-50%);
 }
 
 .menu-panel.hidden {
@@ -123,42 +135,46 @@ body, html {
 
 .menu-panel button {
   width: 90%;
-  padding: 0.75em 1em;
-  margin: 0.3em 0;
-  font-size: 1em;
+  padding: 0.8em;
+  font-size: 1.1em;
   color: white;
-  background-color: #444;
+  background: #555;
   border: none;
   border-radius: 0.5em;
   cursor: pointer;
-  text-align: center;
-  transition: background-color 0.2s ease-in-out;
 }
 
-.menu-panel button:hover {
-  background-color: #666;
-}
+/* モバイル向け縦横レスポンシブ */
+@media (orientation: portrait) and (max-width: 768px) {
+  .char-slot {
+    display: none !important;
+  }
 
-/* ▼ モバイル縦画面：セーフエリア右下にメニュー配置 */
-@media screen and (max-width: 768px) and (orientation: portrait) {
+  .char-slot.active {
+    display: flex !important;
+    justify-content: center;
+    align-items: flex-end;
+  }
+
   .menu-panel {
-    top: 25vh;
-    bottom: 25vh;
-    left: 50vw;
-    right: 0;
-    width: 50vw;
-    height: 50vh;
+    width: 50%;
+    left: 50%;
+    top: 25%;
+    height: 50%;
+    transform: translateX(-50%);
   }
 }
 
-/* ▼ モバイル横画面・PC：セーフエリア右端にメニュー配置 */
-@media screen and (min-width: 769px), (orientation: landscape) {
+@media (orientation: landscape) and (max-width: 768px) {
+  .char-slot {
+    display: flex !important;
+  }
+
   .menu-panel {
-    top: 5vh;
-    bottom: 25vh;
-    left: 750px;
-    right: 0;
-    width: calc(100vw - 750px);
-    height: 70vh;
+    width: 30%;
+    left: 65%;
+    top: 25%;
+    height: 45%;
+    transform: translateX(0%);
   }
 }
