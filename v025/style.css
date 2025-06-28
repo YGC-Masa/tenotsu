@@ -161,7 +161,7 @@ body {
 @media screen and (orientation: landscape) {
   .menu-panel {
     left: 70%;
-    top: 20%;
+    top: 5%;
     width: 28%;
     height: 55%;
   }
