@@ -1,8 +1,9 @@
-let currentScenario = "000start.json";
+""let currentScenario = "000start.json";
 let currentIndex = 0;
 let bgm = null;
 let lastActiveSide = null;
 let isMuted = true; // 初期はミュート状態
+let typingInterval = null; // 一文字ずつ描画用の interval を管理
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -26,13 +27,16 @@ function isMobilePortrait() {
 }
 
 function setTextWithSpeed(text, speed, callback) {
+  if (typingInterval) clearInterval(typingInterval);
+
   isPlaying = true;
   textEl.innerHTML = "";
   let i = 0;
-  const interval = setInterval(() => {
+  typingInterval = setInterval(() => {
     textEl.innerHTML += text[i++];
     if (i >= text.length) {
-      clearInterval(interval);
+      clearInterval(typingInterval);
+      typingInterval = null;
       isPlaying = false;
       if (callback) callback();
     }
@@ -82,6 +86,13 @@ async function applyEffect(el, effectName) {
 async function showScene(scene) {
   if (!scene) return;
 
+  if (typingInterval) {
+    clearInterval(typingInterval);
+    typingInterval = null;
+  }
+  textEl.innerHTML = "";
+  nameEl.textContent = "";
+
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
     await new Promise((resolve) => {
@@ -125,9 +136,6 @@ async function showScene(scene) {
   updateCharacterDisplay();
 
   if (scene.name !== undefined && scene.text !== undefined) {
-    nameEl.textContent = "";
-    textEl.innerHTML = "";
-
     const color = characterColors[scene.name] || "#C0C0C0";
     nameEl.textContent = scene.name;
     nameEl.style.color = color;
@@ -161,6 +169,7 @@ async function showScene(scene) {
       const btn = document.createElement("button");
       btn.textContent = choice.text;
       btn.onclick = () => {
+        if (typingInterval) clearInterval(typingInterval);
         textEl.innerHTML = "";
         nameEl.textContent = "";
         clearCharacters();
@@ -194,6 +203,8 @@ function loadScenario(filename) {
   clearCharacters();
   textEl.innerHTML = "";
   nameEl.textContent = "";
+  if (typingInterval) clearInterval(typingInterval);
+  typingInterval = null;
 
   fetch(config.scenarioPath + filename + "?t=" + Date.now())
     .then((res) => res.json())
