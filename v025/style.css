@@ -155,10 +155,10 @@ body, html {
 @media screen and (min-width: 769px), (orientation: landscape) {
   .menu-panel {
     top: 5vh;
-    bottom: 10vh;
+    bottom: 20vh;
     left: 70vw;
     right: 0;
     width: 30vw;
-    height: 85vh;
+    height: 75vh;
   }
 }
