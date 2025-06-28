@@ -1,4 +1,4 @@
-""let currentScenario = "000start.json";
+let currentScenario = "000start.json";
 let currentIndex = 0;
 let bgm = null;
 let lastActiveSide = null;
