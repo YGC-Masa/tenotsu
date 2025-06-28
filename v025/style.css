@@ -152,13 +152,23 @@ body, html {
 }
 
 /* ▼ モバイル横画面・PC：セーフエリア右端にメニュー配置 */
-@media screen and (min-width: 769px), (orientation: landscape) {
+@media screen and (max-width: 1024px) and (orientation: landscape) {
   .menu-panel {
-    top: 5vh;
-    bottom: 20vh;
-    left: 70vw;
+    position: absolute;
+    top: 20vh;      /* 上端を画面の 20% に */
+    bottom: 10vh;   /* 下端を画面の 10% に設定 → 少し上げる */
+    left: 70vw;     /* 右端30%のみ使用 */
     right: 0;
-    width: 30vw;
-    height: 75vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 0.5em;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 10;
+    border-radius: 1em 0 0 1em;
+    box-shadow: -2px 0 6px rgba(0, 0, 0, 0.4);
   }
+}
+
 }
