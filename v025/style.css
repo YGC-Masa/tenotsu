@@ -1,55 +1,33 @@
-:root {
-  --fontSize: 1em;
-  --vh: 1vh;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-  background-color: black;
-  color: white;
-  overflow: hidden;
-  height: calc(var(--vh, 1vh) * 100);
-  touch-action: manipulation;
-}
-
-#game-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
+/* 背景画像 */
 #background {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   object-fit: cover;
-  z-index: 0;
+  z-index: -1;
 }
 
-/* キャラクタースロット共通 */
-.char-slot {
-  position: absolute;
+/* キャラ表示 */
+#char-layer {
+  position: fixed;
   bottom: 0;
-  width: 33.3%;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 1rem;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.char-slot {
+  flex: 1;
   display: none;
   justify-content: center;
   align-items: flex-end;
-  z-index: 3;
-}
-
-#char-left {
-  left: 0;
-}
-#char-center {
-  left: 33.3%;
-}
-#char-right {
-  left: 66.6%;
 }
 
 .char-slot.active {
@@ -57,88 +35,89 @@ body {
 }
 
 .char-image {
-  max-height: 95%;
+  max-height: 100vh;
   max-width: 100%;
   object-fit: contain;
 }
 
-/* テキスト表示 */
-#text-container {
-  position: absolute;
+/* セリフ・テキストボックス */
+#dialogue-box {
+  position: fixed;
   bottom: 0;
   width: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.6);
   color: white;
   padding: 1em;
-  z-index: 4;
-}
-
-#name {
-  font-weight: bold;
-  font-size: 1.2em;
-  color: #fff;
-}
-
-#text {
   font-size: var(--fontSize, 1em);
-  margin-top: 0.5em;
+  z-index: 20;
 }
 
-/* 選択肢ボタン */
+.name-area {
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.text-area {
+  line-height: 1.5;
+}
+
+/* 選択肢エリア */
 #choices {
-  position: absolute;
-  top: 10%;
-  left: 10%;
-  width: 80%;
-  z-index: 6;
-  display: flex;
-  flex-direction: column;
-  gap: 1em;
+  position: fixed;
+  bottom: 20%;
+  width: 100%;
+  text-align: center;
+  z-index: 30;
 }
 
 #choices button {
-  font-size: 1em;
-  padding: 0.5em;
-  border-radius: 0.5em;
+  font-size: 1rem;
+  margin: 0.5em;
+  padding: 0.75em 2em;
+  background-color: white;
   border: none;
-  background: #444;
-  color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
 }
 
-/* ▼▼▼ メニュー ▼▼▼ */
-#menu-panel {
-  position: absolute;
-  top: 1%;
-  right: 0;
-  width: 20%;
-  height: 98%;
-  max-width: 160px;
+/* メニュー */
+.menu-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: stretch;
-  z-index: 10;
-  padding: 0;
-  box-sizing: border-box;
-  background: rgba(0, 0, 0, 0.7);
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 100;
+  padding: env(safe-area-inset-top) 1rem env(safe-area-inset-bottom);
 }
 
-#menu-panel.hidden {
+.menu-panel.hidden {
   display: none;
 }
 
-#menu-panel button {
-  flex: 0 0 16%;
-  margin: 0.5% 0;
-  font-size: 0.9em;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border: 1px solid #666;
-  border-radius: 0.5em;
-  cursor: pointer;
-  padding: 0.4em 0.3em;
+/* メニューボタン共通 */
+.menu-panel button {
+  width: 90%;
+  max-width: 400px;
+  font-size: 1.2rem;
+  padding: 1.2rem;
+  margin: 0.3rem 0;
+  background-color: white;
+  color: black;
+  border: none;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
-#menu-panel button:hover {
-  background: rgba(255, 255, 255, 0.3);
+/* 音声状態ボタン（最上部） */
+.menu-panel button:first-child {
+  font-weight: bold;
+  background-color: #444;
+  color: white;
 }
