@@ -155,7 +155,7 @@ body, html {
 @media screen and (min-width: 769px), (orientation: landscape) {
   .menu-panel {
     top: 5vh;
-    bottom: 5vh;
+    bottom: 10vh;
     left: 70vw;
     right: 0;
     width: 30vw;
