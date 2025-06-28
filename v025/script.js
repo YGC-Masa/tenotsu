@@ -245,7 +245,6 @@ function showMenu(menuData) {
 
   const soundBtn = document.createElement("button");
   soundBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
-  soundBtn.className = "menu-sound-toggle";
   soundBtn.onclick = () => {
     isMuted = !isMuted;
     if (bgm) bgm.muted = isMuted;
