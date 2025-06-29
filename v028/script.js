@@ -5,7 +5,7 @@ let lastActiveSide = null;
 let isMuted = true;
 let typingInterval = null;
 let isAutoMode = false;
-let autoWaitTime = 1750;
+let autoWaitTime = 2000;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
