@@ -2,8 +2,10 @@ let currentScenario = "000start.json";
 let currentIndex = 0;
 let bgm = null;
 let lastActiveSide = null;
-let isMuted = true; // 初期はミュート状態
-let typingInterval = null; // 一文字ずつ描画用の interval を管理
+let isMuted = true;
+let typingInterval = null;
+let isAutoMode = false;
+let autoWaitTime = 1750;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -39,6 +41,12 @@ function setTextWithSpeed(text, speed, callback) {
       typingInterval = null;
       isPlaying = false;
       if (callback) callback();
+
+      if (isAutoMode && choicesEl.children.length === 0) {
+        setTimeout(() => {
+          if (!isPlaying) next();
+        }, autoWaitTime);
+      }
     }
   }, speed);
 }
@@ -266,6 +274,20 @@ function showMenu(menuData) {
     menuPanel.classList.add("hidden");
   };
   menuPanel.appendChild(audioStateBtn);
+
+  const autoModeBtn = document.createElement("button");
+  autoModeBtn.textContent = isAutoMode ? "オートモードOFF" : "オートモードON";
+  autoModeBtn.onclick = () => {
+    isAutoMode = !isAutoMode;
+    textEl.innerHTML = "(AutoMode On)";
+    setTimeout(() => {
+      if (!isPlaying && choicesEl.children.length === 0) {
+        next();
+      }
+    }, autoWaitTime);
+    menuPanel.classList.add("hidden");
+  };
+  menuPanel.appendChild(autoModeBtn);
 
   menuData.items.forEach((item) => {
     const btn = document.createElement("button");
