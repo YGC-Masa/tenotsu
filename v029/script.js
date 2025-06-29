@@ -12,6 +12,7 @@ const nameEl = document.getElementById("name");
 const textEl = document.getElementById("text");
 const choicesEl = document.getElementById("choices");
 const menuPanel = document.getElementById("menu-panel");
+const evLayer = document.getElementById("ev-layer");
 
 const charSlots = {
   left: document.getElementById("char-left"),
@@ -100,6 +101,7 @@ async function showScene(scene) {
   }
   textEl.innerHTML = "";
   nameEl.textContent = "";
+  evLayer.innerHTML = "";
 
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
@@ -108,6 +110,22 @@ async function showScene(scene) {
       bgEl.src = config.bgPath + scene.bg;
     });
     await applyEffect(bgEl, scene.bgEffect || "fadein");
+  }
+
+  if (scene.showev) {
+    const evImg = document.createElement("img");
+    evImg.src = config.evPath + scene.showev;
+    evImg.classList.add("ev-image");
+    evImg.onload = () => applyEffect(evImg, scene.evEffect || "fadein");
+    evLayer.appendChild(evImg);
+  }
+
+  if (scene.showcg) {
+    const cgImg = document.createElement("img");
+    cgImg.src = config.cgPath + scene.showcg;
+    cgImg.classList.add("cg-image");
+    cgImg.onload = () => applyEffect(cgImg, scene.cgEffect || "fadein");
+    evLayer.appendChild(cgImg);
   }
 
   if (scene.bgm !== undefined) {
@@ -181,6 +199,7 @@ async function showScene(scene) {
         textEl.innerHTML = "";
         nameEl.textContent = "";
         clearCharacters();
+        evLayer.innerHTML = "";
         if (choice.jump) {
           loadScenario(choice.jump);
         } else if (choice.url) {
@@ -211,6 +230,7 @@ function loadScenario(filename) {
   clearCharacters();
   textEl.innerHTML = "";
   nameEl.textContent = "";
+  evLayer.innerHTML = "";
   if (typingInterval) clearInterval(typingInterval);
   typingInterval = null;
 
