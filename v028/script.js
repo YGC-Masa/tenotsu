@@ -5,7 +5,7 @@ let lastActiveSide = null;
 let isMuted = true;
 let typingInterval = null;
 let isAutoMode = false;
-let autoWaitTime = 1750;
+let autoWaitTime = 2000;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -279,12 +279,24 @@ function showMenu(menuData) {
   autoModeBtn.textContent = isAutoMode ? "オートモードOFF" : "オートモードON";
   autoModeBtn.onclick = () => {
     isAutoMode = !isAutoMode;
-    textEl.innerHTML = "(AutoMode On)";
-    setTimeout(() => {
-      if (!isPlaying && choicesEl.children.length === 0) {
-        next();
-      }
-    }, autoWaitTime);
+
+    if (isAutoMode) {
+      textEl.innerHTML = "(AutoMode On 3秒後開始)";
+      setTimeout(() => {
+        textEl.innerHTML = "";
+        setTimeout(() => {
+          if (!isPlaying && choicesEl.children.length === 0) {
+            next();
+          }
+        }, autoWaitTime);
+      }, 1000);
+    } else {
+      textEl.innerHTML = "(AutoMode Off)";
+      setTimeout(() => {
+        textEl.innerHTML = "";
+      }, 1000);
+    }
+
     menuPanel.classList.add("hidden");
   };
   menuPanel.appendChild(autoModeBtn);
