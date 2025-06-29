@@ -1,0 +1,58 @@
+{
+ "scenes":[
+  {
+   "bg":"bg_field.jpg",
+   "bgEffect":"fadein",
+   "bgm":"main.mp3",
+     "characters": [   {"side":"center", "src": "a01002.png", "effect": "fadein"  }  ],
+   "name":"緋奈",
+   "text":"うわぁー！今日はピクニック日和だね！"
+  },
+  {
+     "characters": [   {"side":"left", "src": "a02002.png", "effect": "slideleft"  }  ],
+   "name":"藍",
+   "text":"緋奈さん、そんなにはしゃぐと転びますよ……。",
+   "voice":"ai_001.mp3"
+  },
+  {
+     "characters": [   {"side":"right", "src": "a03002.png", "effect": "slideright"  }  ],
+   "name":"翠",
+   "text":"私は皆さんの分のお弁当を持ってきました。",
+   "se":"ding.mp3"
+  },
+  {
+     "characters": [   {"side":"center", "src": "a04002.png", "effect": "fadein"  }  ],
+   "name":"こがね",
+   "text":"え、マジ？助かるわー！私お菓子しか持ってきてない！",
+   "voice":"kogane001.mp3"
+  },
+  {
+     "characters": [   {"side":"left", "src": "a01002.png", "effect": "fadein"  }  ],
+   "name":"緋奈",
+   "text":"あっはっは！お菓子しか持ってきてないとか。うけるんだけど！",
+   "fontSize":"1.5em",
+   "speed":"20",
+   "voice":"hina_001.mp3"
+  },
+  {
+     "characters": [   {"side":"center", "src": "a05002.png", "effect": "slideleft"  }  ],
+   "name":"琥珀",
+   "text":"みんな元気そうで何よりだね！さて、食べる？走る？"
+  },
+  {
+      "text": "どうする？",
+      "choices": [
+        {
+          "text": "お弁当を食べる",
+          "jump": "branch_eat.json",
+          "voice": "choice_eat.mp3"
+        },
+        {
+          "text": "運動をする！",
+          "jump": "branch_sports.json",
+          "voice": "choice_run.mp3"
+        }
+      ]
+    }
+ ]
+}
