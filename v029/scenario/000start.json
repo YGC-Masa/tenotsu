@@ -1,58 +1,44 @@
 {
- "scenes":[
-  {
-   "bg":"bg_field.jpg",
-   "bgEffect":"fadein",
-   "bgm":"main.mp3",
-     "characters": [   {"side":"center", "src": "a01002.png", "effect": "fadein"  }  ],
-   "name":"緋奈",
-   "text":"うわぁー！今日はピクニック日和だね！"
-  },
-  {
-     "characters": [   {"side":"left", "src": "a02002.png", "effect": "slideleft"  }  ],
-   "name":"藍",
-   "text":"緋奈さん、そんなにはしゃぐと転びますよ……。",
-   "voice":"ai_001.mp3"
-  },
-  {
-     "characters": [   {"side":"right", "src": "a03002.png", "effect": "slideright"  }  ],
-   "name":"翠",
-   "text":"私は皆さんの分のお弁当を持ってきました。",
-   "se":"ding.mp3"
-  },
-  {
-     "characters": [   {"side":"center", "src": "a04002.png", "effect": "fadein"  }  ],
-   "name":"こがね",
-   "text":"え、マジ？助かるわー！私お菓子しか持ってきてない！",
-   "voice":"kogane001.mp3"
-  },
-  {
-     "characters": [   {"side":"left", "src": "a01002.png", "effect": "fadein"  }  ],
-   "name":"緋奈",
-   "text":"あっはっは！お菓子しか持ってきてないとか。うけるんだけど！",
-   "fontSize":"1.5em",
-   "speed":"20",
-   "voice":"hina_001.mp3"
-  },
-  {
-     "characters": [   {"side":"center", "src": "a05002.png", "effect": "slideleft"  }  ],
-   "name":"琥珀",
-   "text":"みんな元気そうで何よりだね！さて、食べる？走る？"
-  },
-  {
-      "text": "どうする？",
+  "scenes": [
+    {
+      "bg": "bg_school.jpg",
+      "bgm": "school_theme.mp3",
+      "name": "緋奈",
+      "text": "ここが今日の取材場所か〜！",
+      "characters": [
+        { "side": "center", "src": "a01002.png" }
+      ]
+    },
+    {
+      "name": "緋奈",
+      "text": "うわっ、なんだか緊張するかも……",
+      "voice": "hina01.mp3"
+    },
+    {
+      "showev": "ev01.jpg",
+      "evEffect": "fadein",
+      "name": "緋奈",
+      "text": "あっ、イベントCGも用意されてるんだね！",
+      "se": "se_click.mp3"
+    },
+    {
+      "showcg": "cg01.jpg",
+      "cgEffect": "fadein",
+      "name": "緋奈",
+      "text": "ふふっ、ちょっと見せすぎかも？"
+    },
+    {
+      "text": "このあと、どこに向かおうかな？",
       "choices": [
         {
-          "text": "お弁当を食べる",
-          "jump": "branch_eat.json",
-          "voice": "choice_eat.mp3"
+          "text": "図書室に行く",
+          "jump": "goto_library.json"
         },
         {
-          "text": "運動をする！",
-          "jump": "branch_sports.json",
-          "voice": "choice_run.mp3"
+          "text": "屋上に行く",
+          "jump": "goto_rooftop.json"
         }
       ]
     }
- ]
+  ]
 }
