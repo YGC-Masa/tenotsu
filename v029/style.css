@@ -29,29 +29,6 @@ body {
   z-index: 0;
 }
 
-#ev-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.ev-image,
-.cg-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 2;
-}
-
 #char-layer {
   position: absolute;
   width: 100%;
@@ -83,7 +60,7 @@ body {
   object-fit: contain;
 }
 
-/* キャラクター配置 */
+/* 左・中央・右位置の基本設定 */
 #char-left {
   left: 5%;
   width: 30%;
@@ -145,15 +122,116 @@ body {
   background-color: #555;
 }
 
-/* メニュー表示パネル共通 */
+/* ▼▼▼ メニュー表示パネル ▼▼▼ */
 .menu-panel {
   position: absolute;
-  background-color: rgba(0, 0, 0, 0.7);
-  z-index: 10;
+  right: 0;
+  top: 5%;
+  width: 35%;
+  height: 75%;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   align-items: stretch;
   padding: 0.5em;
   box-sizing: border-box;
-  font-size: 1em; /* 完全固定フォントサイズ */
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 10;
+  font-size: 14px; /* ← ここが今回の重要ポイント */
+}
+
+.menu-panel button {
+  flex: 1;
+  margin: 0.2em 0;
+  padding: 0.4em;
+  font-size: 1em;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border: 1px solid #666;
+  border-radius: 0.4em;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.menu-panel button:hover {
+  background: #444;
+}
+
+/* 音声ON/OFFボタン */
+.menu-sound-toggle {
+  font-weight: bold;
+  font-size: 1em;
+  padding: 0.8em 0.5em;
+  margin-bottom: 0.5em;
+  background: #222;
+  color: #fff;
+  border: 2px solid #888;
+  border-radius: 0.5em;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+.menu-sound-toggle:hover {
+  background: #444;
+  color: #fff;
+}
+
+/* ▼▼▼ モバイル横画面用 ▼▼▼ */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  .menu-panel {
+    top: 5%;
+    height: 75%;
+    width: 35%;
+    right: 0;
+  }
+}
+
+/* ▼▼▼ モバイル縦画面用 ▼▼▼ */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  .menu-panel {
+    top: 25%;
+    height: 50%;
+    width: 50%;
+    right: 0;
+  }
+}
+
+/* ▼▼▼ PC画面用（再定義、念のため） ▼▼▼ */
+@media screen and (min-width: 769px) {
+  .menu-panel {
+    top: 5%;
+    height: 75%;
+    width: 35%;
+    right: 0;
+  }
+}
+
+/* ▼▼▼ 共通非表示ユーティリティ ▼▼▼ */
+.hidden {
+  display: none !important;
+}
+
+#ev-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ev-image,
+.cg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
