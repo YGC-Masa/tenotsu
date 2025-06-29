@@ -2,7 +2,7 @@
   "scenes": [
     {
       "bg": "bg_school.jpg",
-      "bgm": "school_theme.mp3",
+      "bgm": "main.mp3",
       "name": "緋奈",
       "text": "ここが今日の取材場所か〜！",
       "characters": [
@@ -12,7 +12,7 @@
     {
       "name": "緋奈",
       "text": "うわっ、なんだか緊張するかも……",
-      "voice": "hina01.mp3"
+      "voice": "a06007.mp3"
     },
     {
       "showev": "ev01.png",
