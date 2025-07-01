@@ -95,6 +95,12 @@ async function applyEffect(el, effectName) {
 async function showScene(scene) {
   if (!scene) return;
 
+  // ▼ showmenu コマンド処理
+  if (scene.showmenu) {
+    loadMenu(scene.showmenu);
+    return;
+  }
+
   if (typingInterval) {
     clearInterval(typingInterval);
     typingInterval = null;
