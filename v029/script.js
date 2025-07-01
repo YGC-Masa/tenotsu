@@ -220,6 +220,10 @@ function next() {
       currentIndex++;
       if (currentIndex < data.scenes.length) {
         showScene(data.scenes[currentIndex]);
+      } else {
+        nameEl.textContent = "";
+        textEl.innerHTML = "（物語は つづく・・・）";
+        isAutoMode = false;
       }
     });
 }
