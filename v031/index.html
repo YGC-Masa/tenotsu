@@ -2,48 +2,38 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>ノベルゲーム v031</title>
-
-  <!-- メインスタイル -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ノベルゲーム</title>
   <link rel="stylesheet" href="style.css" />
-
-  <!-- キャラクター位置・サイズ設定 -->
-  <link rel="stylesheet" href="chardispsetting.css" />
 </head>
 <body>
   <div id="game-container">
-    <!-- 背景画像 -->
-    <img id="background" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=" alt="背景画像" />
-    
-    <!-- キャラ表示層 -->
+    <img id="background" src="" alt="背景" />
+    <div id="ev-layer"></div>
+
     <div id="char-layer">
       <div id="char-left" class="char-slot"></div>
-      <div id="char-right" class="char-slot"></div>
       <div id="char-center" class="char-slot"></div>
+      <div id="char-right" class="char-slot"></div>
     </div>
 
-    <div id="ev-layer"></div> <!-- EV/CG 共通表示レイヤー -->
-    
-    <!-- セリフボックス -->
     <div id="dialogue-box">
-      <div id="name" class="name-area"></div>
-      <div id="text" class="text-area"></div>
+      <div class="name-area" id="name"></div>
+      <div class="text-area" id="text"></div>
     </div>
 
-    <!-- 選択肢ボタン -->
-    <div id="choices" class="choices-area"></div>
+    <div class="choices-area" id="choices"></div>
 
-    <!-- メニュー表示パネル -->
-    <div id="list-panel" class="list-panel hidden"></div>  <!-- 下層 -->
-    <div id="menu-panel" class="menu-panel hidden"></div>  <!-- 上層 -->
+    <!-- ▼ LISTパネル（z-index: 11） -->
+    <div id="list-panel" class="list-panel hidden"></div>
+
+    <!-- ▼ メニューパネル（z-index: 12） -->
+    <div id="menu-panel" class="menu-panel hidden"></div>
   </div>
 
-  <!-- スクリプト群 -->
   <script src="config.js"></script>
-  <script src="characterColors.js"></script>
-  <script src="characterStyles.js"></script>
-  <script src="effect.js"></script>
+  <script src="character.js"></script>
+  <script src="effects.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
