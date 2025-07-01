@@ -6,6 +6,7 @@ let isMuted = true;
 let typingInterval = null;
 let isAutoMode = false;
 let autoWaitTime = 2000;
+let isListVisible = false;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -42,7 +43,6 @@ function setTextWithSpeed(text, speed, callback) {
       typingInterval = null;
       isPlaying = false;
       if (callback) callback();
-
       if (isAutoMode && choicesEl.children.length === 0) {
         setTimeout(() => {
           if (!isPlaying) next();
@@ -75,11 +75,7 @@ function updateCharacterDisplay() {
     if (isPortrait) {
       slot.classList.toggle("active", pos === lastActiveSide && hasCharacter);
     } else {
-      if (hasCharacter) {
-        slot.classList.add("active");
-      } else {
-        slot.classList.remove("active");
-      }
+      slot.classList.toggle("active", hasCharacter);
     }
   }
 }
@@ -94,12 +90,6 @@ async function applyEffect(el, effectName) {
 
 async function showScene(scene) {
   if (!scene) return;
-
-  // ▼ showmenu コマンド処理
-  if (scene.showmenu) {
-    loadMenu(scene.showmenu);
-    return;
-  }
 
   if (typingInterval) {
     clearInterval(typingInterval);
@@ -176,23 +166,15 @@ async function showScene(scene) {
   }
 
   if (scene.voice) {
-    try {
-      const voice = new Audio(config.voicePath + scene.voice);
-      voice.muted = isMuted;
-      voice.play();
-    } catch (e) {
-      console.warn("ボイス再生エラー:", scene.voice);
-    }
+    const voice = new Audio(config.voicePath + scene.voice);
+    voice.muted = isMuted;
+    voice.play().catch(() => {});
   }
 
   if (scene.se) {
-    try {
-      const se = new Audio(config.sePath + scene.se);
-      se.muted = isMuted;
-      se.play();
-    } catch (e) {
-      console.warn("SE再生エラー:", scene.se);
-    }
+    const se = new Audio(config.sePath + scene.se);
+    se.muted = isMuted;
+    se.play().catch(() => {});
   }
 
   if (scene.choices) {
@@ -201,11 +183,10 @@ async function showScene(scene) {
       const btn = document.createElement("button");
       btn.textContent = choice.text;
       btn.onclick = () => {
-        if (typingInterval) clearInterval(typingInterval);
-        textEl.innerHTML = "";
-        nameEl.textContent = "";
         clearCharacters();
         evLayer.innerHTML = "";
+        textEl.innerHTML = "";
+        nameEl.textContent = "";
         if (choice.jump) {
           loadScenario(choice.jump);
         } else if (choice.url) {
@@ -216,6 +197,14 @@ async function showScene(scene) {
     });
   } else {
     choicesEl.innerHTML = "";
+  }
+
+  if (scene.showmenu) {
+    loadMenu(scene.showmenu);
+  }
+
+  if (scene.showlist) {
+    loadList(scene.showlist);
   }
 }
 
@@ -257,8 +246,10 @@ bgEl.addEventListener("dblclick", () => {
 
 document.addEventListener("click", (e) => {
   if (menuPanel && !menuPanel.classList.contains("hidden")) {
-    menuPanel.classList.add("hidden");
-    return;
+    if (!isListVisible) {
+      menuPanel.classList.add("hidden");
+      return;
+    }
   }
 
   if (!isPlaying && choicesEl.children.length === 0) {
@@ -291,7 +282,18 @@ async function loadMenu(filename = "menu01.json") {
   }
 }
 
+async function loadList(filename) {
+  try {
+    const res = await fetch(config.listPath + filename + "?t=" + Date.now());
+    const data = await res.json();
+    showList(data);
+  } catch (e) {
+    console.error("リスト読み込みエラー:", e);
+  }
+}
+
 function showMenu(menuData) {
+  isListVisible = false;
   menuPanel.innerHTML = "";
   menuPanel.classList.remove("hidden");
 
@@ -335,6 +337,23 @@ function showMenu(menuData) {
     const btn = document.createElement("button");
     btn.textContent = item.text;
     btn.onclick = () => {
+      menuPanel.classList.add("hidden");
+      handleMenuAction(item);
+    };
+    menuPanel.appendChild(btn);
+  });
+}
+
+function showList(listData) {
+  isListVisible = true;
+  menuPanel.innerHTML = "";
+  menuPanel.classList.remove("hidden");
+
+  listData.items.slice(0, 7).forEach((item) => {
+    const btn = document.createElement("button");
+    btn.textContent = item.text;
+    btn.onclick = () => {
+      isListVisible = false;
       menuPanel.classList.add("hidden");
       handleMenuAction(item);
     };
