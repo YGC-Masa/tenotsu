@@ -1,34 +1,20 @@
 {
   "scenes": [
     {
-      "bg": "bg_school.jpg",
-      "bgm": "main.mp3",
-      "name": "緋奈",
-      "text": "ここが今日の取材場所か〜！",
-      "characters": [
-        { "side": "center", "src": "a01002.png" }
-      ]
+      "bg": "school_bg.jpg",
+      "name": "ナビ",
+      "text": "ここは放課後の教室……"
     },
     {
-      "name": "緋奈",
-      "text": "うわっ、なんだか緊張するかも……",
-      "voice": "a06007.mp3"
-    },
-    {
-      "showev": "ev01.png",
-      "evEffect": "fadein",
-      "name": "緋奈",
-      "text": "あっ、こがねちゃんのイベントCGも用意されてるんだね！",
-      "se": "se_click.mp3"
-    },
-    {
-      "showcg": "cg01.png",
-      "cgEffect": "fadein",
-      "name": "緋奈",
-      "text": "ふふっ、部活中の琥珀ちゃん。ちょっと見せすぎかも？"
+      "name": "ナビ",
+      "text": "どこへ行こうか考えていたら、選択肢が現れた……"
     },
     {
       "showlist": "list01.json"
+    },
+    {
+      "name": "ナビ",
+      "text": "（リスト選択後にこのセリフが表示されます）"
     }
   ]
 }
