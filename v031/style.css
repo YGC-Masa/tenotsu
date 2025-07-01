@@ -103,3 +103,175 @@ body {
   position: absolute;
   top: 60%;
   width: 100%;
+  text-align: center;
+  z-index: 4;
+}
+
+.choices-area button {
+  margin: 0.5em;
+  padding: 0.5em 1em;
+  font-size: 1em;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 0.3em;
+  cursor: pointer;
+}
+
+.choices-area button:hover {
+  background-color: #555;
+}
+
+/* ▼▼▼ LIST表示パネル（ピンク系）▼▼▼ */
+.list-panel {
+  position: absolute;
+  right: 0;
+  top: 5%;
+  width: 35%;
+  height: 75%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: stretch;
+  padding: 0.5em;
+  box-sizing: border-box;
+  background-color: rgba(255, 192, 203, 0.85);
+  z-index: 11;
+  font-size: 14px;
+}
+
+.list-panel button {
+  flex: 1;
+  margin: 0.2em 0;
+  padding: 0.4em;
+  font-size: 1em;
+  background: rgba(255, 105, 180, 0.9);
+  color: white;
+  border: 1px solid #d36c8d;
+  border-radius: 0.4em;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.list-panel button:hover {
+  background: rgba(255, 20, 147, 0.95);
+}
+
+/* ▼▼▼ メニュー表示パネル（黒系）▼▼▼ */
+.menu-panel {
+  position: absolute;
+  right: 0;
+  top: 5%;
+  width: 35%;
+  height: 75%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: stretch;
+  padding: 0.5em;
+  box-sizing: border-box;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 12;
+  font-size: 14px;
+}
+
+.menu-panel button {
+  flex: 1;
+  margin: 0.2em 0;
+  padding: 0.4em;
+  font-size: 1em;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border: 1px solid #666;
+  border-radius: 0.4em;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.menu-panel button:hover {
+  background: #444;
+}
+
+.menu-sound-toggle {
+  font-weight: bold;
+  font-size: 1em;
+  padding: 0.8em 0.5em;
+  margin-bottom: 0.5em;
+  background: #222;
+  color: #fff;
+  border: 2px solid #888;
+  border-radius: 0.5em;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+.menu-sound-toggle:hover {
+  background: #444;
+  color: #fff;
+}
+
+/* ▼▼▼ モバイル横画面用 ▼▼▼ */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  .menu-panel,
+  .list-panel {
+    top: 5%;
+    height: 75%;
+    width: 35%;
+    right: 0;
+  }
+}
+
+/* ▼▼▼ モバイル縦画面用 ▼▼▼ */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  .menu-panel,
+  .list-panel {
+    top: 25%;
+    height: 50%;
+    width: 50%;
+    right: 0;
+  }
+}
+
+/* ▼▼▼ PC画面用（再定義、念のため） ▼▼▼ */
+@media screen and (min-width: 769px) {
+  .menu-panel,
+  .list-panel {
+    top: 5%;
+    height: 75%;
+    width: 35%;
+    right: 0;
+  }
+}
+
+/* ▼▼▼ 共通非表示ユーティリティ ▼▼▼ */
+.hidden {
+  display: none !important;
+}
+
+/* ▼▼▼ EV/CG 表示エリア ▼▼▼ */
+#ev-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ev-image,
+.cg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
