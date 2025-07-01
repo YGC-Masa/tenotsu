@@ -7,6 +7,6 @@ const config = {
   scenarioPath: "./scenario/",
   menuPath: "./menu/",  // メニューファイル格納先
   evPath: "../assets2/ev/",
-  cgPath: "../assets2/cg/" // ← 追加
+  cgPath: "../assets2/cg/", // ← 追加
   listPath: "./list/"
 };
