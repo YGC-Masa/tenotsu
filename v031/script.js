@@ -1,3 +1,4 @@
+// グローバル定義など（v031以前と同じ）
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let bgm = null;
@@ -6,13 +7,13 @@ let isMuted = true;
 let typingInterval = null;
 let isAutoMode = false;
 let autoWaitTime = 2000;
-let isListVisible = false;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
 const textEl = document.getElementById("text");
 const choicesEl = document.getElementById("choices");
 const menuPanel = document.getElementById("menu-panel");
+const listPanel = document.getElementById("list-panel");
 const evLayer = document.getElementById("ev-layer");
 
 const charSlots = {
@@ -32,7 +33,6 @@ function isMobilePortrait() {
 
 function setTextWithSpeed(text, speed, callback) {
   if (typingInterval) clearInterval(typingInterval);
-
   isPlaying = true;
   textEl.innerHTML = "";
   let i = 0;
@@ -90,11 +90,8 @@ async function applyEffect(el, effectName) {
 
 async function showScene(scene) {
   if (!scene) return;
+  if (typingInterval) clearInterval(typingInterval);
 
-  if (typingInterval) {
-    clearInterval(typingInterval);
-    typingInterval = null;
-  }
   textEl.innerHTML = "";
   nameEl.textContent = "";
   evLayer.innerHTML = "";
@@ -168,13 +165,13 @@ async function showScene(scene) {
   if (scene.voice) {
     const voice = new Audio(config.voicePath + scene.voice);
     voice.muted = isMuted;
-    voice.play().catch(() => {});
+    voice.play();
   }
 
   if (scene.se) {
     const se = new Audio(config.sePath + scene.se);
     se.muted = isMuted;
-    se.play().catch(() => {});
+    se.play();
   }
 
   if (scene.choices) {
@@ -184,9 +181,9 @@ async function showScene(scene) {
       btn.textContent = choice.text;
       btn.onclick = () => {
         clearCharacters();
-        evLayer.innerHTML = "";
         textEl.innerHTML = "";
         nameEl.textContent = "";
+        evLayer.innerHTML = "";
         if (choice.jump) {
           loadScenario(choice.jump);
         } else if (choice.url) {
@@ -230,8 +227,8 @@ function loadScenario(filename) {
   textEl.innerHTML = "";
   nameEl.textContent = "";
   evLayer.innerHTML = "";
+  listPanel.classList.add("hidden");
   if (typingInterval) clearInterval(typingInterval);
-  typingInterval = null;
 
   fetch(config.scenarioPath + filename + "?t=" + Date.now())
     .then((res) => res.json())
@@ -240,22 +237,10 @@ function loadScenario(filename) {
     });
 }
 
-bgEl.addEventListener("dblclick", () => {
-  loadMenu("menu01.json");
-});
-
-document.addEventListener("click", (e) => {
-  if (menuPanel && !menuPanel.classList.contains("hidden")) {
-    if (!isListVisible) {
-      menuPanel.classList.add("hidden");
-      return;
-    }
-  }
-
-  if (!isPlaying && choicesEl.children.length === 0) {
-    next();
-  }
-});
+function setVhVariable() {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
+}
 
 window.addEventListener("resize", () => {
   setVhVariable();
@@ -267,33 +252,14 @@ window.addEventListener("load", () => {
   loadScenario(currentScenario);
 });
 
-function setVhVariable() {
-  let vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty("--vh", `${vh}px`);
-}
-
+// === メニュー表示 ===
 async function loadMenu(filename = "menu01.json") {
-  try {
-    const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
-    const data = await res.json();
-    showMenu(data);
-  } catch (e) {
-    console.error("メニュー読み込みエラー:", e);
-  }
-}
-
-async function loadList(filename) {
-  try {
-    const res = await fetch(config.listPath + filename + "?t=" + Date.now());
-    const data = await res.json();
-    showList(data);
-  } catch (e) {
-    console.error("リスト読み込みエラー:", e);
-  }
+  const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
+  const data = await res.json();
+  showMenu(data);
 }
 
 function showMenu(menuData) {
-  isListVisible = false;
   menuPanel.innerHTML = "";
   menuPanel.classList.remove("hidden");
 
@@ -302,38 +268,32 @@ function showMenu(menuData) {
   audioStateBtn.onclick = () => {
     isMuted = !isMuted;
     if (bgm) bgm.muted = isMuted;
-    document.querySelectorAll("audio").forEach(audio => audio.muted = isMuted);
+    document.querySelectorAll("audio").forEach(a => a.muted = isMuted);
     menuPanel.classList.add("hidden");
   };
   menuPanel.appendChild(audioStateBtn);
 
-  const autoModeBtn = document.createElement("button");
-  autoModeBtn.textContent = isAutoMode ? "オートモードOFF" : "オートモードON";
-  autoModeBtn.onclick = () => {
+  const autoBtn = document.createElement("button");
+  autoBtn.textContent = isAutoMode ? "オートモードOFF" : "オートモードON";
+  autoBtn.onclick = () => {
     isAutoMode = !isAutoMode;
-
     if (isAutoMode) {
       textEl.innerHTML = "(AutoMode On 3秒後開始)";
       setTimeout(() => {
         textEl.innerHTML = "";
         setTimeout(() => {
-          if (!isPlaying && choicesEl.children.length === 0) {
-            next();
-          }
+          if (!isPlaying && choicesEl.children.length === 0) next();
         }, autoWaitTime);
       }, 1000);
     } else {
       textEl.innerHTML = "(AutoMode Off)";
-      setTimeout(() => {
-        textEl.innerHTML = "";
-      }, 1000);
+      setTimeout(() => { textEl.innerHTML = ""; }, 1000);
     }
-
     menuPanel.classList.add("hidden");
   };
-  menuPanel.appendChild(autoModeBtn);
+  menuPanel.appendChild(autoBtn);
 
-  menuData.items.forEach((item) => {
+  menuData.items.forEach(item => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
     btn.onclick = () => {
@@ -344,20 +304,25 @@ function showMenu(menuData) {
   });
 }
 
-function showList(listData) {
-  isListVisible = true;
-  menuPanel.innerHTML = "";
-  menuPanel.classList.remove("hidden");
+// === リスト表示 ===
+async function loadList(filename = "list01.json") {
+  const res = await fetch(config.listPath + filename + "?t=" + Date.now());
+  const data = await res.json();
+  showList(data);
+}
 
-  listData.items.slice(0, 7).forEach((item) => {
+function showList(listData) {
+  listPanel.innerHTML = "";
+  listPanel.classList.remove("hidden");
+
+  listData.items.slice(0, 7).forEach(item => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
     btn.onclick = () => {
-      isListVisible = false;
-      menuPanel.classList.add("hidden");
+      listPanel.classList.add("hidden");
       handleMenuAction(item);
     };
-    menuPanel.appendChild(btn);
+    listPanel.appendChild(btn);
   });
 }
 
@@ -370,3 +335,18 @@ function handleMenuAction(item) {
     location.href = item.url;
   }
 }
+
+document.addEventListener("click", (e) => {
+  if (!menuPanel.classList.contains("hidden")) {
+    menuPanel.classList.add("hidden");
+    return;
+  }
+
+  if (!isPlaying && choicesEl.children.length === 0) {
+    next();
+  }
+});
+
+bgEl.addEventListener("dblclick", () => {
+  loadMenu("menu01.json");
+});
