@@ -14,6 +14,9 @@
       "text": "うわっ、なんだか緊張するかも……",
       "voice": "a06007.mp3"
     },
+     {
+      "showmenu": "menu01.json"
+     },
     {
       "showev": "ev01.png",
       "evEffect": "fadein",
