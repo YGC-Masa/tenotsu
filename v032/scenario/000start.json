@@ -1,21 +1,15 @@
 {
   "scenes": [
     {
-      "name": "",
-      "text": " ",
       "auto": true,
       "textareahide": true
     },
     {
-      "name": "",
-      "text": " ",
       "auto": true,
       "bg": "titleon.jpg",
       "bgEffect": "transition"
     },
     {
-      "name": "",
-      "text": " ",
       "auto": false,
       "showlist": "title.json"
     }
