@@ -4,12 +4,12 @@
       "textareahide": true
     },
     {
-      "showev": "title.jpg",
-      "evEffect": "whitein"
+      "bg": "title.jpg",
+      "bgEffect": "whitein"
     },
     {
-      "showev": "titleon.jpg",
-      "evEffect": "transition"
+      "bg": "titleon.jpg",
+      "bgEffect": "transition"
     },
     {
       "showlist": "title.json"
