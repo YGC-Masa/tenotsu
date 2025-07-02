@@ -1,4 +1,4 @@
-// グローバル定義など（v031以前と同じ）
+// === グローバル定義 ===
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let bgm = null;
@@ -7,6 +7,7 @@ let isMuted = true;
 let typingInterval = null;
 let isAutoMode = false;
 let autoWaitTime = 2000;
+let isPlaying = false;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -15,6 +16,7 @@ const choicesEl = document.getElementById("choices");
 const menuPanel = document.getElementById("menu-panel");
 const listPanel = document.getElementById("list-panel");
 const evLayer = document.getElementById("ev-layer");
+const dialogueBox = document.getElementById("dialogue-box");
 
 const charSlots = {
   left: document.getElementById("char-left"),
@@ -25,7 +27,6 @@ const charSlots = {
 let defaultFontSize = "1em";
 let defaultSpeed = 40;
 let currentSpeed = defaultSpeed;
-let isPlaying = false;
 
 function isMobilePortrait() {
   return window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
@@ -88,6 +89,7 @@ async function applyEffect(el, effectName) {
   }
 }
 
+// === メイン表示処理 ===
 async function showScene(scene) {
   if (!scene) return;
   if (typingInterval) clearInterval(typingInterval);
@@ -95,6 +97,14 @@ async function showScene(scene) {
   textEl.innerHTML = "";
   nameEl.textContent = "";
   evLayer.innerHTML = "";
+
+  // 文字表示操作
+  if (scene.textareahide) {
+    dialogueBox.classList.add("hidden");
+  }
+  if (scene.textareashow) {
+    dialogueBox.classList.remove("hidden");
+  }
 
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
@@ -196,13 +206,8 @@ async function showScene(scene) {
     choicesEl.innerHTML = "";
   }
 
-  if (scene.showmenu) {
-    loadMenu(scene.showmenu);
-  }
-
-  if (scene.showlist) {
-    loadList(scene.showlist);
-  }
+  if (scene.showmenu) loadMenu(scene.showmenu);
+  if (scene.showlist) loadList(scene.showlist);
 }
 
 function next() {
@@ -228,6 +233,7 @@ function loadScenario(filename) {
   nameEl.textContent = "";
   evLayer.innerHTML = "";
   listPanel.classList.add("hidden");
+  dialogueBox.classList.remove("hidden");
   if (typingInterval) clearInterval(typingInterval);
 
   fetch(config.scenarioPath + filename + "?t=" + Date.now())
