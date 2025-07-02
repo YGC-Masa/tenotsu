@@ -7,7 +7,7 @@
     {
       "auto": true,
       "bg": "titleon.jpg",
-      "bgEffect": "transition"
+      "bgEffect": "whitein"
     },
     {
       "auto": false,
