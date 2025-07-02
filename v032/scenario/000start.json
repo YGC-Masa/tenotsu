@@ -1,23 +1,24 @@
 {
   "scenes": [
     {
-    "name": "",
-    "text": " ",
-    "auto": true,
-      "textareahide": true
-    },
-    {
-    "name": "",
-    "text": " ",
-    "auto": true,
-      "bg": "titleon.jpg",
-      "bgEffect": "transition"
-    },
-    {
+      "textareahide": true,
+      "auto": true,
       "name": "",
-      "text": " ",
-      "auto": false,
+      "text": " "
+    },
+    {
+    "bg": "titleon.jpg",
+    "bgEffect": "transition",
+    "auto": true,
+    "name": "",
+    "text": " "
+    
+      },
+    {
       "showlist": "title.json"
+      "auto": false,
+      "name": "",
+      "text": " "
     }
   ]
 }
