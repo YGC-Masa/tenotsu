@@ -122,7 +122,6 @@ body {
   background-color: #555;
 }
 
-/* ▼▼▼ メニュー表示パネル ▼▼▼ */
 /* ▼▼▼ LIST表示パネル（ピンク系）▼▼▼ */
 .list-panel {
   position: absolute;
@@ -197,7 +196,6 @@ body {
   background: #444;
 }
 
-/* 音声ON/OFFボタン */
 .menu-sound-toggle {
   font-weight: bold;
   font-size: 1em;
@@ -218,7 +216,8 @@ body {
 
 /* ▼▼▼ モバイル横画面用 ▼▼▼ */
 @media screen and (max-width: 768px) and (orientation: landscape) {
-  .menu-panel {
+  .menu-panel,
+  .list-panel {
     top: 5%;
     height: 75%;
     width: 35%;
@@ -228,7 +227,8 @@ body {
 
 /* ▼▼▼ モバイル縦画面用 ▼▼▼ */
 @media screen and (max-width: 768px) and (orientation: portrait) {
-  .menu-panel {
+  .menu-panel,
+  .list-panel {
     top: 25%;
     height: 50%;
     width: 50%;
@@ -238,7 +238,8 @@ body {
 
 /* ▼▼▼ PC画面用（再定義、念のため） ▼▼▼ */
 @media screen and (min-width: 769px) {
-  .menu-panel {
+  .menu-panel,
+  .list-panel {
     top: 5%;
     height: 75%;
     width: 35%;
@@ -251,6 +252,7 @@ body {
   display: none !important;
 }
 
+/* ▼▼▼ EV/CG 表示エリア ▼▼▼ */
 #ev-layer {
   position: absolute;
   top: 0;
@@ -272,4 +274,22 @@ body {
   top: 0;
   left: 0;
   z-index: 2;
-} 
+}
+
+/* ▼▼▼ モバイル縦画面用キャラサイズ調整 ▼▼▼ */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  #char-left,
+  #char-center,
+  #char-right {
+    width: 45%;
+    left: 5% !important;
+  }
+
+  #char-center {
+    left: 27.5% !important;
+  }
+
+  #char-right {
+    left: 50% !important;
+  }
+}
