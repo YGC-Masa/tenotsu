@@ -178,6 +178,26 @@ body {
   font-size: 14px;
 }
 
+.menu-panel button {
+  flex: 1;
+  margin: 0.2em 0;
+  padding: 0.4em;
+  font-size: 1em;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border: 1px solid #666;
+  border-radius: 0.4em;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.menu-panel button:hover {
+  background: #444;
+}
+
+
 
 /* 音声ON/OFFボタン（メニュー専用） */
 .menu-sound-toggle {
