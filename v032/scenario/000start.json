@@ -4,10 +4,6 @@
       "textareahide": true
     },
     {
-      "bg": "title.jpg",
-      "bgEffect": "whitein"
-    },
-    {
       "bg": "titleon.jpg",
       "bgEffect": "transition"
     },
