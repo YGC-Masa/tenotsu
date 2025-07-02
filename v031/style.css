@@ -60,7 +60,7 @@ body {
   object-fit: contain;
 }
 
-/* 左・中央・右位置の基本設定 */
+/* キャラ配置 */
 #char-left {
   left: 5%;
   width: 30%;
@@ -76,6 +76,7 @@ body {
   width: 30%;
 }
 
+/* ダイアログボックス */
 #dialogue-box {
   position: absolute;
   bottom: 0;
@@ -122,44 +123,7 @@ body {
   background-color: #555;
 }
 
-/* ▼▼▼ LIST表示パネル（ピンク系）▼▼▼ */
-.list-panel {
-  position: absolute;
-  right: 0;
-  top: 5%;
-  width: 35%;
-  height: 75%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: stretch;
-  padding: 0.5em;
-  box-sizing: border-box;
-  background-color: rgba(255, 192, 203, 0.85);
-  z-index: 11;
-  font-size: 14px;
-}
-
-.list-panel button {
-  flex: 1;
-  margin: 0.2em 0;
-  padding: 0.4em;
-  font-size: 1em;
-  background: rgba(255, 105, 180, 0.9);
-  color: white;
-  border: 1px solid #d36c8d;
-  border-radius: 0.4em;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.list-panel button:hover {
-  background: rgba(255, 20, 147, 0.95);
-}
-
-/* ▼▼▼ メニュー表示パネル（黒系）▼▼▼ */
+/* ▼▼▼ メニュー表示パネル ▼▼▼ */
 .menu-panel {
   position: absolute;
   right: 0;
@@ -173,7 +137,7 @@ body {
   padding: 0.5em;
   box-sizing: border-box;
   background-color: rgba(0, 0, 0, 0.7);
-  z-index: 12;
+  z-index: 10;
   font-size: 14px;
 }
 
@@ -196,6 +160,44 @@ body {
   background: #444;
 }
 
+/* ▼▼▼ LIST表示パネル（新規）▼▼▼ */
+.list-panel {
+  position: absolute;
+  left: 0;
+  top: 5%;
+  width: 35%;
+  height: 75%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: stretch;
+  padding: 0.5em;
+  box-sizing: border-box;
+  background-color: rgba(32, 32, 64, 0.8); /* menuと違う色で識別 */
+  z-index: 11; /* メニューより奥に出す場合は10以下に */
+  font-size: 14px;
+}
+
+.list-panel button {
+  flex: 1;
+  margin: 0.2em 0;
+  padding: 0.4em;
+  font-size: 1em;
+  background: rgba(64, 64, 128, 0.9);
+  color: white;
+  border: 1px solid #888;
+  border-radius: 0.4em;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.list-panel button:hover {
+  background: #556;
+}
+
+/* 音声ON/OFFボタン（メニュー専用） */
 .menu-sound-toggle {
   font-weight: bold;
   font-size: 1em;
@@ -214,45 +216,37 @@ body {
   color: #fff;
 }
 
-/* ▼▼▼ モバイル横画面用 ▼▼▼ */
+/* モバイル横画面用 */
 @media screen and (max-width: 768px) and (orientation: landscape) {
-  .menu-panel,
-  .list-panel {
+  .menu-panel, .list-panel {
     top: 5%;
     height: 75%;
-    width: 35%;
-    right: 0;
+    width: 45%;
+    font-size: 12px;
   }
 }
 
-/* ▼▼▼ モバイル縦画面用 ▼▼▼ */
+/* モバイル縦画面用 */
 @media screen and (max-width: 768px) and (orientation: portrait) {
-  .menu-panel,
-  .list-panel {
-    top: 25%;
+  .menu-panel, .list-panel {
+    top: 20%;
     height: 50%;
-    width: 50%;
-    right: 0;
+    width: 60%;
+    font-size: 13px;
   }
 }
 
-/* ▼▼▼ PC画面用（再定義、念のため） ▼▼▼ */
+/* PC画面用 */
 @media screen and (min-width: 769px) {
-  .menu-panel,
-  .list-panel {
+  .menu-panel, .list-panel {
     top: 5%;
     height: 75%;
     width: 35%;
-    right: 0;
+    font-size: 14px;
   }
 }
 
-/* ▼▼▼ 共通非表示ユーティリティ ▼▼▼ */
-.hidden {
-  display: none !important;
-}
-
-/* ▼▼▼ EV/CG 表示エリア ▼▼▼ */
+/* EV/CG */
 #ev-layer {
   position: absolute;
   top: 0;
@@ -276,20 +270,7 @@ body {
   z-index: 2;
 }
 
-/* ▼▼▼ モバイル縦画面用キャラサイズ調整 ▼▼▼ */
-@media screen and (max-width: 768px) and (orientation: portrait) {
-  #char-left,
-  #char-center,
-  #char-right {
-    width: 45%;
-    left: 5% !important;
-  }
-
-  #char-center {
-    left: 27.5% !important;
-  }
-
-  #char-right {
-    left: 50% !important;
-  }
+/* 共通非表示ユーティリティ */
+.hidden {
+  display: none !important;
 }
