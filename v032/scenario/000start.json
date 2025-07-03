@@ -2,18 +2,6 @@
   "scenes": [
     {
       "auto": true,
-      "bg": "osaruworks.png",
-      "bgEffect": "blackin",
-      "textareashow": false
-    },
-    {
-      "auto": true,
-      "bg": "osaruworks.png",
-      "bgEffect": "blackout",
-      "textareashow": false
-    },
-    {
-      "auto": true,
       "bg": "titleon.jpg",
       "bgEffect": "whitein",
       "textareashow": false
