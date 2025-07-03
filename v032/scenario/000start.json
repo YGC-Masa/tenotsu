@@ -4,15 +4,13 @@
       "auto": true,
       "bg": "osaruworks.png",
       "bgEffect": "blackin",
-      "textareashow": false,
-      "wait": 2000
+      "textareashow": false
     },
     {
       "auto": true,
       "bg": "osaruworks.png",
       "bgEffect": "blackout",
-      "textareashow": false,
-      "wait": 2000
+      "textareashow": false
     },
     {
       "auto": true,
