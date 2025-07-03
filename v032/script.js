@@ -1,4 +1,3 @@
-// グローバル変数など
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let bgm = null;
@@ -7,6 +6,11 @@ let isMuted = true;
 let typingInterval = null;
 let isAutoMode = false;
 let autoWaitTime = 2000;
+let isPlaying = false;
+let currentSpeed = 40;
+let defaultSpeed = 40;
+let defaultFontSize = "1em";
+let textAreaVisible = true;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -15,6 +19,7 @@ const choicesEl = document.getElementById("choices");
 const menuPanel = document.getElementById("menu-panel");
 const listPanel = document.getElementById("list-panel");
 const evLayer = document.getElementById("ev-layer");
+const clickLayer = document.getElementById("click-layer");
 const dialogueBox = document.getElementById("dialogue-box");
 
 const charSlots = {
@@ -22,11 +27,6 @@ const charSlots = {
   center: document.getElementById("char-center"),
   right: document.getElementById("char-right"),
 };
-
-let defaultFontSize = "1em";
-let defaultSpeed = 40;
-let currentSpeed = defaultSpeed;
-let isPlaying = false;
 
 function isMobilePortrait() {
   return window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
@@ -89,23 +89,25 @@ async function applyEffect(el, effectName) {
   }
 }
 
+function updateTextAreaVisibility(show) {
+  textAreaVisible = show;
+  dialogueBox.classList.toggle("hidden", !show);
+}
+
 async function showScene(scene) {
   if (!scene) return;
   if (typingInterval) clearInterval(typingInterval);
 
-  // テキストボックスの初期化
-  nameEl.textContent = "";
+  // 初期化
   textEl.innerHTML = "";
+  nameEl.textContent = "";
   evLayer.innerHTML = "";
+  choicesEl.innerHTML = "";
 
-  // ▼ テキストエリアの表示制御
-  if (scene.textareashow === false) {
-    dialogueBox.classList.add("hidden");
-  } else {
-    dialogueBox.classList.remove("hidden");
+  if (scene.textareashow !== undefined) {
+    updateTextAreaVisibility(scene.textareashow);
   }
 
-  // 背景画像処理
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
     await new Promise((resolve) => {
@@ -115,7 +117,6 @@ async function showScene(scene) {
     await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
-  // EV/CG処理
   if (scene.showev) {
     const evImg = document.createElement("img");
     evImg.src = config.evPath + scene.showev;
@@ -132,7 +133,6 @@ async function showScene(scene) {
     evLayer.appendChild(cgImg);
   }
 
-  // BGM処理
   if (scene.bgm !== undefined) {
     if (bgm) {
       bgm.pause();
@@ -146,7 +146,6 @@ async function showScene(scene) {
     }
   }
 
-  // キャラ表示
   if (scene.characters) {
     lastActiveSide = scene.characters[scene.characters.length - 1]?.side || null;
     ["left", "center", "right"].forEach(async (pos) => {
@@ -167,7 +166,6 @@ async function showScene(scene) {
 
   updateCharacterDisplay();
 
-  // セリフ
   if (scene.name !== undefined && scene.text !== undefined) {
     const color = characterColors[scene.name] || "#C0C0C0";
     nameEl.textContent = scene.name;
@@ -176,7 +174,6 @@ async function showScene(scene) {
     setTextWithSpeed(scene.text, currentSpeed);
   }
 
-  // 音声/SE
   if (scene.voice) {
     const voice = new Audio(config.voicePath + scene.voice);
     voice.muted = isMuted;
@@ -189,16 +186,14 @@ async function showScene(scene) {
     se.play();
   }
 
-  // 選択肢
   if (scene.choices) {
-    choicesEl.innerHTML = "";
     scene.choices.forEach((choice) => {
       const btn = document.createElement("button");
       btn.textContent = choice.text;
       btn.onclick = () => {
         clearCharacters();
-        nameEl.textContent = "";
         textEl.innerHTML = "";
+        nameEl.textContent = "";
         evLayer.innerHTML = "";
         if (choice.jump) {
           loadScenario(choice.jump);
@@ -208,8 +203,6 @@ async function showScene(scene) {
       };
       choicesEl.appendChild(btn);
     });
-  } else {
-    choicesEl.innerHTML = "";
   }
 
   if (scene.showmenu) {
@@ -220,11 +213,10 @@ async function showScene(scene) {
     loadList(scene.showlist);
   }
 
-  if (scene.auto) {
-    const wait = typeof scene.wait === "number" ? scene.wait : autoWaitTime;
+  if (scene.auto && scene.choices === undefined && scene.text === undefined) {
     setTimeout(() => {
-      if (!isPlaying && choicesEl.children.length === 0) next();
-    }, wait);
+      if (!isPlaying) next();
+    }, autoWaitTime);
   }
 }
 
@@ -236,13 +228,9 @@ function next() {
       if (currentIndex < data.scenes.length) {
         showScene(data.scenes[currentIndex]);
       } else {
-        // 最後のシーンが textareashow: false の場合、非表示を保持
-        const lastScene = data.scenes[data.scenes.length - 1];
-        if (lastScene.textareashow !== false) {
-          dialogueBox.classList.remove("hidden");
+        if (textAreaVisible) {
+          nameEl.textContent = "";
           textEl.innerHTML = "（物語は つづく・・・）";
-        } else {
-          dialogueBox.classList.add("hidden");
         }
         isAutoMode = false;
       }
@@ -258,9 +246,8 @@ function loadScenario(filename) {
   evLayer.innerHTML = "";
   listPanel.classList.add("hidden");
   menuPanel.classList.add("hidden");
-  dialogueBox.classList.remove("hidden");
   if (typingInterval) clearInterval(typingInterval);
-  isPlaying = false;
+  updateTextAreaVisibility(true); // 初期状態で表示
 
   fetch(config.scenarioPath + filename + "?t=" + Date.now())
     .then((res) => res.json())
@@ -269,7 +256,6 @@ function loadScenario(filename) {
     });
 }
 
-// ウィンドウサイズに応じた --vh 設定
 function setVhVariable() {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
@@ -359,7 +345,6 @@ function showList(listData) {
   });
 }
 
-// メニュー＆リスト共通アクション
 function handleMenuAction(item) {
   if (item.action === "jump" && item.jump) {
     loadScenario(item.jump);
@@ -370,27 +355,26 @@ function handleMenuAction(item) {
   }
 }
 
-// 画面クリックで次へ進む
-document.addEventListener("click", (e) => {
+// === クリックで次へ or メニュー表示 ===
+clickLayer.addEventListener("dblclick", () => {
+  loadMenu("menu01.json");
+});
+
+let lastTouch = 0;
+clickLayer.addEventListener("touchend", () => {
+  const now = Date.now();
+  if (now - lastTouch < 300) {
+    loadMenu("menu01.json");
+  }
+  lastTouch = now;
+});
+
+clickLayer.addEventListener("click", () => {
   if (!menuPanel.classList.contains("hidden")) {
     menuPanel.classList.add("hidden");
     return;
   }
-
   if (!isPlaying && choicesEl.children.length === 0) {
     next();
   }
-});
-
-// 背景ダブルクリックでメニュー呼び出し
-let lastTap = 0;
-bgEl.addEventListener("touchend", (e) => {
-  const currentTime = new Date().getTime();
-  const tapLength = currentTime - lastTap;
-  if (tapLength < 300 && tapLength > 0) {
-    // ダブルタップと判定
-    loadMenu("menu01.json");
-    e.preventDefault();
-  }
-  lastTap = currentTime;
 });
