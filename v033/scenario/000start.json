@@ -1,0 +1,15 @@
+{
+  "scenes": [
+    {
+      "auto": true,
+      "bg": "titleon.jpg",
+      "bgEffect": "whitein",
+      "textareashow": false
+    },
+    {
+      "auto": false,
+      "showlist": "title.json",
+      "textareashow": false
+    }
+  ]
+}
