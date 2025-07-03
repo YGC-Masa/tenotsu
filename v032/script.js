@@ -383,6 +383,14 @@ document.addEventListener("click", (e) => {
 });
 
 // 背景ダブルクリックでメニュー呼び出し
-bgEl.addEventListener("dblclick", () => {
-  loadMenu("menu01.json");
+let lastTap = 0;
+bgEl.addEventListener("touchend", (e) => {
+  const currentTime = new Date().getTime();
+  const tapLength = currentTime - lastTap;
+  if (tapLength < 300 && tapLength > 0) {
+    // ダブルタップと判定
+    loadMenu("menu01.json");
+    e.preventDefault();
+  }
+  lastTap = currentTime;
 });
