@@ -1,9 +1,6 @@
 {
   "scenes": [
-    {
-      "auto": true,
-      "textareashow": false
-    },
+
     {
       "auto": true,
       "bg": "titleon.jpg",
