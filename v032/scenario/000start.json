@@ -5,6 +5,7 @@
       "textareahide": true
     },
     {
+      "textareahide": true,
       "auto": true,
       "bg": "titleon.jpg",
       "bgEffect": "whitein"
