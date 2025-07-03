@@ -2,6 +2,12 @@
   "scenes": [
     {
       "auto": true,
+      "bg": "osaruworks.jpg",
+      "textareashow": false,
+      "wait": 2000
+    },
+    {
+      "auto": true,
       "bg": "titleon.jpg",
       "bgEffect": "whitein",
       "textareashow": false
