@@ -272,6 +272,18 @@ body {
   z-index: 2;
 }
 
+#click-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9; /* dialogue より下・キャラより上 */
+  background: transparent;
+  pointer-events: auto;  /* イベント受ける */
+}
+
+
 /* 共通非表示ユーティリティ */
 .hidden {
   display: none !important;
