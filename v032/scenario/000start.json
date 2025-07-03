@@ -5,10 +5,11 @@
       "textareahide": true
     },
     {
-      "textareahide": true,
       "auto": true,
       "bg": "titleon.jpg",
-      "bgEffect": "whitein"
+      "bgEffect": "whitein",
+      "textareahide": true
+
     },
     {
       "auto": false,
