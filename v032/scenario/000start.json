@@ -7,7 +7,7 @@
       "textareashow": false
     },
     {
-      "auto": false,
+      "wait": 1000,
       "showlist": "title.json",
       "textareashow": false
     }
