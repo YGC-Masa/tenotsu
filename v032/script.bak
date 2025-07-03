@@ -1,4 +1,4 @@
-// === グローバル定義 ===
+// グローバル定義
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let bgm = null;
@@ -7,7 +7,7 @@ let isMuted = true;
 let typingInterval = null;
 let isAutoMode = false;
 let autoWaitTime = 2000;
-let isPlaying = false;
+let lastTextAreaShow = true; // ← 直近の状態を保持
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -16,7 +16,6 @@ const choicesEl = document.getElementById("choices");
 const menuPanel = document.getElementById("menu-panel");
 const listPanel = document.getElementById("list-panel");
 const evLayer = document.getElementById("ev-layer");
-const dialogueBox = document.getElementById("dialogue-box");
 
 const charSlots = {
   left: document.getElementById("char-left"),
@@ -27,6 +26,7 @@ const charSlots = {
 let defaultFontSize = "1em";
 let defaultSpeed = 40;
 let currentSpeed = defaultSpeed;
+let isPlaying = false;
 
 function isMobilePortrait() {
   return window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
@@ -89,7 +89,6 @@ async function applyEffect(el, effectName) {
   }
 }
 
-// === メイン表示処理 ===
 async function showScene(scene) {
   if (!scene) return;
   if (typingInterval) clearInterval(typingInterval);
@@ -97,14 +96,6 @@ async function showScene(scene) {
   textEl.innerHTML = "";
   nameEl.textContent = "";
   evLayer.innerHTML = "";
-
-  // 文字表示操作
-  if (scene.textareahide) {
-    dialogueBox.classList.add("hidden");
-  }
-  if (scene.textareashow) {
-    dialogueBox.classList.remove("hidden");
-  }
 
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
@@ -206,8 +197,22 @@ async function showScene(scene) {
     choicesEl.innerHTML = "";
   }
 
-  if (scene.showmenu) loadMenu(scene.showmenu);
-  if (scene.showlist) loadList(scene.showlist);
+  if (scene.showmenu) {
+    loadMenu(scene.showmenu);
+  }
+
+  if (scene.showlist) {
+    loadList(scene.showlist);
+  }
+
+  // テキストエリア表示制御（textareashow に置き換え）
+  if (scene.textareashow === false) {
+    document.getElementById("dialogue-box").classList.add("hidden");
+    lastTextAreaShow = false;
+  } else {
+    document.getElementById("dialogue-box").classList.remove("hidden");
+    lastTextAreaShow = true;
+  }
 }
 
 function next() {
@@ -219,7 +224,9 @@ function next() {
         showScene(data.scenes[currentIndex]);
       } else {
         nameEl.textContent = "";
-        textEl.innerHTML = "（物語は つづく・・・）";
+        if (lastTextAreaShow) {
+          textEl.innerHTML = "（物語は つづく・・・）";
+        }
         isAutoMode = false;
       }
     });
@@ -233,8 +240,10 @@ function loadScenario(filename) {
   nameEl.textContent = "";
   evLayer.innerHTML = "";
   listPanel.classList.add("hidden");
-  dialogueBox.classList.remove("hidden");
   if (typingInterval) clearInterval(typingInterval);
+
+  document.getElementById("dialogue-box").classList.remove("hidden"); // 初期状態：必ず表示
+  lastTextAreaShow = true;
 
   fetch(config.scenarioPath + filename + "?t=" + Date.now())
     .then((res) => res.json())
@@ -258,7 +267,7 @@ window.addEventListener("load", () => {
   loadScenario(currentScenario);
 });
 
-// === メニュー表示 ===
+// メニュー表示
 async function loadMenu(filename = "menu01.json") {
   const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
   const data = await res.json();
@@ -310,7 +319,7 @@ function showMenu(menuData) {
   });
 }
 
-// === リスト表示 ===
+// リスト表示
 async function loadList(filename = "list01.json") {
   const res = await fetch(config.listPath + filename + "?t=" + Date.now());
   const data = await res.json();
