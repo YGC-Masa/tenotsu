@@ -276,3 +276,11 @@ body {
 .hidden {
   display: none !important;
 }
+
+#background,
+#ev-layer,
+#ev-layer img,
+.ev-image,
+.cg-image {
+  pointer-events: none;
+}
