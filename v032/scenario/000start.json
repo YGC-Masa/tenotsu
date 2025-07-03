@@ -2,7 +2,7 @@
   "scenes": [
     {
       "auto": true,
-      "bg": "osaruworks.jpg",
+      "bg": "osaruworks.png",
       "textareashow": false,
       "wait": 2000
     },
