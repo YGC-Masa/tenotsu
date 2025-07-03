@@ -1,4 +1,4 @@
-// グローバル定義など
+// グローバル定義
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let bgm = null;
@@ -7,6 +7,7 @@ let isMuted = true;
 let typingInterval = null;
 let isAutoMode = false;
 let autoWaitTime = 2000;
+let lastTextAreaShow = true; // ← 直近の状態を保持
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -14,7 +15,6 @@ const textEl = document.getElementById("text");
 const choicesEl = document.getElementById("choices");
 const menuPanel = document.getElementById("menu-panel");
 const listPanel = document.getElementById("list-panel");
-const dialogueBox = document.getElementById("dialogue-box");
 const evLayer = document.getElementById("ev-layer");
 
 const charSlots = {
@@ -92,14 +92,6 @@ async function applyEffect(el, effectName) {
 async function showScene(scene) {
   if (!scene) return;
   if (typingInterval) clearInterval(typingInterval);
-
-  // テキスト再表示（シナリオ跨ぎ時に確実に復元）
-  dialogueBox.classList.remove("hidden");
-
-  // textareahide 指定時は非表示に
-  if (scene.textareahide) {
-    dialogueBox.classList.add("hidden");
-  }
 
   textEl.innerHTML = "";
   nameEl.textContent = "";
@@ -213,18 +205,13 @@ async function showScene(scene) {
     loadList(scene.showlist);
   }
 
-  // セリフやチョイスがなく、auto指定ありであれば進行
-  if (
-    scene.auto &&
-    !scene.text &&
-    !scene.name &&
-    !scene.choices &&
-    !isPlaying &&
-    typingInterval == null
-  ) {
-    setTimeout(() => {
-      if (!isPlaying) next();
-    }, autoWaitTime);
+  // テキストエリア表示制御（textareashow に置き換え）
+  if (scene.textareashow === false) {
+    document.getElementById("dialogue-box").classList.add("hidden");
+    lastTextAreaShow = false;
+  } else {
+    document.getElementById("dialogue-box").classList.remove("hidden");
+    lastTextAreaShow = true;
   }
 }
 
@@ -237,8 +224,8 @@ function next() {
         showScene(data.scenes[currentIndex]);
       } else {
         nameEl.textContent = "";
-        if (!textEl.classList.contains("hidden")) {
-            textEl.innerHTML = "（物語は つづく・・・）";
+        if (lastTextAreaShow) {
+          textEl.innerHTML = "（物語は つづく・・・）";
         }
         isAutoMode = false;
       }
@@ -253,9 +240,10 @@ function loadScenario(filename) {
   nameEl.textContent = "";
   evLayer.innerHTML = "";
   listPanel.classList.add("hidden");
-  menuPanel.classList.add("hidden");
   if (typingInterval) clearInterval(typingInterval);
-  dialogueBox.classList.remove("hidden");
+
+  document.getElementById("dialogue-box").classList.remove("hidden"); // 初期状態：必ず表示
+  lastTextAreaShow = true;
 
   fetch(config.scenarioPath + filename + "?t=" + Date.now())
     .then((res) => res.json())
@@ -279,7 +267,7 @@ window.addEventListener("load", () => {
   loadScenario(currentScenario);
 });
 
-// === メニュー表示 ===
+// メニュー表示
 async function loadMenu(filename = "menu01.json") {
   const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
   const data = await res.json();
@@ -295,7 +283,7 @@ function showMenu(menuData) {
   audioStateBtn.onclick = () => {
     isMuted = !isMuted;
     if (bgm) bgm.muted = isMuted;
-    document.querySelectorAll("audio").forEach((a) => (a.muted = isMuted));
+    document.querySelectorAll("audio").forEach(a => a.muted = isMuted);
     menuPanel.classList.add("hidden");
   };
   menuPanel.appendChild(audioStateBtn);
@@ -314,15 +302,13 @@ function showMenu(menuData) {
       }, 1000);
     } else {
       textEl.innerHTML = "(AutoMode Off)";
-      setTimeout(() => {
-        textEl.innerHTML = "";
-      }, 1000);
+      setTimeout(() => { textEl.innerHTML = ""; }, 1000);
     }
     menuPanel.classList.add("hidden");
   };
   menuPanel.appendChild(autoBtn);
 
-  menuData.items.forEach((item) => {
+  menuData.items.forEach(item => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
     btn.onclick = () => {
@@ -333,7 +319,7 @@ function showMenu(menuData) {
   });
 }
 
-// === リスト表示 ===
+// リスト表示
 async function loadList(filename = "list01.json") {
   const res = await fetch(config.listPath + filename + "?t=" + Date.now());
   const data = await res.json();
@@ -344,7 +330,7 @@ function showList(listData) {
   listPanel.innerHTML = "";
   listPanel.classList.remove("hidden");
 
-  listData.items.slice(0, 7).forEach((item) => {
+  listData.items.slice(0, 7).forEach(item => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
     btn.onclick = () => {
