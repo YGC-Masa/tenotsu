@@ -1,126 +1,245 @@
-// グローバル定義など（v032 継承）
-let currentScenario = "000start.json";
-let currentIndex = 0;
-let bgm = null;
-let lastActiveSide = null;
-let isMuted = true;
-let typingInterval = null;
-let isAutoMode = false;
-let autoWaitTime = 2000;
-
-const bgEl = document.getElementById("background");
-const nameEl = document.getElementById("name");
-const textEl = document.getElementById("text");
-const choicesEl = document.getElementById("choices");
-const menuPanel = document.getElementById("menu-panel");
-const listPanel = document.getElementById("list-panel");
-const evLayer = document.getElementById("ev-layer");
-const clickLayer = document.getElementById("click-layer");
-
-const charSlots = {
-  left: document.getElementById("char-left"),
-  center: document.getElementById("char-center"),
-  right: document.getElementById("char-right"),
-};
-
-let defaultFontSize = "1em";
-let defaultSpeed = 40;
-let currentSpeed = defaultSpeed;
+let currentSceneIndex = 0;
+let currentScenario = null;
 let isPlaying = false;
+let typingInterval = null;
+let autoMode = false;
 
-// --vh 再計算
-function setVhVariable() {
-  const vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty("--vh", `${vh}px`);
+function setViewportHeight() {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+window.addEventListener('resize', setViewportHeight);
+window.addEventListener('orientationchange', setViewportHeight);
+setViewportHeight();
+
+function loadScenario(scenarioData) {
+  currentScenario = scenarioData;
+  currentSceneIndex = 0;
+  isPlaying = false;
+  autoMode = false;
+  clearInterval(typingInterval);
+  hideAllCharacters();
+  clearEventLayer();
+  showDialogueBox(true); // 初期状態ではテキストエリアを表示
+  showScene(currentScenario.scenes[currentSceneIndex]);
 }
 
-window.addEventListener("resize", () => {
-  setVhVariable();
-  updateCharacterDisplay();
-});
-window.addEventListener("DOMContentLoaded", () => {
-  setVhVariable();
-  loadScenario(currentScenario);
-});
+function showScene(scene) {
+  if (!scene) return;
 
-// 画面クリックレイヤー上での操作を確保
-clickLayer.addEventListener("dblclick", () => loadMenu("menu01.json"));
-clickLayer.addEventListener("click", () => {
-  if (!menuPanel.classList.contains("hidden")) {
-    menuPanel.classList.add("hidden");
-    return;
+  if (scene.textareashow !== undefined) {
+    showDialogueBox(scene.textareashow);
   }
-  if (!listPanel.classList.contains("hidden")) {
-    listPanel.classList.add("hidden");
-    return;
-  }
-  if (!isPlaying && choicesEl.children.length === 0) {
-    next();
-  }
-});
 
-// 省略：タイプ処理、キャラ表示等は v032 と同じ
-
-// === メニュー表示 ===
-async function loadMenu(filename = "menu01.json") {
-  const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
-  const data = await res.json();
-  showMenu(data);
-}
-
-function showMenu(menuData) {
-  menuPanel.innerHTML = "";
-  menuPanel.classList.remove("hidden");
-
-  // 音声切替ボタン（左詰め固定）
-  const audioBtn = document.createElement("button");
-  audioBtn.className = "menu-sound-toggle";
-  audioBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
-  audioBtn.onclick = () => {
-    isMuted = !isMuted;
-    if (bgm) bgm.muted = isMuted;
-    document.querySelectorAll("audio").forEach(a => (a.muted = isMuted));
-    menuPanel.classList.add("hidden");
-  };
-  menuPanel.appendChild(audioBtn);
-
-  // オートモード ON/OFF
-  const autoBtn = document.createElement("button");
-  autoBtn.textContent = isAutoMode ? "オートモードOFF" : "オートモードON";
-  autoBtn.onclick = () => {
-    isAutoMode = !isAutoMode;
-    textEl.innerHTML = isAutoMode ? "(AutoMode On 3秒後開始)" : "(AutoMode Off)";
-    setTimeout(() => (textEl.innerHTML = ""), 1000);
-    if (isAutoMode) {
-      setTimeout(() => {
-        if (!isPlaying && choicesEl.children.length === 0) next();
-      }, autoWaitTime + 1000);
-    }
-    menuPanel.classList.add("hidden");
-  };
-  menuPanel.appendChild(autoBtn);
-
-  // 全画面表示 ON/OFF ボタン 追加
-  const fsBtn = document.createElement("button");
-  fsBtn.textContent = document.fullscreenElement ? "全画面を解除" : "全画面表示";
-  fsBtn.onclick = () => {
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
+  if (scene.bg) {
+    if (scene.bgEffect === 'whitein') {
+      applyWhiteInEffect(scene.bg);
+    } else if (scene.bgEffect === 'transition') {
+      applyTransitionEffect(scene.bg);
     } else {
-      document.documentElement.requestFullscreen();
+      setBackground(scene.bg);
     }
-    menuPanel.classList.add("hidden");
-  };
-  menuPanel.appendChild(fsBtn);
+  }
 
-  // その他メニュー項目
-  menuData.items.forEach(item => {
-    const btn = document.createElement("button");
-    btn.textContent = item.text;
-    btn.onclick = () => {
-      menuPanel.classList.add("hidden");
-      handleMenuAction(item);
-    };
-    menuPanel.appendChild(btn);
+  if (scene.ev) {
+    showEvImage(scene.ev);
+  } else {
+    clearEventLayer();
+  }
+
+  if (scene.name || scene.text) {
+    setText(scene.name || '', scene.text || '');
+  } else {
+    setText('', '');
+  }
+
+  if (scene.choices) {
+    showChoices(scene.choices);
+  } else {
+    hideChoices();
+  }
+
+  if (scene.showlist) {
+    showList(scene.showlist);
+  }
+
+  if (scene.wait) {
+    setTimeout(() => {
+      if (scene.auto) nextScene();
+    }, scene.wait);
+  } else if (scene.auto) {
+    setTimeout(() => nextScene(), 800);
+  }
+}
+
+function nextScene() {
+  if (!currentScenario) return;
+  currentSceneIndex++;
+  if (currentSceneIndex < currentScenario.scenes.length) {
+    showScene(currentScenario.scenes[currentSceneIndex]);
+  } else {
+    if (document.getElementById('dialogue-box').classList.contains('hidden')) {
+      return; // テキスト非表示のまま終了
+    }
+    setText('', '物語はつづく・・・');
+  }
+}
+
+function setText(name, text) {
+  const nameArea = document.getElementById('name');
+  const textArea = document.getElementById('text');
+  nameArea.textContent = name;
+  textArea.textContent = '';
+  isPlaying = true;
+
+  let i = 0;
+  typingInterval = setInterval(() => {
+    textArea.textContent = text.substring(0, i + 1);
+    i++;
+    if (i >= text.length) {
+      clearInterval(typingInterval);
+      isPlaying = false;
+    }
+  }, 30);
+}
+
+function showDialogueBox(show) {
+  const box = document.getElementById('dialogue-box');
+  if (show) {
+    box.classList.remove('hidden');
+  } else {
+    box.classList.add('hidden');
+  }
+}
+
+function hideAllCharacters() {
+  ['char-left', 'char-center', 'char-right'].forEach(id => {
+    const slot = document.getElementById(id);
+    slot.innerHTML = '';
+    slot.classList.remove('active');
   });
 }
+
+function showEvImage(filename) {
+  const evLayer = document.getElementById('ev-layer');
+  evLayer.innerHTML = `<img src="./ev/${filename}" class="ev-image" />`;
+}
+
+function clearEventLayer() {
+  const evLayer = document.getElementById('ev-layer');
+  evLayer.innerHTML = '';
+}
+
+function showChoices(choices) {
+  const area = document.getElementById('choices');
+  area.innerHTML = '';
+  choices.forEach(choice => {
+    const btn = document.createElement('button');
+    btn.textContent = choice.text;
+    btn.onclick = () => loadScenarioFromFile(choice.jump);
+    area.appendChild(btn);
+  });
+  area.classList.remove('hidden');
+}
+
+function hideChoices() {
+  const area = document.getElementById('choices');
+  area.innerHTML = '';
+  area.classList.add('hidden');
+}
+
+function showList(filename) {
+  fetch(`./list/${filename}`)
+    .then(response => response.json())
+    .then(data => {
+      const panel = document.getElementById('list-panel');
+      panel.innerHTML = '';
+      data.items.forEach(item => {
+        const btn = document.createElement('button');
+        btn.textContent = item.label;
+        btn.onclick = () => {
+          panel.classList.add('hidden');
+          loadScenarioFromFile(item.jump);
+        };
+        panel.appendChild(btn);
+      });
+      panel.classList.remove('hidden');
+    });
+}
+
+function loadScenarioFromFile(filename) {
+  fetch(`./scenario/${filename}`)
+    .then(response => response.json())
+    .then(data => loadScenario(data));
+}
+
+function setBackground(filename) {
+  const bg = document.getElementById('background');
+  bg.src = `./bgev/${filename}`;
+}
+
+function applyWhiteInEffect(filename) {
+  const bg = document.getElementById('background');
+  bg.style.transition = 'none';
+  bg.style.opacity = 0;
+  bg.src = `./bgev/${filename}`;
+  setTimeout(() => {
+    bg.style.transition = 'opacity 1s';
+    bg.style.opacity = 1;
+  }, 100);
+}
+
+function applyTransitionEffect(filename) {
+  const bg = document.getElementById('background');
+  bg.style.transition = 'opacity 0.8s';
+  bg.style.opacity = 0;
+  setTimeout(() => {
+    bg.src = `./bgev/${filename}`;
+    bg.style.opacity = 1;
+  }, 300);
+}
+
+// メニュー表示切替
+function toggleMenu() {
+  const menu = document.getElementById('menu-panel');
+  menu.classList.toggle('hidden');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadScenarioFromFile('000start.json');
+
+  // ダブルタップでメニュー表示
+  let lastTap = 0;
+  const clickLayer = document.getElementById('click-layer');
+  clickLayer.addEventListener('touchend', e => {
+    const now = Date.now();
+    if (now - lastTap < 300) {
+      toggleMenu();
+    }
+    lastTap = now;
+  });
+
+  // 通常クリックでスキップ
+  clickLayer.addEventListener('click', () => {
+    if (isPlaying) {
+      clearInterval(typingInterval);
+      const text = currentScenario.scenes[currentSceneIndex].text || '';
+      document.getElementById('text').textContent = text;
+      isPlaying = false;
+    } else {
+      nextScene();
+    }
+  });
+
+  // 全画面化ボタン追加
+  const menu = document.getElementById('menu-panel');
+  const fullBtn = document.createElement('button');
+  fullBtn.textContent = '全画面表示';
+  fullBtn.onclick = () => {
+    const el = document.documentElement;
+    if (el.requestFullscreen) el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    else if (el.msRequestFullscreen) el.msRequestFullscreen();
+  };
+  menu.appendChild(fullBtn);
+});
