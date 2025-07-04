@@ -19,7 +19,7 @@ body {
   overflow: hidden;
 }
 
-/* === 背景層 === */
+/* 背景 */
 #background {
   width: 100%;
   height: 100%;
@@ -31,7 +31,7 @@ body {
   pointer-events: none;
 }
 
-/* === キャラ層 === */
+/* キャラ表示レイヤー */
 #char-layer {
   position: absolute;
   width: 100%;
@@ -63,7 +63,7 @@ body {
   object-fit: contain;
 }
 
-/* === キャラ配置 === */
+/* キャラ位置 */
 #char-left {
   left: 5%;
   width: 30%;
@@ -79,7 +79,7 @@ body {
   width: 30%;
 }
 
-/* === EV/CG レイヤー === */
+/* EV/CG 表示レイヤー */
 #ev-layer {
   position: absolute;
   top: 0;
@@ -104,19 +104,19 @@ body {
   pointer-events: none;
 }
 
-/* === クリックレイヤー（タッチ対応）=== */
+/* クリックレイヤー（透過） */
 #click-layer {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 9; /* キャラより上・テキストより下 */
+  z-index: 9;
   background: transparent;
   pointer-events: auto;
 }
 
-/* === セリフボックス === */
+/* テキストボックス */
 #dialogue-box {
   position: absolute;
   bottom: 0;
@@ -140,7 +140,7 @@ body {
   min-height: 3em;
 }
 
-/* === 選択肢 === */
+/* 選択肢 */
 .choices-area {
   position: absolute;
   top: 60%;
@@ -164,7 +164,7 @@ body {
   background-color: #555;
 }
 
-/* === LISTパネル（右側・ピンク系） === */
+/* ▼ LISTパネル（右） */
 .list-panel {
   position: absolute;
   right: 0;
@@ -201,7 +201,7 @@ body {
   background: rgba(255, 20, 147, 0.95);
 }
 
-/* === メニューパネル（左側） === */
+/* ▼ メニューパネル（左） */
 .menu-panel {
   position: absolute;
   left: 0;
@@ -238,28 +238,19 @@ body {
   background: #444;
 }
 
-/* 音声ON/OFFボタン専用（任意） */
+/* 音声トグル専用（追加スタイルがあるなら） */
 .menu-sound-toggle {
   font-weight: bold;
-  font-size: 1em;
   padding: 0.8em 0.5em;
-  margin-bottom: 0.5em;
   background: #222;
-  color: #fff;
   border: 2px solid #888;
   border-radius: 0.5em;
-  cursor: pointer;
-  transition: background 0.3s, color 0.3s;
 }
 
-.menu-sound-toggle:hover {
-  background: #444;
-  color: #fff;
-}
-
-/* === モバイル横画面用 === */
+/* モバイル横画面用 */
 @media screen and (max-width: 768px) and (orientation: landscape) {
-  .menu-panel, .list-panel {
+  .menu-panel,
+  .list-panel {
     top: 5%;
     height: 75%;
     width: 45%;
@@ -267,9 +258,10 @@ body {
   }
 }
 
-/* === モバイル縦画面用 === */
+/* モバイル縦画面用 */
 @media screen and (max-width: 768px) and (orientation: portrait) {
-  .menu-panel, .list-panel {
+  .menu-panel,
+  .list-panel {
     top: 20%;
     height: 50%;
     width: 60%;
@@ -277,9 +269,10 @@ body {
   }
 }
 
-/* === PC画面用 === */
+/* PC画面用 */
 @media screen and (min-width: 769px) {
-  .menu-panel, .list-panel {
+  .menu-panel,
+  .list-panel {
     top: 5%;
     height: 75%;
     width: 35%;
@@ -287,35 +280,7 @@ body {
   }
 }
 
-/* === 共通: 非表示ユーティリティ === */
+/* 共通非表示ユーティリティ */
 .hidden {
   display: none !important;
 }
-/* === 全画面モード専用のスタイル調整 === */
-:fullscreen {
-  font-size: 1.2em; /* 全体的に文字を少し大きく */
-}
-
-/* ゲームコンテナが全画面のときの調整 */
-#game-container:fullscreen {
-  background-color: black; /* 念のため背景色明示 */
-}
-
-/* ダイアログやボタンのサイズ調整 */
-#dialogue-box:fullscreen {
-  font-size: 1.2em;
-  padding: 1.2em;
-}
-
-.menu-panel:fullscreen,
-.list-panel:fullscreen {
-  width: 40%;  /* 少しワイドに */
-  height: 80%;
-  font-size: 1.1em;
-}
-
-.choices-area:fullscreen button {
-  font-size: 1.1em;
-  padding: 0.6em 1.2em;
-}
-
