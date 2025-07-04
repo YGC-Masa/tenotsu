@@ -291,3 +291,31 @@ body {
 .hidden {
   display: none !important;
 }
+/* === 全画面モード専用のスタイル調整 === */
+:fullscreen {
+  font-size: 1.2em; /* 全体的に文字を少し大きく */
+}
+
+/* ゲームコンテナが全画面のときの調整 */
+#game-container:fullscreen {
+  background-color: black; /* 念のため背景色明示 */
+}
+
+/* ダイアログやボタンのサイズ調整 */
+#dialogue-box:fullscreen {
+  font-size: 1.2em;
+  padding: 1.2em;
+}
+
+.menu-panel:fullscreen,
+.list-panel:fullscreen {
+  width: 40%;  /* 少しワイドに */
+  height: 80%;
+  font-size: 1.1em;
+}
+
+.choices-area:fullscreen button {
+  font-size: 1.1em;
+  padding: 0.6em 1.2em;
+}
+
