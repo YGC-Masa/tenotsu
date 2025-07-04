@@ -204,13 +204,8 @@ async function showScene(scene) {
     });
   }
 
-  if (scene.showmenu) {
-    loadMenu(scene.showmenu);
-  }
-
-  if (scene.showlist) {
-    loadList(scene.showlist);
-  }
+  if (scene.showmenu) loadMenu(scene.showmenu);
+  if (scene.showlist) loadList(scene.showlist);
 
   if (scene.auto && scene.choices === undefined && scene.text === undefined) {
     setTimeout(() => {
@@ -246,7 +241,7 @@ function loadScenario(filename) {
   listPanel.classList.add("hidden");
   menuPanel.classList.add("hidden");
   if (typingInterval) clearInterval(typingInterval);
-  updateTextAreaVisibility(true); // 初期状態で表示
+  updateTextAreaVisibility(true);
 
   fetch(config.scenarioPath + filename + "?t=" + Date.now())
     .then((res) => res.json())
@@ -264,7 +259,6 @@ window.addEventListener("resize", () => {
   setVhVariable();
   updateCharacterDisplay();
 });
-
 window.addEventListener("load", () => {
   setVhVariable();
   loadScenario(currentScenario);
@@ -281,7 +275,6 @@ function showMenu(menuData) {
   menuPanel.innerHTML = "";
   menuPanel.classList.remove("hidden");
 
-  // ① 音声トグル
   const audioStateBtn = document.createElement("button");
   audioStateBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
   audioStateBtn.onclick = () => {
@@ -292,7 +285,6 @@ function showMenu(menuData) {
   };
   menuPanel.appendChild(audioStateBtn);
 
-  // ② オートモード
   const autoBtn = document.createElement("button");
   autoBtn.textContent = isAutoMode ? "オートモードOFF" : "オートモードON";
   autoBtn.onclick = () => {
@@ -313,20 +305,21 @@ function showMenu(menuData) {
   };
   menuPanel.appendChild(autoBtn);
 
-  // ③ 全画面トグル
+  // ✅ 全画面ON/OFFボタン
   const fullscreenBtn = document.createElement("button");
   fullscreenBtn.textContent = document.fullscreenElement ? "全画面OFF" : "全画面ON";
   fullscreenBtn.onclick = () => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen?.();
+      document.documentElement.requestFullscreen().catch(err => {
+        alert("全画面にできません: " + err.message);
+      });
     } else {
-      document.exitFullscreen?.();
+      document.exitFullscreen();
     }
     menuPanel.classList.add("hidden");
   };
   menuPanel.appendChild(fullscreenBtn);
 
-  // ④ その他メニュー項目
   menuData.items.forEach(item => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
@@ -370,7 +363,7 @@ function handleMenuAction(item) {
   }
 }
 
-// === クリックで次へ or メニュー表示 ===
+// === クリック/ダブルクリックでメニュー or 次へ ===
 clickLayer.addEventListener("dblclick", () => {
   loadMenu("menu01.json");
 });
