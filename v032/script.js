@@ -98,7 +98,6 @@ async function showScene(scene) {
   if (!scene) return;
   if (typingInterval) clearInterval(typingInterval);
 
-  // 初期化
   textEl.innerHTML = "";
   nameEl.textContent = "";
   evLayer.innerHTML = "";
@@ -282,6 +281,7 @@ function showMenu(menuData) {
   menuPanel.innerHTML = "";
   menuPanel.classList.remove("hidden");
 
+  // ① 音声トグル
   const audioStateBtn = document.createElement("button");
   audioStateBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
   audioStateBtn.onclick = () => {
@@ -292,6 +292,7 @@ function showMenu(menuData) {
   };
   menuPanel.appendChild(audioStateBtn);
 
+  // ② オートモード
   const autoBtn = document.createElement("button");
   autoBtn.textContent = isAutoMode ? "オートモードOFF" : "オートモードON";
   autoBtn.onclick = () => {
@@ -312,6 +313,20 @@ function showMenu(menuData) {
   };
   menuPanel.appendChild(autoBtn);
 
+  // ③ 全画面トグル
+  const fullscreenBtn = document.createElement("button");
+  fullscreenBtn.textContent = document.fullscreenElement ? "全画面OFF" : "全画面ON";
+  fullscreenBtn.onclick = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen?.();
+    } else {
+      document.exitFullscreen?.();
+    }
+    menuPanel.classList.add("hidden");
+  };
+  menuPanel.appendChild(fullscreenBtn);
+
+  // ④ その他メニュー項目
   menuData.items.forEach(item => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
