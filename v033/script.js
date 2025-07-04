@@ -11,7 +11,6 @@ let currentSpeed = 40;
 let defaultSpeed = 40;
 let defaultFontSize = "1em";
 let textAreaVisible = true;
-let isFullscreen = false;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -53,6 +52,7 @@ function setTextWithSpeed(text, speed, callback) {
     }
   }, speed);
 }
+
 function setCharacterStyle(name, scene = {}) {
   const style = characterStyles[name] || characterStyles[""];
   const fontSize = scene.fontSize || style.fontSize || defaultFontSize;
@@ -94,16 +94,10 @@ function updateTextAreaVisibility(show) {
   dialogueBox.classList.toggle("hidden", !show);
 }
 
-function ensureClickLayerOnTop() {
-  // リストが出ているときにもクリックを通す
-  clickLayer.style.display = "block";
-  clickLayer.style.pointerEvents = "auto";
-}
 async function showScene(scene) {
   if (!scene) return;
   if (typingInterval) clearInterval(typingInterval);
 
-  // 初期化
   textEl.innerHTML = "";
   nameEl.textContent = "";
   evLayer.innerHTML = "";
@@ -216,7 +210,6 @@ async function showScene(scene) {
 
   if (scene.showlist) {
     loadList(scene.showlist);
-    ensureClickLayerOnTop();
   }
 
   if (scene.auto && scene.choices === undefined && scene.text === undefined) {
@@ -225,6 +218,7 @@ async function showScene(scene) {
     }, autoWaitTime);
   }
 }
+
 function next() {
   fetch(config.scenarioPath + currentScenario + "?t=" + Date.now())
     .then((res) => res.json())
@@ -253,6 +247,7 @@ function loadScenario(filename) {
   menuPanel.classList.add("hidden");
   if (typingInterval) clearInterval(typingInterval);
   updateTextAreaVisibility(true);
+
   fetch(config.scenarioPath + filename + "?t=" + Date.now())
     .then((res) => res.json())
     .then((data) => {
@@ -260,7 +255,6 @@ function loadScenario(filename) {
     });
 }
 
-// vh対応
 function setVhVariable() {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
@@ -287,18 +281,16 @@ function showMenu(menuData) {
   menuPanel.innerHTML = "";
   menuPanel.classList.remove("hidden");
 
-  // 音声ON/OFF
-  const audioStateBtn = document.createElement("button");
-  audioStateBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
-  audioStateBtn.onclick = () => {
+  const audioBtn = document.createElement("button");
+  audioBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
+  audioBtn.onclick = () => {
     isMuted = !isMuted;
     if (bgm) bgm.muted = isMuted;
     document.querySelectorAll("audio").forEach(a => a.muted = isMuted);
     menuPanel.classList.add("hidden");
   };
-  menuPanel.appendChild(audioStateBtn);
+  menuPanel.appendChild(audioBtn);
 
-  // オートモードON/OFF
   const autoBtn = document.createElement("button");
   autoBtn.textContent = isAutoMode ? "オートモードOFF" : "オートモードON";
   autoBtn.onclick = () => {
@@ -319,12 +311,11 @@ function showMenu(menuData) {
   };
   menuPanel.appendChild(autoBtn);
 
-  // 全画面表示切替
   const fullscreenBtn = document.createElement("button");
   fullscreenBtn.textContent = document.fullscreenElement ? "全画面OFF" : "全画面ON";
   fullscreenBtn.onclick = () => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(() => {});
+      document.documentElement.requestFullscreen();
     } else {
       document.exitFullscreen();
     }
@@ -332,7 +323,6 @@ function showMenu(menuData) {
   };
   menuPanel.appendChild(fullscreenBtn);
 
-  // メニュー項目
   menuData.items.forEach(item => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
@@ -364,8 +354,6 @@ function showList(listData) {
     };
     listPanel.appendChild(btn);
   });
-
-  ensureClickLayerOnTop(); // list表示中のクリック補強
 }
 
 function handleMenuAction(item) {
@@ -378,7 +366,7 @@ function handleMenuAction(item) {
   }
 }
 
-// === クリック・ダブルクリックで操作 ===
+// === クリックレイヤー ===
 clickLayer.addEventListener("dblclick", () => {
   loadMenu("menu01.json");
 });
@@ -397,13 +385,8 @@ clickLayer.addEventListener("click", () => {
     menuPanel.classList.add("hidden");
     return;
   }
+  if (!listPanel.classList.contains("hidden")) return;
   if (!isPlaying && choicesEl.children.length === 0) {
     next();
   }
 });
-
-// listパネルクリック強化（再前面に）
-function ensureClickLayerOnTop() {
-  clickLayer.style.zIndex = "10";  // list: 11, menu: 12 より下
-  clickLayer.style.pointerEvents = "auto";
-}
