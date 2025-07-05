@@ -1,6 +1,6 @@
 {
-  "fixed": "../asset2/bgev/titleon.jpg",
-  "randompath": "../asset2/ev/",
+  "fixed": "../assets2/bgev/titleon.jpg",
+  "randompath": "../assets2/ev/",
   "random": [
     "a01ev01.png",
     "a01ev02.png",
