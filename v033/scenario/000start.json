@@ -2,7 +2,7 @@
   "scenes": [
     {
       "auto": true,
-      "bg": "titleon.jpg",
+      "bg": "title.jpg",
       "bgEffect": "whitein",
       "textareashow": false
     },
