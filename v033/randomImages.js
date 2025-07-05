@@ -47,7 +47,7 @@ async function randomImagesOn(jsonFile) {
     img.style.width = `${cellWidth}px`;
     img.style.height = `${cellHeight}px`;
     img.style.objectFit = "contain";
-    img.style.pointerEvents = "none`;
+    img.style.pointerEvents = "none";
 
     if (i === 0) {
       img.src = data.fixed;
