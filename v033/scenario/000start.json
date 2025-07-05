@@ -7,7 +7,7 @@
       "textareashow": false
     },
     {
-      "auto": false,
+      "auto": true,
       "randomimageson": "imageset01.json" ,
       "wait" : 1750
     },
