@@ -50,12 +50,11 @@ function renderRandomImages() {
   const safeHeight = containerHeight * 0.8;
 
   const cellWidth = safeWidth / 3;
-  const cellHeight = safeHeight / 3;
+  const cellHeight = safeHeight / 2;
 
   const positions = [
     [0, 0], [1, 0], [2, 0],
-    [0, 1], [1, 1], [2, 1],
-    [0, 2], [1, 2], [2, 2]
+    [0, 1], [1, 1], [2, 1]
   ];
 
   // セル①（左上）は固定画像
@@ -68,18 +67,19 @@ function renderRandomImages() {
   const [fx, fy] = positions[0];
   const fLeft = safeLeft + fx * cellWidth;
   const fTop = safeTop + fy * cellHeight;
-  fixedImg.style.left = `${fLeft}px`;
-  fixedImg.style.top = `${fTop}px`;
-  fixedImg.style.width = `${cellWidth}px`;
-  fixedImg.style.height = `${cellHeight}px`;
+  fixedImg.style.left = ${fLeft}px;
+  fixedImg.style.top = ${fTop}px;
+  fixedImg.style.width = ${cellWidth}px;
+  fixedImg.style.height = ${cellHeight}px;
 
   randomImagesLayer.appendChild(fixedImg);
 
-  // セル②〜⑨にランダム画像（重複なし）
-  const remainingPositions = positions.slice(1);
+  // セル②〜⑥にランダム画像（重複なし）
+  const remainingPositions = positions.slice(1); // [②③④⑤⑥]
   const availableImages = [...randomImagesData.random];
 
   for (let i = 0; i < remainingPositions.length && availableImages.length > 0; i++) {
+    // 重複を除外
     const candidates = availableImages.filter(img => !usedRandomImages.includes(img));
     if (candidates.length === 0) break;
 
@@ -96,10 +96,10 @@ function renderRandomImages() {
 
     const left = safeLeft + x * cellWidth;
     const top = safeTop + y * cellHeight;
-    img.style.left = `${left}px`;
-    img.style.top = `${top}px`;
-    img.style.width = `${cellWidth}px`;
-    img.style.height = `${cellHeight}px`;
+    img.style.left = ${left}px;
+    img.style.top = ${top}px;
+    img.style.width = ${cellWidth}px;
+    img.style.height = ${cellHeight}px;
 
     randomImagesLayer.appendChild(img);
   }
