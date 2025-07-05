@@ -9,6 +9,10 @@
     {
       "auto": false,
       "randomimageson": "imageset01.json" ,
+      "wait" : 1750
+    },
+    {
+      "auto": false,
       "showlist": "title.json",
       "textareashow": false
     }
