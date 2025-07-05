@@ -112,6 +112,14 @@ async function showScene(scene) {
     updateTextAreaVisibility(scene.textareashow);
   }
 
+  if (scene.randomimageson) {
+    randomImagesOn(scene.randomimageson);
+  }
+  
+  if (scene.randomimagesoff) {
+    randomImagesOff();
+  }
+  
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
     await new Promise((resolve) => {
