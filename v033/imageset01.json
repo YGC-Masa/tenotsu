@@ -1,0 +1,12 @@
+{
+  "fixed": "img/fixed001.jpg",
+  "randompath": "img/",
+  "random": [
+    "rand001.jpg",
+    "rand002.jpg",
+    "rand003.jpg",
+    "rand004.jpg",
+    "rand005.jpg",
+    "rand006.jpg"
+  ]
+}
