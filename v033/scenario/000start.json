@@ -8,6 +8,7 @@
     },
     {
       "auto": false,
+      "randomimageson": "imageset01.json" },
       "showlist": "title.json",
       "textareashow": false
     }
