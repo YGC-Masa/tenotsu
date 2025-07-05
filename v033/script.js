@@ -1,6 +1,4 @@
-
 let lastActiveSide = null;
-
 let typingInterval = null;
 let isAutoMode = false;
 let autoWaitTime = 2000;
