@@ -57,7 +57,7 @@ function renderRandomImages() {
     [0, 1], [1, 1], [2, 1]
   ];
 
-  // セル①（左上）は固定画像
+  // セル①（左上）＝固定画像
   const fixedImg = document.createElement("img");
   fixedImg.src = randomImagesData.fixed;
   fixedImg.style.position = "absolute";
@@ -65,17 +65,15 @@ function renderRandomImages() {
   fixedImg.style.pointerEvents = "none";
 
   const [fx, fy] = positions[0];
-  const fLeft = safeLeft + fx * cellWidth;
-  const fTop = safeTop + fy * cellHeight;
-  fixedImg.style.left = `${fLeft}px`;
-  fixedImg.style.top = `${fTop}px`;
+  fixedImg.style.left = `${safeLeft + fx * cellWidth}px`;
+  fixedImg.style.top = `${safeTop + fy * cellHeight}px`;
   fixedImg.style.width = `${cellWidth}px`;
   fixedImg.style.height = `${cellHeight}px`;
 
   randomImagesLayer.appendChild(fixedImg);
 
-  // セル②〜⑥にランダム画像（重複なし）
-  const remainingPositions = positions.slice(1); // [②③④⑤⑥]
+  // セル②〜⑥＝ランダム画像（重複なし）
+  const remainingPositions = positions.slice(1);
   const availableImages = [...randomImagesData.random];
 
   for (let i = 0; i < remainingPositions.length && availableImages.length > 0; i++) {
@@ -93,10 +91,8 @@ function renderRandomImages() {
     img.style.objectFit = "contain";
     img.style.pointerEvents = "none";
 
-    const left = safeLeft + x * cellWidth;
-    const top = safeTop + y * cellHeight;
-    img.style.left = `${left}px`;
-    img.style.top = `${top}px`;
+    img.style.left = `${safeLeft + x * cellWidth}px`;
+    img.style.top = `${safeTop + y * cellHeight}px`;
     img.style.width = `${cellWidth}px`;
     img.style.height = `${cellHeight}px`;
 
