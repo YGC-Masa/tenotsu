@@ -1,8 +1,6 @@
-let currentScenario = "000start.json";
-let currentIndex = 0;
-let bgm = null;
+
 let lastActiveSide = null;
-let isMuted = true;
+
 let typingInterval = null;
 let isAutoMode = false;
 let autoWaitTime = 2000;
