@@ -50,11 +50,12 @@ function renderRandomImages() {
   const safeHeight = containerHeight * 0.8;
 
   const cellWidth = safeWidth / 3;
-  const cellHeight = safeHeight / 2;
+  const cellHeight = safeHeight / 3;
 
   const positions = [
     [0, 0], [1, 0], [2, 0],
-    [0, 1], [1, 1], [2, 1]
+    [0, 1], [1, 1], [2, 1],
+    [0, 2], [1, 2], [2, 2]
   ];
 
   // セル①（左上）は固定画像
@@ -74,12 +75,11 @@ function renderRandomImages() {
 
   randomImagesLayer.appendChild(fixedImg);
 
-  // セル②〜⑥にランダム画像（重複なし）
-  const remainingPositions = positions.slice(1); // [②③④⑤⑥]
+  // セル②〜⑨にランダム画像（重複なし）
+  const remainingPositions = positions.slice(1);
   const availableImages = [...randomImagesData.random];
 
   for (let i = 0; i < remainingPositions.length && availableImages.length > 0; i++) {
-    // 重複を除外
     const candidates = availableImages.filter(img => !usedRandomImages.includes(img));
     if (candidates.length === 0) break;
 
