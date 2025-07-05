@@ -11,6 +11,7 @@ let currentSpeed = 40;
 let defaultSpeed = 40;
 let defaultFontSize = "1em";
 let textAreaVisible = true;
+let isSceneTransitioning = false;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -46,7 +47,7 @@ function setTextWithSpeed(text, speed, callback) {
       if (callback) callback();
       if (isAutoMode && choicesEl.children.length === 0) {
         setTimeout(() => {
-          if (!isPlaying) next();
+          if (!isPlaying && !isSceneTransitioning) next();
         }, autoWaitTime);
       }
     }
@@ -95,9 +96,10 @@ function updateTextAreaVisibility(show) {
 }
 
 async function showScene(scene) {
-  if (!scene) return;
-  if (typingInterval) clearInterval(typingInterval);
+  if (!scene || isSceneTransitioning) return;
+  isSceneTransitioning = true;
 
+  if (typingInterval) clearInterval(typingInterval);
   textEl.innerHTML = "";
   nameEl.textContent = "";
   evLayer.innerHTML = "";
@@ -109,7 +111,7 @@ async function showScene(scene) {
 
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
-    await new Promise((resolve) => {
+    await new Promise(resolve => {
       bgEl.onload = resolve;
       bgEl.src = config.bgPath + scene.bg;
     });
@@ -204,25 +206,22 @@ async function showScene(scene) {
     });
   }
 
-  if (scene.showmenu) {
-    loadMenu(scene.showmenu);
-  }
+  if (scene.showmenu) loadMenu(scene.showmenu);
+  if (scene.showlist) loadList(scene.showlist);
 
-  if (scene.showlist) {
-    loadList(scene.showlist);
-  }
-
-  if (scene.auto && scene.choices === undefined && scene.text === undefined) {
+  if (scene.auto && !scene.choices && !scene.text) {
     setTimeout(() => {
-      if (!isPlaying) next();
+      if (!isPlaying && !isSceneTransitioning) next();
     }, autoWaitTime);
   }
+
+  isSceneTransitioning = false;
 }
 
 function next() {
   fetch(config.scenarioPath + currentScenario + "?t=" + Date.now())
-    .then((res) => res.json())
-    .then((data) => {
+    .then(res => res.json())
+    .then(data => {
       currentIndex++;
       if (currentIndex < data.scenes.length) {
         showScene(data.scenes[currentIndex]);
@@ -249,27 +248,11 @@ function loadScenario(filename) {
   updateTextAreaVisibility(true);
 
   fetch(config.scenarioPath + filename + "?t=" + Date.now())
-    .then((res) => res.json())
-    .then((data) => {
-      showScene(data.scenes[0]);
-    });
+    .then(res => res.json())
+    .then(data => showScene(data.scenes[0]));
 }
 
-function setVhVariable() {
-  let vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty("--vh", `${vh}px`);
-}
-
-window.addEventListener("resize", () => {
-  setVhVariable();
-  updateCharacterDisplay();
-});
-
-window.addEventListener("load", () => {
-  setVhVariable();
-  loadScenario(currentScenario);
-});
-
+// 省略された場合、続きを希望してください（showMenu, showList, イベントハンドラ部分など）。
 // === メニュー表示 ===
 async function loadMenu(filename = "menu01.json") {
   const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
@@ -281,16 +264,18 @@ function showMenu(menuData) {
   menuPanel.innerHTML = "";
   menuPanel.classList.remove("hidden");
 
-  const audioBtn = document.createElement("button");
-  audioBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
-  audioBtn.onclick = () => {
+  // 音声ON/OFF
+  const audioStateBtn = document.createElement("button");
+  audioStateBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
+  audioStateBtn.onclick = () => {
     isMuted = !isMuted;
     if (bgm) bgm.muted = isMuted;
     document.querySelectorAll("audio").forEach(a => a.muted = isMuted);
     menuPanel.classList.add("hidden");
   };
-  menuPanel.appendChild(audioBtn);
+  menuPanel.appendChild(audioStateBtn);
 
+  // オートモード
   const autoBtn = document.createElement("button");
   autoBtn.textContent = isAutoMode ? "オートモードOFF" : "オートモードON";
   autoBtn.onclick = () => {
@@ -300,7 +285,7 @@ function showMenu(menuData) {
       setTimeout(() => {
         textEl.innerHTML = "";
         setTimeout(() => {
-          if (!isPlaying && choicesEl.children.length === 0) next();
+          if (!isPlaying && choicesEl.children.length === 0 && !isSceneTransitioning) next();
         }, autoWaitTime);
       }, 1000);
     } else {
@@ -311,18 +296,20 @@ function showMenu(menuData) {
   };
   menuPanel.appendChild(autoBtn);
 
+  // 全画面ON/OFF
   const fullscreenBtn = document.createElement("button");
   fullscreenBtn.textContent = document.fullscreenElement ? "全画面OFF" : "全画面ON";
   fullscreenBtn.onclick = () => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
+      document.documentElement.requestFullscreen().catch(err => console.warn(err));
     } else {
-      document.exitFullscreen();
+      document.exitFullscreen().catch(err => console.warn(err));
     }
     menuPanel.classList.add("hidden");
   };
   menuPanel.appendChild(fullscreenBtn);
 
+  // 残りのメニュー項目
   menuData.items.forEach(item => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
@@ -366,7 +353,7 @@ function handleMenuAction(item) {
   }
 }
 
-// === クリックレイヤー ===
+// === イベントハンドラ ===
 clickLayer.addEventListener("dblclick", () => {
   loadMenu("menu01.json");
 });
@@ -381,12 +368,26 @@ clickLayer.addEventListener("touchend", () => {
 });
 
 clickLayer.addEventListener("click", () => {
+  if (!listPanel.classList.contains("hidden")) return; // list優先
   if (!menuPanel.classList.contains("hidden")) {
     menuPanel.classList.add("hidden");
     return;
   }
-  if (!listPanel.classList.contains("hidden")) return;
-  if (!isPlaying && choicesEl.children.length === 0) {
+  if (!isPlaying && choicesEl.children.length === 0 && !isSceneTransitioning) {
     next();
   }
+});
+
+// === --vh 再計算（①案） ===
+function setVhVariable() {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
+}
+window.addEventListener("resize", () => {
+  setVhVariable();
+  updateCharacterDisplay();
+});
+window.addEventListener("load", () => {
+  setVhVariable();
+  loadScenario(currentScenario);
 });
