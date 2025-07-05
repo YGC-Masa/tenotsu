@@ -284,3 +284,9 @@ body {
 .hidden {
   display: none !important;
 }
+
+.random-image {
+  position: absolute;
+  object-fit: contain;
+  pointer-events: none;
+}
