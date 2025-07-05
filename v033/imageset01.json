@@ -1,12 +1,21 @@
 {
-  "fixed": "img/fixed001.jpg",
-  "randompath": "img/",
+  "fixed": "../asset2/bgev/titleon.jpg",
+  "randompath": "../asset2/ev/",
   "random": [
-    "rand001.jpg",
-    "rand002.jpg",
-    "rand003.jpg",
-    "rand004.jpg",
-    "rand005.jpg",
-    "rand006.jpg"
+    "a01ev01.png",
+    "a01ev02.png","
+    "a01ev03.png","
+    "a01ev04.png","
+    "a01ev05.png","
+    "b01ev01.png","
+    "b01ev02.png","
+    "c01ev01.png","
+    "c01ev02.png","
+    "d01ev01.png","
+    "d01ev02.png","
+    "e01ev01.png","
+    "e01ev02.png","
+    "ev01.png","
+    "ev_rooftop.png"
   ]
 }
