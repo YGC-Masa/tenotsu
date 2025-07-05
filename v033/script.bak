@@ -33,32 +33,14 @@ function isMobilePortrait() {
   return window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
 }
 
-function setTextWithSpeed(text, speed, callback) {
-  if (typingInterval) clearInterval(typingInterval);
-  isPlaying = true;
-  textEl.innerHTML = "";
-  let i = 0;
-  typingInterval = setInterval(() => {
-    textEl.innerHTML += text[i++];
-    if (i >= text.length) {
-      clearInterval(typingInterval);
-      typingInterval = null;
-      isPlaying = false;
-      if (callback) callback();
-      if (isAutoMode && choicesEl.children.length === 0) {
-        setTimeout(() => {
-          if (!isPlaying && !isSceneTransitioning) next();
-        }, autoWaitTime);
-      }
-    }
-  }, speed);
+function setVhVariable() {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
 
-function setCharacterStyle(name, scene = {}) {
-  const style = characterStyles[name] || characterStyles[""];
-  const fontSize = scene.fontSize || style.fontSize || defaultFontSize;
-  currentSpeed = scene.speed || style.speed || defaultSpeed;
-  document.documentElement.style.setProperty("--fontSize", fontSize);
+function updateTextAreaVisibility(show) {
+  textAreaVisible = show;
+  dialogueBox.classList.toggle("hidden", !show);
 }
 
 function clearCharacters() {
@@ -81,6 +63,33 @@ function updateCharacterDisplay() {
     }
   }
 }
+function setTextWithSpeed(text, speed, callback) {
+  if (typingInterval) clearInterval(typingInterval);
+  isPlaying = true;
+  textEl.innerHTML = "";
+  let i = 0;
+  typingInterval = setInterval(() => {
+    textEl.innerHTML += text[i++];
+    if (i >= text.length) {
+      clearInterval(typingInterval);
+      typingInterval = null;
+      isPlaying = false;
+      if (callback) callback();
+      if (isAutoMode && choicesEl.children.length === 0) {
+        setTimeout(() => {
+          if (!isPlaying) next();
+        }, autoWaitTime);
+      }
+    }
+  }, speed);
+}
+
+function setCharacterStyle(name, scene = {}) {
+  const style = characterStyles[name] || characterStyles[""];
+  const fontSize = scene.fontSize || style.fontSize || defaultFontSize;
+  currentSpeed = scene.speed || style.speed || defaultSpeed;
+  document.documentElement.style.setProperty("--fontSize", fontSize);
+}
 
 async function applyEffect(el, effectName) {
   if (window.effects && effectName && window.effects[effectName]) {
@@ -89,12 +98,6 @@ async function applyEffect(el, effectName) {
     return await window.effects.fadein(el);
   }
 }
-
-function updateTextAreaVisibility(show) {
-  textAreaVisible = show;
-  dialogueBox.classList.toggle("hidden", !show);
-}
-
 async function showScene(scene) {
   if (!scene || isSceneTransitioning) return;
   isSceneTransitioning = true;
@@ -111,7 +114,7 @@ async function showScene(scene) {
 
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       bgEl.onload = resolve;
       bgEl.src = config.bgPath + scene.bg;
     });
@@ -206,22 +209,26 @@ async function showScene(scene) {
     });
   }
 
-  if (scene.showmenu) loadMenu(scene.showmenu);
-  if (scene.showlist) loadList(scene.showlist);
+  if (scene.showmenu) {
+    loadMenu(scene.showmenu);
+  }
 
-  if (scene.auto && !scene.choices && !scene.text) {
+  if (scene.showlist) {
+    loadList(scene.showlist);
+  }
+
+  if (scene.auto && scene.choices === undefined && scene.text === undefined) {
     setTimeout(() => {
-      if (!isPlaying && !isSceneTransitioning) next();
+      if (!isPlaying) next();
     }, autoWaitTime);
   }
 
   isSceneTransitioning = false;
 }
-
 function next() {
   fetch(config.scenarioPath + currentScenario + "?t=" + Date.now())
-    .then(res => res.json())
-    .then(data => {
+    .then((res) => res.json())
+    .then((data) => {
       currentIndex++;
       if (currentIndex < data.scenes.length) {
         showScene(data.scenes[currentIndex]);
@@ -246,14 +253,26 @@ function loadScenario(filename) {
   menuPanel.classList.add("hidden");
   if (typingInterval) clearInterval(typingInterval);
   updateTextAreaVisibility(true);
-
   fetch(config.scenarioPath + filename + "?t=" + Date.now())
-    .then(res => res.json())
-    .then(data => showScene(data.scenes[0]));
+    .then((res) => res.json())
+    .then((data) => {
+      showScene(data.scenes[0]);
+    });
 }
 
-// 省略された場合、続きを希望してください（showMenu, showList, イベントハンドラ部分など）。
-// === メニュー表示 ===
+function setVhVariable() {
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
+}
+
+window.addEventListener("resize", () => {
+  setVhVariable();
+  updateCharacterDisplay();
+});
+window.addEventListener("load", () => {
+  setVhVariable();
+  loadScenario(currentScenario);
+});
 async function loadMenu(filename = "menu01.json") {
   const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
   const data = await res.json();
@@ -270,7 +289,7 @@ function showMenu(menuData) {
   audioStateBtn.onclick = () => {
     isMuted = !isMuted;
     if (bgm) bgm.muted = isMuted;
-    document.querySelectorAll("audio").forEach(a => a.muted = isMuted);
+    document.querySelectorAll("audio").forEach((a) => (a.muted = isMuted));
     menuPanel.classList.add("hidden");
   };
   menuPanel.appendChild(audioStateBtn);
@@ -285,12 +304,14 @@ function showMenu(menuData) {
       setTimeout(() => {
         textEl.innerHTML = "";
         setTimeout(() => {
-          if (!isPlaying && choicesEl.children.length === 0 && !isSceneTransitioning) next();
+          if (!isPlaying && choicesEl.children.length === 0) next();
         }, autoWaitTime);
       }, 1000);
     } else {
       textEl.innerHTML = "(AutoMode Off)";
-      setTimeout(() => { textEl.innerHTML = ""; }, 1000);
+      setTimeout(() => {
+        textEl.innerHTML = "";
+      }, 1000);
     }
     menuPanel.classList.add("hidden");
   };
@@ -300,17 +321,17 @@ function showMenu(menuData) {
   const fullscreenBtn = document.createElement("button");
   fullscreenBtn.textContent = document.fullscreenElement ? "全画面OFF" : "全画面ON";
   fullscreenBtn.onclick = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(err => console.warn(err));
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
     } else {
-      document.exitFullscreen().catch(err => console.warn(err));
+      document.documentElement.requestFullscreen().catch(() => {});
     }
     menuPanel.classList.add("hidden");
   };
   menuPanel.appendChild(fullscreenBtn);
 
-  // 残りのメニュー項目
-  menuData.items.forEach(item => {
+  // メニュー内の項目
+  menuData.items.forEach((item) => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
     btn.onclick = () => {
@@ -320,8 +341,6 @@ function showMenu(menuData) {
     menuPanel.appendChild(btn);
   });
 }
-
-// === リスト表示 ===
 async function loadList(filename = "list01.json") {
   const res = await fetch(config.listPath + filename + "?t=" + Date.now());
   const data = await res.json();
@@ -332,7 +351,7 @@ function showList(listData) {
   listPanel.innerHTML = "";
   listPanel.classList.remove("hidden");
 
-  listData.items.slice(0, 7).forEach(item => {
+  listData.items.slice(0, 7).forEach((item) => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
     btn.onclick = () => {
@@ -341,8 +360,13 @@ function showList(listData) {
     };
     listPanel.appendChild(btn);
   });
-}
 
+  // リストパネル最前面強調（z-indexを一度リセット）
+  listPanel.style.zIndex = "12";
+  setTimeout(() => {
+    listPanel.style.zIndex = "11";
+  }, 200); // 軽い遅延を挟むことで競合回避
+}
 function handleMenuAction(item) {
   if (item.action === "jump" && item.jump) {
     loadScenario(item.jump);
@@ -352,42 +376,41 @@ function handleMenuAction(item) {
     location.href = item.url;
   }
 }
+let lastTouch = 0;
 
-// === イベントハンドラ ===
+// ダブルクリック：メニュー表示のON/OFF（リストが開いていてもメニューは操作可能）
 clickLayer.addEventListener("dblclick", () => {
-  loadMenu("menu01.json");
+  const menuVisible = !menuPanel.classList.contains("hidden");
+  const listVisible = !listPanel.classList.contains("hidden");
+
+  if (menuVisible) {
+    // メニューが開いてる → 閉じる（リストが開いてても関係なし）
+    menuPanel.classList.add("hidden");
+  } else {
+    // メニューが閉じていて：
+    // ・リストが開いてる → メニューだけ開く
+    // ・両方閉じている → メニュー開く
+    menuPanel.classList.remove("hidden");
+    loadMenu("menu01.json");
+  }
 });
 
-let lastTouch = 0;
+// タッチ時：ダブルタップ検出
 clickLayer.addEventListener("touchend", () => {
   const now = Date.now();
   if (now - lastTouch < 300) {
-    loadMenu("menu01.json");
+    clickLayer.dispatchEvent(new Event("dblclick"));
   }
   lastTouch = now;
 });
 
+// 通常クリック：次のシーンへ（ただしメニューが開いてるときは閉じる）
 clickLayer.addEventListener("click", () => {
-  if (!listPanel.classList.contains("hidden")) return; // list優先
   if (!menuPanel.classList.contains("hidden")) {
     menuPanel.classList.add("hidden");
     return;
   }
-  if (!isPlaying && choicesEl.children.length === 0 && !isSceneTransitioning) {
+  if (!isPlaying && choicesEl.children.length === 0) {
     next();
   }
-});
-
-// === --vh 再計算（①案） ===
-function setVhVariable() {
-  let vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty("--vh", `${vh}px`);
-}
-window.addEventListener("resize", () => {
-  setVhVariable();
-  updateCharacterDisplay();
-});
-window.addEventListener("load", () => {
-  setVhVariable();
-  loadScenario(currentScenario);
 });
