@@ -18,6 +18,14 @@ const charSlots = {
   center: document.getElementById("char-center"),
   right: document.getElementById("char-right"),
 };
+// ▼ vhの再計算（モバイルブラウザ対応）
+function setVhVariable() {
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+window.addEventListener("resize", setVhVariable);
+document.addEventListener("DOMContentLoaded", setVhVariable);
 
 // === シナリオ読み込みと表示 ===
 async function showScene(scene) {
