@@ -1,3 +1,4 @@
+let currentScenario = "000start.json";
 let currentSceneIndex = 0;
 let isAutoMode = false;
 let isSkipping = false;
