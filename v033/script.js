@@ -113,7 +113,7 @@ async function showScene(scene) {
   }
 
   if (scene.randomimageson) {
-    randomImagesOn(scene.randomimageson);
+    randomImagesOn();
   }
   
   if (scene.randomimagesoff) {
