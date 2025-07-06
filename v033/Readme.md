@@ -27,7 +27,7 @@ project-root/
       ├── utils.js # 表示関連スクリプト
       ├── menulist.js # メニュー・リスト表示スクリプト
       ├── effect.js # 背景＆キャラ表示演出
-      ├── ramdom/ # ランダム用listファイル
+      ├── random/ # ランダム用listファイル
       │     ├── imageset01.json #　画像リスト
       │     └── *.json # 各ファイル
       ├── listmenu/ # list・menu設定ファイル
