@@ -19,7 +19,7 @@ async function randomImagesOn() {
 
   if (!randomImagesData) {
     try {
-      const res = await fetch("./randomimages/imageset01.json");
+      const res = await fetch("./random/imageset01.json");
       randomImagesData = await res.json();
     } catch (e) {
       console.error("ランダム画像JSONの読み込みに失敗しました", e);
