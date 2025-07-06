@@ -1,4 +1,4 @@
-// script.js - v033-02 with randomimageson/off support
+// script.js - v033-02 with unified characterStyles support
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
@@ -118,6 +118,13 @@ async function showScene(scene) {
     await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
+  if (scene.randomimageson) {
+    if (typeof randomImagesOn === "function") randomImagesOn();
+  }
+  if (scene.randomimagesoff) {
+    if (typeof randomImagesOff === "function") randomImagesOff();
+  }
+
   if (scene.showev) {
     const evImg = document.createElement("img");
     evImg.src = config.evPath + scene.showev;
@@ -168,9 +175,9 @@ async function showScene(scene) {
   updateCharacterDisplay();
 
   if (scene.name !== undefined && scene.text !== undefined) {
-    const color = characterColors[scene.name] || "#C0C0C0";
+    const style = characterStyles[scene.name] || characterStyles[""];
     nameEl.textContent = scene.name;
-    nameEl.style.color = color;
+    nameEl.style.color = style.color;
     setCharacterStyle(scene.name, scene);
     setTextWithSpeed(scene.text, currentSpeed);
   }
@@ -185,14 +192,6 @@ async function showScene(scene) {
     const se = new Audio(config.sePath + scene.se);
     se.muted = isMuted;
     se.play();
-  }
-
-  // ✅ ランダム画像表示切り替え
-  if (scene.randomimageson) {
-    if (typeof randomImagesOn === "function") randomImagesOn();
-  }
-  if (scene.randomimagesoff) {
-    if (typeof randomImagesOff === "function") randomImagesOff();
   }
 
   if (scene.choices) {
@@ -214,8 +213,13 @@ async function showScene(scene) {
     });
   }
 
-  if (scene.showmenu) loadMenu(scene.showmenu);
-  if (scene.showlist) loadList(scene.showlist);
+  if (scene.showmenu) {
+    loadMenu(scene.showmenu);
+  }
+
+  if (scene.showlist) {
+    loadList(scene.showlist);
+  }
 
   if (scene.auto && scene.choices === undefined && scene.text === undefined) {
     setTimeout(() => {
