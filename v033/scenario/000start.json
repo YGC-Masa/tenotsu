@@ -1,20 +1,18 @@
-{
-  "scenes": [
-    {
-      "auto": true,
-      "bg": "title.jpg",
-      "bgEffect": "whitein",
-      "textareashow": false
-    },
-    {
-      "auto": true,
-      "randomimageson": "imageset01.json" ,
-      "wait" : 1750
-    },
-    {
-      "auto": false,
-      "showlist": "title.json",
-      "textareashow": false
-    }
-  ]
-}
+[
+  {
+    "auto": true,
+    "bg": "title.jpg",
+    "effect": "whitein",
+    "textareashow": false
+  },
+  {
+    "auto": true,
+    "randomimageson": true,
+    "wait": 1750
+  },
+  {
+    "auto": false,
+    "showlist": "title.json",
+    "textareashow": false
+  }
+]
