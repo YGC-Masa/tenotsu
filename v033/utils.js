@@ -1,13 +1,16 @@
+// ▼ テキストをスピード制御付きで表示
 function setTextWithSpeed(text, callback) {
   const textArea = document.getElementById("text");
   textArea.innerText = "";
-  let i = 0;
+  let index = 0;
+  const speed = 20; // 1文字の表示間隔（ミリ秒）
 
   function typeChar() {
-    if (i < text.length) {
-      textArea.innerText += text[i++];
-      setTimeout(typeChar, 20); // 1文字20ms間隔
-    } else if (typeof callback === "function") {
+    if (index < text.length) {
+      textArea.innerText += text.charAt(index);
+      index++;
+      setTimeout(typeChar, speed);
+    } else if (callback) {
       callback();
     }
   }
@@ -15,42 +18,43 @@ function setTextWithSpeed(text, callback) {
   typeChar();
 }
 
-function setCharacterStyle(imgElement, charId) {
-  if (!imgElement || !charId) return;
+// ▼ キャラクターのスタイルを適用
+function setCharacterStyle(img, charId) {
+  if (!window.characterStyles || !charId) return;
+  const style = window.characterStyles[charId];
+  if (!style) return;
 
-  // 色指定
-  const color = window.characterColors?.[charId];
-  if (color) {
-    imgElement.style.filter = `drop-shadow(0 0 4px ${color})`;
+  if (style.scale) {
+    img.style.transform = `scale(${style.scale})`;
   }
-
-  // CSSスタイル指定
-  const styleClass = window.characterStyles?.[charId];
-  if (styleClass) {
-    imgElement.classList.add(styleClass);
+  if (style.marginLeft) {
+    img.style.marginLeft = style.marginLeft;
+  }
+  if (style.marginTop) {
+    img.style.marginTop = style.marginTop;
   }
 }
 
+// ▼ キャラクターの表示をクリア
 function clearCharacters() {
-  const slots = ["char-left", "char-center", "char-right"];
-  slots.forEach((id) => {
-    const slot = document.getElementById(id);
-    if (slot) {
-      slot.innerHTML = "";
-      slot.classList.remove("active");
-    }
+  const slots = document.querySelectorAll(".char-slot");
+  slots.forEach((slot) => {
+    slot.innerHTML = "";
+    slot.classList.remove("active");
   });
 }
 
+// ▼ キャラクターを表示（config.charPath対応）
 function updateCharacterDisplay(position, charId) {
   const slotId = `char-${position}`;
   const slot = document.getElementById(slotId);
-  if (!slot) return;
+  if (!slot || !charId) return;
 
   slot.innerHTML = "";
 
   const img = document.createElement("img");
-  img.src = `./assets/char/${charId}`;
+  const basePath = window.config?.charPath || "./assets/char/";
+  img.src = basePath + charId;
   img.className = "char-image";
 
   setCharacterStyle(img, charId);
@@ -59,7 +63,7 @@ function updateCharacterDisplay(position, charId) {
   slot.classList.add("active");
 }
 
-// 画面高さを --vh に反映（iOS対応）
+// ▼ --vh の再計算（iOS対策）
 function setVhVariable() {
   const vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
