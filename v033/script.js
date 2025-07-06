@@ -241,10 +241,11 @@ function next() {
         isAutoMode = false;
         return;
       }
-      currentIndex++; // ここを追加（または移動）
-      showScene(scenes[currentIndex - 1]); // 1つ前を表示（もし ++を先にするなら）
+      showScene(scenes[currentIndex]);
+      currentIndex++;
     });
 }
+
 
 function loadScenario(filename) {
   currentScenario = filename;
