@@ -19,8 +19,7 @@ function showScene() {
   if (!scene) return;
 
   updateUIState(scene);
-
-  // キャラ・背景・音声などの表示処理があればここに
+  // 必要に応じてキャラ、背景、テキスト表示などを追加
 }
 
 function nextScene() {
@@ -38,19 +37,28 @@ function updateUIState(scene) {
     randomImagesOff();
   }
 
-  // その他UI更新（例: テキスト、キャラ表示など）
+  // 他のUI更新処理（テキスト、キャラクターなど）があればここに
 }
 
-// イベント
-document.getElementById("clicklayer").addEventListener("click", () => {
-  nextScene();
-});
-
-// ダブルクリックでメニュー
-document.addEventListener("dblclick", () => {
-  if (menuVisible()) {
-    hideMenu();
-  } else {
-    showMenu();
+// DOM要素が読み込まれてからイベント設定
+document.addEventListener("DOMContentLoaded", () => {
+  const clickLayer = document.getElementById("clicklayer");
+  if (clickLayer) {
+    clickLayer.addEventListener("click", () => {
+      nextScene();
+    });
   }
+
+  // ダブルクリックでメニュー開閉
+  document.addEventListener("dblclick", () => {
+    if (menuVisible()) {
+      if (listVisible()) {
+        hideMenu(); // リストは残す
+      } else {
+        hideMenu();
+      }
+    } else {
+      showMenu();
+    }
+  });
 });
