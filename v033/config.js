@@ -9,5 +9,5 @@ const config = {
   evPath: "../assets2/ev/",
   cgPath: "../assets2/cg/",
   listPath: "./listmenu/",
-  randomPath: "./ramdom/"
+  randomPath: "./random/"
 };
