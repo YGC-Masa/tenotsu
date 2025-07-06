@@ -1,4 +1,4 @@
-let currentScenario = "000start.json";
+let currentScenario = null;
 let currentSceneIndex = 0;
 let isAutoMode = false;
 let isSkipping = false;
@@ -7,7 +7,7 @@ let clickDisabled = false;
 
 const clickLayer = document.getElementById("click-layer");
 
-// ビューポート高さ変数を再設定
+// resize時に --vh 再設定
 window.addEventListener("resize", () => {
   if (typeof setVhVariable === "function") {
     setVhVariable();
@@ -20,42 +20,51 @@ function loadScenario(scenario) {
   isSkipping = false;
   isSceneTransitioning = false;
   clickDisabled = false;
+  currentScenario = scenario;
 
-  window.currentScenario = scenario;
-  showScene(scenario[currentSceneIndex]);
+  showScene(currentScenario[currentSceneIndex]);
+}
+
+async function loadScenarioFromFile(fileName) {
+  try {
+    const response = await fetch(config.scenarioPath + fileName);
+    const scenarioData = await response.json();
+    loadScenario(scenarioData);
+  } catch (error) {
+    console.error("シナリオ読み込みエラー:", error);
+  }
 }
 
 function showScene(scene) {
   if (!scene || isSceneTransitioning) return;
   isSceneTransitioning = true;
 
-  // ランダム画像レイヤー制御
   if (scene.randomimageson) randomImagesOn?.();
   if (scene.randomimagesoff) randomImagesOff?.();
 
-  // 背景
   if (scene.bg) {
     const bg = document.getElementById("background");
     if (scene.effect && effects[scene.effect]) {
       effects[scene.effect](bg);
-      setTimeout(() => { bg.src = scene.bg; }, 250);
+      setTimeout(() => {
+        bg.src = scene.bg;
+      }, 250);
     } else {
       bg.src = scene.bg;
     }
   }
 
-  // EV/CG
-  const evLayer = document.getElementById("ev-layer");
-  evLayer.innerHTML = "";
   if (scene.ev || scene.cg) {
+    const evLayer = document.getElementById("ev-layer");
+    evLayer.innerHTML = "";
     const img = document.createElement("img");
-    const basePath = scene.ev ? config.evPath : config.cgPath;
-    img.src = basePath + (scene.ev || scene.cg);
+    img.src = scene.ev || scene.cg;
     img.className = scene.ev ? "ev-image" : "cg-image";
     evLayer.appendChild(img);
+  } else {
+    document.getElementById("ev-layer").innerHTML = "";
   }
 
-  // キャラクター
   clearCharacters();
   if (scene.chars) {
     for (const pos in scene.chars) {
@@ -63,16 +72,14 @@ function showScene(scene) {
     }
   }
 
-  // 名前
   document.getElementById("name").innerText = scene.name || "";
 
-  // テキスト
   if (scene.text) {
     setTextWithSpeed(scene.text, () => {
       isSceneTransitioning = false;
       if (scene.auto) {
         isAutoMode = true;
-        setTimeout(nextScene, 1500);
+        setTimeout(() => nextScene(), 1500);
       }
     });
   } else {
@@ -80,7 +87,7 @@ function showScene(scene) {
     isSceneTransitioning = false;
     if (scene.auto) {
       isAutoMode = true;
-      setTimeout(nextScene, 1000);
+      setTimeout(() => nextScene(), 1000);
     }
   }
 
@@ -99,10 +106,10 @@ function updateUIState(scene) {
 }
 
 function nextScene() {
-  if (isSceneTransitioning) return;
+  if (isSceneTransitioning || !currentScenario) return;
   currentSceneIndex++;
-  if (window.currentScenario && currentSceneIndex < window.currentScenario.length) {
-    showScene(window.currentScenario[currentSceneIndex]);
+  if (currentSceneIndex < currentScenario.length) {
+    showScene(currentScenario[currentSceneIndex]);
   } else {
     showEndMessage();
   }
@@ -117,51 +124,51 @@ function showEndMessage() {
 }
 
 function showChoices(choices) {
-  const area = document.getElementById("choices");
-  area.innerHTML = "";
-  area.style.display = "block";
+  const choicesArea = document.getElementById("choices");
+  choicesArea.innerHTML = "";
+  choicesArea.style.display = "block";
 
   choices.forEach((choice) => {
-    const btn = document.createElement("button");
-    btn.innerText = choice.text;
-    btn.addEventListener("click", () => {
+    const button = document.createElement("button");
+    button.innerText = choice.text;
+    button.addEventListener("click", () => {
       if (choice.jump !== undefined) {
         currentSceneIndex = choice.jump;
-        showScene(window.currentScenario[currentSceneIndex]);
+        showScene(currentScenario[currentSceneIndex]);
       }
     });
-    area.appendChild(btn);
+    choicesArea.appendChild(button);
   });
 }
 
 function hideChoices() {
-  const area = document.getElementById("choices");
-  area.innerHTML = "";
-  area.style.display = "none";
+  const choicesArea = document.getElementById("choices");
+  choicesArea.innerHTML = "";
+  choicesArea.style.display = "none";
 }
 
-// ▼クリック操作（通常進行）
+// クリックで進行
 clickLayer.addEventListener("click", () => {
   if (clickDisabled || isSceneTransitioning || isAutoMode || isSkipping) return;
   nextScene();
 });
 
-// ▼ダブルクリックでメニュー切り替え（list状態問わず）
+// ダブルクリックでメニュー表示/非表示（リスト状態問わず）
 let lastClickTime = 0;
 clickLayer.addEventListener("dblclick", () => {
   const now = Date.now();
   if (now - lastClickTime < 300) return;
   lastClickTime = now;
 
-  const listPanel = document.getElementById("list-panel");
-  const menuPanel = document.getElementById("menu-panel");
-
-  const isListOpen = !listPanel.classList.contains("hidden");
-  const isMenuOpen = !menuPanel.classList.contains("hidden");
-
+  const isMenuOpen = !document.getElementById("menu-panel").classList.contains("hidden");
   if (isMenuOpen) {
     hideMenu();
   } else {
     showMenu();
   }
+});
+
+// ✅ 起動時：初期シナリオ「000start.json」を読み込む
+window.addEventListener("DOMContentLoaded", () => {
+  loadScenarioFromFile("000start.json");
 });
