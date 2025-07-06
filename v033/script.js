@@ -119,4 +119,291 @@ async function showScene(scene) {
   if (scene.showev) {
     const evImg = document.createElement("img");
     evImg.src = config.evPath + scene.showev;
-    evImg.cla
+    evImg.classList.add("ev-image");
+    evImg.onload = () => applyEffect(evImg, scene.evEffect || "fadein");
+    evLayer.appendChild(evImg);
+  }
+
+  if (scene.showcg) {
+    const cgImg = document.createElement("img");
+    cgImg.src = config.cgPath + scene.showcg;
+    cgImg.classList.add("cg-image");
+    cgImg.onload = () => applyEffect(cgImg, scene.cgEffect || "fadein");
+    evLayer.appendChild(cgImg);
+  }
+
+  if (scene.bgm !== undefined) {
+    if (bgm) {
+      bgm.pause();
+      bgm = null;
+    }
+    if (scene.bgm) {
+      bgm = new Audio(config.bgmPath + scene.bgm);
+      bgm.loop = true;
+      bgm.muted = isMuted;
+      bgm.play();
+    }
+  }
+
+  if (scene.characters) {
+    lastActiveSide = scene.characters[scene.characters.length - 1]?.side || null;
+    ["left", "center", "right"].forEach(async (pos) => {
+      const slot = charSlots[pos];
+      const charData = scene.characters.find((c) => c.side === pos);
+      if (charData && charData.src && charData.src !== "NULL") {
+        const img = document.createElement("img");
+        img.src = config.charPath + charData.src;
+        img.classList.add("char-image");
+        slot.innerHTML = "";
+        slot.appendChild(img);
+        await applyEffect(img, charData.effect || "fadein");
+      } else if (charData && charData.src === "NULL") {
+        slot.innerHTML = "";
+      }
+    });
+  }
+
+  updateCharacterDisplay();
+
+  if (scene.name !== undefined && scene.text !== undefined) {
+    const color = characterColors[scene.name] || "#C0C0C0";
+    nameEl.textContent = scene.name;
+    nameEl.style.color = color;
+    setCharacterStyle(scene.name, scene);
+    setTextWithSpeed(scene.text, currentSpeed);
+  }
+
+  if (scene.voice) {
+    const voice = new Audio(config.voicePath + scene.voice);
+    voice.muted = isMuted;
+    voice.play();
+  }
+
+  if (scene.se) {
+    const se = new Audio(config.sePath + scene.se);
+    se.muted = isMuted;
+    se.play();
+  }
+
+  if (scene.choices) {
+    scene.choices.forEach((choice) => {
+      const btn = document.createElement("button");
+      btn.textContent = choice.text;
+      btn.onclick = () => {
+        clearCharacters();
+        textEl.innerHTML = "";
+        nameEl.textContent = "";
+        evLayer.innerHTML = "";
+        if (choice.jump) {
+          loadScenario(choice.jump);
+        } else if (choice.url) {
+          location.href = choice.url;
+        }
+      };
+      choicesEl.appendChild(btn);
+    });
+  }
+
+  if (scene.showmenu) {
+    loadMenu(scene.showmenu);
+  }
+
+  if (scene.showlist) {
+    loadList(scene.showlist);
+  }
+
+  if (scene.auto && scene.choices === undefined && scene.text === undefined) {
+    setTimeout(() => {
+      if (!isPlaying) next();
+    }, autoWaitTime);
+  }
+}
+
+function next() {
+  fetch(config.scenarioPath + currentScenario + "?t=" + Date.now())
+    .then((res) => res.json())
+    .then((data) => {
+      currentIndex++;
+      const scenes = Array.isArray(data) ? data : data.scenes;
+      if (Array.isArray(scenes) && currentIndex < scenes.length) {
+        showScene(scenes[currentIndex]);
+      } else {
+        if (textAreaVisible) {
+          nameEl.textContent = "";
+          textEl.innerHTML = "（物語は つづく・・・）";
+        }
+        isAutoMode = false;
+      }
+    })
+    .catch((e) => {
+      console.error("次のシーン読み込み失敗:", e);
+    });
+}
+
+function loadScenario(filename) {
+  currentScenario = filename;
+  currentIndex = 0;
+  clearCharacters();
+  textEl.innerHTML = "";
+  nameEl.textContent = "";
+  evLayer.innerHTML = "";
+  listPanel.classList.add("hidden");
+  menuPanel.classList.add("hidden");
+  if (typingInterval) clearInterval(typingInterval);
+  updateTextAreaVisibility(true);
+
+  fetch(config.scenarioPath + filename + "?t=" + Date.now())
+    .then((res) => res.json())
+    .then((data) => {
+      const scenes = Array.isArray(data) ? data : data.scenes;
+      if (Array.isArray(scenes)) {
+        showScene(scenes[0]);
+      } else {
+        console.error("シナリオデータの形式が不正です:", data);
+      }
+    })
+    .catch((e) => {
+      console.error("シナリオ読み込み失敗:", e);
+    });
+}
+
+function setVhVariable() {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
+}
+
+window.addEventListener("resize", () => {
+  setVhVariable();
+  updateCharacterDisplay();
+});
+
+window.addEventListener("load", () => {
+  setVhVariable();
+  loadScenario(currentScenario);
+});
+
+// === メニュー表示 ===
+async function loadMenu(filename = "menu01.json") {
+  const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
+  const data = await res.json();
+  showMenu(data);
+}
+
+function showMenu(menuData) {
+  menuPanel.innerHTML = "";
+  menuPanel.classList.remove("hidden");
+
+  // ① 音声トグル
+  const audioStateBtn = document.createElement("button");
+  audioStateBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
+  audioStateBtn.onclick = () => {
+    isMuted = !isMuted;
+    if (bgm) bgm.muted = isMuted;
+    document.querySelectorAll("audio").forEach(a => (a.muted = isMuted));
+    menuPanel.classList.add("hidden");
+  };
+  menuPanel.appendChild(audioStateBtn);
+
+  // ② オートモード
+  const autoBtn = document.createElement("button");
+  autoBtn.textContent = isAutoMode ? "オートモードOFF" : "オートモードON";
+  autoBtn.onclick = () => {
+    isAutoMode = !isAutoMode;
+    if (isAutoMode) {
+      textEl.innerHTML = "(AutoMode On 3秒後開始)";
+      setTimeout(() => {
+        textEl.innerHTML = "";
+        setTimeout(() => {
+          if (!isPlaying && choicesEl.children.length === 0) next();
+        }, autoWaitTime);
+      }, 1000);
+    } else {
+      textEl.innerHTML = "(AutoMode Off)";
+      setTimeout(() => {
+        textEl.innerHTML = "";
+      }, 1000);
+    }
+    menuPanel.classList.add("hidden");
+  };
+  menuPanel.appendChild(autoBtn);
+
+  // ③ 全画面トグル
+  const fullscreenBtn = document.createElement("button");
+  fullscreenBtn.textContent = document.fullscreenElement ? "全画面OFF" : "全画面ON";
+  fullscreenBtn.onclick = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen?.();
+    } else {
+      document.exitFullscreen?.();
+    }
+    menuPanel.classList.add("hidden");
+  };
+  menuPanel.appendChild(fullscreenBtn);
+
+  // ④ その他メニュー項目
+  menuData.items.forEach((item) => {
+    const btn = document.createElement("button");
+    btn.textContent = item.text;
+    btn.onclick = () => {
+      menuPanel.classList.add("hidden");
+      handleMenuAction(item);
+    };
+    menuPanel.appendChild(btn);
+  });
+}
+
+// === リスト表示 ===
+async function loadList(filename = "list01.json") {
+  const res = await fetch(config.listPath + filename + "?t=" + Date.now());
+  const data = await res.json();
+  showList(data);
+}
+
+function showList(listData) {
+  listPanel.innerHTML = "";
+  listPanel.classList.remove("hidden");
+
+  listData.items.slice(0, 7).forEach((item) => {
+    const btn = document.createElement("button");
+    btn.textContent = item.text;
+    btn.onclick = () => {
+      listPanel.classList.add("hidden");
+      handleMenuAction(item);
+    };
+    listPanel.appendChild(btn);
+  });
+}
+
+function handleMenuAction(item) {
+  if (item.action === "jump" && item.jump) {
+    loadScenario(item.jump);
+  } else if (item.action === "menu" && item.menu) {
+    loadMenu(item.menu);
+  } else if (item.action === "url" && item.url) {
+    location.href = item.url;
+  }
+}
+
+// === クリック操作 ===
+clickLayer.addEventListener("dblclick", () => {
+  loadMenu("menu01.json");
+});
+
+let lastTouch = 0;
+clickLayer.addEventListener("touchend", () => {
+  const now = Date.now();
+  if (now - lastTouch < 300) {
+    loadMenu("menu01.json");
+  }
+  lastTouch = now;
+});
+
+clickLayer.addEventListener("click", () => {
+  if (!menuPanel.classList.contains("hidden")) {
+    menuPanel.classList.add("hidden");
+    return;
+  }
+  if (!isPlaying && choicesEl.children.length === 0) {
+    next();
+  }
+});
