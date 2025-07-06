@@ -47,9 +47,51 @@ function updateUIState(scene) {
   if (scene.bg) {
     const bg = document.getElementById("background");
     if (bg) {
-      bg.style.backgroundImage = `url('${scene.bg}')`;
+      bg.style.backgroundImage = `url('${config.bgPath}${scene.bg}')`;
       bg.style.backgroundSize = "cover";
       bg.style.backgroundPosition = "center";
+    }
+  }
+
+  // キャラクター画像切り替え
+  if (scene.char) {
+    const charImg = document.getElementById("charImage");
+    if (charImg) {
+      charImg.src = `${config.charPath}${scene.char}`;
+      charImg.style.display = "block";
+    }
+  } else {
+    const charImg = document.getElementById("charImage");
+    if (charImg) {
+      charImg.style.display = "none";
+    }
+  }
+
+  // EV画像切り替え
+  if (scene.ev) {
+    const evImg = document.getElementById("evImage");
+    if (evImg) {
+      evImg.src = `${config.evPath}${scene.ev}`;
+      evImg.style.display = "block";
+    }
+  } else {
+    const evImg = document.getElementById("evImage");
+    if (evImg) {
+      evImg.style.display = "none";
+    }
+  }
+
+  // CG画像切り替え
+  if (scene.cg) {
+    const cgImg = document.getElementById("cgImage");
+    if (cgImg) {
+      cgImg.src = `${config.cgPath}${scene.cg}`;
+      cgImg.style.display = "block";
+    }
+  } else {
+    const cgImg = document.getElementById("cgImage");
+    if (cgImg) {
+      cgImg.style.display = "none";
     }
   }
 
@@ -93,4 +135,14 @@ document.addEventListener("DOMContentLoaded", () => {
       showMenu();
     }
   });
+
+  // 初期シナリオ読み込み例（パスは適宜変更してください）
+  fetch(`${config.scenarioPath}000start.json`)
+    .then(response => response.json())
+    .then(data => {
+      loadScenario(data);
+    })
+    .catch(err => {
+      console.error("シナリオ読み込み失敗:", err);
+    });
 });
