@@ -1,4 +1,4 @@
-let currentScenario = null;
+let currentScenario = "000start.json";
 let currentSceneIndex = 0;
 let isAutoMode = false;
 let isSkipping = false;
@@ -7,7 +7,6 @@ let clickDisabled = false;
 
 const clickLayer = document.getElementById("click-layer");
 
-// resize時に --vh 再設定
 window.addEventListener("resize", () => {
   if (typeof setVhVariable === "function") {
     setVhVariable();
@@ -20,51 +19,44 @@ function loadScenario(scenario) {
   isSkipping = false;
   isSceneTransitioning = false;
   clickDisabled = false;
-  currentScenario = scenario;
-
-  showScene(currentScenario[currentSceneIndex]);
-}
-
-async function loadScenarioFromFile(fileName) {
-  try {
-    const response = await fetch(config.scenarioPath + fileName);
-    const scenarioData = await response.json();
-    loadScenario(scenarioData);
-  } catch (error) {
-    console.error("シナリオ読み込みエラー:", error);
-  }
+  window.currentScenario = scenario;
+  showScene(scenario[currentSceneIndex]);
 }
 
 function showScene(scene) {
   if (!scene || isSceneTransitioning) return;
   isSceneTransitioning = true;
 
-  if (scene.randomimageson) randomImagesOn?.();
+  // ランダム画像レイヤー制御
+  if (scene.randomimageson) randomImagesOn?.(scene.randomimageson);
   if (scene.randomimagesoff) randomImagesOff?.();
 
+  // 背景処理
   if (scene.bg) {
     const bg = document.getElementById("background");
+    const fullBgPath = config.bgPath + scene.bg;
+
     if (scene.effect && effects[scene.effect]) {
       effects[scene.effect](bg);
       setTimeout(() => {
-        bg.src = scene.bg;
+        bg.src = fullBgPath;
       }, 250);
     } else {
-      bg.src = scene.bg;
+      bg.src = fullBgPath;
     }
   }
 
+  // EV or CG 処理
+  const evLayer = document.getElementById("ev-layer");
+  evLayer.innerHTML = "";
   if (scene.ev || scene.cg) {
-    const evLayer = document.getElementById("ev-layer");
-    evLayer.innerHTML = "";
     const img = document.createElement("img");
-    img.src = scene.ev || scene.cg;
+    img.src = (scene.ev ? config.evPath : config.cgPath) + (scene.ev || scene.cg);
     img.className = scene.ev ? "ev-image" : "cg-image";
     evLayer.appendChild(img);
-  } else {
-    document.getElementById("ev-layer").innerHTML = "";
   }
 
+  // キャラ処理
   clearCharacters();
   if (scene.chars) {
     for (const pos in scene.chars) {
@@ -72,14 +64,16 @@ function showScene(scene) {
     }
   }
 
+  // 名前表示
   document.getElementById("name").innerText = scene.name || "";
 
+  // テキスト表示
   if (scene.text) {
     setTextWithSpeed(scene.text, () => {
       isSceneTransitioning = false;
       if (scene.auto) {
         isAutoMode = true;
-        setTimeout(() => nextScene(), 1500);
+        setTimeout(nextScene, scene.wait || 1500);
       }
     });
   } else {
@@ -87,11 +81,17 @@ function showScene(scene) {
     isSceneTransitioning = false;
     if (scene.auto) {
       isAutoMode = true;
-      setTimeout(() => nextScene(), 1000);
+      setTimeout(nextScene, scene.wait || 1000);
     }
   }
 
+  // UI更新
   updateUIState(scene);
+
+  // showlist処理
+  if (scene.showlist) {
+    showList(scene.showlist);
+  }
 }
 
 function updateUIState(scene) {
@@ -106,10 +106,10 @@ function updateUIState(scene) {
 }
 
 function nextScene() {
-  if (isSceneTransitioning || !currentScenario) return;
+  if (isSceneTransitioning) return;
   currentSceneIndex++;
-  if (currentSceneIndex < currentScenario.length) {
-    showScene(currentScenario[currentSceneIndex]);
+  if (window.currentScenario && currentSceneIndex < window.currentScenario.length) {
+    showScene(window.currentScenario[currentSceneIndex]);
   } else {
     showEndMessage();
   }
@@ -117,10 +117,13 @@ function nextScene() {
 
 function showEndMessage() {
   const dialogueBox = document.getElementById("dialogue-box");
+  const nameArea = document.getElementById("name");
+  const textArea = document.getElementById("text");
+
   if (dialogueBox.style.display === "none") return;
 
-  document.getElementById("name").innerText = "";
-  document.getElementById("text").innerText = "物語はつづく・・・";
+  nameArea.innerText = "";
+  textArea.innerText = "物語はつづく・・・";
 }
 
 function showChoices(choices) {
@@ -134,7 +137,7 @@ function showChoices(choices) {
     button.addEventListener("click", () => {
       if (choice.jump !== undefined) {
         currentSceneIndex = choice.jump;
-        showScene(currentScenario[currentSceneIndex]);
+        showScene(window.currentScenario[currentSceneIndex]);
       }
     });
     choicesArea.appendChild(button);
@@ -147,20 +150,16 @@ function hideChoices() {
   choicesArea.style.display = "none";
 }
 
-// クリックで進行
-clickLayer.addEventListener("click", () => {
-  if (clickDisabled || isSceneTransitioning || isAutoMode || isSkipping) return;
-  nextScene();
-});
-
-// ダブルクリックでメニュー表示/非表示（リスト状態問わず）
+// ダブルクリックでメニュー切替（list表示に関係なく）
 let lastClickTime = 0;
 clickLayer.addEventListener("dblclick", () => {
   const now = Date.now();
   if (now - lastClickTime < 300) return;
   lastClickTime = now;
 
+  const isListOpen = !document.getElementById("list-panel").classList.contains("hidden");
   const isMenuOpen = !document.getElementById("menu-panel").classList.contains("hidden");
+
   if (isMenuOpen) {
     hideMenu();
   } else {
@@ -168,7 +167,17 @@ clickLayer.addEventListener("dblclick", () => {
   }
 });
 
-// ✅ 起動時：初期シナリオ「000start.json」を読み込む
-window.addEventListener("DOMContentLoaded", () => {
-  loadScenarioFromFile("000start.json");
+clickLayer.addEventListener("click", () => {
+  if (clickDisabled || isSceneTransitioning || isAutoMode || isSkipping) return;
+  nextScene();
 });
+
+// 起動処理：最初のシナリオを読み込み
+fetch(config.scenarioPath + currentScenario)
+  .then(res => res.json())
+  .then(data => {
+    loadScenario(data);
+  })
+  .catch(err => {
+    console.error("シナリオファイルの読み込みに失敗:", err);
+  });
