@@ -1,67 +1,28 @@
-const menuPanel = document.getElementById("menu-panel");
-const listPanel = document.getElementById("list-panel");
+// menuList.js
+
+const menuPanelElement = document.getElementById("menu");
+const listPanelElement = document.getElementById("list");
 
 function showMenu() {
-  menuPanel.classList.remove("hidden");
+  if (menuPanelElement) menuPanelElement.style.display = "block";
 }
 
 function hideMenu() {
-  menuPanel.classList.add("hidden");
+  if (menuPanelElement) menuPanelElement.style.display = "none";
 }
 
-function toggleMenu() {
-  menuPanel.classList.toggle("hidden");
+function menuVisible() {
+  return menuPanelElement && menuPanelElement.style.display === "block";
 }
 
-function showList(listItems = []) {
-  listPanel.innerHTML = "";
-  listItems.forEach((item) => {
-    const button = document.createElement("button");
-    button.innerText = item.label;
-    button.addEventListener("click", () => {
-      hideList();
-      if (item.command) item.command();
-    });
-    listPanel.appendChild(button);
-  });
-  listPanel.classList.remove("hidden");
+function showList() {
+  if (listPanelElement) listPanelElement.style.display = "block";
 }
 
 function hideList() {
-  listPanel.classList.add("hidden");
+  if (listPanelElement) listPanelElement.style.display = "none";
 }
 
-// メニュー構築
-function buildMenu() {
-  menuPanel.innerHTML = "";
-
-  const autoBtn = document.createElement("button");
-  autoBtn.innerText = "オートモード";
-  autoBtn.addEventListener("click", () => {
-    hideMenu();
-    nextScene();
-  });
-  menuPanel.appendChild(autoBtn);
-
-  const skipBtn = document.createElement("button");
-  skipBtn.innerText = "スキップ";
-  skipBtn.addEventListener("click", () => {
-    hideMenu();
-    nextScene();
-  });
-  menuPanel.appendChild(skipBtn);
-
-  const fullscreenBtn = document.createElement("button");
-  fullscreenBtn.innerText = "全画面表示ON/OFF";
-  fullscreenBtn.addEventListener("click", () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen?.();
-    } else {
-      document.exitFullscreen?.();
-    }
-  });
-  menuPanel.appendChild(fullscreenBtn);
+function listVisible() {
+  return listPanelElement && listPanelElement.style.display === "block";
 }
-
-// 初期化
-document.addEventListener("DOMContentLoaded", buildMenu);
