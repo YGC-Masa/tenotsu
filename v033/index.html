@@ -52,5 +52,15 @@
   <script src="randomShows.js"></script>
   <script src="utils.js"></script>
   <script src="script.js"></script>
+  <script>
+    fetch("000start.json")
+    .then(response => response.json())
+    .then(data => {
+    loadScenario(data);
+      })
+      .catch(err => {
+    console.error("シナリオ（000start.json）の読み込みに失敗しました", err);
+  });
+  </script>
 </body>
 </html>
