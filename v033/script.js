@@ -1,4 +1,4 @@
-// script.js - v033-02 with unified characterStyles support
+// script.js - v033-02 unified with characterStyles + JSON array support
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
@@ -232,16 +232,16 @@ function next() {
   fetch(config.scenarioPath + currentScenario + "?t=" + Date.now())
     .then((res) => res.json())
     .then((data) => {
-      currentIndex++;
-      if (currentIndex < data.scenes.length) {
-        showScene(data.scenes[currentIndex]);
-      } else {
+      const scenes = Array.isArray(data) ? data : data.scenes;
+      if (!scenes || currentIndex >= scenes.length) {
         if (textAreaVisible) {
           nameEl.textContent = "";
           textEl.innerHTML = "（物語は つづく・・・）";
         }
         isAutoMode = false;
+        return;
       }
+      showScene(scenes[currentIndex]);
     });
 }
 
@@ -260,7 +260,12 @@ function loadScenario(filename) {
   fetch(config.scenarioPath + filename + "?t=" + Date.now())
     .then((res) => res.json())
     .then((data) => {
-      showScene(data.scenes[0]);
+      const scenes = Array.isArray(data) ? data : data.scenes;
+      if (scenes?.[0]) {
+        showScene(scenes[0]);
+      } else {
+        console.error("シナリオデータが不正です", data);
+      }
     });
 }
 
