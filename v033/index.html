@@ -53,6 +53,12 @@
   <script src="utils.js"></script>
   <script src="script.js"></script>
 
-
+<script>
+fetch("./scenario/000start.json")
+  .then(response => response.json())
+  .then(data => {
+    loadScenario(data);
+  });
+</script>
 </body>
 </html>
