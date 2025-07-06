@@ -1,4 +1,4 @@
-# ノベルゲーム v022-02
+    # ノベルゲーム v022-02
 
 モバイル・PC対応のHTML5ベースノベルゲームエンジンです。  
 JavaScriptによる完全同期演出、BGM/SE/ボイス再生、オートプレイ、選択肢分岐などに対応。  
@@ -10,21 +10,33 @@ JavaScriptによる完全同期演出、BGM/SE/ボイス再生、オートプレ
 project-root/
 ├── assets2/
 │ ├── bgev/ # 背景画像
+│ ├── cg/ # キャラクター画像
+│ ├── ev/ # キャラクターイベント画像
 │ ├── char/ # キャラクター画像
 │ ├── bgm/ # BGM音源
 │ ├── se/ # 効果音
 │ └── voice/ # ボイス
-└── v022/
-├── index.html # UIレイアウト
-├── style.css # レスポンシブ＆キャラ演出スタイル
-├── script.js # セリフ制御＆演出同期処理
-├── config.js # アセットパス設定
-├── characterColors.js # キャラクターごとのセリフ色
-├── characterStyles.js # キャラクターごとの表示スタイル（fontSize, speed）
-├── effect.js # 背景＆キャラ表示演出
-└── scenario/
-├── 000start.json # 最初のシナリオ
-└── *.json # 各シナリオファイル（選択肢分岐対応）
+└── v033/
+      ├── index.html # UIレイアウト
+      ├── style.css # レスポンシブ＆キャラ演出スタイル
+      ├── script.js # セリフ制御＆演出同期処理
+      ├── config.js # アセットパス設定
+      ├── chardispsetting.css # キャラクター表示のcss
+      ├── characterStyles.js # キャラクターごとの表示スタイル（fontSize, speed,color）
+      ├── randomShows.js # 画像・テキストのランダム表示用のスクリプト
+      ├── utils.js # 表示関連スクリプト
+      ├── menulist.js # メニュー・リスト表示スクリプト
+      ├── effect.js # 背景＆キャラ表示演出
+      ├── ramdom/ # ランダム用listファイル
+      │     ├── imageset01.json #　画像リスト
+      │     └── *.json # 各ファイル
+      ├── listmenu/ # list・menu設定ファイル
+      │     ├──menu01.json # 最初のmenu項目
+      │     ├──list01.json # 最初のlist項目      
+      │     └── *.json # 各ファイル
+      └── scenario/
+            ├── 000start.json # 最初のシナリオ
+            └── *.json # 各シナリオファイル（選択肢分岐対応）
 
 ---
 
