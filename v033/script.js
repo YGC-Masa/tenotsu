@@ -7,44 +7,29 @@ let clickDisabled = false;
 
 const clickLayer = document.getElementById("click-layer");
 
+// ビューポート高さ変数を再設定
 window.addEventListener("resize", () => {
   if (typeof setVhVariable === "function") {
     setVhVariable();
   }
 });
 
-// ゲーム開始処理
-document.addEventListener("DOMContentLoaded", () => {
-  if (typeof setVhVariable === "function") {
-    setVhVariable();
-  }
-  loadScenario(currentScenario);
-});
+function loadScenario(scenario) {
+  currentSceneIndex = 0;
+  isAutoMode = false;
+  isSkipping = false;
+  isSceneTransitioning = false;
+  clickDisabled = false;
 
-// シナリオJSONを読み込んでスタート
-function loadScenario(filename) {
-  fetch(`./scenario/${filename}`)
-    .then(res => res.json())
-    .then(data => {
-      window.currentScenario = data;
-      currentSceneIndex = 0;
-      isAutoMode = false;
-      isSkipping = false;
-      isSceneTransitioning = false;
-      clickDisabled = false;
-      showScene(window.currentScenario[currentSceneIndex]);
-    })
-    .catch(err => {
-      console.error("シナリオ読み込みエラー:", err);
-    });
+  window.currentScenario = scenario;
+  showScene(scenario[currentSceneIndex]);
 }
 
 function showScene(scene) {
   if (!scene || isSceneTransitioning) return;
-
   isSceneTransitioning = true;
 
-  // ランダム画像制御
+  // ランダム画像レイヤー制御
   if (scene.randomimageson) randomImagesOn?.();
   if (scene.randomimagesoff) randomImagesOff?.();
 
@@ -53,24 +38,24 @@ function showScene(scene) {
     const bg = document.getElementById("background");
     if (scene.effect && effects[scene.effect]) {
       effects[scene.effect](bg);
-      setTimeout(() => {
-        bg.src = scene.bg;
-      }, 250);
+      setTimeout(() => { bg.src = scene.bg; }, 250);
     } else {
       bg.src = scene.bg;
     }
   }
 
-  // EV / CG
+  // EV/CG
   const evLayer = document.getElementById("ev-layer");
   evLayer.innerHTML = "";
   if (scene.ev || scene.cg) {
     const img = document.createElement("img");
-    img.src = scene.ev || scene.cg;
+    const basePath = scene.ev ? config.evPath : config.cgPath;
+    img.src = basePath + (scene.ev || scene.cg);
     img.className = scene.ev ? "ev-image" : "cg-image";
     evLayer.appendChild(img);
   }
 
+  // キャラクター
   clearCharacters();
   if (scene.chars) {
     for (const pos in scene.chars) {
@@ -78,9 +63,10 @@ function showScene(scene) {
     }
   }
 
+  // 名前
   document.getElementById("name").innerText = scene.name || "";
-  const textArea = document.getElementById("text");
 
+  // テキスト
   if (scene.text) {
     setTextWithSpeed(scene.text, () => {
       isSceneTransitioning = false;
@@ -90,7 +76,7 @@ function showScene(scene) {
       }
     });
   } else {
-    textArea.innerText = "";
+    document.getElementById("text").innerText = "";
     isSceneTransitioning = false;
     if (scene.auto) {
       isAutoMode = true;
@@ -114,7 +100,6 @@ function updateUIState(scene) {
 
 function nextScene() {
   if (isSceneTransitioning) return;
-
   currentSceneIndex++;
   if (window.currentScenario && currentSceneIndex < window.currentScenario.length) {
     showScene(window.currentScenario[currentSceneIndex]);
@@ -125,58 +110,58 @@ function nextScene() {
 
 function showEndMessage() {
   const dialogueBox = document.getElementById("dialogue-box");
-  const nameArea = document.getElementById("name");
-  const textArea = document.getElementById("text");
-
   if (dialogueBox.style.display === "none") return;
 
-  nameArea.innerText = "";
-  textArea.innerText = "物語はつづく・・・";
+  document.getElementById("name").innerText = "";
+  document.getElementById("text").innerText = "物語はつづく・・・";
 }
 
 function showChoices(choices) {
-  const choicesArea = document.getElementById("choices");
-  choicesArea.innerHTML = "";
-  choicesArea.style.display = "block";
+  const area = document.getElementById("choices");
+  area.innerHTML = "";
+  area.style.display = "block";
 
-  choices.forEach(choice => {
-    const button = document.createElement("button");
-    button.innerText = choice.text;
-    button.addEventListener("click", () => {
+  choices.forEach((choice) => {
+    const btn = document.createElement("button");
+    btn.innerText = choice.text;
+    btn.addEventListener("click", () => {
       if (choice.jump !== undefined) {
         currentSceneIndex = choice.jump;
         showScene(window.currentScenario[currentSceneIndex]);
       }
     });
-    choicesArea.appendChild(button);
+    area.appendChild(btn);
   });
 }
 
 function hideChoices() {
-  const choicesArea = document.getElementById("choices");
-  choicesArea.innerHTML = "";
-  choicesArea.style.display = "none";
+  const area = document.getElementById("choices");
+  area.innerHTML = "";
+  area.style.display = "none";
 }
 
-// ▼ クリック進行
+// ▼クリック操作（通常進行）
 clickLayer.addEventListener("click", () => {
   if (clickDisabled || isSceneTransitioning || isAutoMode || isSkipping) return;
   nextScene();
 });
 
-// ▼ ダブルクリックでメニューのON/OFF（list表示に関係なく）
+// ▼ダブルクリックでメニュー切り替え（list状態問わず）
 let lastClickTime = 0;
 clickLayer.addEventListener("dblclick", () => {
   const now = Date.now();
   if (now - lastClickTime < 300) return;
   lastClickTime = now;
 
-  const isListOpen = !document.getElementById("list-panel").classList.contains("hidden");
-  const isMenuOpen = !document.getElementById("menu-panel").classList.contains("hidden");
+  const listPanel = document.getElementById("list-panel");
+  const menuPanel = document.getElementById("menu-panel");
+
+  const isListOpen = !listPanel.classList.contains("hidden");
+  const isMenuOpen = !menuPanel.classList.contains("hidden");
 
   if (isMenuOpen) {
-    hideMenu(); // menuList.js に定義
+    hideMenu();
   } else {
-    showMenu(); // menuList.js に定義
+    showMenu();
   }
 });
