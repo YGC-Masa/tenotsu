@@ -40,6 +40,52 @@ project-root/
 
 ---
 
+✅ 現在のディレクトリ構成チェック
+pgsql
+コピーする
+編集する
+project-root/
+├── assets2/
+│   ├── bgev/          ✅ 背景画像 → config.bgPath
+│   ├── cg/            ✅ CG画像 → config.cgPath
+│   ├── ev/            ✅ EV画像 → config.evPath
+│   ├── char/          ✅ キャラクター画像 → config.charPath
+│   ├── bgm/           ✅ BGM → config.bgmPath
+│   ├── se/            ✅ 効果音 → config.sePath
+│   └── voice/         ✅ ボイス → config.voicePath
+├── v033/
+│   ├── index.html     ✅ UI定義（すべてのJS/CSSを読み込み）
+│   ├── style.css      ✅ 汎用レイアウト・ボタン・レイヤー構成
+│   ├── chardispsetting.css ✅ キャラサイズ・レスポンシブ表示
+│   ├── script.js      ✅ 本体処理：シナリオ読み込み、セリフ表示など
+│   ├── config.js      ✅ アセットパス定義（上記 assets2 内にマッピング）
+│   ├── characterStyles.js ✅ フォントサイズ、速度、色の定義（color統合済み）
+│   ├── utils.js       ✅ setTextWithSpeed(), clearCharacters() など表示ユーティリティ
+│   ├── menulist.js    ✅ メニュー表示制御、list/menuパネルUI
+│   ├── effect.js      ✅ フェード/ホワイトインなどの演出処理
+│   ├── randomShows.js ✅ ランダム画像表示（imageset対応・重複排除）
+│   ├── ramdom/
+│   │   └── imageset01.json ✅ 画像表示用の固定＋ランダム画像リスト（randomImages.jsが利用）
+│   ├── listmenu/
+│   │   ├── menu01.json ✅ メニュー表示用リスト
+│   │   └── list01.json ✅ 選択肢リスト（右パネル）
+│   └── scenario/
+│       ├── 000start.json ✅ 初期シナリオ（JSON配列、"scenes"なし）
+│       └── *.json ✅ 分岐シナリオ
+✅ 機能連携チェック
+ファイル	正しく動作するための条件	現状の確認
+config.js	全ファイルに読み込まれ、config.bgPath 等で参照	✅ 問題なし（../assets2/...）
+characterStyles.js	fontSize, speed, color を提供	✅ 色統合済みで反映済み
+randomShows.js	imageset01.json 読み込み、セーフエリア3×2表示	✅ 機能正常（ただし重いときは制限OK）
+menuList.js	menuPath, listPath からファイルを読み込む	✅ config.menuPath, config.listPath で読込対応済み
+script.js	000start.jsonを初期に読み込み表示	✅ ただし loadScenarioFromFile("000start.json") が明示必要
+effect.js	"effect": "whitein"などが使える	✅ エフェクト名と関数対応済み
+click-layer	シーン切り替え or メニュー呼出（ダブルタップ）	✅ script.jsでイベント登録済み
+
+
+
+
+
 ## 🔧 機能仕様
 
 ### ✅ 対応機能
@@ -50,6 +96,11 @@ project-root/
 - 選択肢によるジャンプ分岐
 - キャラクターごとのセリフ速度・フォントサイズ指定
 - シナリオファイル上で `fontSize`, `speed` を個別指定可能（優先される）
+
+
+
+
+
 
 ---
 
