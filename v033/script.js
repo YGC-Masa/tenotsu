@@ -15,11 +15,23 @@ function loadScenario(data) {
 
 function showScene() {
   if (isSceneTransitioning) return;
+
   const scene = scenario[currentSceneIndex];
   if (!scene) return;
 
   updateUIState(scene);
-  // 必要に応じてキャラ、背景、テキスト表示などを追加
+
+  // effect が指定されている場合は呼び出す
+  if (scene.effect && window.effects && typeof window.effects[scene.effect] === "function") {
+    window.effects[scene.effect](document.getElementById("background"));
+  }
+
+  // auto + wait がある場合は次へ
+  if (scene.auto && scene.wait) {
+    setTimeout(() => {
+      nextScene();
+    }, scene.wait);
+  }
 }
 
 function nextScene() {
@@ -31,16 +43,36 @@ function nextScene() {
 }
 
 function updateUIState(scene) {
+  // 背景画像切り替え
+  if (scene.bg) {
+    const bg = document.getElementById("background");
+    if (bg) {
+      bg.style.backgroundImage = `url('${scene.bg}')`;
+      bg.style.backgroundSize = "cover";
+      bg.style.backgroundPosition = "center";
+    }
+  }
+
+  // テキストエリア表示・非表示
+  const textArea = document.getElementById("textarea");
+  if (textArea) {
+    textArea.style.display = (scene.textareashow === false) ? "none" : "block";
+  }
+
+  // ランダム画像表示制御
   if (scene.randomimageson) {
     randomImagesOn();
   } else if (scene.randomimagesoff) {
     randomImagesOff();
   }
 
-  // 他のUI更新処理（テキスト、キャラクターなど）があればここに
+  // showlist 指定がある場合は読み込み
+  if (scene.showlist) {
+    showList(scene.showlist);
+  }
 }
 
-// DOM要素が読み込まれてからイベント設定
+// DOM読み込み後にイベント登録
 document.addEventListener("DOMContentLoaded", () => {
   const clickLayer = document.getElementById("clicklayer");
   if (clickLayer) {
@@ -53,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("dblclick", () => {
     if (menuVisible()) {
       if (listVisible()) {
-        hideMenu(); // リストは残す
+        hideMenu(); // メニューだけ閉じる
       } else {
         hideMenu();
       }
