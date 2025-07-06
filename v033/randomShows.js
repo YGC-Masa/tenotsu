@@ -1,101 +1,111 @@
-let isRandomImagesOn = false;
-let usedRandomImages = [];
-let randomImagesData = null;
+// randomShows.js
 
-const randomImagesLayer = document.createElement("div");
-randomImagesLayer.id = "random-images-layer";
-randomImagesLayer.style.position = "absolute";
-randomImagesLayer.style.top = "0";
-randomImagesLayer.style.left = "0";
-randomImagesLayer.style.width = "100%";
-randomImagesLayer.style.height = "100%";
-randomImagesLayer.style.zIndex = "2.5"; // BG(0), EV(2) より上、click-layer(9)より下
-randomImagesLayer.style.pointerEvents = "none";
-document.getElementById("game-container").appendChild(randomImagesLayer);
+let randomImagesLayer = null;
+let randomImageElements = [];
 
-async function randomImagesOn() {
-  isRandomImagesOn = true;
-  usedRandomImages = [];
+function createRandomImagesLayer() {
+  if (randomImagesLayer) return;
 
-  if (!randomImagesData) {
-    try {
-      const res = await fetch("./random/imageset01.json");
-      randomImagesData = await res.json();
-    } catch (e) {
-      console.error("ランダム画像JSONの読み込みに失敗しました", e);
-      return;
-    }
+  randomImagesLayer = document.createElement("div");
+  randomImagesLayer.id = "random-images-layer";
+  Object.assign(randomImagesLayer.style, {
+    position: "absolute",
+    top: "0",
+    left: "0",
+    width: "100%",
+    height: "100%",
+    zIndex: "2.5",
+    pointerEvents: "none"
+  });
+
+  document.body.appendChild(randomImagesLayer);
+}
+
+function clearRandomImages() {
+  if (!randomImagesLayer) return;
+  randomImagesLayer.innerHTML = "";
+  randomImageElements = [];
+}
+
+function randomImagesOn() {
+  if (!window.config || !config.randomPath) {
+    console.error("config.randomPath が定義されていません。");
+    return;
   }
 
-  renderRandomImages();
+  fetch(`${config.randomPath}imageset01.json`)
+    .then(response => {
+      if (!response.ok) throw new Error("JSON読み込み失敗");
+      return response.json();
+    })
+    .then(data => {
+      createRandomImagesLayer();
+      clearRandomImages();
+
+      const safeArea = {
+        x: window.innerWidth * 0.1,
+        y: window.innerHeight * 0.1,
+        width: window.innerWidth * 0.8,
+        height: window.innerHeight * 0.8
+      };
+
+      const cellWidth = safeArea.width / 3;
+      const cellHeight = safeArea.height / 2;
+
+      const positions = [
+        { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 },
+        { x: 0, y: 1 }, { x: 1, y: 1 }, { x: 2, y: 1 }
+      ];
+
+      const fixedImage = data.fixed;
+      const randomList = [...data.random];
+      shuffleArray(randomList);
+
+      positions.forEach((pos, index) => {
+        const img = document.createElement("img");
+        img.draggable = false;
+        img.style.position = "absolute";
+        img.style.maxWidth = "100%";
+        img.style.maxHeight = "100%";
+        img.style.objectFit = "contain";
+        img.style.pointerEvents = "none";
+
+        const left = safeArea.x + cellWidth * pos.x;
+        const top = safeArea.y + cellHeight * pos.y;
+
+        Object.assign(img.style, {
+          left: `${left}px`,
+          top: `${top}px`,
+          width: `${cellWidth}px`,
+          height: `${cellHeight}px`
+        });
+
+        if (index === 0) {
+          img.src = config.randomPath + fixedImage;
+        } else {
+          const randomImg = randomList.shift();
+          if (randomImg) {
+            img.src = config.randomPath + data.randompath + randomImg;
+          }
+        }
+
+        randomImagesLayer.appendChild(img);
+        randomImageElements.push(img);
+      });
+    })
+    .catch(err => {
+      console.error("ランダム画像JSONの読み込みに失敗しました", err);
+    });
 }
 
 function randomImagesOff() {
-  isRandomImagesOn = false;
-  usedRandomImages = [];
-  randomImagesLayer.innerHTML = "";
+  clearRandomImages();
 }
 
-function renderRandomImages() {
-  if (!isRandomImagesOn || !randomImagesData) return;
-
-  randomImagesLayer.innerHTML = "";
-
-  const containerWidth = randomImagesLayer.clientWidth;
-  const containerHeight = randomImagesLayer.clientHeight;
-
-  const safeLeft = containerWidth * 0.1;
-  const safeTop = containerHeight * 0.1;
-  const safeWidth = containerWidth * 0.8;
-  const safeHeight = containerHeight * 0.8;
-
-  const cellWidth = safeWidth / 3;
-  const cellHeight = safeHeight / 2;
-
-  const positions = [
-    [0, 0], [1, 0], [2, 0],
-    [0, 1], [1, 1], [2, 1]
-  ];
-
-  // セル①（左上）＝固定画像
-  const fixedImg = document.createElement("img");
-  fixedImg.src = randomImagesData.fixed;
-  fixedImg.style.position = "absolute";
-  fixedImg.style.objectFit = "contain";
-  fixedImg.style.pointerEvents = "none";
-
-  const [fx, fy] = positions[0];
-  fixedImg.style.left = `${safeLeft + fx * cellWidth}px`;
-  fixedImg.style.top = `${safeTop + fy * cellHeight}px`;
-  fixedImg.style.width = `${cellWidth}px`;
-  fixedImg.style.height = `${cellHeight}px`;
-
-  randomImagesLayer.appendChild(fixedImg);
-
-  // セル②〜⑥＝ランダム画像（重複なし）
-  const remainingPositions = positions.slice(1);
-  const availableImages = [...randomImagesData.random];
-
-  for (let i = 0; i < remainingPositions.length && availableImages.length > 0; i++) {
-    const candidates = availableImages.filter(img => !usedRandomImages.includes(img));
-    if (candidates.length === 0) break;
-
-    const index = Math.floor(Math.random() * candidates.length);
-    const imgName = candidates[index];
-    usedRandomImages.push(imgName);
-
-    const [x, y] = remainingPositions[i];
-    const img = document.createElement("img");
-    img.src = randomImagesData.randompath + imgName;
-    img.style.position = "absolute";
-    img.style.objectFit = "contain";
-    img.style.pointerEvents = "none";
-
-    img.style.left = `${safeLeft + x * cellWidth}px`;
-    img.style.top = `${safeTop + y * cellHeight}px`;
-    img.style.width = `${cellWidth}px`;
-    img.style.height = `${cellHeight}px`;
-
-    randomImagesLayer.appendChild(img);
+// 配列をランダムシャッフル
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
 }
