@@ -1,3 +1,5 @@
+// script.js - v033-02 with randomimageson/off support
+
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let bgm = null;
@@ -185,6 +187,14 @@ async function showScene(scene) {
     se.play();
   }
 
+  // ✅ ランダム画像表示切り替え
+  if (scene.randomimageson) {
+    if (typeof randomImagesOn === "function") randomImagesOn();
+  }
+  if (scene.randomimagesoff) {
+    if (typeof randomImagesOff === "function") randomImagesOff();
+  }
+
   if (scene.choices) {
     scene.choices.forEach((choice) => {
       const btn = document.createElement("button");
@@ -204,13 +214,8 @@ async function showScene(scene) {
     });
   }
 
-  if (scene.showmenu) {
-    loadMenu(scene.showmenu);
-  }
-
-  if (scene.showlist) {
-    loadList(scene.showlist);
-  }
+  if (scene.showmenu) loadMenu(scene.showmenu);
+  if (scene.showlist) loadList(scene.showlist);
 
   if (scene.auto && scene.choices === undefined && scene.text === undefined) {
     setTimeout(() => {
@@ -224,9 +229,8 @@ function next() {
     .then((res) => res.json())
     .then((data) => {
       currentIndex++;
-      const scenes = Array.isArray(data) ? data : data.scenes;
-      if (Array.isArray(scenes) && currentIndex < scenes.length) {
-        showScene(scenes[currentIndex]);
+      if (currentIndex < data.scenes.length) {
+        showScene(data.scenes[currentIndex]);
       } else {
         if (textAreaVisible) {
           nameEl.textContent = "";
@@ -234,9 +238,6 @@ function next() {
         }
         isAutoMode = false;
       }
-    })
-    .catch((e) => {
-      console.error("次のシーン読み込み失敗:", e);
     });
 }
 
@@ -255,15 +256,7 @@ function loadScenario(filename) {
   fetch(config.scenarioPath + filename + "?t=" + Date.now())
     .then((res) => res.json())
     .then((data) => {
-      const scenes = Array.isArray(data) ? data : data.scenes;
-      if (Array.isArray(scenes)) {
-        showScene(scenes[0]);
-      } else {
-        console.error("シナリオデータの形式が不正です:", data);
-      }
-    })
-    .catch((e) => {
-      console.error("シナリオ読み込み失敗:", e);
+      showScene(data.scenes[0]);
     });
 }
 
@@ -280,130 +273,4 @@ window.addEventListener("resize", () => {
 window.addEventListener("load", () => {
   setVhVariable();
   loadScenario(currentScenario);
-});
-
-// === メニュー表示 ===
-async function loadMenu(filename = "menu01.json") {
-  const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
-  const data = await res.json();
-  showMenu(data);
-}
-
-function showMenu(menuData) {
-  menuPanel.innerHTML = "";
-  menuPanel.classList.remove("hidden");
-
-  // ① 音声トグル
-  const audioStateBtn = document.createElement("button");
-  audioStateBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
-  audioStateBtn.onclick = () => {
-    isMuted = !isMuted;
-    if (bgm) bgm.muted = isMuted;
-    document.querySelectorAll("audio").forEach(a => (a.muted = isMuted));
-    menuPanel.classList.add("hidden");
-  };
-  menuPanel.appendChild(audioStateBtn);
-
-  // ② オートモード
-  const autoBtn = document.createElement("button");
-  autoBtn.textContent = isAutoMode ? "オートモードOFF" : "オートモードON";
-  autoBtn.onclick = () => {
-    isAutoMode = !isAutoMode;
-    if (isAutoMode) {
-      textEl.innerHTML = "(AutoMode On 3秒後開始)";
-      setTimeout(() => {
-        textEl.innerHTML = "";
-        setTimeout(() => {
-          if (!isPlaying && choicesEl.children.length === 0) next();
-        }, autoWaitTime);
-      }, 1000);
-    } else {
-      textEl.innerHTML = "(AutoMode Off)";
-      setTimeout(() => {
-        textEl.innerHTML = "";
-      }, 1000);
-    }
-    menuPanel.classList.add("hidden");
-  };
-  menuPanel.appendChild(autoBtn);
-
-  // ③ 全画面トグル
-  const fullscreenBtn = document.createElement("button");
-  fullscreenBtn.textContent = document.fullscreenElement ? "全画面OFF" : "全画面ON";
-  fullscreenBtn.onclick = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen?.();
-    } else {
-      document.exitFullscreen?.();
-    }
-    menuPanel.classList.add("hidden");
-  };
-  menuPanel.appendChild(fullscreenBtn);
-
-  // ④ その他メニュー項目
-  menuData.items.forEach((item) => {
-    const btn = document.createElement("button");
-    btn.textContent = item.text;
-    btn.onclick = () => {
-      menuPanel.classList.add("hidden");
-      handleMenuAction(item);
-    };
-    menuPanel.appendChild(btn);
-  });
-}
-
-// === リスト表示 ===
-async function loadList(filename = "list01.json") {
-  const res = await fetch(config.listPath + filename + "?t=" + Date.now());
-  const data = await res.json();
-  showList(data);
-}
-
-function showList(listData) {
-  listPanel.innerHTML = "";
-  listPanel.classList.remove("hidden");
-
-  listData.items.slice(0, 7).forEach((item) => {
-    const btn = document.createElement("button");
-    btn.textContent = item.text;
-    btn.onclick = () => {
-      listPanel.classList.add("hidden");
-      handleMenuAction(item);
-    };
-    listPanel.appendChild(btn);
-  });
-}
-
-function handleMenuAction(item) {
-  if (item.action === "jump" && item.jump) {
-    loadScenario(item.jump);
-  } else if (item.action === "menu" && item.menu) {
-    loadMenu(item.menu);
-  } else if (item.action === "url" && item.url) {
-    location.href = item.url;
-  }
-}
-
-// === クリック操作 ===
-clickLayer.addEventListener("dblclick", () => {
-  loadMenu("menu01.json");
-});
-
-let lastTouch = 0;
-clickLayer.addEventListener("touchend", () => {
-  const now = Date.now();
-  if (now - lastTouch < 300) {
-    loadMenu("menu01.json");
-  }
-  lastTouch = now;
-});
-
-clickLayer.addEventListener("click", () => {
-  if (!menuPanel.classList.contains("hidden")) {
-    menuPanel.classList.add("hidden");
-    return;
-  }
-  if (!isPlaying && choicesEl.children.length === 0) {
-    next();
-  }
 });
