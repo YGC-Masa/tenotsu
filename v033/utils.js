@@ -1,21 +1,13 @@
-function setVhVariable() {
-  const vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty("--vh", `${vh}px`);
-}
-setVhVariable();
-window.addEventListener("resize", setVhVariable);
-
-// セリフをスピード付きで表示
 function setTextWithSpeed(text, callback) {
-  const textElement = document.getElementById("text");
-  textElement.innerHTML = "";
+  const textArea = document.getElementById("text");
+  textArea.innerText = "";
   let i = 0;
 
   function typeChar() {
     if (i < text.length) {
-      textElement.innerHTML += text[i++];
-      setTimeout(typeChar, 30); // 1文字ごとのスピード調整
-    } else if (callback) {
+      textArea.innerText += text[i++];
+      setTimeout(typeChar, 20); // 1文字20ms間隔
+    } else if (typeof callback === "function") {
       callback();
     }
   }
@@ -23,44 +15,52 @@ function setTextWithSpeed(text, callback) {
   typeChar();
 }
 
-// キャラスタイル適用（透明度や反転等）
-function setCharacterStyle(charImg, charId) {
-  if (!window.characterStyles || !window.characterStyles[charId]) return;
+function setCharacterStyle(imgElement, charId) {
+  if (!imgElement || !charId) return;
 
-  const style = window.characterStyles[charId];
-
-  if (style.opacity !== undefined) {
-    charImg.style.opacity = style.opacity;
+  // 色指定
+  const color = window.characterColors?.[charId];
+  if (color) {
+    imgElement.style.filter = `drop-shadow(0 0 4px ${color})`;
   }
 
-  if (style.scaleX !== undefined) {
-    charImg.style.transform = `scaleX(${style.scaleX})`;
+  // CSSスタイル指定
+  const styleClass = window.characterStyles?.[charId];
+  if (styleClass) {
+    imgElement.classList.add(styleClass);
   }
 }
 
-// キャラ全消去
 function clearCharacters() {
-  ["left", "center", "right"].forEach((pos) => {
-    const slot = document.getElementById(`char-${pos}`);
-    slot.innerHTML = "";
-    slot.classList.remove("active");
+  const slots = ["char-left", "char-center", "char-right"];
+  slots.forEach((id) => {
+    const slot = document.getElementById(id);
+    if (slot) {
+      slot.innerHTML = "";
+      slot.classList.remove("active");
+    }
   });
 }
 
-// キャラ表示
 function updateCharacterDisplay(position, charId) {
-  const slot = document.getElementById(`char-${position}`);
+  const slotId = `char-${position}`;
+  const slot = document.getElementById(slotId);
   if (!slot) return;
 
-  slot.classList.add("active");
+  slot.innerHTML = "";
+
   const img = document.createElement("img");
-  img.src = `./characters/${charId}`;
+  img.src = `./assets/char/${charId}`;
   img.className = "char-image";
 
-  const color = window.characterColors?.[charId] || "#FFFFFF";
-  img.style.border = `2px solid ${color}`;
-
   setCharacterStyle(img, charId);
-  slot.innerHTML = "";
+
   slot.appendChild(img);
+  slot.classList.add("active");
+}
+
+// 画面高さを --vh に反映（iOS対応）
+function setVhVariable() {
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
