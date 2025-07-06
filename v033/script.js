@@ -241,7 +241,8 @@ function next() {
         isAutoMode = false;
         return;
       }
-      showScene(scenes[currentIndex]);
+      currentIndex++; // ここを追加（または移動）
+      showScene(scenes[currentIndex - 1]); // 1つ前を表示（もし ++を先にするなら）
     });
 }
 
