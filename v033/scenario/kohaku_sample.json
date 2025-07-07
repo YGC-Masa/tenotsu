@@ -19,10 +19,10 @@
     "se": "se_stretch.mp3"
   },
   {
-    "showcg": "cg01.png",
     "text": "琥珀は手早く着替えるとしっかり準備体操を始めた。"
   },
   {
+    "showcg": "cg01.png",
     "name": "琥珀",
     "text": "さあ、これで完璧だ。旦那、行くぞー！",
     "voice": "kohaku_cheer.mp3"
