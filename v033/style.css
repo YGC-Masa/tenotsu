@@ -316,3 +316,28 @@ body {
 #random-text-layer.hidden {
   display: none !important;
 }
+
+.random-text-sticky {
+  background: linear-gradient(to bottom right, #ffc0cb, #f4a6b0);
+  color: #000;
+  font-size: 1em;
+  padding: 0.8em 1em;
+  border-radius: 1em;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  clip-path: polygon(
+    10% 0%, 90% 0%,
+    100% 20%, 100% 80%,
+    90% 100%, 10% 100%,
+    0% 80%, 0% 20%
+  );
+  z-index: 3;
+  pointer-events: none;
+}
