@@ -1,9 +1,7 @@
-// randomShows.js
-
 let randomImagesLayer = null;
 let randomImageElements = [];
-let randomTextElements = [];
 let randomTextLayer = null;
+let randomTextElements = [];
 
 // ▼ 画像レイヤー作成
 function createRandomImagesLayer() {
@@ -74,10 +72,20 @@ function randomImagesOn() {
       createRandomImagesLayer();
       clearRandomImages();
 
+      const isMobilePortrait = window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
       const isMobileLandscape = window.innerWidth <= 768 && window.innerWidth > window.innerHeight;
 
-      const cols = isMobileLandscape ? 2 : 3;
-      const rows = isMobileLandscape ? 4 : 2;
+      let cols = 3;
+      let rows = 2;
+
+      if (isMobilePortrait) {
+        cols = 2;
+        rows = 4;
+      } else if (isMobileLandscape) {
+        cols = 3;
+        rows = 2;
+      }
+      // PCは cols=3, rows=2 のまま
 
       const safeArea = {
         x: window.innerWidth * 0.1,
@@ -117,7 +125,7 @@ function randomImagesOn() {
           width: `${cellWidth}px`,
           height: `${cellHeight}px`,
           maxWidth: "100%",
-          maxHeight: "100%",
+          maxHeight: "100%"
         });
 
         img.src = index === 0 && fixedImage ? imageBasePath + fixedImage : imageBasePath + (randomList.shift() || "");
@@ -142,41 +150,36 @@ function randomTextsOn() {
       createRandomTextLayer();
       clearRandomTexts();
 
-      const selected = [];
-      while (selected.length < 2 && data.length > 0) {
-        const i = Math.floor(Math.random() * data.length);
-        if (!selected.includes(data[i])) selected.push(data[i]);
+      // ここは、画面幅100%を20個に分割(5%ずつ×2段で10個ずつ)
+      // そのうち2個だけをランダムに選んで上下2段に並べる仕様に変更も可能ですが、
+      // 現状は20個ランダム表示のままです。
+
+      const usedIndexes = new Set();
+      const count = 20; // 5%ずつ、2段で20個
+
+      for (let i = 0; i < count; i++) {
+        let index;
+        do {
+          index = Math.floor(Math.random() * data.length);
+        } while (usedIndexes.has(index) && usedIndexes.size < data.length);
+        usedIndexes.add(index);
+
+        const div = document.createElement("div");
+        div.className = "random-text-note";
+        div.textContent = data[index];
+        Object.assign(div.style, {
+          width: "5%",
+          margin: "0.2em",
+          whiteSpace: "nowrap",
+          pointerEvents: "none"
+        });
+
+        randomTextLayer.appendChild(div);
+        randomTextElements.push(div);
       }
-
-const div = document.createElement("div");
-div.className = "random-text-sticky";
-div.textContent = `${text1}\n${text2}`; // 2段表示（\nで改行）
-
-      
-      Object.assign(div.style, {
-        background: "linear-gradient(to bottom right, #ffc0cb, #f4a6b0)",
-        color: "#000",
-        fontSize: "1em",
-        padding: "0.8em",
-        borderRadius: "1em",
-        boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
-        position: "absolute",
-        bottom: "10%",
-        left: "50%",
-        transform: "translateX(-50%)",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        textAlign: "center",
-        clipPath: "polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)"
-      });
-
-      randomTextLayer.appendChild(div);
-      randomTextElements.push(div);
     })
     .catch(err => console.error("ランダムテキストJSONの読み込みに失敗しました", err));
 }
-
 
 // ▼ オフ関数
 function randomImagesOff() {
