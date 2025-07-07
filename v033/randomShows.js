@@ -78,3 +78,41 @@ function randomImagesOn() {
       console.error("ランダム画像JSONの読み込みに失敗しました", err);
     });
 }
+
+
+function showRandomTexts() {
+  // 既に表示中なら一度削除
+  randomTextsOff();
+
+  fetch('./random/textset01.json')
+    .then(response => {
+      if (!response.ok) throw new Error("テキストJSONの読み込み失敗");
+      return response.json();
+    })
+    .then(data => {
+      const texts = [...data.texts];
+      shuffleArray(texts);
+
+      const container = document.createElement("div");
+      container.id = "random-text-layer";
+      document.body.appendChild(container);
+
+      const count = Math.min(texts.length, 8);
+      for (let i = 0; i < count; i++) {
+        const note = document.createElement("div");
+        note.className = "random-text-note";
+        note.textContent = texts[i];
+
+        const row = Math.floor(i / 2);
+        const col = i % 2;
+
+        note.style.left = `${5 + col * 50}%`;
+        note.style.bottom = `${1 + row * 2.5}%`;
+
+        container.appendChild(note);
+      }
+    })
+    .catch(err => {
+      console.error("ランダムテキストの表示に失敗", err);
+    });
+}
