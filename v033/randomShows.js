@@ -129,11 +129,12 @@ function randomTextsOn() {
       const selected = [];
       const usedIndexes = new Set();
 
+      // 2個（上下段）だけランダムに選択
       while (selected.length < 2 && usedIndexes.size < data.length / 2) {
         const idx = Math.floor(Math.random() * (data.length / 2));
         if (!usedIndexes.has(idx)) {
           usedIndexes.add(idx);
-          selected.push([data[idx * 2], data[idx * 2 + 1]]);
+          selected.push([data[idx * 2], data[idx * 2 + 1]]); // [キャラ名, テキスト]
         }
       }
 
@@ -141,21 +142,29 @@ function randomTextsOn() {
         const div = document.createElement("div");
         div.className = "random-text-note";
 
-        // キャラスタイル取得
+        // キャラカラー取得
         const style = window.characterStyles?.[char] || {};
         const color = style.color || "#000000";
 
         Object.assign(div.style, {
           color: color, // 文字色
-          borderLeft: `12px solid ${color}`, // 左の帯
+          borderLeft: `12px solid ${color}`, // 帯色もキャラカラー
+          backgroundColor: "#ffffff", // 白背景付箋風
+          padding: "1em",
+          paddingRight: "calc(1em + 12px)",
+          display: "inline-block",
+          fontSize: "0.9em",
+          fontWeight: "bold",
+          boxShadow: "2px 2px 6px rgba(0,0,0,0.2)",
           position: "absolute",
           left: "5%",
           width: "90%",
-          textAlign: "left",
-          bottom: i === 0 ? "5%" : "0%"
+          bottom: i === 0 ? "10%" : "5%", // 上段:90〜95%, 下段:95〜100%
+          whiteSpace: "nowrap",
         });
 
         div.textContent = `「${text}」`;
+
         randomTextLayer.appendChild(div);
         randomTextElements.push(div);
       });
