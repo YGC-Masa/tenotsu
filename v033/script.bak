@@ -1,4 +1,10 @@
+// script.js - v033-02
+
+let currentScenario = "000start.json";
+let currentIndex = 0;
+let bgm = null;
 let lastActiveSide = null;
+let isMuted = true;
 let typingInterval = null;
 let isAutoMode = false;
 let autoWaitTime = 2000;
@@ -7,7 +13,6 @@ let currentSpeed = 40;
 let defaultSpeed = 40;
 let defaultFontSize = "1em";
 let textAreaVisible = true;
-let isSceneTransitioning = false;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -22,43 +27,13 @@ const dialogueBox = document.getElementById("dialogue-box");
 const charSlots = {
   left: document.getElementById("char-left"),
   center: document.getElementById("char-center"),
-  right: document.getElementById("char-right"),
+  right: document.getElementById("char-right")
 };
 
 function isMobilePortrait() {
   return window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
 }
 
-function setVhVariable() {
-  let vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty("--vh", `${vh}px`);
-}
-
-function updateTextAreaVisibility(show) {
-  textAreaVisible = show;
-  dialogueBox.classList.toggle("hidden", !show);
-}
-
-function clearCharacters() {
-  for (const pos in charSlots) {
-    charSlots[pos].innerHTML = "";
-    charSlots[pos].classList.remove("active");
-  }
-  lastActiveSide = null;
-}
-
-function updateCharacterDisplay() {
-  const isPortrait = isMobilePortrait();
-  for (const pos in charSlots) {
-    const slot = charSlots[pos];
-    const hasCharacter = slot.children.length > 0;
-    if (isPortrait) {
-      slot.classList.toggle("active", pos === lastActiveSide && hasCharacter);
-    } else {
-      slot.classList.toggle("active", hasCharacter);
-    }
-  }
-}
 function setTextWithSpeed(text, speed, callback) {
   if (typingInterval) clearInterval(typingInterval);
   isPlaying = true;
@@ -84,7 +59,29 @@ function setCharacterStyle(name, scene = {}) {
   const style = characterStyles[name] || characterStyles[""];
   const fontSize = scene.fontSize || style.fontSize || defaultFontSize;
   currentSpeed = scene.speed || style.speed || defaultSpeed;
+  nameEl.style.color = style.color || "#C0C0C0";
   document.documentElement.style.setProperty("--fontSize", fontSize);
+}
+
+function clearCharacters() {
+  for (const pos in charSlots) {
+    charSlots[pos].innerHTML = "";
+    charSlots[pos].classList.remove("active");
+  }
+  lastActiveSide = null;
+}
+
+function updateCharacterDisplay() {
+  const isPortrait = isMobilePortrait();
+  for (const pos in charSlots) {
+    const slot = charSlots[pos];
+    const hasCharacter = slot.children.length > 0;
+    if (isPortrait) {
+      slot.classList.toggle("active", pos === lastActiveSide && hasCharacter);
+    } else {
+      slot.classList.toggle("active", hasCharacter);
+    }
+  }
 }
 
 async function applyEffect(el, effectName) {
@@ -94,11 +91,16 @@ async function applyEffect(el, effectName) {
     return await window.effects.fadein(el);
   }
 }
-async function showScene(scene) {
-  if (!scene || isSceneTransitioning) return;
-  isSceneTransitioning = true;
 
+function updateTextAreaVisibility(show) {
+  textAreaVisible = show;
+  dialogueBox.classList.toggle("hidden", !show);
+}
+
+async function showScene(scene) {
+  if (!scene) return;
   if (typingInterval) clearInterval(typingInterval);
+
   textEl.innerHTML = "";
   nameEl.textContent = "";
   evLayer.innerHTML = "";
@@ -106,6 +108,12 @@ async function showScene(scene) {
 
   if (scene.textareashow !== undefined) {
     updateTextAreaVisibility(scene.textareashow);
+  }
+
+  if (scene.randomimageson) {
+    if (typeof randomImagesOn === "function") randomImagesOn();
+  } else if (scene.randomimageson === false) {
+    if (typeof randomImagesOff === "function") randomImagesOff();
   }
 
   if (scene.bg) {
@@ -167,9 +175,7 @@ async function showScene(scene) {
   updateCharacterDisplay();
 
   if (scene.name !== undefined && scene.text !== undefined) {
-    const color = characterColors[scene.name] || "#C0C0C0";
     nameEl.textContent = scene.name;
-    nameEl.style.color = color;
     setCharacterStyle(scene.name, scene);
     setTextWithSpeed(scene.text, currentSpeed);
   }
@@ -205,29 +211,24 @@ async function showScene(scene) {
     });
   }
 
-  if (scene.showmenu) {
-    loadMenu(scene.showmenu);
-  }
-
-  if (scene.showlist) {
-    loadList(scene.showlist);
-  }
+  if (scene.showmenu) loadMenu(scene.showmenu);
+  if (scene.showlist) loadList(scene.showlist);
 
   if (scene.auto && scene.choices === undefined && scene.text === undefined) {
     setTimeout(() => {
       if (!isPlaying) next();
     }, autoWaitTime);
   }
-
-  isSceneTransitioning = false;
 }
+
 function next() {
   fetch(config.scenarioPath + currentScenario + "?t=" + Date.now())
     .then((res) => res.json())
     .then((data) => {
       currentIndex++;
-      if (currentIndex < data.scenes.length) {
-        showScene(data.scenes[currentIndex]);
+      const scenes = Array.isArray(data) ? data : data.scenes;
+      if (currentIndex < scenes.length) {
+        showScene(scenes[currentIndex]);
       } else {
         if (textAreaVisible) {
           nameEl.textContent = "";
@@ -239,6 +240,8 @@ function next() {
 }
 
 function loadScenario(filename) {
+  if (typeof randomImagesOff === "function") randomImagesOff();
+
   currentScenario = filename;
   currentIndex = 0;
   clearCharacters();
@@ -249,15 +252,17 @@ function loadScenario(filename) {
   menuPanel.classList.add("hidden");
   if (typingInterval) clearInterval(typingInterval);
   updateTextAreaVisibility(true);
+
   fetch(config.scenarioPath + filename + "?t=" + Date.now())
     .then((res) => res.json())
     .then((data) => {
-      showScene(data.scenes[0]);
+      const scenes = Array.isArray(data) ? data : data.scenes;
+      showScene(scenes[0]);
     });
 }
 
 function setVhVariable() {
-  const vh = window.innerHeight * 0.01;
+  let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
 
@@ -265,10 +270,23 @@ window.addEventListener("resize", () => {
   setVhVariable();
   updateCharacterDisplay();
 });
+
 window.addEventListener("load", () => {
   setVhVariable();
   loadScenario(currentScenario);
 });
+
+// === メニュー関連 ===
+function handleMenuAction(item) {
+  if (item.action === "jump" && item.jump) {
+    loadScenario(item.jump);
+  } else if (item.action === "menu" && item.menu) {
+    loadMenu(item.menu);
+  } else if (item.action === "url" && item.url) {
+    location.href = item.url;
+  }
+}
+
 async function loadMenu(filename = "menu01.json") {
   const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
   const data = await res.json();
@@ -279,18 +297,16 @@ function showMenu(menuData) {
   menuPanel.innerHTML = "";
   menuPanel.classList.remove("hidden");
 
-  // 音声ON/OFF
-  const audioStateBtn = document.createElement("button");
-  audioStateBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
-  audioStateBtn.onclick = () => {
+  const audioBtn = document.createElement("button");
+  audioBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
+  audioBtn.onclick = () => {
     isMuted = !isMuted;
     if (bgm) bgm.muted = isMuted;
-    document.querySelectorAll("audio").forEach((a) => (a.muted = isMuted));
+    document.querySelectorAll("audio").forEach(a => a.muted = isMuted);
     menuPanel.classList.add("hidden");
   };
-  menuPanel.appendChild(audioStateBtn);
+  menuPanel.appendChild(audioBtn);
 
-  // オートモード
   const autoBtn = document.createElement("button");
   autoBtn.textContent = isAutoMode ? "オートモードOFF" : "オートモードON";
   autoBtn.onclick = () => {
@@ -305,29 +321,25 @@ function showMenu(menuData) {
       }, 1000);
     } else {
       textEl.innerHTML = "(AutoMode Off)";
-      setTimeout(() => {
-        textEl.innerHTML = "";
-      }, 1000);
+      setTimeout(() => { textEl.innerHTML = ""; }, 1000);
     }
     menuPanel.classList.add("hidden");
   };
   menuPanel.appendChild(autoBtn);
 
-  // 全画面ON/OFF
   const fullscreenBtn = document.createElement("button");
   fullscreenBtn.textContent = document.fullscreenElement ? "全画面OFF" : "全画面ON";
   fullscreenBtn.onclick = () => {
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen?.();
     } else {
-      document.documentElement.requestFullscreen().catch(() => {});
+      document.exitFullscreen?.();
     }
     menuPanel.classList.add("hidden");
   };
   menuPanel.appendChild(fullscreenBtn);
 
-  // メニュー内の項目
-  menuData.items.forEach((item) => {
+  menuData.items.forEach(item => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
     btn.onclick = () => {
@@ -337,6 +349,7 @@ function showMenu(menuData) {
     menuPanel.appendChild(btn);
   });
 }
+
 async function loadList(filename = "list01.json") {
   const res = await fetch(config.listPath + filename + "?t=" + Date.now());
   const data = await res.json();
@@ -347,7 +360,7 @@ function showList(listData) {
   listPanel.innerHTML = "";
   listPanel.classList.remove("hidden");
 
-  listData.items.slice(0, 7).forEach((item) => {
+  listData.items.slice(0, 7).forEach(item => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
     btn.onclick = () => {
@@ -356,51 +369,19 @@ function showList(listData) {
     };
     listPanel.appendChild(btn);
   });
-
-  // リストパネル最前面強調（z-indexを一度リセット）
-  listPanel.style.zIndex = "12";
-  setTimeout(() => {
-    listPanel.style.zIndex = "11";
-  }, 200); // 軽い遅延を挟むことで競合回避
 }
-function handleMenuAction(item) {
-  if (item.action === "jump" && item.jump) {
-    loadScenario(item.jump);
-  } else if (item.action === "menu" && item.menu) {
-    loadMenu(item.menu);
-  } else if (item.action === "url" && item.url) {
-    location.href = item.url;
-  }
-}
-let lastTouch = 0;
 
-// ダブルクリック：メニュー表示のON/OFF（リストが開いていてもメニューは操作可能）
 clickLayer.addEventListener("dblclick", () => {
-  const menuVisible = !menuPanel.classList.contains("hidden");
-  const listVisible = !listPanel.classList.contains("hidden");
-
-  if (menuVisible) {
-    // メニューが開いてる → 閉じる（リストが開いてても関係なし）
-    menuPanel.classList.add("hidden");
-  } else {
-    // メニューが閉じていて：
-    // ・リストが開いてる → メニューだけ開く
-    // ・両方閉じている → メニュー開く
-    menuPanel.classList.remove("hidden");
-    loadMenu("menu01.json");
-  }
+  loadMenu("menu01.json");
 });
 
-// タッチ時：ダブルタップ検出
+let lastTouch = 0;
 clickLayer.addEventListener("touchend", () => {
   const now = Date.now();
-  if (now - lastTouch < 300) {
-    clickLayer.dispatchEvent(new Event("dblclick"));
-  }
+  if (now - lastTouch < 300) loadMenu("menu01.json");
   lastTouch = now;
 });
 
-// 通常クリック：次のシーンへ（ただしメニューが開いてるときは閉じる）
 clickLayer.addEventListener("click", () => {
   if (!menuPanel.classList.contains("hidden")) {
     menuPanel.classList.add("hidden");
