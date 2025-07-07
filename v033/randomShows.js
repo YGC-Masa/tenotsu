@@ -55,7 +55,7 @@ function randomImagesOn() {
         { x: 0, y: 1 }, { x: 1, y: 1 }, { x: 2, y: 1 }
       ];
 
-      const imageBasePath = data.randompath || config.randomPath;
+      const imageBasePath = (data.randompath || config.randomPath).replace(/\/?$/, "/");
       const fixedImage = data.fixed;
       const randomList = [...data.random];
       shuffleArray(randomList);
@@ -101,7 +101,6 @@ function randomImagesOff() {
   clearRandomImages();
 }
 
-// 配列をランダムシャッフル
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
