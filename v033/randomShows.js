@@ -160,7 +160,6 @@ function randomTextsOn() {
         randomTextElements.push(div);
       });
     })
-    console.log("キャラ:", char, "カラー:", color);
     .catch(err => console.error("ランダムテキストJSONの読み込みに失敗しました", err));
 }
 
