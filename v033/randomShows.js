@@ -1,77 +1,167 @@
 // randomShows.js
 
-// セーフエリアに2段表示でランダムテキスト表示
-async function randomTextsOn() {
-  const layer = document.getElementById('random-text-layer');
-  if (!layer) return;
+let randomImagesLayer = null;
+let randomImageElements = [];
+let randomTextElements = [];
+let randomTextLayer = null;
 
-  layer.innerHTML = ''; // 既存の付箋をクリア
-  layer.classList.remove('hidden');
+// ▼ 画像レイヤー作成
+function createRandomImagesLayer() {
+  if (randomImagesLayer) return;
+  randomImagesLayer = document.getElementById("random-images-layer") || document.createElement("div");
+  randomImagesLayer.id = "random-images-layer";
+  Object.assign(randomImagesLayer.style, {
+    position: "absolute",
+    top: "0",
+    left: "0",
+    width: "100%",
+    height: "100%",
+    zIndex: "2.5",
+    pointerEvents: "none"
+  });
+  document.body.appendChild(randomImagesLayer);
+}
 
-  try {
-    const response = await fetch('./random/textset01.json');
-    const data = await response.json();
+// ▼ テキストレイヤー作成
+function createRandomTextLayer() {
+  if (randomTextLayer) return;
+  randomTextLayer = document.getElementById("random-text-layer") || document.createElement("div");
+  randomTextLayer.id = "random-text-layer";
+  Object.assign(randomTextLayer.style, {
+    position: "absolute",
+    bottom: "0",
+    left: "0",
+    width: "100%",
+    height: "10%",
+    zIndex: "3",
+    pointerEvents: "none"
+  });
+  document.body.appendChild(randomTextLayer);
+}
 
-    // キャラ名とセリフのペアを抽出
-    const pairs = [];
-    for (let i = 0; i < data.length; i += 2) {
-      pairs.push([data[i], data[i + 1]]);
-    }
+// ▼ 画像クリア
+function clearRandomImages() {
+  if (!randomImagesLayer) return;
+  randomImagesLayer.innerHTML = "";
+  randomImageElements = [];
+}
 
-    // ランダムに1組選ぶ
-    const selected = pairs[Math.floor(Math.random() * pairs.length)];
-    const [charName, message] = selected;
+// ▼ テキストクリア
+function clearRandomTexts() {
+  if (!randomTextLayer) return;
+  randomTextLayer.innerHTML = "";
+  randomTextElements = [];
+}
 
-    // キャラカラー取得
-    const style = characterStyles[charName] || characterStyles[""];
-    const mainColor = style.color || '#C0C0C0';
-
-    // 明るい背景色を生成（明度補正）
-    function brightenColor(hex, percent = 60) {
-      const num = parseInt(hex.replace('#', ''), 16);
-      const r = Math.min(255, (num >> 16) + percent);
-      const g = Math.min(255, ((num >> 8) & 0x00FF) + percent);
-      const b = Math.min(255, (num & 0x0000FF) + percent);
-      return `rgb(${r},${g},${b})`;
-    }
-
-    const bgColor = brightenColor(mainColor, 80);
-
-    // DOM生成
-    const note = document.createElement('div');
-    note.className = 'random-text-note';
-    note.style.setProperty('--char-color', mainColor);
-    note.style.backgroundColor = bgColor;
-
-    // 上段：キャラ名（キャラカラー）、下段：黒
-    const topLine = document.createElement('div');
-    topLine.textContent = charName;
-    topLine.style.color = mainColor;
-    topLine.style.fontWeight = 'bold';
-
-    const bottomLine = document.createElement('div');
-    bottomLine.textContent = message;
-    bottomLine.style.color = '#000';
-
-    note.appendChild(topLine);
-    note.appendChild(bottomLine);
-
-    // 配置：画面下の中央に
-    note.style.left = '50%';
-    note.style.transform = 'translateX(-50%)';
-    note.style.bottom = '0.5vh';
-
-    layer.appendChild(note);
-  } catch (e) {
-    console.error('ランダムテキストJSONの読み込みに失敗しました', e);
+// ▼ 配列シャッフル
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
 }
 
-// テキスト非表示
-function randomTextsOff() {
-  const layer = document.getElementById('random-text-layer');
-  if (layer) {
-    layer.innerHTML = '';
-    layer.classList.add('hidden');
-  }
+// ▼ 色を薄く
+function lightenColor(hex, percent) {
+  const num = parseInt(hex.replace("#", ""), 16);
+  let r = (num >> 16) & 0xff;
+  let g = (num >> 8) & 0xff;
+  let b = num & 0xff;
+  r = Math.min(255, Math.floor(r + (255 - r) * (percent / 100)));
+  g = Math.min(255, Math.floor(g + (255 - g) * (percent / 100)));
+  b = Math.min(255, Math.floor(b + (255 - b) * (percent / 100)));
+  return `rgb(${r},${g},${b})`;
 }
+
+// ▼ ランダム画像表示
+function randomImagesOn() {
+  if (!window.config || !config.randomPath) return;
+  fetch(`${config.randomPath}imageset01.json`)
+     const randomList = [...data.random];
+      shuffleArray(randomList);
+
+      positions.forEach((pos, index) => {
+        const img = document.createElement("img");
+        img.draggable = false;
+        img.style.position = "absolute";
+        img.style.objectFit = "contain";
+        img.style.pointerEvents = "none";
+        const left = safeArea.x + cellWidth * pos.x;
+        const top = safeArea.y + cellHeight * pos.y;
+        Object.assign(img.style, {
+          left: `${left}px`,
+          top: `${top}px`,
+          width: `${cellWidth}px`,
+          height: `${cellHeight}px`,
+          maxWidth: "100%",
+          maxHeight: "100%"
+        });
+        img.src = index === 0 && fixedImage ? imageBasePath + fixedImage : imageBasePath + (randomList.shift() || "");
+        randomImagesLayer.appendChild(img);
+        randomImageElements.push(img);
+      });
+    });
+}
+
+// ▼ ランダムテキスト表示
+function randomTextsOn() {
+  if (!window.config || !config.randomPath) return;
+  fetch(`${config.randomPath}textset01.json`)
+    .then(res => res.json())
+    .then(data => {
+      createRandomTextLayer();
+      clearRandomTexts();
+      if (data.length < 4) return;
+      const pairCount = data.length / 2;
+      const selectedIndexes = [];
+      while (selectedIndexes.length < 2) {
+        const idx = Math.floor(Math.random() * pairCount);
+        if (!selectedIndexes.includes(idx)) selectedIndexes.push(idx);
+      }
+      const note = document.createElement("div");
+      note.className = "random-text-note";
+      const charName1 = data[selectedIndexes[0] * 2];
+      const charName2 = data[selectedIndexes[1] * 2];
+      const style1 = characterStyles[charName1] || characterStyles[""];
+      const style2 = characterStyles[charName2] || characterStyles[""];
+      const baseColor1 = style1.color || "#C0C0C0";
+      note.style.backgroundColor = lightenColor(baseColor1, 85);
+      note.style.borderLeft = `10px solid ${baseColor1}`;
+      const line1 = document.createElement("div");
+      line1.textContent = `${charName1}：${data[selectedIndexes[0] * 2 + 1]}`;
+      line1.style.color = baseColor1;
+      const line2 = document.createElement("div");
+      line2.textContent = `${charName2}：${data[selectedIndexes[1] * 2 + 1]}`;
+      line2.style.color = "#000";
+      note.appendChild(line1);
+      note.appendChild(line2);
+      randomTextLayer.appendChild(note);
+      randomTextElements.push(note);   .then(res => res.json())
+    .then(data => {
+      createRandomImagesLayer();
+      clearRandomImages();
+
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const isMobilePortrait = w <= 768 && h > w;
+      const isMobileLandscape = w <= 768 && w > h;
+      let cols = 3, rows = 2;
+      if (isMobilePortrait) { cols = 2; rows = 4; }
+
+      const safeArea = { x: w * 0.1, y: h * 0.1, width: w * 0.8, height: h * 0.8 };
+      const cellWidth = safeArea.width / cols;
+      const cellHeight = safeArea.height / rows;
+      const positions = [];
+      for (let y = 0; y < rows; y++)
+        for (let x = 0; x < cols; x++)
+          positions.push({ x, y });
+
+      const imageBasePath = data.picpath || config.randomPath;
+      const fixedImage = data.fixed;
+  
+    });
+}
+
+// ▼ 非表示関数
+function randomImagesOff() { clearRandomImages(); }
+function randomTextsOff() { clearRandomTexts(); }
