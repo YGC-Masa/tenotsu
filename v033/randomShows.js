@@ -150,36 +150,79 @@ function randomTextsOn() {
       createRandomTextLayer();
       clearRandomTexts();
 
-      // ここは、画面幅100%を20個に分割(5%ずつ×2段で10個ずつ)
-      // そのうち2個だけをランダムに選んで上下2段に並べる仕様に変更も可能ですが、
-      // 現状は20個ランダム表示のままです。
-
+      // ランダムに2個選ぶ
       const usedIndexes = new Set();
-      const count = 2; // 5%ずつ、2段で20個
-
-      for (let i = 0; i < count; i++) {
-        let index;
-        do {
-          index = Math.floor(Math.random() * data.length);
-        } while (usedIndexes.has(index) && usedIndexes.size < data.length);
-        usedIndexes.add(index);
-
-        const div = document.createElement("div");
-        div.className = "random-text-note";
-        div.textContent = data[index];
-        Object.assign(div.style, {
-          width: "5%",
-          margin: "0.2em",
-          whiteSpace: "nowrap",
-          pointerEvents: "none"
-        });
-
-        randomTextLayer.appendChild(div);
-        randomTextElements.push(div);
+      while (usedIndexes.size < 2 && usedIndexes.size < data.length) {
+        usedIndexes.add(Math.floor(Math.random() * data.length));
       }
+      const selectedTexts = Array.from(usedIndexes).map(i => data[i]);
+
+      // randomTextLayerは画面全幅固定、高さ10%固定、位置はbottom0にする
+      Object.assign(randomTextLayer.style, {
+        display: "block",
+        position: "absolute",
+        bottom: "0",
+        left: "0",
+        width: "100%",
+        height: "10%", // 画面下10%
+        pointerEvents: "none",
+        overflow: "visible",
+      });
+
+      // 上段テキスト配置 (縦90%-95%)
+      const divTop = document.createElement("div");
+      divTop.className = "random-text-note";
+      divTop.textContent = selectedTexts[0] || "";
+      Object.assign(divTop.style, {
+        position: "absolute",
+        top: "90%",     // 親の10%高さのうち90% = 画面全体の90%〜95%あたり
+        left: "5%",
+        width: "90%",   // 横幅5%~95%の幅
+        height: "5%",
+        lineHeight: "1.2",
+        background: "rgba(255,192,203,0.95)", // ピンク付箋風
+        color: "#000",
+        fontWeight: "bold",
+        fontSize: "0.9em",
+        borderRadius: "0.4em 0.4em 0 0",
+        boxShadow: "2px 2px 6px rgba(0,0,0,0.2)",
+        padding: "0.2em 0.4em",
+        whiteSpace: "nowrap",
+        pointerEvents: "none",
+        clipPath: "polygon(0 0, 95% 0, 100% 20%, 100% 100%, 0% 100%)" // 右端ギザギザ風カット
+      });
+
+      // 下段テキスト配置 (縦95%-100%)
+      const divBottom = document.createElement("div");
+      divBottom.className = "random-text-note";
+      divBottom.textContent = selectedTexts[1] || "";
+      Object.assign(divBottom.style, {
+        position: "absolute",
+        top: "95%",
+        left: "5%",
+        width: "90%",
+        height: "5%",
+        lineHeight: "1.2",
+        background: "rgba(255,182,193,0.95)",
+        color: "#000",
+        fontWeight: "bold",
+        fontSize: "0.9em",
+        borderRadius: "0 0 0.4em 0.4em",
+        boxShadow: "2px 2px 6px rgba(0,0,0,0.2)",
+        padding: "0.2em 0.4em",
+        whiteSpace: "nowrap",
+        pointerEvents: "none",
+        clipPath: "polygon(0 0, 100% 0, 100% 80%, 95% 100%, 0% 100%)"
+      });
+
+      randomTextLayer.appendChild(divTop);
+      randomTextLayer.appendChild(divBottom);
+
+      randomTextElements.push(divTop, divBottom);
     })
     .catch(err => console.error("ランダムテキストJSONの読み込みに失敗しました", err));
 }
+
 
 // ▼ オフ関数
 function randomImagesOff() {
