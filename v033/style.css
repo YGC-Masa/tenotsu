@@ -164,7 +164,7 @@ body {
   background-color: #555;
 }
 
-/* ▼ LISTパネル（右） */
+/* LISTパネル（右） */
 .list-panel {
   position: absolute;
   right: 0;
@@ -201,7 +201,7 @@ body {
   background: rgba(255, 20, 147, 0.95);
 }
 
-/* ▼ メニューパネル（左） */
+/* メニューパネル（左） */
 .menu-panel {
   position: absolute;
   left: 0;
@@ -238,7 +238,7 @@ body {
   background: #444;
 }
 
-/* 音声トグル専用（追加スタイルがあるなら） */
+/* 音声トグル専用 */
 .menu-sound-toggle {
   font-weight: bold;
   padding: 0.8em 0.5em;
@@ -285,19 +285,20 @@ body {
   display: none !important;
 }
 
+/* ランダム画像 */
 .random-image {
   position: absolute;
   object-fit: contain;
   pointer-events: none;
 }
 
-
+/* ランダムテキスト（付箋） */
 #random-text-layer {
   position: absolute;
   bottom: 0;
-  left: 5vw;  /* 横幅の5%余白 */
-  width: 90vw; /* 横幅は全体の90% (= 100%-5%-5%) */
-  height: 10vh; /* 下10%の高さを確保 */
+  left: 5vw;
+  width: 90vw;
+  height: 10vh;
   z-index: 3;
   pointer-events: none;
   user-select: none;
@@ -306,84 +307,17 @@ body {
 
 .random-text-note {
   position: absolute;
-  left: 5%;
-  width: 90%;
-  bottom: env(safe-area-inset-bottom, 0); /* セーフエリア考慮 */
-  height: 10vh;
-
-  display: flex;
-  align-items: center;
-
-  padding: 0.5em 1em 0.5em 1.4em; /* 左端余白は帯のため */
+  background-color: rgba(255, 255, 255, 0.85);
+  color: #000;
+  font-size: 0.9em;
+  padding: 0.5em 1em 0.5em 1.4em;
   border-radius: 0.5em;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
-
-  background-color: rgba(255, 255, 255, 0.85); /* ← JSで薄色キャラカラーに上書き */
-  border-left: 12px solid gray; /* ← JSで濃いキャラカラーに上書き */
-
-  color: #000;  /* セリフは黒で固定 */
-  font-weight: bold;
-  font-size: 1em;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  pointer-events: none;
-  user-select: none;
-  z-index: 3;
-}
-
-.random-text-note div {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-weight: bold;
-  font-size: 1em;
+  border-left: 8px solid var(--char-color, gray);
 }
 
 /* 非表示用 */
 #random-text-layer.hidden {
   display: none !important;
-}
-.random-text-sticky {
-  background: linear-gradient(to bottom, #ffc0cb, #fca4ba); /* ピンクグラデ */
-  color: #000;
-  font-size: 0.9em;
-  padding: 0.5em 1em;
-  margin: 0.4em;
-  font-weight: bold;
-  position: relative;
-  border-radius: 0.5em;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
-  width: fit-content;
-  max-width: 90%;
-  white-space: pre-line; /* 2段テキスト用 */
-  pointer-events: none;
-}
-
-/* ギザギザ切れ込みの再現：左右にbefore/afterで山型の切り込み */
-.random-text-sticky::before,
-.random-text-sticky::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  width: 12px;
-  height: 100%;
-  background: repeating-linear-gradient(
-    45deg,
-    transparent 0,
-    transparent 2px,
-    #fff 2px,
-    #fff 4px
-  );
-  mix-blend-mode: lighten;
-  pointer-events: none;
-}
-
-.random-text-sticky::before {
-  left: 0;
-  transform: rotate(180deg);
-}
-
-.random-text-sticky::after {
-  right: 0;
 }
