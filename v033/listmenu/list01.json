@@ -1,8 +1,8 @@
 {
   "items": [
-    { "text": "①緋奈と遊ぶ", "action": "jump", "jump": "goto_library.json" },
-    { "text": "②藍と遊ぶ", "action": "jump", "jump": "goto_rooftop.json" },
-    { "text": "③翠と遊ぶ", "action": "jump", "jump": "goto_gate.json" },
+    { "text": "①緋奈と遊ぶ", "action": "jump", "jump": "./scenario/goto_library.json" },
+    { "text": "②藍と遊ぶ", "action": "jump", "jump": "goto_library.json" },
+    { "text": "③翠と遊ぶ", "action": "jump", "jump": "goto_rooftop.json" },
     { "text": "④こがねと遊ぶ", "action": "jump", "jump": "goto_library.json" },
     { "text": "⑤琥珀と遊ぶ", "action": "jump", "jump": "goto_rooftop.json" },
     { "text": "⑥次のメニュー", "action": "jump", "jump": "goto_rooftop.json" },
