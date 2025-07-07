@@ -1,11 +1,11 @@
 [
   {
-    "bg": "bg_gym.jpg",
+    "bg": "bg_beach.jpg",
     "bgm": "upbeat_sports.mp3",
     "name": "琥珀",
     "text": "よーっし！今日も旦那と一緒に全力で汗を流すぜ！",
     "characters": [
-      { "side": "center", "src": "kohaku.png" }
+      { "side": "center", "src": "a05002.png" }
     ]
   },
   {
