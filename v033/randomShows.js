@@ -169,12 +169,12 @@ function randomTextsOn() {
       line1.style.color = baseColor1;
       line1.style.fontSize = "1.2em";
       line1.style.fontWeight = "bold";
-      line1.style.textShadow = `
-        -1.5px -1.5px 0 #000,
-         1.5px -1.5px 0 #000,
-        -1.5px  1.5px 0 #000,
-         1.5px  1.5px 0 #000
-      `;
+line1.style.textShadow = `
+  -1.5px -1.5px 0 #5A2D0C,
+   1.5px -1.5px 0 #5A2D0C,
+  -1.5px  1.5px 0 #5A2D0C,
+   1.5px  1.5px 0 #5A2D0C
+`;
 
       // 下段テキスト（1.2倍、黒縁取り、キャラ色）
       const line2 = document.createElement("div");
@@ -182,13 +182,12 @@ function randomTextsOn() {
       line2.style.color = baseColor2;
       line2.style.fontSize = "1.2em";
       line2.style.fontWeight = "bold";
-      line2.style.textShadow = `
-        -1.5px -1.5px 0 #000,
-         1.5px -1.5px 0 #000,
-        -1.5px  1.5px 0 #000,
-         1.5px  1.5px 0 #000
-      `;
-
+line2.style.textShadow = `
+  -1.5px -1.5px 0 #5A2D0C,
+   1.5px -1.5px 0 #5A2D0C,
+  -1.5px  1.5px 0 #5A2D0C,
+   1.5px  1.5px 0 #5A2D0C
+`;
       note.appendChild(line1);
       note.appendChild(line2);
       randomTextLayer.appendChild(note);
