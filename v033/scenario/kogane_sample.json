@@ -1,0 +1,37 @@
+[
+  {
+    "bg": "bg_courtyard.jpg",
+    "bgm": "sunny_day.mp3",
+    "name": "こがね",
+    "text": "やっほーっ！ここで待ち合わせだったよね？",
+    "characters": [
+      { "side": "center", "src": "a04002.png" }
+    ]
+  },
+  {
+    "name": "こがね",
+    "text": "うんうん、いい天気～♪",
+    "voice": "k01001.mp3"
+  },
+  {
+    "se": "se_jump.mp3",
+    "name": "こがね",
+    "text": "今日は楽しいこと、いーっぱいしよ！"
+  },
+  {
+    "showev": "kogane_ev01.png",
+    "evEffect": "whitein",
+    "name": "こがね",
+    "text": "じゃじゃーん！この制服、似合ってるかな？"
+  },
+  {
+    "text": "こがね笑顔に、つられてこちらも笑顔になる。",
+    "name": ""
+  },
+  {
+    "randomimageson": true
+  },
+  {
+    "auto": true
+  }
+]
