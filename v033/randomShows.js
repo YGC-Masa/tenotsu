@@ -155,10 +155,7 @@ function randomImagesOn() {
 }
 // ▼ ランダムテキスト表示
 function randomTextsOn() {
-  if (!window.config || !config.randomPath) {
-    console.error("config.randomPath が定義されていません。");
-    return;
-  }
+  if (!window.config || !config.randomPath) return;
 
   fetch(`${config.randomPath}textset01.json`)
     .then(res => res.json())
@@ -166,74 +163,38 @@ function randomTextsOn() {
       createRandomTextLayer();
       clearRandomTexts();
 
-      if (!Array.isArray(data) || data.length < 4) {
-        console.warn("textset01.json には最低2ペアのデータが必要です。");
-        return;
+      if (data.length < 4) return;
+
+      const pairCount = data.length / 2;
+      const selectedIndexes = [];
+      while (selectedIndexes.length < 2) {
+        const idx = Math.floor(Math.random() * pairCount);
+        if (!selectedIndexes.includes(idx)) selectedIndexes.push(idx);
       }
-
-      const pairCount = Math.floor(data.length / 2);
-      const selectedIndexes = new Set();
-
-      while (selectedIndexes.size < 2) {
-        selectedIndexes.add(Math.floor(Math.random() * pairCount));
-      }
-
-      const [idx1, idx2] = [...selectedIndexes];
-      const charName1 = data[idx1 * 2];
-      const text1 = data[idx1 * 2 + 1];
-      const charName2 = data[idx2 * 2];
-      const text2 = data[idx2 * 2 + 1];
-
-      const style1 = characterStyles[charName1] || characterStyles[""];
-      const style2 = characterStyles[charName2] || characterStyles[""];
-      const baseColor = style1.color || "#C0C0C0";
-      const bgColor = lightenColor(baseColor, 85);
 
       const note = document.createElement("div");
       note.className = "random-text-note";
 
-      Object.assign(note.style, {
-        backgroundColor: bgColor,
-        borderLeft: `12px solid ${baseColor}`,
-        position: "absolute",
-        left: "5%",
-        width: "90%",
-        top: "90%",
-        height: "auto",
-        padding: "0.5em 1em",
-        borderRadius: "0.5em",
-        boxShadow: "2px 2px 6px rgba(0,0,0,0.2)",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        gap: "0.3em",
-        fontSize: "1em",
-        pointerEvents: "none",
-        userSelect: "none",
-        zIndex: 3
-      });
+      const charName1 = data[selectedIndexes[0] * 2];
+      const charName2 = data[selectedIndexes[1] * 2];
+      const style1 = characterStyles[charName1] || characterStyles[""];
+      const style2 = characterStyles[charName2] || characterStyles[""];
+      const baseColor1 = style1.color || "#C0C0C0";
+
+      note.style.backgroundColor = lightenColor(baseColor1, 85);
+      note.style.borderLeft = `10px solid ${baseColor1}`;
 
       const line1 = document.createElement("div");
-      line1.textContent = `${charName1}：${text1}`;
-      Object.assign(line1.style, {
-        color: baseColor,
-        fontWeight: "bold",
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        textOverflow: "ellipsis"
-      });
+      line1.textContent = `${charName1}：${data[selectedIndexes[0] * 2 + 1]}`;
+      line1.style.color = baseColor1;
 
       const line2 = document.createElement("div");
-      line2.textContent = `${charName2}：${text2}`;
-      Object.assign(line2.style, {
-        color: "#000",
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        textOverflow: "ellipsis"
-      });
+      line2.textContent = `${charName2}：${data[selectedIndexes[1] * 2 + 1]}`;
+      line2.style.color = "#000";
 
       note.appendChild(line1);
       note.appendChild(line2);
+
       randomTextLayer.appendChild(note);
       randomTextElements.push(note);
     })
