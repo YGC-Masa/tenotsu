@@ -1,7 +1,7 @@
 // menuList.js
 
-const menuPanelElement = document.getElementById("menu");
-const listPanelElement = document.getElementById("list");
+const menuPanelElement = document.getElementById("menu-panel");
+const listPanelElement = document.getElementById("list-panel");
 
 function showMenu() {
   if (menuPanelElement) menuPanelElement.style.display = "block";
