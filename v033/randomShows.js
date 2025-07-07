@@ -134,14 +134,26 @@ function randomTextsOn() {
     .then(data => {
       createRandomTextLayer();
       clearRandomTexts();
-      if (data.length < 2) return;
-      const pairCount = data.length / 2;
-      const idx = Math.floor(Math.random() * pairCount);
 
-      const charName = data[idx * 2];
-      const text = data[idx * 2 + 1];
-      const style = characterStyles[charName] || characterStyles[""];
-      const baseColor = style.color || "#C0C0C0";
+      if (data.length < 4) return;
+
+      const pairCount = data.length / 2;
+      const selectedIndexes = [];
+      while (selectedIndexes.length < 2) {
+        const idx = Math.floor(Math.random() * pairCount);
+        if (!selectedIndexes.includes(idx)) selectedIndexes.push(idx);
+      }
+
+      const charName1 = data[selectedIndexes[0] * 2];
+      const charName2 = data[selectedIndexes[1] * 2];
+      const text1 = data[selectedIndexes[0] * 2 + 1];
+      const text2 = data[selectedIndexes[1] * 2 + 1];
+
+      const style1 = characterStyles[charName1] || characterStyles[""];
+      const style2 = characterStyles[charName2] || characterStyles[""];
+
+      const baseColor1 = style1.color || "#C0C0C0";
+      const baseColor2 = style2.color || "#C0C0C0";
 
       const note = document.createElement("div");
       note.className = "random-text-note";
@@ -150,19 +162,28 @@ function randomTextsOn() {
         left: "5%",
         width: "90%",
         bottom: "0",
-        backgroundColor: "#ccc",
-        borderLeft: `10px solid ${baseColor}`,
+        backgroundColor: "#fff",
+        borderLeft: `10px solid ${baseColor1}`,
         fontSize: "1.2em",
         fontWeight: "bold",
-        color: baseColor,
-        textShadow: `-1.2px -1.2px 1px #555, 1.2px -1.2px 1px #555, -1.2px 1.2px 1px #555, 1.2px 1.2px 1px #555`,
         padding: "0.5em 1em",
         borderRadius: "0.5em",
         boxSizing: "border-box",
         zIndex: 3
       });
 
-      note.textContent = text;
+      const line1 = document.createElement("div");
+      line1.textContent = text1;
+      line1.style.color = baseColor1;
+      line1.style.textShadow = `-1.2px -1.2px 1px #999, 1.2px -1.2px 1px #999, -1.2px 1.2px 1px #999, 1.2px 1.2px 1px #999`;
+
+      const line2 = document.createElement("div");
+      line2.textContent = text2;
+      line2.style.color = baseColor2;
+      line2.style.textShadow = `-1.2px -1.2px 1px #999, 1.2px -1.2px 1px #999, -1.2px 1.2px 1px #999, 1.2px 1.2px 1px #999`;
+
+      note.appendChild(line1);
+      note.appendChild(line2);
       randomTextLayer.appendChild(note);
       randomTextElements.push(note);
     })
