@@ -118,11 +118,14 @@ async function showScene(scene) {
   }
 
   // ランダムテキストのon/off
-  if (scene.randomtexton === false && typeof randomTextsOff === "function") {
-    randomTextsOff();
-  } else if (scene.randomtexton === true && typeof randomTextsOn === "function") {
-    randomTextsOn();
+// ▼ この下に追加
+if (scene.randomtexts !== undefined) {
+  if (scene.randomtexts) {
+    if (typeof randomTextsOn === "function") randomTextsOn();
+  } else {
+    if (typeof randomTextsOff === "function") randomTextsOff();
   }
+}
 
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
