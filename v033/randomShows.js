@@ -1,43 +1,10 @@
-// randomShows.js
-
-let randomImagesLayer = null;
-let randomImageElements = [];
-
-// ランダム画像表示用レイヤーを作成（重複作成防止）
-function createRandomImagesLayer() {
-  if (randomImagesLayer) return;
-
-  randomImagesLayer = document.createElement("div");
-  randomImagesLayer.id = "random-images-layer";
-  Object.assign(randomImagesLayer.style, {
-    position: "absolute",
-    top: "0",
-    left: "0",
-    width: "100%",
-    height: "100%",
-    zIndex: "2.5",
-    pointerEvents: "none"
-  });
-
-  document.body.appendChild(randomImagesLayer);
-}
-
-// ランダム画像を全削除
-function clearRandomImages() {
-  if (!randomImagesLayer) return;
-  randomImagesLayer.innerHTML = "";
-  randomImageElements = [];
-}
-
-// ランダム画像表示ON
 function randomImagesOn() {
   if (!window.config || !config.randomPath) {
     console.error("config.randomPath が定義されていません。");
     return;
   }
 
-  // JSONファイルを config.randomPath 配下から読み込む
-  fetch(`${config.randomPath}imageset01.json?t=${Date.now()}`)
+  fetch(`${config.randomPath}imageset01.json`)
     .then(response => {
       if (!response.ok) throw new Error("JSON読み込み失敗");
       return response.json();
@@ -53,17 +20,25 @@ function randomImagesOn() {
         height: window.innerHeight * 0.8
       };
 
-      const cellWidth = safeArea.width / 3;
-      const cellHeight = safeArea.height / 2;
+      // モバイル横画面（横向き）の判定
+      const isMobileLandscape =
+        window.innerWidth < 768 &&
+        window.innerWidth > window.innerHeight;
 
-      const positions = [
-        { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 },
-        { x: 0, y: 1 }, { x: 1, y: 1 }, { x: 2, y: 1 }
-      ];
+      const columns = isMobileLandscape ? 2 : 3;
+      const rows = isMobileLandscape ? 4 : 2;
 
-      // JSON内のpicpath（画像フォルダパス）を優先使用。なければconfig.randomPathを代用
+      const cellWidth = safeArea.width / columns;
+      const cellHeight = safeArea.height / rows;
+
+      const positions = [];
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < columns; x++) {
+          positions.push({ x, y });
+        }
+      }
+
       const imageBasePath = data.picpath || config.randomPath;
-
       const fixedImage = data.fixed;
       const randomList = [...data.random];
       shuffleArray(randomList);
@@ -71,9 +46,8 @@ function randomImagesOn() {
       positions.forEach((pos, index) => {
         const img = document.createElement("img");
         img.draggable = false;
+        img.className = "random-image";
         img.style.position = "absolute";
-        img.style.maxWidth = "100%";
-        img.style.maxHeight = "100%";
         img.style.objectFit = "contain";
         img.style.pointerEvents = "none";
 
@@ -88,10 +62,8 @@ function randomImagesOn() {
         });
 
         if (index === 0) {
-          // 固定画像は fixed キーから
           img.src = imageBasePath + fixedImage;
         } else {
-          // ランダム画像は random 配列から取り出し
           const randomImg = randomList.shift();
           if (randomImg) {
             img.src = imageBasePath + randomImg;
@@ -105,17 +77,4 @@ function randomImagesOn() {
     .catch(err => {
       console.error("ランダム画像JSONの読み込みに失敗しました", err);
     });
-}
-
-// ランダム画像表示OFF（クリア）
-function randomImagesOff() {
-  clearRandomImages();
-}
-
-// 配列シャッフル（Fisher-Yatesアルゴリズム）
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
 }
