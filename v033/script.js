@@ -1,4 +1,5 @@
-// 冒頭の状態管理など（省略せず記述）
+// script.js - v033-02
+
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let bgm = null;
@@ -26,7 +27,7 @@ const dialogueBox = document.getElementById("dialogue-box");
 const charSlots = {
   left: document.getElementById("char-left"),
   center: document.getElementById("char-center"),
-  right: document.getElementById("char-right"),
+  right: document.getElementById("char-right")
 };
 
 function isMobilePortrait() {
@@ -58,6 +59,7 @@ function setCharacterStyle(name, scene = {}) {
   const style = characterStyles[name] || characterStyles[""];
   const fontSize = scene.fontSize || style.fontSize || defaultFontSize;
   currentSpeed = scene.speed || style.speed || defaultSpeed;
+  nameEl.style.color = style.color || "#C0C0C0";
   document.documentElement.style.setProperty("--fontSize", fontSize);
 }
 
@@ -106,6 +108,12 @@ async function showScene(scene) {
 
   if (scene.textareashow !== undefined) {
     updateTextAreaVisibility(scene.textareashow);
+  }
+
+  if (scene.randomimageson) {
+    if (typeof randomImagesOn === "function") randomImagesOn();
+  } else if (scene.randomimageson === false) {
+    if (typeof randomImagesOff === "function") randomImagesOff();
   }
 
   if (scene.bg) {
@@ -167,9 +175,7 @@ async function showScene(scene) {
   updateCharacterDisplay();
 
   if (scene.name !== undefined && scene.text !== undefined) {
-    const color = (characterStyles[scene.name] || {}).color || "#C0C0C0";
     nameEl.textContent = scene.name;
-    nameEl.style.color = color;
     setCharacterStyle(scene.name, scene);
     setTextWithSpeed(scene.text, currentSpeed);
   }
@@ -184,13 +190,6 @@ async function showScene(scene) {
     const se = new Audio(config.sePath + scene.se);
     se.muted = isMuted;
     se.play();
-  }
-
-  // ✅ ランダム画像ON/OFF処理（ここに追加！）
-  if (scene.randomimageson === true) {
-    if (typeof randomImagesOn === "function") randomImagesOn();
-  } else if (scene.randomimageson === false) {
-    if (typeof randomImagesOff === "function") randomImagesOff();
   }
 
   if (scene.choices) {
@@ -212,13 +211,8 @@ async function showScene(scene) {
     });
   }
 
-  if (scene.showmenu) {
-    loadMenu(scene.showmenu);
-  }
-
-  if (scene.showlist) {
-    loadList(scene.showlist);
-  }
+  if (scene.showmenu) loadMenu(scene.showmenu);
+  if (scene.showlist) loadList(scene.showlist);
 
   if (scene.auto && scene.choices === undefined && scene.text === undefined) {
     setTimeout(() => {
@@ -232,8 +226,9 @@ function next() {
     .then((res) => res.json())
     .then((data) => {
       currentIndex++;
-      if (currentIndex < data.length) {
-        showScene(data[currentIndex]);
+      const scenes = Array.isArray(data) ? data : data.scenes;
+      if (currentIndex < scenes.length) {
+        showScene(scenes[currentIndex]);
       } else {
         if (textAreaVisible) {
           nameEl.textContent = "";
@@ -245,6 +240,8 @@ function next() {
 }
 
 function loadScenario(filename) {
+  if (typeof randomImagesOff === "function") randomImagesOff();
+
   currentScenario = filename;
   currentIndex = 0;
   clearCharacters();
@@ -259,8 +256,138 @@ function loadScenario(filename) {
   fetch(config.scenarioPath + filename + "?t=" + Date.now())
     .then((res) => res.json())
     .then((data) => {
-      showScene(data[0]);
+      const scenes = Array.isArray(data) ? data : data.scenes;
+      showScene(scenes[0]);
     });
 }
 
-// 以下：画面調整、リスト・メニュー・クリック等は省略可（必要あれば追記します）
+function setVhVariable() {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
+}
+
+window.addEventListener("resize", () => {
+  setVhVariable();
+  updateCharacterDisplay();
+});
+
+window.addEventListener("load", () => {
+  setVhVariable();
+  loadScenario(currentScenario);
+});
+
+// === メニュー関連 ===
+function handleMenuAction(item) {
+  if (item.action === "jump" && item.jump) {
+    loadScenario(item.jump);
+  } else if (item.action === "menu" && item.menu) {
+    loadMenu(item.menu);
+  } else if (item.action === "url" && item.url) {
+    location.href = item.url;
+  }
+}
+
+async function loadMenu(filename = "menu01.json") {
+  const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
+  const data = await res.json();
+  showMenu(data);
+}
+
+function showMenu(menuData) {
+  menuPanel.innerHTML = "";
+  menuPanel.classList.remove("hidden");
+
+  const audioBtn = document.createElement("button");
+  audioBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
+  audioBtn.onclick = () => {
+    isMuted = !isMuted;
+    if (bgm) bgm.muted = isMuted;
+    document.querySelectorAll("audio").forEach(a => a.muted = isMuted);
+    menuPanel.classList.add("hidden");
+  };
+  menuPanel.appendChild(audioBtn);
+
+  const autoBtn = document.createElement("button");
+  autoBtn.textContent = isAutoMode ? "オートモードOFF" : "オートモードON";
+  autoBtn.onclick = () => {
+    isAutoMode = !isAutoMode;
+    if (isAutoMode) {
+      textEl.innerHTML = "(AutoMode On 3秒後開始)";
+      setTimeout(() => {
+        textEl.innerHTML = "";
+        setTimeout(() => {
+          if (!isPlaying && choicesEl.children.length === 0) next();
+        }, autoWaitTime);
+      }, 1000);
+    } else {
+      textEl.innerHTML = "(AutoMode Off)";
+      setTimeout(() => { textEl.innerHTML = ""; }, 1000);
+    }
+    menuPanel.classList.add("hidden");
+  };
+  menuPanel.appendChild(autoBtn);
+
+  const fullscreenBtn = document.createElement("button");
+  fullscreenBtn.textContent = document.fullscreenElement ? "全画面OFF" : "全画面ON";
+  fullscreenBtn.onclick = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen?.();
+    } else {
+      document.exitFullscreen?.();
+    }
+    menuPanel.classList.add("hidden");
+  };
+  menuPanel.appendChild(fullscreenBtn);
+
+  menuData.items.forEach(item => {
+    const btn = document.createElement("button");
+    btn.textContent = item.text;
+    btn.onclick = () => {
+      menuPanel.classList.add("hidden");
+      handleMenuAction(item);
+    };
+    menuPanel.appendChild(btn);
+  });
+}
+
+async function loadList(filename = "list01.json") {
+  const res = await fetch(config.listPath + filename + "?t=" + Date.now());
+  const data = await res.json();
+  showList(data);
+}
+
+function showList(listData) {
+  listPanel.innerHTML = "";
+  listPanel.classList.remove("hidden");
+
+  listData.items.slice(0, 7).forEach(item => {
+    const btn = document.createElement("button");
+    btn.textContent = item.text;
+    btn.onclick = () => {
+      listPanel.classList.add("hidden");
+      handleMenuAction(item);
+    };
+    listPanel.appendChild(btn);
+  });
+}
+
+clickLayer.addEventListener("dblclick", () => {
+  loadMenu("menu01.json");
+});
+
+let lastTouch = 0;
+clickLayer.addEventListener("touchend", () => {
+  const now = Date.now();
+  if (now - lastTouch < 300) loadMenu("menu01.json");
+  lastTouch = now;
+});
+
+clickLayer.addEventListener("click", () => {
+  if (!menuPanel.classList.contains("hidden")) {
+    menuPanel.classList.add("hidden");
+    return;
+  }
+  if (!isPlaying && choicesEl.children.length === 0) {
+    next();
+  }
+});
