@@ -1,5 +1,4 @@
-{
-  "scenes": [
+[
     {
       "bg": "bg_school.jpg",
       "bgm": "main.mp3",
@@ -28,5 +27,4 @@
       "text": "ふふっ、部活中の琥珀ちゃん。ちょっと見せすぎかも？"
     },
 	{ "showlist": "list01.json" }
-  ]
-}
+]
