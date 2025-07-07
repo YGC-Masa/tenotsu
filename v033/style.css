@@ -307,15 +307,27 @@ body {
 
 .random-text-note {
   position: absolute;
-  background-color: rgba(255, 255, 255, 0.85);
-  color: #000;
   font-size: 0.9em;
-  padding: 0.5em 1em 0.5em 1.4em;
+  padding: 0.6em 1em 0.6em 1.2em;
   border-radius: 0.5em;
   box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
-  white-space: nowrap;
-  border-left: 8px solid var(--char-color, gray);
+  white-space: pre-line;
+  line-height: 1.4;
+  max-width: 90%;
+  pointer-events: none;
+
+  background-color: var(--char-bgcolor, #f0f0f0); /* キャラ背景色（明るく） */
+  border-left: 10px solid var(--char-color, gray); /* 左帯は濃いキャラ色 */
+  color: #000; /* 下段セリフは黒 */
 }
+
+.random-text-note .char-name {
+  font-weight: bold;
+  color: var(--char-color, #000); /* 上段キャラ名にキャラカラー */
+  display: block;
+  margin-bottom: 0.2em;
+}
+
 
 /* 非表示用 */
 #random-text-layer.hidden {
