@@ -1,6 +1,9 @@
+// randomShows.js
+
 let randomImagesLayer = null;
 let randomImageElements = [];
 
+// ランダム画像表示用レイヤーを作成（重複作成防止）
 function createRandomImagesLayer() {
   if (randomImagesLayer) return;
 
@@ -19,19 +22,22 @@ function createRandomImagesLayer() {
   document.body.appendChild(randomImagesLayer);
 }
 
+// ランダム画像を全削除
 function clearRandomImages() {
   if (!randomImagesLayer) return;
   randomImagesLayer.innerHTML = "";
   randomImageElements = [];
 }
 
+// ランダム画像表示ON
 function randomImagesOn() {
   if (!window.config || !config.randomPath) {
     console.error("config.randomPath が定義されていません。");
     return;
   }
 
-  fetch(`${config.randomPath}imageset01.json`)
+  // JSONファイルを config.randomPath 配下から読み込む
+  fetch(`${config.randomPath}imageset01.json?t=${Date.now()}`)
     .then(response => {
       if (!response.ok) throw new Error("JSON読み込み失敗");
       return response.json();
@@ -55,7 +61,9 @@ function randomImagesOn() {
         { x: 0, y: 1 }, { x: 1, y: 1 }, { x: 2, y: 1 }
       ];
 
-      const imageBasePath = (data.randompath || config.randomPath).replace(/\/?$/, "/");
+      // JSON内のpicpath（画像フォルダパス）を優先使用。なければconfig.randomPathを代用
+      const imageBasePath = data.picpath || config.randomPath;
+
       const fixedImage = data.fixed;
       const randomList = [...data.random];
       shuffleArray(randomList);
@@ -80,8 +88,10 @@ function randomImagesOn() {
         });
 
         if (index === 0) {
+          // 固定画像は fixed キーから
           img.src = imageBasePath + fixedImage;
         } else {
+          // ランダム画像は random 配列から取り出し
           const randomImg = randomList.shift();
           if (randomImg) {
             img.src = imageBasePath + randomImg;
@@ -97,10 +107,12 @@ function randomImagesOn() {
     });
 }
 
+// ランダム画像表示OFF（クリア）
 function randomImagesOff() {
   clearRandomImages();
 }
 
+// 配列シャッフル（Fisher-Yatesアルゴリズム）
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
