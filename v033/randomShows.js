@@ -170,12 +170,11 @@ function randomTextsOn() {
       line1.style.fontSize = "1.2em";
       line1.style.fontWeight = "bold";
 line1.style.textShadow = `
-  -1.5px -1.5px 0 #000,
-   1.5px -1.5px 0 #000,
-  -1.5px  1.5px 0 #000,
-   1.5px  1.5px 0 #000
+  -1.2px -1.2px 1px #444444,
+   1.2px -1.2px 1px #444444,
+  -1.2px  1.2px 1px #444444,
+   1.2px  1.2px 1px #444444
 `;
-
       // 下段テキスト（1.2倍、黒縁取り、キャラ色）
       const line2 = document.createElement("div");
       line2.textContent = `${charName2}：${data[selectedIndexes[1] * 2 + 1]}`;
@@ -183,10 +182,10 @@ line1.style.textShadow = `
       line2.style.fontSize = "1.2em";
       line2.style.fontWeight = "bold";
 line2.style.textShadow = `
-  -1.5px -1.5px 0 #000,
-   1.5px -1.5px 0 #000,
-  -1.5px  1.5px 0 #000,
-   1.5px  1.5px 0 #000
+  -1.2px -1.2px 1px #444444,
+   1.2px -1.2px 1px #444444,
+  -1.2px  1.2px 1px #444444,
+   1.2px  1.2px 1px #444444
 `;
       note.appendChild(line1);
       note.appendChild(line2);
