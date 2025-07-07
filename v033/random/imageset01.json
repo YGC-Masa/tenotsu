@@ -1,6 +1,6 @@
 {
   "fixed": "a01ev01.png",
-  "randompath": "../assets2/ev/",
+  "picpath": "./assets2/ev/",
   "random": [
     "a01ev02.png",
     "a01ev03.png",
