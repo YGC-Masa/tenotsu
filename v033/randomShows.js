@@ -164,7 +164,7 @@ function randomTextsOn() {
         bottom: "0",
         backgroundColor: "#fff",
         borderLeft: `10px solid ${baseColor1}`,
-        fontSize: "1.2em",
+        fontSize: "1.0em",
         fontWeight: "bold",
         padding: "0.5em 1em",
         borderRadius: "0.5em",
