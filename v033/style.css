@@ -305,18 +305,17 @@ body {
 }
 
 .random-text-note {
-  background-color: #ffffff;
-  color: #000000;
-  border-left: 12px solid gray; /* JS 側で上書きされる */
-  padding: 1em;
-  padding-right: calc(1em + 12px);
-  font-size: 0.9em;
-  font-weight: bold;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
-  display: inline-block;
-  white-space: nowrap;
   position: absolute;
-  z-index: 3;
+  background-color: rgba(255, 255, 255, 0.85); /* 薄い白系背景 */
+  color: #000; /* テキストは黒 */
+  font-size: 0.9em;
+  padding: 0.5em 1em 0.5em 1.4em; /* 左側は余裕を持って帯分のスペース確保 */
+  border-radius: 0.5em;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+  white-space: nowrap;
+
+  /* 左端のカラーバー */
+  border-left: 8px solid var(--char-color, gray); /* CSS変数 --char-color で動的に変える */
 }
 
 
