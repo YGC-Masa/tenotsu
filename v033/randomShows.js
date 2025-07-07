@@ -175,12 +175,12 @@ function randomTextsOn() {
       const line1 = document.createElement("div");
       line1.textContent = text1;
       line1.style.color = baseColor1;
-      line1.style.textShadow = `-1.2px -1.2px 1px #999, 1.2px -1.2px 1px #999, -1.2px 1.2px 1px #999, 1.2px 1.2px 1px #999`;
+      line1.style.textShadow = `-1.2px -1.2px 1px #444, 1.2px -1.2px 1px #444, -1.2px 1.2px 1px #444, 1.2px 1.2px 1px #444`;
 
       const line2 = document.createElement("div");
       line2.textContent = text2;
       line2.style.color = baseColor2;
-      line2.style.textShadow = `-1.2px -1.2px 1px #999, 1.2px -1.2px 1px #999, -1.2px 1.2px 1px #999, 1.2px 1.2px 1px #999`;
+      line2.style.textShadow = `-1.2px -1.2px 1px #444, 1.2px -1.2px 1px #444, -1.2px 1.2px 1px #444, 1.2px 1.2px 1px #444`;
 
       note.appendChild(line1);
       note.appendChild(line2);
