@@ -142,34 +142,40 @@ function randomTextsOn() {
       createRandomTextLayer();
       clearRandomTexts();
 
-      const usedIndexes = new Set();
-      const count = 20; // 5%ずつ、2段で20個
-
-      for (let i = 0; i < count; i++) {
-        const index = Math.floor(Math.random() * data.length);
-        if (usedIndexes.has(index)) continue;
-        usedIndexes.add(index);
-
-        const div = document.createElement("div");
-        div.className = "random-text-sticky";
-        div.textContent = data[index];
-        Object.assign(div.style, {
-          background: "rgba(255,182,193,0.9)",
-          color: "#000",
-          fontSize: "0.9em",
-          padding: "0.3em 0.6em",
-          margin: "0.2em",
-          borderRadius: "0.5em",
-          fontWeight: "bold",
-          boxShadow: "0 2px 5px rgba(0,0,0,0.3)"
-        });
-
-        randomTextLayer.appendChild(div);
-        randomTextElements.push(div);
+      const selected = [];
+      while (selected.length < 2 && data.length > 0) {
+        const i = Math.floor(Math.random() * data.length);
+        if (!selected.includes(data[i])) selected.push(data[i]);
       }
+
+      const div = document.createElement("div");
+      div.className = "random-text-sticky";
+      div.innerHTML = `<div>${selected[0] || ""}</div><div>${selected[1] || ""}</div>`;
+
+      Object.assign(div.style, {
+        background: "linear-gradient(to bottom right, #ffc0cb, #f4a6b0)",
+        color: "#000",
+        fontSize: "1em",
+        padding: "0.8em",
+        borderRadius: "1em",
+        boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
+        position: "absolute",
+        bottom: "10%",
+        left: "50%",
+        transform: "translateX(-50%)",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        textAlign: "center",
+        clipPath: "polygon(10% 0%, 90% 0%, 100% 20%, 100% 80%, 90% 100%, 10% 100%, 0% 80%, 0% 20%)"
+      });
+
+      randomTextLayer.appendChild(div);
+      randomTextElements.push(div);
     })
     .catch(err => console.error("ランダムテキストJSONの読み込みに失敗しました", err));
 }
+
 
 // ▼ オフ関数
 function randomImagesOff() {
