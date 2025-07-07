@@ -1,5 +1,3 @@
-// script.js - v033-02 修正版
-
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let bgm = null;
