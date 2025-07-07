@@ -75,11 +75,7 @@ function lightenColor(hex, percent) {
 
 // ▼ ランダム画像表示
 function randomImagesOn() {
-  if (!window.config || !config.randomPath) {
-    console.error("config.randomPath が定義されていません。");
-    return;
-  }
-
+  if (!window.config || !config.randomPath) return;
   fetch(`${config.randomPath}imageset01.json`)
     .then(res => res.json())
     .then(data => {
@@ -90,33 +86,17 @@ function randomImagesOn() {
       const h = window.innerHeight;
       const isMobilePortrait = w <= 768 && h > w;
       const isMobileLandscape = w <= 768 && w > h;
-
-      // 配置行列を端末によって変更
       let cols = 3, rows = 2;
-      if (isMobilePortrait) {
-        cols = 2;
-        rows = 4;
-      }
+      if (isMobilePortrait) { cols = 2; rows = 4; }
 
-      // セーフエリア内に配置
-      const safeArea = {
-        x: w * 0.1,
-        y: h * 0.1,
-        width: w * 0.8,
-        height: h * 0.8
-      };
-
+      const safeArea = { x: w * 0.1, y: h * 0.1, width: w * 0.8, height: h * 0.8 };
       const cellWidth = safeArea.width / cols;
       const cellHeight = safeArea.height / rows;
-
       const positions = [];
-      for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
+      for (let y = 0; y < rows; y++)
+        for (let x = 0; x < cols; x++)
           positions.push({ x, y });
-        }
-      }
 
-      // ランダム画像パス
       const imageBasePath = data.picpath || config.randomPath;
       const fixedImage = data.fixed;
       const randomList = [...data.random];
@@ -125,34 +105,26 @@ function randomImagesOn() {
       positions.forEach((pos, index) => {
         const img = document.createElement("img");
         img.draggable = false;
-        img.classList.add("random-image");
-
+        img.style.position = "absolute";
+        img.style.objectFit = "contain";
+        img.style.pointerEvents = "none";
         const left = safeArea.x + cellWidth * pos.x;
         const top = safeArea.y + cellHeight * pos.y;
-
         Object.assign(img.style, {
-          position: "absolute",
           left: `${left}px`,
           top: `${top}px`,
           width: `${cellWidth}px`,
           height: `${cellHeight}px`,
           maxWidth: "100%",
-          maxHeight: "100%",
-          objectFit: "contain",
-          pointerEvents: "none"
+          maxHeight: "100%"
         });
-
-        // 1枚目は固定、それ以外はシャッフルから
-        img.src = (index === 0 && fixedImage)
-          ? imageBasePath + fixedImage
-          : imageBasePath + (randomList.shift() || "");
-
+        img.src = index === 0 && fixedImage ? imageBasePath + fixedImage : imageBasePath + (randomList.shift() || "");
         randomImagesLayer.appendChild(img);
         randomImageElements.push(img);
       });
-    })
-    .catch(err => console.error("ランダム画像JSONの読み込みに失敗しました", err));
+    });
 }
+
 // ▼ ランダムテキスト表示
 function randomTextsOn() {
   if (!window.config || !config.randomPath) return;
@@ -163,7 +135,7 @@ function randomTextsOn() {
       createRandomTextLayer();
       clearRandomTexts();
 
-      if (data.length < 4) return;
+      if (data.length < 4) return; // 2組ペア(4要素)以上が必須
 
       const pairCount = data.length / 2;
       const selectedIndexes = [];
@@ -174,27 +146,49 @@ function randomTextsOn() {
 
       const note = document.createElement("div");
       note.className = "random-text-note";
+      note.style.position = "absolute";
+      note.style.left = "5%";
+      note.style.width = "90%";  // セーフエリア5~95%
+      note.style.bottom = "0";
+      note.style.backgroundColor = "#ccc"; // グレー背景
 
       const charName1 = data[selectedIndexes[0] * 2];
       const charName2 = data[selectedIndexes[1] * 2];
       const style1 = characterStyles[charName1] || characterStyles[""];
       const style2 = characterStyles[charName2] || characterStyles[""];
-      const baseColor1 = style1.color || "#C0C0C0";
 
-      note.style.backgroundColor = lightenColor(baseColor1, 85);
+      const baseColor1 = style1.color || "#C0C0C0";
+      const baseColor2 = style2.color || "#C0C0C0";
+
+      // 付箋の左帯は上段キャラ色
       note.style.borderLeft = `10px solid ${baseColor1}`;
 
+      // 上段テキスト（1.2倍、黒縁取り、キャラ色）
       const line1 = document.createElement("div");
       line1.textContent = `${charName1}：${data[selectedIndexes[0] * 2 + 1]}`;
       line1.style.color = baseColor1;
-
+      line1.style.fontSize = "1.2em";
+      line1.style.fontWeight = "bold";
+line1.style.textShadow = `
+  -1.2px -1.2px 1px #444444,
+   1.2px -1.2px 1px #444444,
+  -1.2px  1.2px 1px #444444,
+   1.2px  1.2px 1px #444444
+`;
+      // 下段テキスト（1.2倍、黒縁取り、キャラ色）
       const line2 = document.createElement("div");
       line2.textContent = `${charName2}：${data[selectedIndexes[1] * 2 + 1]}`;
-      line2.style.color = "#000";
-
+      line2.style.color = baseColor2;
+      line2.style.fontSize = "1.2em";
+      line2.style.fontWeight = "bold";
+line2.style.textShadow = `
+  -1.2px -1.2px 1px #444444,
+   1.2px -1.2px 1px #444444,
+  -1.2px  1.2px 1px #444444,
+   1.2px  1.2px 1px #444444
+`;
       note.appendChild(line1);
       note.appendChild(line2);
-
       randomTextLayer.appendChild(note);
       randomTextElements.push(note);
     })
