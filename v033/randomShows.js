@@ -134,40 +134,69 @@ function randomTextsOn() {
     .then(data => {
       createRandomTextLayer();
       clearRandomTexts();
-      if (data.length < 2) return;
-      const pairCount = data.length / 2;
-      const idx = Math.floor(Math.random() * pairCount);
 
-      const charName = data[idx * 2];
-      const text = data[idx * 2 + 1];
-      const style = characterStyles[charName] || characterStyles[""];
-      const baseColor = style.color || "#C0C0C0";
+      if (data.length < 4) return; // 2組ペア(4要素)以上が必須
+
+      const pairCount = data.length / 2;
+      const selectedIndexes = [];
+      while (selectedIndexes.length < 2) {
+        const idx = Math.floor(Math.random() * pairCount);
+        if (!selectedIndexes.includes(idx)) selectedIndexes.push(idx);
+      }
 
       const note = document.createElement("div");
       note.className = "random-text-note";
-      Object.assign(note.style, {
-        position: "absolute",
-        left: "5%",
-        width: "90%",
-        bottom: "0",
-        backgroundColor: "#ccc",
-        borderLeft: `10px solid ${baseColor}`,
-        fontSize: "1.5em",
-        fontWeight: "bold",
-        color: "#fff",
-        textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
-        padding: "0.5em 1em",
-        borderRadius: "0.5em",
-        boxSizing: "border-box",
-        zIndex: 3
-      });
+      note.style.position = "absolute";
+      note.style.left = "5%";
+      note.style.width = "90%";  // セーフエリア5~95%
+      note.style.bottom = "0";
+      note.style.backgroundColor = "#ccc"; // グレー背景
 
-      note.textContent = `${charName}：${text}`;
+      const charName1 = data[selectedIndexes[0] * 2];
+      const charName2 = data[selectedIndexes[1] * 2];
+      const style1 = characterStyles[charName1] || characterStyles[""];
+      const style2 = characterStyles[charName2] || characterStyles[""];
+
+      const baseColor1 = style1.color || "#C0C0C0";
+      const baseColor2 = style2.color || "#C0C0C0";
+
+      // 付箋の左帯は上段キャラ色
+      note.style.borderLeft = `10px solid ${baseColor1}`;
+
+      // 上段テキスト（1.2倍、黒縁取り、キャラ色）
+      const line1 = document.createElement("div");
+      line1.textContent = `${charName1}：${data[selectedIndexes[0] * 2 + 1]}`;
+      line1.style.color = baseColor1;
+      line1.style.fontSize = "1.2em";
+      line1.style.fontWeight = "bold";
+      line1.style.textShadow = `
+        -1.5px -1.5px 0 #000,
+         1.5px -1.5px 0 #000,
+        -1.5px  1.5px 0 #000,
+         1.5px  1.5px 0 #000
+      `;
+
+      // 下段テキスト（1.2倍、黒縁取り、キャラ色）
+      const line2 = document.createElement("div");
+      line2.textContent = `${charName2}：${data[selectedIndexes[1] * 2 + 1]}`;
+      line2.style.color = baseColor2;
+      line2.style.fontSize = "1.2em";
+      line2.style.fontWeight = "bold";
+      line2.style.textShadow = `
+        -1.5px -1.5px 0 #000,
+         1.5px -1.5px 0 #000,
+        -1.5px  1.5px 0 #000,
+         1.5px  1.5px 0 #000
+      `;
+
+      note.appendChild(line1);
+      note.appendChild(line2);
       randomTextLayer.appendChild(note);
       randomTextElements.push(note);
     })
     .catch(err => console.error("ランダムテキストJSONの読み込みに失敗しました", err));
 }
+
 
 // ▼ 非表示関数
 function randomImagesOff() { clearRandomImages(); }
