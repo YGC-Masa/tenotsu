@@ -316,28 +316,46 @@ body {
 #random-text-layer.hidden {
   display: none !important;
 }
-
 .random-text-sticky {
-  background: linear-gradient(to bottom right, #ffc0cb, #f4a6b0);
+  background: linear-gradient(to bottom, #ffc0cb, #fca4ba); /* ピンクグラデ */
   color: #000;
-  font-size: 1em;
-  padding: 0.8em 1em;
-  border-radius: 1em;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  position: absolute;
-  bottom: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  clip-path: polygon(
-    10% 0%, 90% 0%,
-    100% 20%, 100% 80%,
-    90% 100%, 10% 100%,
-    0% 80%, 0% 20%
-  );
-  z-index: 3;
+  font-size: 0.9em;
+  padding: 0.5em 1em;
+  margin: 0.4em;
+  font-weight: bold;
+  position: relative;
+  border-radius: 0.5em;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+  width: fit-content;
+  max-width: 90%;
+  white-space: pre-line; /* 2段テキスト用 */
   pointer-events: none;
+}
+
+/* ギザギザ切れ込みの再現：左右にbefore/afterで山型の切り込み */
+.random-text-sticky::before,
+.random-text-sticky::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 12px;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent 0,
+    transparent 2px,
+    #fff 2px,
+    #fff 4px
+  );
+  mix-blend-mode: lighten;
+  pointer-events: none;
+}
+
+.random-text-sticky::before {
+  left: 0;
+  transform: rotate(180deg);
+}
+
+.random-text-sticky::after {
+  right: 0;
 }
