@@ -1,9 +1,35 @@
+let randomImagesLayer = null;
+let randomImageElements = [];
+
+function createRandomImagesLayer() {
+  if (randomImagesLayer) return;
+
+  randomImagesLayer = document.createElement("div");
+  randomImagesLayer.id = "random-images-layer";
+  Object.assign(randomImagesLayer.style, {
+    position: "absolute",
+    top: "0",
+    left: "0",
+    width: "100%",
+    height: "100%",
+    zIndex: "2.5",
+    pointerEvents: "none"
+  });
+
+  document.body.appendChild(randomImagesLayer);
+}
+
+function clearRandomImages() {
+  if (!randomImagesLayer) return;
+  randomImagesLayer.innerHTML = "";
+  randomImageElements = [];
+}
+
 function randomImagesOn() {
   if (!window.config || !config.randomPath) {
     console.error("config.randomPath が定義されていません。");
     return;
   }
-  console.log("randomImagesOn 実行");
 
   fetch(`${config.randomPath}imageset01.json`)
     .then(response => {
@@ -11,8 +37,6 @@ function randomImagesOn() {
       return response.json();
     })
     .then(data => {
-      console.log("imageset01.json 読み込み成功", data);
-
       createRandomImagesLayer();
       clearRandomImages();
 
@@ -31,6 +55,7 @@ function randomImagesOn() {
         { x: 0, y: 1 }, { x: 1, y: 1 }, { x: 2, y: 1 }
       ];
 
+      const imageBasePath = data.randompath || config.randomPath;
       const fixedImage = data.fixed;
       const randomList = [...data.random];
       shuffleArray(randomList);
@@ -55,13 +80,11 @@ function randomImagesOn() {
         });
 
         if (index === 0) {
-          img.src = config.randomPath + fixedImage;
-          console.log("固定画像セット:", img.src);
+          img.src = imageBasePath + fixedImage;
         } else {
           const randomImg = randomList.shift();
           if (randomImg) {
-            img.src = config.randomPath + data.randompath + randomImg;
-            console.log("ランダム画像セット:", img.src);
+            img.src = imageBasePath + randomImg;
           }
         }
 
@@ -72,4 +95,16 @@ function randomImagesOn() {
     .catch(err => {
       console.error("ランダム画像JSONの読み込みに失敗しました", err);
     });
+}
+
+function randomImagesOff() {
+  clearRandomImages();
+}
+
+// 配列をランダムシャッフル
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
 }
