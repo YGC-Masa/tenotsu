@@ -139,58 +139,50 @@ function randomImagesOn() {
 
 // ▼ ランダムテキスト表示
 function randomTextsOn() {
-  if (!window.config || !config.randomPath) {
-    console.error("config.randomPath が定義されていません。");
-    return;
-  }
-
   fetch(`${config.randomPath}textset01.json`)
     .then(res => res.json())
     .then(data => {
       createRandomTextLayer();
       clearRandomTexts();
 
-      // ランダムに2個選ぶ
-      const usedIndexes = new Set();
-      while (usedIndexes.size < 2 && usedIndexes.size < data.length) {
-        usedIndexes.add(Math.floor(Math.random() * data.length));
+      // ランダムに2つ選択
+      let indexes = [];
+      while (indexes.length < 2) {
+        const idx = Math.floor(Math.random() * data.length);
+        if (!indexes.includes(idx)) indexes.push(idx);
       }
-      const selectedTexts = Array.from(usedIndexes).map(i => data[i]);
 
-      // randomTextLayerは画面全幅固定、高さ10%固定、位置はbottom0にする
-      Object.assign(randomTextLayer.style, {
-        display: "block",
-        position: "absolute",
-        bottom: "0",
+      // 上段テキスト
+      const upperNote = document.createElement("div");
+      upperNote.className = "random-text-note";
+      upperNote.textContent = data[indexes[0]];
+      Object.assign(upperNote.style, {
+        bottom: "5vh",     // 画面下から 90%-95% = 5vh上（※vhで5%指定）
         left: "0",
-        width: "100%",
-        height: "10%", // 画面下10%
-        pointerEvents: "none",
-        overflow: "visible",
+        width: "90%",      // 親の90%を占有（左右の余白は親で5%ずつ確保済み）
+        height: "5vh",
+        clipPath: "polygon(0 0, 100% 0, 95% 100%, 5% 100%)" // 下辺がギザギザ風カット例
       });
+      randomTextLayer.appendChild(upperNote);
+      randomTextElements.push(upperNote);
 
-      // 上段テキスト配置 (縦90%-95%)
-      const divTop = document.createElement("div");
-      divTop.className = "random-text-note";
-      divTop.textContent = selectedTexts[0] || "";
-      Object.assign(divTop.style, {
-        position: "absolute",
-        top: "90%",     // 親の10%高さのうち90% = 画面全体の90%〜95%あたり
-        left: "5%",
-        width: "90%",   // 横幅5%~95%の幅
-        height: "5%",
-        lineHeight: "1.2",
-        background: "rgba(255,192,203,0.95)", // ピンク付箋風
-        color: "#000",
-        fontWeight: "bold",
-        fontSize: "0.9em",
-        borderRadius: "0.4em 0.4em 0 0",
-        boxShadow: "2px 2px 6px rgba(0,0,0,0.2)",
-        padding: "0.2em 0.4em",
-        whiteSpace: "nowrap",
-        pointerEvents: "none",
-        clipPath: "polygon(0 0, 95% 0, 100% 20%, 100% 100%, 0% 100%)" // 右端ギザギザ風カット
+      // 下段テキスト
+      const lowerNote = document.createElement("div");
+      lowerNote.className = "random-text-note";
+      lowerNote.textContent = data[indexes[1]];
+      Object.assign(lowerNote.style, {
+        bottom: "0",      // 画面下から 95%-100% = 0vh上（画面底）
+        left: "0",
+        width: "90%",
+        height: "5vh",
+        clipPath: "polygon(5% 0, 95% 0, 100% 100%, 0% 100%)" // 上辺がギザギザ風カット例
       });
+      randomTextLayer.appendChild(lowerNote);
+      randomTextElements.push(lowerNote);
+    })
+    .catch(err => console.error("ランダムテキストJSONの読み込みに失敗しました", err));
+}
+
 
       // 下段テキスト配置 (縦95%-100%)
       const divBottom = document.createElement("div");
