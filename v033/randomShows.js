@@ -158,6 +158,7 @@ function randomImagesOn() {
 }
 
 // ▼ ランダムテキスト表示（2文言1枚の付箋風）
+// ランダムテキスト表示（1枚・1段・キャラカラー反映）
 function randomTextsOn() {
   if (!window.config || !config.randomPath) {
     console.error("config.randomPath が定義されていません。");
@@ -170,88 +171,19 @@ function randomTextsOn() {
       createRandomTextLayer();
       clearRandomTexts();
 
-      if (data.length < 4) {
-        console.warn("textset01.json はキャラ名とテキストがペアで最低2セット必要です。");
-        return;
-      }
+      const index = Math.floor(Math.random() * (data.length / 2));
+      const charName = data[index * 2];
+      const message = data[index * 2 + 1];
 
-      // dataは [キャラ名, テキスト, キャラ名, テキスト,...]
-      // ペア数
-      const pairCount = data.length / 2;
+      const style = characterStyles[charName] || characterStyles[""];
+      const baseColor = style.color || "#999999";
 
-      // 2つのランダムペアを選ぶ（重複なし）
-      const selectedIndexes = [];
-      while (selectedIndexes.length < 2) {
-        const idx = Math.floor(Math.random() * pairCount);
-        if (!selectedIndexes.includes(idx)) selectedIndexes.push(idx);
-      }
-
-      // 付箋1枚に2段テキストをまとめて作成
       const note = document.createElement("div");
       note.className = "random-text-note";
+      note.textContent = message;
 
-      // 配置とサイズ（safe areaの横5%~95%、縦90~100%）
-      Object.assign(note.style, {
-        position: "absolute",
-        left: "5%",
-        width: "90%",
-        top: "90%",
-        height: "10%",
-        borderRadius: "0.5em",
-        boxShadow: "2px 2px 6px rgba(0,0,0,0.2)",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        padding: "0.5em 1em",
-        boxSizing: "border-box",
-        userSelect: "none",
-        pointerEvents: "none",
-        zIndex: 3,
-        backgroundColor: "",  // 後述で設定
-        borderLeft: "",      // 後述で設定
-        color: "",           // 後述で設定
-      });
-
-      // キャラカラー（付箋背景は薄色、左帯は原色、テキスト色は原色）
-      // 2つのキャラカラーを混ぜて背景色は平均化（または1つ目の薄色）とする方法もあるが、
-      // ここは1つ目のキャラカラーをベースに薄色に設定し、テキストは各段のキャラ色に設定する例。
-
-      const charName1 = data[selectedIndexes[0] * 2];
-      const charName2 = data[selectedIndexes[1] * 2];
-      const style1 = characterStyles[charName1] || characterStyles[""];
-      const style2 = characterStyles[charName2] || characterStyles[""];
-      const baseColor1 = style1.color || "#C0C0C0";
-
-      // 付箋背景薄色化
-      note.style.backgroundColor = lightenColor(baseColor1, 85);
-      note.style.borderLeft = `12px solid ${baseColor1}`;
-
-      // テキスト上段
-      const line1 = document.createElement("div");
-      line1.textContent = data[selectedIndexes[0] * 2 + 1];
-      Object.assign(line1.style, {
-        color: style1.color,
-        fontWeight: "bold",
-        fontSize: "1em",
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-      });
-
-      // テキスト下段
-      const line2 = document.createElement("div");
-      line2.textContent = data[selectedIndexes[1] * 2 + 1];
-      Object.assign(line2.style, {
-        color: style2.color,
-        fontWeight: "bold",
-        fontSize: "1em",
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-      });
-
-      note.appendChild(line1);
-      note.appendChild(line2);
+      note.style.backgroundColor = lightenColor(baseColor, 85);
+      note.style.borderLeft = `12px solid ${baseColor}`;
 
       randomTextLayer.appendChild(note);
       randomTextElements.push(note);
