@@ -301,16 +301,20 @@ body {
 }
 
 .random-text-note {
-  background: rgba(255, 192, 203, 0.9); /* ピンク付箋風 */
-  color: #fff;
-  font-size: 0.9em;
-  padding: 0.3em 0.5em;
-  border-radius: 0.5em;
-  box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
-  pointer-events: none;
-  white-space: nowrap;
   position: absolute;
+  background: rgba(255, 192, 203, 0.95); /* ピンク付箋風 */
+  color: #000;
+  font-weight: bold;
+  font-size: 0.9em;
+  padding: 0.2em 0.4em;
+  border-radius: 0.4em;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  /* ギザギザ風のclip-pathは個別の上下divで調整 */
 }
+
 
 /* 非表示用 */
 #random-text-layer.hidden {
