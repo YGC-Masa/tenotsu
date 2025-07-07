@@ -1,0 +1,32 @@
+[
+  {
+    "bg": "bg_gym.jpg",
+    "bgm": "upbeat_sports.mp3",
+    "name": "琥珀",
+    "text": "よーっし！今日も旦那と一緒に全力で汗を流すぜ！",
+    "characters": [
+      { "side": "center", "src": "kohaku.png" }
+    ]
+  },
+  {
+    "name": "琥珀",
+    "text": "俺、スポーツ大好きだから、つい本気になっちゃうんだよな！",
+    "voice": "kohaku_energetic.mp3"
+  },
+  {
+    "name": "琥珀",
+    "text": "でも、無理は禁物。ちゃんとストレッチも忘れずに！",
+    "se": "se_stretch.mp3"
+  },
+  {
+    "text": "琥珀はしっかり準備体操を始めた。",
+  },
+  {
+    "name": "琥珀",
+    "text": "さあ、これで完璧だ。旦那、行くぞー！",
+    "voice": "kohaku_cheer.mp3"
+  },
+  {
+    "text": "二人は元気にトレーニングをスタートした。",
+  }
+]
