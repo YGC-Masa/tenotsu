@@ -1,7 +1,11 @@
+// randomShows.js
+
 let randomImagesLayer = null;
 let randomImageElements = [];
 let randomTextLayer = null;
 let randomTextElements = [];
+
+// ▼ 画像レイヤー作成（省略。以前のコードと同じ）
 
 function createRandomImagesLayer() {
   if (randomImagesLayer) return;
@@ -19,101 +23,43 @@ function createRandomImagesLayer() {
   document.body.appendChild(randomImagesLayer);
 }
 
+// ▼ テキストレイヤー作成（省略）
+
 function createRandomTextLayer() {
   if (randomTextLayer) return;
   randomTextLayer = document.createElement("div");
   randomTextLayer.id = "random-text-layer";
   Object.assign(randomTextLayer.style, {
     position: "absolute",
-    bottom: "env(safe-area-inset-bottom)",
-    left: "0",
-    width: "100%",
+    bottom: "0",
+    left: "5%",    // safe area 左端5%
+    width: "90%",  // safe area 横幅90%
     height: "10%",
     zIndex: "3",
     pointerEvents: "none",
-    position: "fixed"
   });
   document.body.appendChild(randomTextLayer);
 }
 
+// ▼ 画像クリア（省略）
 function clearRandomImages() {
   if (!randomImagesLayer) return;
   randomImagesLayer.innerHTML = "";
   randomImageElements = [];
 }
 
+// ▼ テキストクリア（省略）
 function clearRandomTexts() {
   if (!randomTextLayer) return;
   randomTextLayer.innerHTML = "";
   randomTextElements = [];
 }
 
-function randomImagesOn() {
-  if (!window.config || !config.randomPath) return;
+// ▼ ランダム画像表示（省略）
+// ... 以前と同じコード
 
-  fetch(`${config.randomPath}imageset01.json`)
-    .then(res => res.json())
-    .then(data => {
-      createRandomImagesLayer();
-      clearRandomImages();
-
-      const isMobileLandscape = window.innerWidth <= 768 && window.innerWidth > window.innerHeight;
-      const isMobilePortrait = window.innerWidth <= 768 && window.innerHeight >= window.innerWidth;
-
-      const cols = isMobilePortrait ? 2 : 3;
-      const rows = isMobilePortrait ? 4 : 2;
-
-      const safeArea = {
-        x: window.innerWidth * 0.05,
-        y: window.innerHeight * 0.05,
-        width: window.innerWidth * 0.9,
-        height: window.innerHeight * 0.9
-      };
-
-      const cellWidth = safeArea.width / cols;
-      const cellHeight = safeArea.height / rows;
-
-      const positions = [];
-      for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
-          positions.push({ x, y });
-        }
-      }
-
-      const imageBasePath = data.picpath || config.randomPath;
-      const fixedImage = data.fixed;
-      const randomList = [...data.random];
-      shuffleArray(randomList);
-
-      positions.forEach((pos, index) => {
-        const img = document.createElement("img");
-        img.draggable = false;
-        img.style.position = "absolute";
-        img.style.objectFit = "contain";
-        img.style.pointerEvents = "none";
-
-        const left = safeArea.x + cellWidth * pos.x;
-        const top = safeArea.y + cellHeight * pos.y;
-
-        Object.assign(img.style, {
-          left: `${left}px`,
-          top: `${top}px`,
-          width: `${cellWidth}px`,
-          height: `${cellHeight}px`,
-          maxWidth: "100%",
-          maxHeight: "100%",
-        });
-
-        img.src = index === 0 && fixedImage ? imageBasePath + fixedImage : imageBasePath + (randomList.shift() || "");
-
-        randomImagesLayer.appendChild(img);
-        randomImageElements.push(img);
-      });
-    })
-    .catch(err => console.error("ランダム画像JSONの読み込みに失敗しました", err));
-}
-
-// ▼ ランダムテキスト表示（上下2段、キャラカラー対応）
+// ▼ ランダムテキスト表示（修正）
+// ランダムに1つだけ選び、付箋内で上下2段にテキストを分割表示
 function randomTextsOn() {
   if (!window.config || !config.randomPath) {
     console.error("config.randomPath が定義されていません。");
@@ -126,78 +72,85 @@ function randomTextsOn() {
       createRandomTextLayer();
       clearRandomTexts();
 
-      const selected = [];
-      const usedIndexes = new Set();
-
-      // 2個（上下段）だけランダムに選択
-      while (selected.length < 2 && usedIndexes.size < data.length / 2) {
-        const idx = Math.floor(Math.random() * (data.length / 2));
-        if (!usedIndexes.has(idx)) {
-          usedIndexes.add(idx);
-          selected.push([data[idx * 2], data[idx * 2 + 1]]); // [キャラ名, テキスト]
-        }
+      if (!window.characterStyles) {
+        console.warn("characterStyles が見つかりません。文字色はデフォルトになります。");
       }
 
-      selected.forEach(([char, text], i) => {
-        const div = document.createElement("div");
-        div.className = "random-text-note";
+      // dataは ["キャラ名", "テキスト", "キャラ名", "テキスト", ...] の配列
 
-        // キャラカラー取得
-        const style = window.characterStyles?.[char] || {};
-        const color = style.color || "#000000";
+      // ランダムに1つ選ぶ（ペア単位で）
+      const pairCount = data.length / 2;
+      const idx = Math.floor(Math.random() * pairCount) * 2;
+      const charName = data[idx];
+      const text = data[idx + 1];
 
-        Object.assign(div.style, {
-          color: color, // 文字色
-          borderLeft: `12px solid ${color}`, // 帯色もキャラカラー
-          backgroundColor: "#ffffff", // 白背景付箋風
-          padding: "1em",
-          paddingRight: "calc(1em + 12px)",
-          display: "inline-block",
-          fontSize: "0.9em",
-          fontWeight: "bold",
-          boxShadow: "2px 2px 6px rgba(0,0,0,0.2)",
-          position: "absolute",
-          left: "5%",
-          width: "90%",
-          bottom: i === 0 ? "10%" : "5%", // 上段:90〜95%, 下段:95〜100%
-          whiteSpace: "nowrap",
-        });
+      const color = window.characterStyles?.[charName]?.color || "#888";
 
-        div.textContent = `「${text}」`;
-
-        randomTextLayer.appendChild(div);
-        randomTextElements.push(div);
+      // 付箋の親div
+      const note = document.createElement("div");
+      note.className = "random-text-note";
+      Object.assign(note.style, {
+        position: "absolute",
+        left: "5%",
+        width: "90%",
+        height: "10%",
+        backgroundColor: "white",
+        borderLeft: `12px solid ${color}`,
+        borderRadius: "0.5em",
+        boxShadow: "2px 2px 6px rgba(0,0,0,0.2)",
+        pointerEvents: "none",
+        userSelect: "none",
+        zIndex: 3,
+        color: color,
+        fontWeight: "bold",
+        boxSizing: "border-box",
+        padding: "0",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
       });
+
+      // 上段テキスト div（キャラ名）
+      const topDiv = document.createElement("div");
+      topDiv.textContent = charName;
+      Object.assign(topDiv.style, {
+        height: "50%",
+        fontSize: "1.2em",
+        lineHeight: "1.2em",
+        paddingLeft: "1em",
+        paddingTop: "0.3em",
+        paddingBottom: "0",
+        color: color,
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        userSelect: "none",
+      });
+
+      // 下段テキスト div（セリフ）
+      const bottomDiv = document.createElement("div");
+      bottomDiv.textContent = text;
+      Object.assign(bottomDiv.style, {
+        height: "50%",
+        fontSize: "1em",
+        lineHeight: "1.2em",
+        paddingLeft: "1em",
+        paddingTop: "0",
+        paddingBottom: "0.3em",
+        color: "#333",
+        overflowWrap: "break-word",
+        userSelect: "none",
+      });
+
+      note.appendChild(topDiv);
+      note.appendChild(bottomDiv);
+      randomTextLayer.appendChild(note);
+      randomTextElements.push(note);
     })
     .catch(err => console.error("ランダムテキストJSONの読み込みに失敗しました", err));
 }
 
-
-function createTextNote(text, stripeColor, topPercent, bottomPercent) {
-  const div = document.createElement("div");
-  div.className = "random-text-note";
-  Object.assign(div.style, {
-    display: "inline-block",
-    position: "absolute",
-    left: "5%",
-    width: "90%",
-    top: `calc(${topPercent}vh)`,
-    height: `calc(${bottomPercent - topPercent}vh)`,
-    backgroundColor: "white",
-    borderLeft: `solid 12px ${stripeColor}`,
-    color: "#000",
-    fontWeight: "bold",
-    padding: "0.5em 1em",
-    fontSize: "1em",
-    boxShadow: "2px 2px 6px rgba(0,0,0,0.2)",
-    lineHeight: "1.4",
-    display: "flex",
-    alignItems: "center"
-  });
-  div.textContent = text;
-  return div;
-}
-
+// ▼ オフ関数
 function randomImagesOff() {
   clearRandomImages();
 }
@@ -206,6 +159,7 @@ function randomTextsOff() {
   clearRandomTexts();
 }
 
+// ▼ 配列シャッフル（省略）
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
