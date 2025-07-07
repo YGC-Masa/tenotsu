@@ -1,6 +1,6 @@
 [
   {
-    "bg": "bg_courtyard.jpg",
+    "bg": "bg_field.jpg",
     "bgm": "sunny_day.mp3",
     "name": "こがね",
     "text": "やっほーっ！ここで待ち合わせだったよね？",
@@ -19,7 +19,7 @@
     "text": "今日は楽しいこと、いーっぱいしよ！"
   },
   {
-    "showev": "kogane_ev01.png",
+    "showev": "d01ev02.png",
     "evEffect": "whitein",
     "name": "こがね",
     "text": "じゃじゃーん！この制服、似合ってるかな？"
@@ -27,9 +27,6 @@
   {
     "text": "こがね笑顔に、つられてこちらも笑顔になる。",
     "name": ""
-  },
-  {
-    "randomimageson": true
   },
   {
     "auto": true
