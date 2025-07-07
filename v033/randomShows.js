@@ -113,8 +113,12 @@ function randomImagesOn() {
     .catch(err => console.error("ランダム画像JSONの読み込みに失敗しました", err));
 }
 
+// ▼ ランダムテキスト表示（上下2段、キャラカラー対応）
 function randomTextsOn() {
-  if (!window.config || !config.randomPath) return;
+  if (!window.config || !config.randomPath) {
+    console.error("config.randomPath が定義されていません。");
+    return;
+  }
 
   fetch(`${config.randomPath}textset01.json`)
     .then(res => res.json())
@@ -122,24 +126,39 @@ function randomTextsOn() {
       createRandomTextLayer();
       clearRandomTexts();
 
-      const index1 = Math.floor(Math.random() * data.length);
-      let index2;
-      do {
-        index2 = Math.floor(Math.random() * data.length);
-      } while (index1 === index2);
+      const selected = [];
+      const usedIndexes = new Set();
 
-      const [name1, text1] = data[index1];
-      const [name2, text2] = data[index2];
+      while (selected.length < 2 && usedIndexes.size < data.length / 2) {
+        const idx = Math.floor(Math.random() * (data.length / 2));
+        if (!usedIndexes.has(idx)) {
+          usedIndexes.add(idx);
+          selected.push([data[idx * 2], data[idx * 2 + 1]]);
+        }
+      }
 
-      const style1 = characterStyles?.[name1]?.color || "#808080";
-      const style2 = characterStyles?.[name2]?.color || "#808080";
+      selected.forEach(([char, text], i) => {
+        const div = document.createElement("div");
+        div.className = "random-text-note";
 
-      const note1 = createTextNote(text1, style1, 90, 95);
-      const note2 = createTextNote(text2, style2, 95, 100);
+        // キャラカラー取得
+        const style = (window.characterStyles || {})[char] || {};
+        const color = style.color || "#000";
 
-      randomTextLayer.appendChild(note1);
-      randomTextLayer.appendChild(note2);
-      randomTextElements.push(note1, note2);
+        Object.assign(div.style, {
+          color: color,                  // テキスト色
+          borderLeft: `12px solid ${color}`, // 左帯の色
+          position: "absolute",
+          left: "5%",
+          width: "90%",
+          textAlign: "left",
+          bottom: i === 0 ? "5%" : "0%" // 上段 or 下段
+        });
+
+        div.textContent = `「${text}」`;
+        randomTextLayer.appendChild(div);
+        randomTextElements.push(div);
+      });
     })
     .catch(err => console.error("ランダムテキストJSONの読み込みに失敗しました", err));
 }
