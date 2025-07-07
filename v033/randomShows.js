@@ -155,7 +155,7 @@ function randomTextsOn() {
       // 現状は20個ランダム表示のままです。
 
       const usedIndexes = new Set();
-      const count = 20; // 5%ずつ、2段で20個
+      const count = 2; // 5%ずつ、2段で20個
 
       for (let i = 0; i < count; i++) {
         let index;
