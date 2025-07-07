@@ -1,14 +1,10 @@
-// randomShows.js
-
 let randomImagesLayer = null;
+let randomTextLayer = null;
 let randomImageElements = [];
 let randomTextElements = [];
-let randomTextLayer = null;
 
-// ▼ 画像レイヤー作成
 function createRandomImagesLayer() {
   if (randomImagesLayer) return;
-
   randomImagesLayer = document.getElementById("random-images-layer") || document.createElement("div");
   randomImagesLayer.id = "random-images-layer";
   Object.assign(randomImagesLayer.style, {
@@ -20,71 +16,40 @@ function createRandomImagesLayer() {
     zIndex: "2.5",
     pointerEvents: "none"
   });
-
   document.body.appendChild(randomImagesLayer);
 }
 
-// ▼ テキストレイヤー作成
 function createRandomTextLayer() {
   if (randomTextLayer) return;
-
   randomTextLayer = document.getElementById("random-text-layer") || document.createElement("div");
   randomTextLayer.id = "random-text-layer";
   Object.assign(randomTextLayer.style, {
     position: "absolute",
     bottom: "0",
-    left: "0",
-    width: "100%",
-    height: "10%", // 画面下部10%の高さを占める
+    left: "5vw",
+    width: "90vw",
+    height: "10vh",
     zIndex: "3",
     pointerEvents: "none",
+    userSelect: "none"
   });
-
   document.body.appendChild(randomTextLayer);
 }
 
-// ▼ 画像クリア
 function clearRandomImages() {
   if (!randomImagesLayer) return;
   randomImagesLayer.innerHTML = "";
   randomImageElements = [];
 }
 
-// ▼ テキストクリア
 function clearRandomTexts() {
   if (!randomTextLayer) return;
   randomTextLayer.innerHTML = "";
   randomTextElements = [];
 }
 
-// ▼ 配列シャッフル（Fisher-Yates）
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
-
-// ▼ 輝度を上げて薄くする関数（#rrggbb → 薄色rgb）
-function lightenColor(hex, percent) {
-  const num = parseInt(hex.replace("#", ""), 16);
-  let r = (num >> 16) & 0xff;
-  let g = (num >> 8) & 0xff;
-  let b = num & 0xff;
-
-  r = Math.min(255, Math.floor(r + (255 - r) * (percent / 100)));
-  g = Math.min(255, Math.floor(g + (255 - g) * (percent / 100)));
-  b = Math.min(255, Math.floor(b + (255 - b) * (percent / 100)));
-
-  return `rgb(${r},${g},${b})`;
-}
-
-// ▼ ランダム画像表示
 function randomImagesOn() {
-  if (!window.config || !config.randomPath) {
-    console.error("config.randomPath が定義されていません。");
-    return;
-  }
+  if (!window.config || !config.randomPath) return;
 
   fetch(`${config.randomPath}imageset01.json`)
     .then(response => response.json())
@@ -92,26 +57,17 @@ function randomImagesOn() {
       createRandomImagesLayer();
       clearRandomImages();
 
-      const w = window.innerWidth;
-      const h = window.innerHeight;
+      const isMobile = window.innerWidth <= 768;
+      const isLandscape = window.innerWidth > window.innerHeight;
 
-      const isMobilePortrait = w <= 768 && h > w;
-      const isMobileLandscape = w <= 768 && w > h;
-
-      let cols, rows;
-      if (isMobilePortrait) {
-        cols = 2;
-        rows = 4;
-      } else { // モバイル横 or PC
-        cols = 3;
-        rows = 2;
-      }
+      const cols = isMobile ? (isLandscape ? 3 : 2) : 3;
+      const rows = isMobile ? (isLandscape ? 2 : 4) : 2;
 
       const safeArea = {
-        x: w * 0.1,
-        y: h * 0.1,
-        width: w * 0.8,
-        height: h * 0.8
+        x: window.innerWidth * 0.1,
+        y: window.innerHeight * 0.1,
+        width: window.innerWidth * 0.8,
+        height: window.innerHeight * 0.8
       };
 
       const cellWidth = safeArea.width / cols;
@@ -143,27 +99,22 @@ function randomImagesOn() {
           left: `${left}px`,
           top: `${top}px`,
           width: `${cellWidth}px`,
-          height: `${cellHeight}px`,
-          maxWidth: "100%",
-          maxHeight: "100%",
+          height: `${cellHeight}px`
         });
 
-        img.src = index === 0 && fixedImage ? imageBasePath + fixedImage : imageBasePath + (randomList.shift() || "");
+        img.src = index === 0 && fixedImage
+          ? imageBasePath + fixedImage
+          : imageBasePath + (randomList.shift() || "");
 
         randomImagesLayer.appendChild(img);
         randomImageElements.push(img);
       });
     })
-    .catch(err => console.error("ランダム画像JSONの読み込みに失敗しました", err));
+    .catch(err => console.error("ランダム画像読み込み失敗", err));
 }
 
-// ▼ ランダムテキスト表示（2文言1枚の付箋風）
-// ランダムテキスト表示（1枚・1段・キャラカラー反映）
 function randomTextsOn() {
-  if (!window.config || !config.randomPath) {
-    console.error("config.randomPath が定義されていません。");
-    return;
-  }
+  if (!window.config || !config.randomPath) return;
 
   fetch(`${config.randomPath}textset01.json`)
     .then(res => res.json())
@@ -171,32 +122,72 @@ function randomTextsOn() {
       createRandomTextLayer();
       clearRandomTexts();
 
-      const index = Math.floor(Math.random() * (data.length / 2));
-      const charName = data[index * 2];
-      const message = data[index * 2 + 1];
+      // 2つだけランダムに選ぶ
+      const pairs = [];
+      for (let i = 0; i < data.length - 1; i += 2) {
+        pairs.push([data[i], data[i + 1]]);
+      }
+      shuffleArray(pairs);
+      const [charName, text] = pairs[0];
 
-      const style = characterStyles[charName] || characterStyles[""];
-      const baseColor = style.color || "#999999";
+      const charStyle = characterStyles[charName] || characterStyles[""];
+      const baseColor = charStyle.color || "#666";
+      const lightBg = lightenColor(baseColor, 85);
 
       const note = document.createElement("div");
       note.className = "random-text-note";
-      note.textContent = message;
+      note.style.setProperty("--char-color", baseColor);
+      note.style.backgroundColor = lightBg;
 
-      note.style.backgroundColor = lightenColor(baseColor, 85);
-      note.style.borderLeft = `12px solid ${baseColor}`;
+      const nameDiv = document.createElement("div");
+      nameDiv.textContent = charName;
+      nameDiv.style.fontWeight = "bold";
+      nameDiv.style.color = baseColor;
+      nameDiv.style.fontSize = "1em";
+
+      const textDiv = document.createElement("div");
+      textDiv.textContent = text;
+      textDiv.style.color = "#000";
+      textDiv.style.fontSize = "0.95em";
+
+      note.appendChild(nameDiv);
+      note.appendChild(textDiv);
+
+      // ランダム位置（セーフエリア内）
+      const left = 5 + Math.random() * 90; // 5%〜95%
+      const top = 90 + Math.random() * 5;  // 90%〜95%
+
+      Object.assign(note.style, {
+        left: `${left}vw`,
+        top: `${top}vh`
+      });
 
       randomTextLayer.appendChild(note);
       randomTextElements.push(note);
     })
-    .catch(err => console.error("ランダムテキストJSONの読み込みに失敗しました", err));
+    .catch(err => console.error("ランダムテキスト読み込み失敗", err));
 }
 
-// ▼ ランダム画像非表示
 function randomImagesOff() {
   clearRandomImages();
 }
 
-// ▼ ランダムテキスト非表示
 function randomTextsOff() {
   clearRandomTexts();
+}
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+// 色を薄くするユーティリティ
+function lightenColor(hex, percent) {
+  const num = parseInt(hex.replace("#", ""), 16);
+  const r = Math.min(255, ((num >> 16) & 255) + (255 - ((num >> 16) & 255)) * percent / 100);
+  const g = Math.min(255, ((num >> 8) & 255) + (255 - ((num >> 8) & 255)) * percent / 100);
+  const b = Math.min(255, (num & 255) + (255 - (num & 255)) * percent / 100);
+  return `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
 }
