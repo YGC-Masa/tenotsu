@@ -1,5 +1,4 @@
 {
-  "scenes": [
     {
       "bg": "bg_library.jpg",
       "bgm": "library_ambience.mp3",
@@ -17,5 +16,4 @@
     {
       "text": "しばらくここで待ってみよう。"
     }
-  ]
 }
