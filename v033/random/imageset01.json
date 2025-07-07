@@ -1,5 +1,5 @@
 {
-  "fixed": "logofusen.png",
+  "fixed": "../assets2/bgev/logofusen.png",
   "picpath": "../assets2/ev/",
   "random": [
     "a01ev02.png",
