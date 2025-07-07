@@ -141,18 +141,18 @@ function randomTextsOn() {
         const div = document.createElement("div");
         div.className = "random-text-note";
 
-        // キャラカラー取得
-        const style = (window.characterStyles || {})[char] || {};
-        const color = style.color || "#000";
+        // キャラスタイル取得
+        const style = window.characterStyles?.[char] || {};
+        const color = style.color || "#000000";
 
         Object.assign(div.style, {
-          color: color,                  // テキスト色
-          borderLeft: `12px solid ${color}`, // 左帯の色
+          color: color, // 文字色
+          borderLeft: `12px solid ${color}`, // 左の帯
           position: "absolute",
           left: "5%",
           width: "90%",
           textAlign: "left",
-          bottom: i === 0 ? "5%" : "0%" // 上段 or 下段
+          bottom: i === 0 ? "5%" : "0%"
         });
 
         div.textContent = `「${text}」`;
@@ -162,6 +162,7 @@ function randomTextsOn() {
     })
     .catch(err => console.error("ランダムテキストJSONの読み込みに失敗しました", err));
 }
+
 
 function createTextNote(text, stripeColor, topPercent, bottomPercent) {
   const div = document.createElement("div");
