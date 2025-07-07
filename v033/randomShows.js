@@ -148,10 +148,11 @@ function randomTextsOn() {
         if (!selected.includes(data[i])) selected.push(data[i]);
       }
 
-      const div = document.createElement("div");
-      div.className = "random-text-sticky";
-      div.innerHTML = `<div>${selected[0] || ""}</div><div>${selected[1] || ""}</div>`;
+const div = document.createElement("div");
+div.className = "random-text-sticky";
+div.textContent = `${text1}\n${text2}`; // 2段表示（\nで改行）
 
+      
       Object.assign(div.style, {
         background: "linear-gradient(to bottom right, #ffc0cb, #f4a6b0)",
         color: "#000",
