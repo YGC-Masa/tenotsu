@@ -1,21 +1,21 @@
-{
-    {
-      "bg": "bg_rooftop.jpg",
-      "bgm": "windy_rooftop.mp3",
-      "name": "翠",
-      "text": "屋上は風が気持ちいいですね。",
-      "characters": [
-        { "side": "center", "src": "a03002.png" }
-      ]
-    },
-    {
-      "name": "翠",
-      "text": "ここに来たのは、あなたも……気が合いますね。",
-      "voice": "c01005.mp3"
-    },
-    {
-      "showev": "ev_rooftop.png",
-      "name": "翠",
-      "text": "この景色……一緒に見たかったんです。"
-    }
-}
+[
+  {
+    "bg": "bg_rooftop.jpg",
+    "bgm": "windy_rooftop.mp3",
+    "name": "翠",
+    "text": "屋上は風が気持ちいいですね。",
+    "characters": [
+      { "side": "center", "src": "a03002.png" }
+    ]
+  },
+  {
+    "name": "翠",
+    "text": "ここに来たのは、あなたも……気が合いますね。",
+    "voice": "c01005.mp3"
+  },
+  {
+    "showev": "ev_rooftop.png",
+    "name": "翠",
+    "text": "この景色……一緒に見たかったんです。"
+  }
+]
