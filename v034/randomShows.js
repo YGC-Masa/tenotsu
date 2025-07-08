@@ -85,17 +85,24 @@ function randomImagesOn() {
       const w = window.innerWidth;
       const h = window.innerHeight;
       const isMobilePortrait = w <= 768 && h > w;
-      const isMobileLandscape = w <= 768 && w > h;
+      const isMobileLandscape = w <= 768 && w >= h;
       let cols = 3, rows = 2;
       if (isMobilePortrait) { cols = 2; rows = 4; }
 
-      const safeArea = { x: w * 0.1, y: h * 0.1, width: w * 0.8, height: h * 0.8 };
+      const safeArea = {
+        x: w * 0.1,
+        y: h * 0.1,
+        width: w * 0.8,
+        height: h * 0.8
+      };
       const cellWidth = safeArea.width / cols;
       const cellHeight = safeArea.height / rows;
       const positions = [];
-      for (let y = 0; y < rows; y++)
-        for (let x = 0; x < cols; x++)
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
           positions.push({ x, y });
+        }
+      }
 
       const imageBasePath = data.picpath || config.randomPath;
       const fixedImage = data.fixed;
@@ -108,6 +115,8 @@ function randomImagesOn() {
         img.style.position = "absolute";
         img.style.objectFit = "contain";
         img.style.pointerEvents = "none";
+        img.style.boxSizing = "border-box";
+
         const left = safeArea.x + cellWidth * pos.x;
         const top = safeArea.y + cellHeight * pos.y;
         Object.assign(img.style, {
@@ -118,11 +127,16 @@ function randomImagesOn() {
           maxWidth: "100%",
           maxHeight: "100%"
         });
-        img.src = index === 0 && fixedImage ? imageBasePath + fixedImage : imageBasePath + (randomList.shift() || "");
+
+        img.src = index === 0 && fixedImage
+          ? imageBasePath + fixedImage
+          : imageBasePath + (randomList.shift() || "");
+
         randomImagesLayer.appendChild(img);
         randomImageElements.push(img);
       });
-    });
+    })
+    .catch(err => console.error("ランダム画像JSONの読み込みに失敗しました", err));
 }
 
 // ▼ ランダムテキスト表示
@@ -191,5 +205,17 @@ function randomTextsOn() {
 }
 
 // ▼ 非表示関数
-function randomImagesOff() { clearRandomImages(); }
-function randomTextsOff() { clearRandomTexts(); }
+function randomImagesOff() {
+  clearRandomImages();
+}
+function randomTextsOff() {
+  clearRandomTexts();
+}
+
+// ▼ 画面回転時に再描画（レイアウト崩れ防止）
+window.addEventListener("resize", () => {
+  if (randomImagesLayer) {
+    randomImagesOff();
+    randomImagesOn();
+  }
+});
