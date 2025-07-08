@@ -153,7 +153,7 @@ function randomTextsOn() {
       const h = window.innerHeight;
       
       // デフォルト
-      let fontSize = "1.8em";
+      let fontSize = "0.8em";
       let padding = "0.1em 1em";
       let lineGap = "0.1em";
       let paddingBottom = "0.1em";
@@ -166,7 +166,7 @@ function randomTextsOn() {
         paddingBottom = "0.2em";
       } else if (w <= 768 && w >= h) {
         // モバイル横
-        fontSize = "0.8em";
+        fontSize = "0.5em";
         padding = "0.1em 0.6em";
         lineGap = "0.1em";
         paddingBottom = "0.075em"; // ★ 下余白を抑える
