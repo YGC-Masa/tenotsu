@@ -160,7 +160,7 @@ function randomTextsOn() {
 
       if (w <= 768 && h > w) {
         // モバイル縦
-        fontSize = "0.8em";
+        fontSize = "0.7em";
         padding = "0.4em 0.8em";
         lineGap = "0.25em";
         paddingBottom = "0.3em";
