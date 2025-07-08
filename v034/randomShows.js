@@ -1,5 +1,3 @@
-// randomShows.js
-
 let randomImagesLayer = null;
 let randomImageElements = [];
 let randomTextElements = [];
@@ -153,20 +151,25 @@ function randomTextsOn() {
 
       const w = window.innerWidth;
       const h = window.innerHeight;
+
+      // デフォルト
       let fontSize = "1.0em";
       let padding = "0.5em 1em";
       let lineGap = "0.3em";
+      let paddingBottom = "0.4em";
 
       if (w <= 768 && h > w) {
         // モバイル縦
         fontSize = "0.9em";
         padding = "0.4em 0.8em";
         lineGap = "0.25em";
-      } else if (w <= 768 && w > h) {
+        paddingBottom = "0.3em";
+      } else if (w <= 768 && w >= h) {
         // モバイル横
         fontSize = "0.85em";
-        padding = "0.3em 0.6em";
-        lineGap = "0.15em";
+        padding = "0.2em 0.6em";
+        lineGap = "0.1em";
+        paddingBottom = "0.1em"; // ★ 下余白を抑える
       }
 
       const note = document.createElement("div");
@@ -180,11 +183,10 @@ function randomTextsOn() {
         fontSize,
         fontWeight: "bold",
         padding,
-        paddingBottom: `calc(env(safe-area-inset-bottom, 0px) + 0.4em)`,
+        paddingBottom: `calc(env(safe-area-inset-bottom, 0px) + ${paddingBottom})`,
         borderRadius: "0.5em",
         boxSizing: "border-box",
         zIndex: 3
-        // height は指定しない（自動）
       });
 
       const line1 = document.createElement("div");
@@ -210,7 +212,7 @@ function randomTextsOn() {
 function randomImagesOff() { clearRandomImages(); }
 function randomTextsOff() { clearRandomTexts(); }
 
-// ▼ リサイズ時にレイアウト再構成
+// ▼ リサイズ対応
 window.addEventListener("resize", () => {
   if (randomImagesLayer && randomImagesDataCache) {
     randomImagesOff();
