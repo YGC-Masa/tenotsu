@@ -154,7 +154,7 @@ function buildRandomImages(data) {
   });
 }
 
-// ▼ ランダムテキスト表示（レスポンシブ対応フォント）
+// ▼ ランダムテキスト表示（レスポンシブ対応フォント・高さ調整）
 function randomTextsOn() {
   if (!window.config || !config.randomPath) return;
 
@@ -188,13 +188,21 @@ function randomTextsOn() {
       const h = window.innerHeight;
       let fontSize = "1.0em";
       let padding = "0.5em 1em";
+      let bottomHeight = "10%";  // 付箋の高さ
+      let lineMarginBottom = "0.3em";
 
       if (w <= 768 && h > w) {
-        fontSize = "0.9em"; // モバイル縦
+        // モバイル縦
+        fontSize = "0.9em";
         padding = "0.4em 0.8em";
+        bottomHeight = "10%";
+        lineMarginBottom = "0.3em";
       } else if (w <= 768 && w >= h) {
-        fontSize = "0.85em"; // モバイル横
+        // モバイル横
+        fontSize = "0.85em";
         padding = "0.3em 0.6em";
+        bottomHeight = "8%";        // 高さを少し小さく
+        lineMarginBottom = "0.15em"; // 行間も詰める
       }
 
       const note = document.createElement("div");
@@ -204,6 +212,7 @@ function randomTextsOn() {
         left: "5%",
         width: "90%",
         bottom: "0",
+        height: bottomHeight,
         backgroundColor: "#fff",
         borderLeft: `10px solid ${baseColor1}`,
         fontSize: fontSize,
@@ -218,11 +227,13 @@ function randomTextsOn() {
       line1.textContent = text1;
       line1.style.color = baseColor1;
       line1.style.textShadow = `-1.2px -1.2px 1px #444, 1.2px -1.2px 1px #444, -1.2px 1.2px 1px #444, 1.2px 1.2px 1px #444`;
+      line1.style.marginBottom = lineMarginBottom;
 
       const line2 = document.createElement("div");
       line2.textContent = text2;
       line2.style.color = baseColor2;
       line2.style.textShadow = `-1.2px -1.2px 1px #444, 1.2px -1.2px 1px #444, -1.2px 1.2px 1px #444, 1.2px 1.2px 1px #444`;
+      line2.style.marginTop = "0";
 
       note.appendChild(line1);
       note.appendChild(line2);
