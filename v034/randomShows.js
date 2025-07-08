@@ -4,6 +4,7 @@ let randomImagesLayer = null;
 let randomImageElements = [];
 let randomTextElements = [];
 let randomTextLayer = null;
+let randomImagesDataCache = null; // ★ JSONキャッシュ追加
 
 // ▼ 画像レイヤー作成
 function createRandomImagesLayer() {
@@ -73,70 +74,80 @@ function lightenColor(hex, percent) {
   return `rgb(${r},${g},${b})`;
 }
 
-// ▼ ランダム画像表示
+// ▼ ランダム画像表示（キャッシュ対応）
 function randomImagesOn() {
   if (!window.config || !config.randomPath) return;
-  fetch(`${config.randomPath}imageset01.json`)
-    .then(res => res.json())
-    .then(data => {
-      createRandomImagesLayer();
-      clearRandomImages();
 
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      const isMobilePortrait = w <= 768 && h > w;
-      const isMobileLandscape = w <= 768 && w >= h;
-      let cols = 3, rows = 2;
-      if (isMobilePortrait) { cols = 2; rows = 4; }
+  if (randomImagesDataCache) {
+    buildRandomImages(randomImagesDataCache);
+  } else {
+    fetch(`${config.randomPath}imageset01.json`)
+      .then(res => res.json())
+      .then(data => {
+        randomImagesDataCache = data;
+        buildRandomImages(data);
+      })
+      .catch(err => console.error("ランダム画像JSONの読み込みに失敗しました", err));
+  }
+}
 
-      const safeArea = {
-        x: w * 0.1,
-        y: h * 0.1,
-        width: w * 0.8,
-        height: h * 0.8
-      };
-      const cellWidth = safeArea.width / cols;
-      const cellHeight = safeArea.height / rows;
-      const positions = [];
-      for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
-          positions.push({ x, y });
-        }
-      }
+// ▼ 画像DOM構築（リサイズ時にも使用）
+function buildRandomImages(data) {
+  createRandomImagesLayer();
+  clearRandomImages();
 
-      const imageBasePath = data.picpath || config.randomPath;
-      const fixedImage = data.fixed;
-      const randomList = [...data.random];
-      shuffleArray(randomList);
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  const isMobilePortrait = w <= 768 && h > w;
+  let cols = 3, rows = 2;
+  if (isMobilePortrait) { cols = 2; rows = 4; }
 
-      positions.forEach((pos, index) => {
-        const img = document.createElement("img");
-        img.draggable = false;
-        img.style.position = "absolute";
-        img.style.objectFit = "contain";
-        img.style.pointerEvents = "none";
-        img.style.boxSizing = "border-box";
+  const safeArea = {
+    x: w * 0.1,
+    y: h * 0.1,
+    width: w * 0.8,
+    height: h * 0.8
+  };
+  const cellWidth = safeArea.width / cols;
+  const cellHeight = safeArea.height / rows;
+  const positions = [];
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      positions.push({ x, y });
+    }
+  }
 
-        const left = safeArea.x + cellWidth * pos.x;
-        const top = safeArea.y + cellHeight * pos.y;
-        Object.assign(img.style, {
-          left: `${left}px`,
-          top: `${top}px`,
-          width: `${cellWidth}px`,
-          height: `${cellHeight}px`,
-          maxWidth: "100%",
-          maxHeight: "100%"
-        });
+  const imageBasePath = data.picpath || config.randomPath;
+  const fixedImage = data.fixed;
+  const randomList = [...data.random];
+  shuffleArray(randomList);
 
-        img.src = index === 0 && fixedImage
-          ? imageBasePath + fixedImage
-          : imageBasePath + (randomList.shift() || "");
+  positions.forEach((pos, index) => {
+    const img = document.createElement("img");
+    img.draggable = false;
+    img.style.position = "absolute";
+    img.style.objectFit = "contain";
+    img.style.pointerEvents = "none";
+    img.style.boxSizing = "border-box";
 
-        randomImagesLayer.appendChild(img);
-        randomImageElements.push(img);
-      });
-    })
-    .catch(err => console.error("ランダム画像JSONの読み込みに失敗しました", err));
+    const left = safeArea.x + cellWidth * pos.x;
+    const top = safeArea.y + cellHeight * pos.y;
+    Object.assign(img.style, {
+      left: `${left}px`,
+      top: `${top}px`,
+      width: `${cellWidth}px`,
+      height: `${cellHeight}px`,
+      maxWidth: "100%",
+      maxHeight: "100%"
+    });
+
+    img.src = index === 0 && fixedImage
+      ? imageBasePath + fixedImage
+      : imageBasePath + (randomList.shift() || "");
+
+    randomImagesLayer.appendChild(img);
+    randomImageElements.push(img);
+  });
 }
 
 // ▼ ランダムテキスト表示
@@ -205,17 +216,13 @@ function randomTextsOn() {
 }
 
 // ▼ 非表示関数
-function randomImagesOff() {
-  clearRandomImages();
-}
-function randomTextsOff() {
-  clearRandomTexts();
-}
+function randomImagesOff() { clearRandomImages(); }
+function randomTextsOff() { clearRandomTexts(); }
 
-// ▼ 画面回転時に再描画（レイアウト崩れ防止）
+// ▼ 回転・リサイズ時にレイアウト再構成（キャッシュ利用）
 window.addEventListener("resize", () => {
-  if (randomImagesLayer) {
+  if (randomImagesLayer && randomImagesDataCache) {
     randomImagesOff();
-    randomImagesOn();
+    buildRandomImages(randomImagesDataCache);
   }
 });
