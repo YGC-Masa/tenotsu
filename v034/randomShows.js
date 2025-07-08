@@ -160,15 +160,15 @@ function randomTextsOn() {
 
       if (w <= 768 && h > w) {
         // モバイル縦
-        fontSize = "0.7em";
+        fontSize = "0.05em";
         padding = "0.4em 0.8em";
         lineGap = "0.25em";
         paddingBottom = "0.3em";
       } else if (w <= 768 && w >= h) {
         // モバイル横
-        fontSize = "0.75em";
-        padding = "0.075em 0.6em";
-        lineGap = "0.075em";
+        fontSize = "0.05em";
+        padding = "0.05em 0.6em";
+        lineGap = "0.05em";
         paddingBottom = "0.075em"; // ★ 下余白を抑える
       }
 
