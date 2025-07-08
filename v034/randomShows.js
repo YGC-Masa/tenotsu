@@ -154,16 +154,16 @@ function randomTextsOn() {
       
       // デフォルト
       let fontSize = "0.8em";
-      let padding = "0.5em 1em";
-      let lineGap = "0.3em";
+      let padding = "0.3em 1em";
+      let lineGap = "0.1em";
       let paddingBottom = "0.2em";
 
       if (w <= 768 && h > w) {
         // モバイル縦
         fontSize = "0.9em";
-        padding = "0.4em 0.8em";
-        lineGap = "0.25em";
-        paddingBottom = "0.3em";
+        padding = "0.3em 0.8em";
+        lineGap = "0.1em";
+        paddingBottom = "0.2em";
       } else if (w <= 768 && w >= h) {
         // モバイル横
         fontSize = "0.85em";
