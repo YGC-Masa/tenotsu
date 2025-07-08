@@ -153,22 +153,22 @@ function randomTextsOn() {
       const h = window.innerHeight;
       
       // デフォルト
-      let fontSize = "0.8em";
-      let padding = "0.1em 1em";
-      let lineGap = "0.1em";
-      let paddingBottom = "0.1em";
+      let fontSize = "0.5em";
+      let padding = "0.075em 1em";
+      let lineGap = "0.075em";
+      let paddingBottom = "0.075em";
 
       if (w <= 768 && h > w) {
         // モバイル縦
-        fontSize = "0.9em";
+        fontSize = "0.5em";
         padding = "0.1em 0.8em";
-        lineGap = "0.1em";
+        lineGap = "0.075em";
         paddingBottom = "0.2em";
       } else if (w <= 768 && w >= h) {
         // モバイル横
         fontSize = "0.5em";
-        padding = "0.1em 0.6em";
-        lineGap = "0.1em";
+        padding = "0.075em 0.6em";
+        lineGap = "0.075em";
         paddingBottom = "0.075em"; // ★ 下余白を抑える
       }
 
