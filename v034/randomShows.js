@@ -4,7 +4,9 @@ let randomImagesLayer = null;
 let randomImageElements = [];
 let randomTextElements = [];
 let randomTextLayer = null;
-let randomImagesDataCache = null; // ★ JSONキャッシュ追加
+
+let randomImagesDataCache = null;    // JSONデータキャッシュ
+let imagePathsCache = null;          // 表示する画像のパスキャッシュ（最大7件）
 
 // ▼ 画像レイヤー作成
 function createRandomImagesLayer() {
@@ -62,19 +64,7 @@ function shuffleArray(array) {
   }
 }
 
-// ▼ 色を薄く
-function lightenColor(hex, percent) {
-  const num = parseInt(hex.replace("#", ""), 16);
-  let r = (num >> 16) & 0xff;
-  let g = (num >> 8) & 0xff;
-  let b = num & 0xff;
-  r = Math.min(255, Math.floor(r + (255 - r) * (percent / 100)));
-  g = Math.min(255, Math.floor(g + (255 - g) * (percent / 100)));
-  b = Math.min(255, Math.floor(b + (255 - b) * (percent / 100)));
-  return `rgb(${r},${g},${b})`;
-}
-
-// ▼ ランダム画像表示（キャッシュ対応）
+// ▼ ランダム画像表示（最大7件・キャッシュ＆順序固定）
 function randomImagesOn() {
   if (!window.config || !config.randomPath) return;
 
@@ -91,7 +81,7 @@ function randomImagesOn() {
   }
 }
 
-// ▼ 画像DOM構築（リサイズ時にも使用）
+// ▼ 画像DOM構築（初回のみ画像選出→以後は順序保持で再描画）
 function buildRandomImages(data) {
   createRandomImagesLayer();
   clearRandomImages();
@@ -117,12 +107,31 @@ function buildRandomImages(data) {
     }
   }
 
-  const imageBasePath = data.picpath || config.randomPath;
-  const fixedImage = data.fixed;
-  const randomList = [...data.random];
-  shuffleArray(randomList);
+  // ▼ 初回のみ画像選出・順序確定
+  if (!imagePathsCache) {
+    const imageBasePath = data.picpath || config.randomPath;
+    const result = [];
 
-  positions.forEach((pos, index) => {
+    // 先頭に固定画像があれば入れる
+    if (data.fixed) result.push(imageBasePath + data.fixed);
+
+    const randomList = [...data.random];
+    shuffleArray(randomList);
+
+    const maxImages = Math.min(7, positions.length);
+    const needed = maxImages - result.length;
+
+    for (let i = 0; i < needed; i++) {
+      result.push(imageBasePath + randomList[i]);
+    }
+
+    imagePathsCache = result;
+  }
+
+  // ▼ キャッシュに基づいて描画
+  imagePathsCache.forEach((path, index) => {
+    if (!positions[index]) return;
+    const pos = positions[index];
     const img = document.createElement("img");
     img.draggable = false;
     img.style.position = "absolute";
@@ -141,16 +150,13 @@ function buildRandomImages(data) {
       maxHeight: "100%"
     });
 
-    img.src = index === 0 && fixedImage
-      ? imageBasePath + fixedImage
-      : imageBasePath + (randomList.shift() || "");
-
+    img.src = path;
     randomImagesLayer.appendChild(img);
     randomImageElements.push(img);
   });
 }
 
-// ▼ ランダムテキスト表示
+// ▼ ランダムテキスト表示（従来通り）
 function randomTextsOn() {
   if (!window.config || !config.randomPath) return;
 
@@ -216,10 +222,14 @@ function randomTextsOn() {
 }
 
 // ▼ 非表示関数
-function randomImagesOff() { clearRandomImages(); }
-function randomTextsOff() { clearRandomTexts(); }
+function randomImagesOff() {
+  clearRandomImages();
+}
+function randomTextsOff() {
+  clearRandomTexts();
+}
 
-// ▼ 回転・リサイズ時にレイアウト再構成（キャッシュ利用）
+// ▼ 回転時の再描画（シャッフルなしで再配置）
 window.addEventListener("resize", () => {
   if (randomImagesLayer && randomImagesDataCache) {
     randomImagesOff();
