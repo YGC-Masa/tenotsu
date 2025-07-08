@@ -6,7 +6,7 @@ let randomTextElements = [];
 let randomTextLayer = null;
 
 let randomImagesDataCache = null;    // JSONデータキャッシュ
-let imagePathsCache = null;          // 表示する画像のパスキャッシュ（最大8件）
+let imagePathsCache = null;          // 最大8枚の画像パスキャッシュ
 
 // ▼ 画像レイヤー作成
 function createRandomImagesLayer() {
@@ -64,7 +64,7 @@ function shuffleArray(array) {
   }
 }
 
-// ▼ ランダム画像表示（最大8件・キャッシュ＆順序固定）
+// ▼ ランダム画像表示（常に8枚キャッシュ・必要数だけ描画）
 function randomImagesOn() {
   if (!window.config || !config.randomPath) return;
 
@@ -81,7 +81,7 @@ function randomImagesOn() {
   }
 }
 
-// ▼ 画像DOM構築（初回のみ画像選出→以後は順序保持で再描画）
+// ▼ 画像描画（初回のみ最大8枚キャッシュ）
 function buildRandomImages(data) {
   createRandomImagesLayer();
   clearRandomImages();
@@ -107,18 +107,17 @@ function buildRandomImages(data) {
     }
   }
 
-  // ▼ 初回のみ画像選出・順序確定
+  // ▼ 初回のみキャッシュ作成（最大8枚）
   if (!imagePathsCache) {
     const imageBasePath = data.picpath || config.randomPath;
     const result = [];
 
-    // 先頭に固定画像があれば入れる
     if (data.fixed) result.push(imageBasePath + data.fixed);
 
     const randomList = [...data.random];
     shuffleArray(randomList);
 
-    const maxImages = Math.min(8, positions.length);
+    const maxImages = 8;
     const needed = maxImages - result.length;
 
     for (let i = 0; i < needed; i++) {
@@ -128,16 +127,15 @@ function buildRandomImages(data) {
     imagePathsCache = result;
   }
 
-  // ▼ キャッシュに基づいて描画
-  imagePathsCache.forEach((path, index) => {
-    if (!positions[index]) return;
+  // ▼ 現在のレイアウトに応じた数だけ表示
+  const usedPaths = imagePathsCache.slice(0, positions.length);
+  usedPaths.forEach((path, index) => {
     const pos = positions[index];
     const img = document.createElement("img");
     img.draggable = false;
     img.style.position = "absolute";
     img.style.objectFit = "contain";
     img.style.pointerEvents = "none";
-    img.style.boxSizing = "border-box";
 
     const left = safeArea.x + cellWidth * pos.x;
     const top = safeArea.y + cellHeight * pos.y;
@@ -156,7 +154,7 @@ function buildRandomImages(data) {
   });
 }
 
-// ▼ ランダムテキスト表示（従来通り）
+// ▼ ランダムテキスト表示（レスポンシブ対応フォント）
 function randomTextsOn() {
   if (!window.config || !config.randomPath) return;
 
@@ -186,19 +184,16 @@ function randomTextsOn() {
       const baseColor1 = style1.color || "#C0C0C0";
       const baseColor2 = style2.color || "#C0C0C0";
 
-      // ▼ レスポンシブ判定
       const w = window.innerWidth;
       const h = window.innerHeight;
       let fontSize = "1.0em";
       let padding = "0.5em 1em";
 
       if (w <= 768 && h > w) {
-        // モバイル縦
-        fontSize = "0.9em";
+        fontSize = "0.9em"; // モバイル縦
         padding = "0.4em 0.8em";
       } else if (w <= 768 && w >= h) {
-        // モバイル横
-        fontSize = "0.85em";
+        fontSize = "0.85em"; // モバイル横
         padding = "0.3em 0.6em";
       }
 
@@ -237,7 +232,6 @@ function randomTextsOn() {
     .catch(err => console.error("ランダムテキストJSONの読み込みに失敗しました", err));
 }
 
-
 // ▼ 非表示関数
 function randomImagesOff() {
   clearRandomImages();
@@ -246,7 +240,7 @@ function randomTextsOff() {
   clearRandomTexts();
 }
 
-// ▼ 回転時の再描画（シャッフルなしで再配置）
+// ▼ 回転・リサイズ時に再描画（キャッシュ活用）
 window.addEventListener("resize", () => {
   if (randomImagesLayer && randomImagesDataCache) {
     randomImagesOff();
