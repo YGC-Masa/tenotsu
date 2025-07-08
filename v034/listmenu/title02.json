@@ -5,6 +5,6 @@
     { "text": "⑧Purple？と遊ぶ", "action": "jump", "jump": "goto_rooftop.json" },
     { "text": "⑨White・Black？Twinsと遊ぶ", "action": "jump", "jump": "kogane_sample.json" },
     { "text": "⑩Braunと遊ぶ", "action": "jump", "jump": "kohaku_sample.json" },
-    { "text": "⑪前のメニュー", "action": "list", "jump": "title.json" }
+    { "text": "⑪前のメニュー", "action": "list", "list": "title.json" }
   ]
 }
