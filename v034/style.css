@@ -286,11 +286,42 @@ body {
 }
 
 /* ランダム画像 */
-.random-image {
+.random-image-grid {
   position: absolute;
-  object-fit: contain;
+  bottom: max(2vh, env(safe-area-inset-bottom));
+  left: max(2vw, env(safe-area-inset-left));
+  right: max(2vw, env(safe-area-inset-right));
+  height: 60vh;
+  display: grid;
+  gap: 6px;
+  z-index: 10;
   pointer-events: none;
 }
+
+.random-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+}
+
+/* モバイル縦（4列×2行 = 8枚） */
+@media (max-width: 768px) and (orientation: portrait) {
+  .random-image-grid {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+  }
+}
+
+/* PC・モバイル横（3列×2行 = 6枚） */
+@media (min-width: 769px), (orientation: landscape) {
+  .random-image-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+  }
+}
+
 
 /* ランダムテキスト（付箋） */
 /* ランダムテキストレイヤー */
