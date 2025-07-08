@@ -186,6 +186,22 @@ function randomTextsOn() {
       const baseColor1 = style1.color || "#C0C0C0";
       const baseColor2 = style2.color || "#C0C0C0";
 
+      // ▼ レスポンシブ判定
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      let fontSize = "1.0em";
+      let padding = "0.5em 1em";
+
+      if (w <= 768 && h > w) {
+        // モバイル縦
+        fontSize = "0.9em";
+        padding = "0.4em 0.8em";
+      } else if (w <= 768 && w >= h) {
+        // モバイル横
+        fontSize = "0.85em";
+        padding = "0.3em 0.6em";
+      }
+
       const note = document.createElement("div");
       note.className = "random-text-note";
       Object.assign(note.style, {
@@ -195,9 +211,9 @@ function randomTextsOn() {
         bottom: "0",
         backgroundColor: "#fff",
         borderLeft: `10px solid ${baseColor1}`,
-        fontSize: "1.0em",
+        fontSize: fontSize,
         fontWeight: "bold",
-        padding: "0.5em 1em",
+        padding: padding,
         borderRadius: "0.5em",
         boxSizing: "border-box",
         zIndex: 3
@@ -220,6 +236,7 @@ function randomTextsOn() {
     })
     .catch(err => console.error("ランダムテキストJSONの読み込みに失敗しました", err));
 }
+
 
 // ▼ 非表示関数
 function randomImagesOff() {
