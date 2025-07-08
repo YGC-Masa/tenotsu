@@ -1,9 +1,0 @@
-{
-  "items": [
-    { "text": "① 出勤する", "action": "jump", "jump": "000start.json" },
-    { "text": "② 自動で進める", "action": "auto" },
-    { "text": "③ BGM/声/SEのON", "action": "unmute" },
-    { "text": "④ BGM/声/SEのOFF", "action": "mute" },
-    { "text": "⑤ 次のメニューへ", "action": "menu", "menu": "menu02.json" }
-  ]
-}
