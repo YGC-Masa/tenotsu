@@ -25,14 +25,14 @@ function createRandomImagesLayer() {
   document.body.appendChild(randomImagesLayer);
 }
 
-// ▼ テキストレイヤー作成
+// ▼ テキストレイヤー作成（セーフエリアボトム対応）
 function createRandomTextLayer() {
   if (randomTextLayer) return;
   randomTextLayer = document.getElementById("random-text-layer") || document.createElement("div");
   randomTextLayer.id = "random-text-layer";
   Object.assign(randomTextLayer.style, {
     position: "absolute",
-  　bottom: "env(safe-area-inset-bottom)",  // セーフエリア対応に修正
+    bottom: "env(safe-area-inset-bottom)",  // セーフエリア対応
     left: "0",
     width: "100%",
     height: "10%",
