@@ -153,7 +153,7 @@ function randomTextsOn() {
       const h = window.innerHeight;
       
       // デフォルト
-      let fontSize = "0.8em";
+      let fontSize = "1em";
       let padding = "0.075em 1em";
       let lineGap = "0.05em";
       let paddingBottom = "0.075em";
