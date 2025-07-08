@@ -166,10 +166,10 @@ function randomTextsOn() {
         paddingBottom = "0.3em";
       } else if (w <= 768 && w >= h) {
         // モバイル横
-        fontSize = "0.8em";
-        padding = "0.1em 0.6em";
-        lineGap = "0.1em";
-        paddingBottom = "0.1em"; // ★ 下余白を抑える
+        fontSize = "0.75em";
+        padding = "0.075em 0.6em";
+        lineGap = "0.075em";
+        paddingBottom = "0.075em"; // ★ 下余白を抑える
       }
 
       const note = document.createElement("div");
