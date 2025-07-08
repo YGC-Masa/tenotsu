@@ -1,10 +1,10 @@
 {
   "items": [
-    { "text": "⑥Pink？と遊ぶ", "action": "jump", "jump": "gamestart.json" },
-    { "text": "⑦Aqua？と遊ぶ", "action": "jump", "jump": "goto_library.json" },
-    { "text": "⑧Purple？と遊ぶ", "action": "jump", "jump": "goto_rooftop.json" },
-    { "text": "⑨White・Black？Twinsと遊ぶ", "action": "jump", "jump": "kogane_sample.json" },
-    { "text": "⑩Braunと遊ぶ", "action": "jump", "jump": "kohaku_sample.json" },
+    { "text": "⑥Pink？と遊ぶ", "action": "jump", "jump": "pink.json" },
+    { "text": "⑦Aqua？と遊ぶ", "action": "jump", "jump": "aqua.json" },
+    { "text": "⑧Purple？と遊ぶ", "action": "jump", "jump": "purple.json" },
+    { "text": "⑨White・Black？Twinsと遊ぶ", "action": "jump", "jump": "twins.json" },
+    { "text": "⑩Brownと遊ぶ", "action": "jump", "jump": "brown.json" },
     { "text": "⑪前のメニュー", "action": "list", "list": "title.json" }
   ]
 }
