@@ -1,9 +1,6 @@
 {
   "items": [
-    { "text": "① 出勤する", "action": "jump", "jump": "000start.json" },
-    { "text": "② 自動で進める", "action": "auto" },
-    { "text": "③ BGM/声/SEのON/OFF", "action": "mute" },
-    { "text": "④ 緋奈と遊ぶ", "action": "jump", "jump": "a00000.json" },
-    { "text": "⑤ 次のメニューへ", "action": "menu", "menu": "menu02.json" }
+    { "text": "① タイトルへ戻る", "action": "jump", "jump": "000start.json" },
+    { "text": "② アンケート", "action": "url","url":"https://www.google.com" }
   ]
 }
