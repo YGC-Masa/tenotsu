@@ -5,13 +5,13 @@ let randomImageElements = [];
 let randomTextElements = [];
 let randomTextLayer = null;
 
-let randomImagesDataCache = null;    // JSONデータキャッシュ
-let imagePathsCache = null;          // 最大8枚の画像パスキャッシュ
+let randomImagesDataCache = null;
+let imagePathsCache = null;
 
 // ▼ 画像レイヤー作成
 function createRandomImagesLayer() {
   if (randomImagesLayer) return;
-  randomImagesLayer = document.getElementById("random-images-layer") || document.createElement("div");
+  randomImagesLayer = document.createElement("div");
   randomImagesLayer.id = "random-images-layer";
   Object.assign(randomImagesLayer.style, {
     position: "absolute",
@@ -25,38 +25,23 @@ function createRandomImagesLayer() {
   document.body.appendChild(randomImagesLayer);
 }
 
-// ▼ テキストレイヤー作成（セーフエリアボトム対応）
+// ▼ テキストレイヤー作成（bottom: 0）
 function createRandomTextLayer() {
   if (randomTextLayer) return;
-  randomTextLayer = document.getElementById("random-text-layer") || document.createElement("div");
+  randomTextLayer = document.createElement("div");
   randomTextLayer.id = "random-text-layer";
   Object.assign(randomTextLayer.style, {
     position: "absolute",
-    bottom: "env(safe-area-inset-bottom)",  // セーフエリア対応
+    bottom: "0",
     left: "0",
     width: "100%",
-    height: "10%",
     zIndex: "3",
     pointerEvents: "none"
   });
   document.body.appendChild(randomTextLayer);
 }
 
-// ▼ 画像クリア
-function clearRandomImages() {
-  if (!randomImagesLayer) return;
-  randomImagesLayer.innerHTML = "";
-  randomImageElements = [];
-}
-
-// ▼ テキストクリア
-function clearRandomTexts() {
-  if (!randomTextLayer) return;
-  randomTextLayer.innerHTML = "";
-  randomTextElements = [];
-}
-
-// ▼ 配列シャッフル
+// ▼ シャッフル
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -64,7 +49,19 @@ function shuffleArray(array) {
   }
 }
 
-// ▼ ランダム画像表示（常に8枚キャッシュ・必要数だけ描画）
+// ▼ 画像クリア
+function clearRandomImages() {
+  if (randomImagesLayer) randomImagesLayer.innerHTML = "";
+  randomImageElements = [];
+}
+
+// ▼ テキストクリア
+function clearRandomTexts() {
+  if (randomTextLayer) randomTextLayer.innerHTML = "";
+  randomTextElements = [];
+}
+
+// ▼ 画像表示（最大8枚キャッシュ利用）
 function randomImagesOn() {
   if (!window.config || !config.randomPath) return;
 
@@ -77,84 +74,57 @@ function randomImagesOn() {
         randomImagesDataCache = data;
         buildRandomImages(data);
       })
-      .catch(err => console.error("ランダム画像JSONの読み込みに失敗しました", err));
+      .catch(err => console.error("画像JSON読み込み失敗", err));
   }
 }
 
-// ▼ 画像描画（初回のみ最大8枚キャッシュ）
 function buildRandomImages(data) {
   createRandomImagesLayer();
   clearRandomImages();
 
   const w = window.innerWidth;
   const h = window.innerHeight;
-  const isMobilePortrait = w <= 768 && h > w;
+  const isPortrait = w <= 768 && h > w;
   let cols = 3, rows = 2;
-  if (isMobilePortrait) { cols = 2; rows = 4; }
+  if (isPortrait) { cols = 2; rows = 4; }
 
-  const safeArea = {
-    x: w * 0.1,
-    y: h * 0.1,
-    width: w * 0.8,
-    height: h * 0.8
-  };
-  const cellWidth = safeArea.width / cols;
-  const cellHeight = safeArea.height / rows;
+  const safeArea = { x: w * 0.1, y: h * 0.1, width: w * 0.8, height: h * 0.8 };
+  const cellW = safeArea.width / cols;
+  const cellH = safeArea.height / rows;
+
   const positions = [];
-  for (let y = 0; y < rows; y++) {
-    for (let x = 0; x < cols; x++) {
-      positions.push({ x, y });
-    }
-  }
+  for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) positions.push({ x, y });
 
-  // ▼ 初回のみキャッシュ作成（最大8枚）
   if (!imagePathsCache) {
-    const imageBasePath = data.picpath || config.randomPath;
-    const result = [];
-
-    if (data.fixed) result.push(imageBasePath + data.fixed);
-
-    const randomList = [...data.random];
-    shuffleArray(randomList);
-
-    const maxImages = 8;
-    const needed = maxImages - result.length;
-
-    for (let i = 0; i < needed; i++) {
-      result.push(imageBasePath + randomList[i]);
-    }
-
-    imagePathsCache = result;
+    const base = data.picpath || config.randomPath;
+    const list = [];
+    if (data.fixed) list.push(base + data.fixed);
+    const rand = [...data.random];
+    shuffleArray(rand);
+    while (list.length < 8 && rand.length) list.push(base + rand.shift());
+    imagePathsCache = list;
   }
 
-  // ▼ 現在のレイアウトに応じた数だけ表示
-  const usedPaths = imagePathsCache.slice(0, positions.length);
-  usedPaths.forEach((path, index) => {
-    const pos = positions[index];
+  const selected = imagePathsCache.slice(0, positions.length);
+  selected.forEach((src, i) => {
+    const { x, y } = positions[i];
     const img = document.createElement("img");
-    img.draggable = false;
-    img.style.position = "absolute";
-    img.style.objectFit = "contain";
-    img.style.pointerEvents = "none";
-
-    const left = safeArea.x + cellWidth * pos.x;
-    const top = safeArea.y + cellHeight * pos.y;
+    img.src = src;
     Object.assign(img.style, {
-      left: `${left}px`,
-      top: `${top}px`,
-      width: `${cellWidth}px`,
-      height: `${cellHeight}px`,
-      maxWidth: "100%",
-      maxHeight: "100%"
+      position: "absolute",
+      left: `${safeArea.x + cellW * x}px`,
+      top: `${safeArea.y + cellH * y}px`,
+      width: `${cellW}px`,
+      height: `${cellH}px`,
+      objectFit: "contain",
+      pointerEvents: "none"
     });
-
-    img.src = path;
     randomImagesLayer.appendChild(img);
     randomImageElements.push(img);
   });
 }
 
-// ▼ ランダムテキスト表示（レスポンシブ対応フォント・高さ調整）
+// ▼ テキスト表示（セーフエリア + モバイル向け調整）
 function randomTextsOn() {
   if (!window.config || !config.randomPath) return;
 
@@ -166,58 +136,54 @@ function randomTextsOn() {
 
       if (data.length < 4) return;
 
-      const pairCount = data.length / 2;
-      const selectedIndexes = [];
-      while (selectedIndexes.length < 2) {
-        const idx = Math.floor(Math.random() * pairCount);
-        if (!selectedIndexes.includes(idx)) selectedIndexes.push(idx);
+      const selected = [];
+      const pairs = data.length / 2;
+      while (selected.length < 2) {
+        const i = Math.floor(Math.random() * pairs);
+        if (!selected.includes(i)) selected.push(i);
       }
 
-      const charName1 = data[selectedIndexes[0] * 2];
-      const charName2 = data[selectedIndexes[1] * 2];
-      const text1 = data[selectedIndexes[0] * 2 + 1];
-      const text2 = data[selectedIndexes[1] * 2 + 1];
+      const name1 = data[selected[0] * 2];
+      const text1 = data[selected[0] * 2 + 1];
+      const name2 = data[selected[1] * 2];
+      const text2 = data[selected[1] * 2 + 1];
 
-      const style1 = characterStyles[charName1] || characterStyles[""];
-      const style2 = characterStyles[charName2] || characterStyles[""];
-
-      const baseColor1 = style1.color || "#C0C0C0";
-      const baseColor2 = style2.color || "#C0C0C0";
+      const s1 = characterStyles[name1] || characterStyles[""];
+      const s2 = characterStyles[name2] || characterStyles[""];
+      const c1 = s1.color || "#C0C0C0";
+      const c2 = s2.color || "#C0C0C0";
 
       const w = window.innerWidth;
       const h = window.innerHeight;
       let fontSize = "1.0em";
       let padding = "0.5em 1em";
-      let bottomHeight = "10%";  // 付箋の高さ
-      let lineMarginBottom = "0.3em";
+      let height = "10%";
+      let marginBottom = "0.3em";
 
       if (w <= 768 && h > w) {
-        // モバイル縦
         fontSize = "0.9em";
         padding = "0.4em 0.8em";
-        bottomHeight = "10%";
-        lineMarginBottom = "0.3em";
-      } else if (w <= 768 && w >= h) {
-        // モバイル横
+        height = "10%";
+      } else if (w <= 768 && w <= h) {
         fontSize = "0.85em";
         padding = "0.3em 0.6em";
-        bottomHeight = "8%";        // 高さを少し小さく
-        lineMarginBottom = "0.15em"; // 行間も詰める
+        height = "8%";
+        marginBottom = "0.15em";
       }
 
       const note = document.createElement("div");
-      note.className = "random-text-note";
       Object.assign(note.style, {
         position: "absolute",
         left: "5%",
         width: "90%",
         bottom: "0",
-        height: bottomHeight,
+        height,
         backgroundColor: "#fff",
-        borderLeft: `10px solid ${baseColor1}`,
-        fontSize: fontSize,
+        borderLeft: `10px solid ${c1}`,
+        fontSize,
         fontWeight: "bold",
-        padding: padding,
+        padding,
+        paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.3em)", // 安全領域考慮
         borderRadius: "0.5em",
         boxSizing: "border-box",
         zIndex: 3
@@ -225,33 +191,28 @@ function randomTextsOn() {
 
       const line1 = document.createElement("div");
       line1.textContent = text1;
-      line1.style.color = baseColor1;
-      line1.style.textShadow = `-1.2px -1.2px 1px #444, 1.2px -1.2px 1px #444, -1.2px 1.2px 1px #444, 1.2px 1.2px 1px #444`;
-      line1.style.marginBottom = lineMarginBottom;
+      line1.style.color = c1;
+      line1.style.textShadow = "-1px -1px 1px #444, 1px -1px 1px #444, -1px 1px 1px #444, 1px 1px 1px #444";
+      line1.style.marginBottom = marginBottom;
 
       const line2 = document.createElement("div");
       line2.textContent = text2;
-      line2.style.color = baseColor2;
-      line2.style.textShadow = `-1.2px -1.2px 1px #444, 1.2px -1.2px 1px #444, -1.2px 1.2px 1px #444, 1.2px 1.2px 1px #444`;
-      line2.style.marginTop = "0";
+      line2.style.color = c2;
+      line2.style.textShadow = "-1px -1px 1px #444, 1px -1px 1px #444, -1px 1px 1px #444, 1px 1px 1px #444";
 
       note.appendChild(line1);
       note.appendChild(line2);
       randomTextLayer.appendChild(note);
       randomTextElements.push(note);
     })
-    .catch(err => console.error("ランダムテキストJSONの読み込みに失敗しました", err));
+    .catch(err => console.error("テキストJSON読み込み失敗", err));
 }
 
-// ▼ 非表示関数
-function randomImagesOff() {
-  clearRandomImages();
-}
-function randomTextsOff() {
-  clearRandomTexts();
-}
+// ▼ 非表示
+function randomImagesOff() { clearRandomImages(); }
+function randomTextsOff() { clearRandomTexts(); }
 
-// ▼ 回転・リサイズ時に再描画（キャッシュ活用）
+// ▼ リサイズ時に再描画
 window.addEventListener("resize", () => {
   if (randomImagesLayer && randomImagesDataCache) {
     randomImagesOff();
