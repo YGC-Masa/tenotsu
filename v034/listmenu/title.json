@@ -5,6 +5,6 @@
     { "text": "③翠と遊ぶ", "action": "jump", "jump": "goto_rooftop.json" },
     { "text": "④こがねと遊ぶ", "action": "jump", "jump": "kogane_sample.json" },
     { "text": "⑤琥珀と遊ぶ", "action": "jump", "jump": "kohaku_sample.json" },
-    { "text": "⑥次のメニュー", "action": "list", "jump": "title02.json" }
+    { "text": "⑥次のメニュー", "action": "list", "list": "title02.json" }
   ]
 }
