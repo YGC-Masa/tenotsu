@@ -8,7 +8,7 @@ let randomTextLayer = null;
 let randomImagesDataCache = null;
 let imagePathsCache = null;
 
-// ▼ 画像レイヤー作成
+// ▼ レイヤー作成
 function createRandomImagesLayer() {
   if (randomImagesLayer) return;
   randomImagesLayer = document.createElement("div");
@@ -25,7 +25,6 @@ function createRandomImagesLayer() {
   document.body.appendChild(randomImagesLayer);
 }
 
-// ▼ テキストレイヤー作成（bottom: 0）
 function createRandomTextLayer() {
   if (randomTextLayer) return;
   randomTextLayer = document.createElement("div");
@@ -41,6 +40,17 @@ function createRandomTextLayer() {
   document.body.appendChild(randomTextLayer);
 }
 
+// ▼ クリア
+function clearRandomImages() {
+  if (randomImagesLayer) randomImagesLayer.innerHTML = "";
+  randomImageElements = [];
+}
+
+function clearRandomTexts() {
+  if (randomTextLayer) randomTextLayer.innerHTML = "";
+  randomTextElements = [];
+}
+
 // ▼ シャッフル
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -49,19 +59,7 @@ function shuffleArray(array) {
   }
 }
 
-// ▼ 画像クリア
-function clearRandomImages() {
-  if (randomImagesLayer) randomImagesLayer.innerHTML = "";
-  randomImageElements = [];
-}
-
-// ▼ テキストクリア
-function clearRandomTexts() {
-  if (randomTextLayer) randomTextLayer.innerHTML = "";
-  randomTextElements = [];
-}
-
-// ▼ 画像表示（最大8枚キャッシュ利用）
+// ▼ ランダム画像表示
 function randomImagesOn() {
   if (!window.config || !config.randomPath) return;
 
@@ -124,7 +122,7 @@ function buildRandomImages(data) {
   });
 }
 
-// ▼ テキスト表示（セーフエリア + モバイル向け調整）
+// ▼ ランダムテキスト表示
 function randomTextsOn() {
   if (!window.config || !config.randomPath) return;
 
@@ -157,18 +155,18 @@ function randomTextsOn() {
       const h = window.innerHeight;
       let fontSize = "1.0em";
       let padding = "0.5em 1em";
-      let height = "10%";
-      let marginBottom = "0.3em";
+      let lineGap = "0.3em";
 
       if (w <= 768 && h > w) {
+        // モバイル縦
         fontSize = "0.9em";
         padding = "0.4em 0.8em";
-        height = "10%";
-      } else if (w <= 768 && w <= h) {
+        lineGap = "0.25em";
+      } else if (w <= 768 && w > h) {
+        // モバイル横
         fontSize = "0.85em";
         padding = "0.3em 0.6em";
-        height = "8%";
-        marginBottom = "0.15em";
+        lineGap = "0.15em";
       }
 
       const note = document.createElement("div");
@@ -177,23 +175,23 @@ function randomTextsOn() {
         left: "5%",
         width: "90%",
         bottom: "0",
-        height,
         backgroundColor: "#fff",
         borderLeft: `10px solid ${c1}`,
         fontSize,
         fontWeight: "bold",
         padding,
-        paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.3em)", // 安全領域考慮
+        paddingBottom: `calc(env(safe-area-inset-bottom, 0px) + 0.4em)`,
         borderRadius: "0.5em",
         boxSizing: "border-box",
         zIndex: 3
+        // height は指定しない（自動）
       });
 
       const line1 = document.createElement("div");
       line1.textContent = text1;
       line1.style.color = c1;
+      line1.style.marginBottom = lineGap;
       line1.style.textShadow = "-1px -1px 1px #444, 1px -1px 1px #444, -1px 1px 1px #444, 1px 1px 1px #444";
-      line1.style.marginBottom = marginBottom;
 
       const line2 = document.createElement("div");
       line2.textContent = text2;
@@ -208,11 +206,11 @@ function randomTextsOn() {
     .catch(err => console.error("テキストJSON読み込み失敗", err));
 }
 
-// ▼ 非表示
+// ▼ OFF系
 function randomImagesOff() { clearRandomImages(); }
 function randomTextsOff() { clearRandomTexts(); }
 
-// ▼ リサイズ時に再描画
+// ▼ リサイズ時にレイアウト再構成
 window.addEventListener("resize", () => {
   if (randomImagesLayer && randomImagesDataCache) {
     randomImagesOff();
