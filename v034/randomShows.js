@@ -32,7 +32,7 @@ function createRandomTextLayer() {
   randomTextLayer.id = "random-text-layer";
   Object.assign(randomTextLayer.style, {
     position: "absolute",
-    bottom: "0",
+  　bottom: "env(safe-area-inset-bottom)",  // セーフエリア対応に修正
     left: "0",
     width: "100%",
     height: "10%",
