@@ -294,6 +294,8 @@ function handleMenuAction(item) {
     loadScenario(item.jump);
   } else if (item.action === "menu" && item.menu) {
     loadMenu(item.menu);
+  } else if (item.action === "list" && item.list) {
+    loadList(item.list); // ← ★これを追加！
   } else if (item.action === "url" && item.url) {
     location.href = item.url;
   }
