@@ -6,7 +6,7 @@ let randomTextElements = [];
 let randomTextLayer = null;
 
 let randomImagesDataCache = null;    // JSONデータキャッシュ
-let imagePathsCache = null;          // 表示する画像のパスキャッシュ（最大7件）
+let imagePathsCache = null;          // 表示する画像のパスキャッシュ（最大8件）
 
 // ▼ 画像レイヤー作成
 function createRandomImagesLayer() {
@@ -64,7 +64,7 @@ function shuffleArray(array) {
   }
 }
 
-// ▼ ランダム画像表示（最大7件・キャッシュ＆順序固定）
+// ▼ ランダム画像表示（最大8件・キャッシュ＆順序固定）
 function randomImagesOn() {
   if (!window.config || !config.randomPath) return;
 
@@ -118,7 +118,7 @@ function buildRandomImages(data) {
     const randomList = [...data.random];
     shuffleArray(randomList);
 
-    const maxImages = Math.min(7, positions.length);
+    const maxImages = Math.min(8, positions.length);
     const needed = maxImages - result.length;
 
     for (let i = 0; i < needed; i++) {
