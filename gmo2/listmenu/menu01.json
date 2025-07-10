@@ -1,0 +1,6 @@
+{
+  "items": [
+    { "text": "① タイトルへ戻る", "action": "jump", "jump": "000start.json" },
+    { "text": "② アンケート", "action": "url","url":"https://www.google.com" }
+  ]
+}
