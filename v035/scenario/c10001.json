@@ -1,5 +1,5 @@
 [
-  { "bg": "bg011.jpg","name": "", "text": "（カチャッ……とPCの画面を慌てて閉じる）" },
+  { "bg": "bg011.jpg","bgEffect":　"fadein","name": "", "text": "（カチャッ……とPCの画面を慌てて閉じる）" },
   { "name": "店長", "text": "……よし。" },
   { "characters": [ "side":"left" ,"src": "c010201.webp"],"name": "翠", "text": "……今、何を隠しました？" },
   { "name": "", "text": "（いつの間にか背後に立っている）" },
