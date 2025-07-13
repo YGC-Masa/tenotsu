@@ -1,5 +1,5 @@
 window.characterStyles = {
-  "店長": { fontSize: "1.0em", speed: 40, color: "#111111" },
+  "店長": { fontSize: "1.0em", speed: 40, color: "#d3d3d3" },
   "": { fontSize: "1.0em", speed: 40, color: "#C0C0C0" },
   "緋奈": { fontSize: "1.1em", speed: 40, color: "#d3381c" },
   "藍": { fontSize: "1.0em", speed: 50, color: "#0279e0" },
