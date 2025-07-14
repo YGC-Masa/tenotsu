@@ -68,12 +68,10 @@ body {
   left: 5%;
   width: 30%;
 }
-
 #char-center {
   left: 35%;
   width: 30%;
 }
-
 #char-right {
   left: 65%;
   width: 30%;
@@ -90,7 +88,6 @@ body {
   overflow: hidden;
   pointer-events: none;
 }
-
 .ev-image,
 .cg-image {
   width: 100%;
@@ -104,7 +101,7 @@ body {
   pointer-events: none;
 }
 
-/* クリックレイヤー（透過） */
+/* クリックレイヤー */
 #click-layer {
   position: absolute;
   top: 0;
@@ -128,13 +125,11 @@ body {
   box-sizing: border-box;
   cursor: pointer;
 }
-
 .name-area {
   font-weight: bold;
   margin-bottom: 0.5em;
   font-size: 1.1em;
 }
-
 .text-area {
   line-height: 1.6;
   min-height: 3em;
@@ -148,7 +143,6 @@ body {
   text-align: center;
   z-index: 11;
 }
-
 .choices-area button {
   margin: 0.5em;
   padding: 0.5em 1em;
@@ -159,7 +153,6 @@ body {
   border-radius: 0.3em;
   cursor: pointer;
 }
-
 .choices-area button:hover {
   background-color: #555;
 }
@@ -181,7 +174,6 @@ body {
   z-index: 11;
   font-size: 14px;
 }
-
 .list-panel button {
   flex: 1;
   margin: 0.2em 0;
@@ -196,7 +188,6 @@ body {
   justify-content: center;
   align-items: center;
 }
-
 .list-panel button:hover {
   background: rgba(255, 20, 147, 0.95);
 }
@@ -218,7 +209,6 @@ body {
   z-index: 12;
   font-size: 14px;
 }
-
 .menu-panel button {
   flex: 1;
   margin: 0.2em 0;
@@ -233,12 +223,9 @@ body {
   justify-content: center;
   align-items: center;
 }
-
 .menu-panel button:hover {
   background: #444;
 }
-
-/* 音声トグル専用 */
 .menu-sound-toggle {
   font-weight: bold;
   padding: 0.8em 0.5em;
@@ -247,18 +234,7 @@ body {
   border-radius: 0.5em;
 }
 
-/* モバイル横画面用 */
-@media screen and (max-width: 768px) and (orientation: landscape) {
-  .menu-panel,
-  .list-panel {
-    top: 5%;
-    height: 75%;
-    width: 45%;
-    font-size: 12px;
-  }
-}
-
-/* モバイル縦画面用 */
+/* レスポンシブ */
 @media screen and (max-width: 768px) and (orientation: portrait) {
   .menu-panel,
   .list-panel {
@@ -268,8 +244,15 @@ body {
     font-size: 13px;
   }
 }
-
-/* PC画面用 */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  .menu-panel,
+  .list-panel {
+    top: 5%;
+    height: 75%;
+    width: 45%;
+    font-size: 12px;
+  }
+}
 @media screen and (min-width: 769px) {
   .menu-panel,
   .list-panel {
@@ -280,7 +263,6 @@ body {
   }
 }
 
-/* 共通非表示ユーティリティ */
 .hidden {
   display: none !important;
 }
@@ -294,9 +276,7 @@ body {
   z-index: 3;
 }
 
-
-/* ランダムテキスト（付箋） */
-/* ランダムテキストレイヤー */
+/* ランダムテキスト */
 #random-text-layer {
   position: absolute;
   bottom: 0;
@@ -308,25 +288,20 @@ body {
   user-select: none;
   font-family: 'Arial', sans-serif;
 }
-
-/* 付箋本体 */
 .random-text-note {
   position: absolute;
   font-size: 0.9em;
   border-radius: 0.5em;
   box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
   white-space: nowrap;
+  overflow-wrap: break-word;
   border-left: 8px solid var(--char-color, gray);
   display: flex;
   flex-direction: column;
   gap: 0.2em;
   padding: 0.5em 1em 0.5em 1.4em;
-  background-color: rgba(255, 255, 255, 0.9); /* JSで上書きされる */
+  background-color: rgba(255, 255, 255, 0.9);
 }
-
-
-
-/* 非表示用 */
 #random-text-layer.hidden {
   display: none !important;
 }
