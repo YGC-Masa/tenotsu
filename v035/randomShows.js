@@ -1,6 +1,8 @@
+// randomShows.js - 向き変更にも対応 + テキスト調整あり
+
 let randomImagesLayer = null;
 let randomImageElements = [];
-let cachedRandomImages = []; // 最大8枚キャッシュ
+let cachedRandomImages = [];
 let randomTextElements = [];
 let randomTextLayer = null;
 
@@ -40,7 +42,6 @@ function clearRandomImages() {
   if (!randomImagesLayer) return;
   randomImagesLayer.innerHTML = "";
   randomImageElements = [];
-  cachedRandomImages = [];
 }
 
 function clearRandomTexts() {
@@ -56,9 +57,19 @@ function shuffleArray(array) {
   }
 }
 
-function randomImagesOn() {
-  if (!window.config || !config.randomPath) return;
-  createRandomImagesLayer();
+function lightenColor(hex, percent) {
+  const num = parseInt(hex.replace("#", ""), 16);
+  let r = (num >> 16) & 0xff;
+  let g = (num >> 8) & 0xff;
+  let b = num & 0xff;
+  r = Math.min(255, Math.floor(r + (255 - r) * (percent / 100)));
+  g = Math.min(255, Math.floor(g + (255 - g) * (percent / 100)));
+  b = Math.min(255, Math.floor(b + (255 - b) * (percent / 100)));
+  return `rgb(${r},${g},${b})`;
+}
+
+function placeCachedImages() {
+  if (!cachedRandomImages.length) return;
   clearRandomImages();
 
   const w = window.innerWidth;
@@ -75,24 +86,6 @@ function randomImagesOn() {
     for (let x = 0; x < cols; x++)
       positions.push({ x, y });
 
-  if (cachedRandomImages.length !== 8) {
-    fetch(`${config.randomPath}imageset01.json`)
-      .then(res => res.json())
-      .then(data => {
-        const imageBasePath = data.picpath || config.randomPath;
-        const fixedImage = data.fixed;
-        const randomList = [...data.random];
-        shuffleArray(randomList);
-        const selected = [fixedImage, ...randomList.slice(0, 7)].filter(Boolean);
-        cachedRandomImages = selected.map(src => imageBasePath + src);
-        placeCachedImages(positions, cellWidth, cellHeight, safeArea);
-      });
-  } else {
-    placeCachedImages(positions, cellWidth, cellHeight, safeArea);
-  }
-}
-
-function placeCachedImages(positions, cellWidth, cellHeight, safeArea) {
   positions.forEach((pos, index) => {
     const img = document.createElement("img");
     img.draggable = false;
@@ -111,6 +104,27 @@ function placeCachedImages(positions, cellWidth, cellHeight, safeArea) {
     randomImagesLayer.appendChild(img);
     randomImageElements.push(img);
   });
+}
+
+function randomImagesOn() {
+  if (!window.config || !config.randomPath) return;
+  createRandomImagesLayer();
+
+  if (!cachedRandomImages.length) {
+    fetch(`${config.randomPath}imageset01.json`)
+      .then(res => res.json())
+      .then(data => {
+        const imageBasePath = data.picpath || config.randomPath;
+        const fixedImage = data.fixed;
+        const randomList = [...data.random];
+        shuffleArray(randomList);
+        const selected = [fixedImage, ...randomList.slice(0, 7)].filter(Boolean);
+        cachedRandomImages = selected.map(src => imageBasePath + src);
+        placeCachedImages();
+      });
+  } else {
+    placeCachedImages();
+  }
 }
 
 function randomTextsOn() {
@@ -141,46 +155,36 @@ function randomTextsOn() {
 
       const w = window.innerWidth;
       const h = window.innerHeight;
-      let fontSize = "1em", padding = "0.075em 1em", lineGap = "0.05em", paddingBottom = "0.075em";
-
-      if (w <= 768 && h > w) {
-        fontSize = "0.8em";
-        padding = "0.05em 0.8em";
-        paddingBottom = "0.2em";
-      } else if (w <= 768 && w >= h) {
-        fontSize = "0.8em";
-        padding = "0.05em 0.6em";
-        paddingBottom = "0.075em";
-      }
+      let fontSize = "1em";
+      if (w <= 768 && h > w) fontSize = "0.8em";
+      else if (w <= 768 && w >= h) fontSize = "0.75em";
 
       const note = document.createElement("div");
       Object.assign(note.style, {
         position: "absolute",
         left: "5%",
         width: "90%",
-        bottom: `calc(env(safe-area-inset-bottom, 0) + ${paddingBottom})`,
+        bottom: `calc(env(safe-area-inset-bottom, 0) + 0.2em)`,
         backgroundColor: "#fff",
         borderLeft: `10px solid ${color1}`,
         fontSize,
         fontWeight: "bold",
-        padding,
+        padding: "0.4em 0.8em",
         borderRadius: "0.5em",
         boxSizing: "border-box",
         zIndex: 3
       });
 
-      const shadow = "-1.2px -1.2px 1px #444, 1.2px -1.2px 1px #444, -1.2px 1.2px 1px #444, 1.2px 1.2px 1px #444";
-
       const line1 = document.createElement("div");
       line1.textContent = text1;
       line1.style.color = color1;
-      line1.style.marginBottom = lineGap;
-      line1.style.textShadow = shadow;
+      line1.style.marginBottom = "0.2em";
+      line1.style.textShadow = `-1.2px -1.2px 1px #444, 1.2px -1.2px 1px #444, -1.2px 1.2px 1px #444, 1.2px 1.2px 1px #444`;
 
       const line2 = document.createElement("div");
       line2.textContent = text2;
       line2.style.color = color2;
-      line2.style.textShadow = shadow;
+      line2.style.textShadow = `-1.2px -1.2px 1px #444, 1.2px -1.2px 1px #444, -1.2px 1.2px 1px #444, 1.2px 1.2px 1px #444`;
 
       note.appendChild(line1);
       note.appendChild(line2);
@@ -189,5 +193,14 @@ function randomTextsOn() {
     });
 }
 
-function randomImagesOff() { clearRandomImages(); }
-function randomTextsOff() { clearRandomTexts(); }
+function randomImagesOff() {
+  clearRandomImages();
+}
+
+function randomTextsOff() {
+  clearRandomTexts();
+}
+
+window.addEventListener("resize", () => {
+  placeCachedImages();
+});
