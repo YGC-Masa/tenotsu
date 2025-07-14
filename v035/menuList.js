@@ -1,26 +1,28 @@
+// menulist.js（モジュール対応版）
+
 const menuPanelElement = document.getElementById("menu-panel");
 const listPanelElement = document.getElementById("list-panel");
 
-function showMenuPanel() {
+export function showMenuPanel() {
   if (menuPanelElement) menuPanelElement.classList.remove("hidden");
 }
 
-function hideMenuPanel() {
+export function hideMenuPanel() {
   if (menuPanelElement) menuPanelElement.classList.add("hidden");
 }
 
-function menuPanelVisible() {
+export function menuPanelVisible() {
   return menuPanelElement && !menuPanelElement.classList.contains("hidden");
 }
 
-function showListPanel() {
+export function showListPanel() {
   if (listPanelElement) listPanelElement.classList.remove("hidden");
 }
 
-function hideListPanel() {
+export function hideListPanel() {
   if (listPanelElement) listPanelElement.classList.add("hidden");
 }
 
-function listPanelVisible() {
+export function listPanelVisible() {
   return listPanelElement && !listPanelElement.classList.contains("hidden");
 }
