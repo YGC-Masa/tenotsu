@@ -1,13 +1,9 @@
-// randomShows.js - 改訂版（レスポンシブ・resize対応）
-
 let randomImagesLayer = null;
 let randomImageElements = [];
-let cachedRandomImages = [];
+let cachedRandomImages = []; // 最大8枚キャッシュ
 let randomTextElements = [];
 let randomTextLayer = null;
-let lastOrientation = ""; // ★ 画面向き監視用
 
-// ▼ レイヤー作成
 function createRandomImagesLayer() {
   if (randomImagesLayer) return;
   randomImagesLayer = document.getElementById("random-images-layer") || document.createElement("div");
@@ -44,6 +40,7 @@ function clearRandomImages() {
   if (!randomImagesLayer) return;
   randomImagesLayer.innerHTML = "";
   randomImageElements = [];
+  cachedRandomImages = [];
 }
 
 function clearRandomTexts() {
@@ -59,12 +56,6 @@ function shuffleArray(array) {
   }
 }
 
-function getOrientation() {
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-  return w <= 768 ? (h > w ? "portrait" : "landscape") : "desktop";
-}
-
 function randomImagesOn() {
   if (!window.config || !config.randomPath) return;
   createRandomImagesLayer();
@@ -72,9 +63,9 @@ function randomImagesOn() {
 
   const w = window.innerWidth;
   const h = window.innerHeight;
-  const orientation = getOrientation();
+  const isMobilePortrait = w <= 768 && h > w;
   let cols = 3, rows = 2;
-  if (orientation === "portrait") { cols = 2; rows = 4; }
+  if (isMobilePortrait) { cols = 2; rows = 4; }
 
   const safeArea = { x: w * 0.1, y: h * 0.1, width: w * 0.8, height: h * 0.8 };
   const cellWidth = safeArea.width / cols;
@@ -95,11 +86,9 @@ function randomImagesOn() {
         const selected = [fixedImage, ...randomList.slice(0, 7)].filter(Boolean);
         cachedRandomImages = selected.map(src => imageBasePath + src);
         placeCachedImages(positions, cellWidth, cellHeight, safeArea);
-        lastOrientation = orientation;
       });
   } else {
     placeCachedImages(positions, cellWidth, cellHeight, safeArea);
-    lastOrientation = orientation;
   }
 }
 
@@ -108,13 +97,16 @@ function placeCachedImages(positions, cellWidth, cellHeight, safeArea) {
     const img = document.createElement("img");
     img.draggable = false;
     img.src = cachedRandomImages[index % cachedRandomImages.length];
-    img.className = "random-image";
     Object.assign(img.style, {
       position: "absolute",
       left: `${safeArea.x + cellWidth * pos.x}px`,
       top: `${safeArea.y + cellHeight * pos.y}px`,
       width: `${cellWidth}px`,
-      height: `${cellHeight}px`
+      height: `${cellHeight}px`,
+      objectFit: "contain",
+      pointerEvents: "none",
+      maxWidth: "100%",
+      maxHeight: "100%"
     });
     randomImagesLayer.appendChild(img);
     randomImageElements.push(img);
@@ -177,16 +169,18 @@ function randomTextsOn() {
         zIndex: 3
       });
 
+      const shadow = "-1.2px -1.2px 1px #444, 1.2px -1.2px 1px #444, -1.2px 1.2px 1px #444, 1.2px 1.2px 1px #444";
+
       const line1 = document.createElement("div");
       line1.textContent = text1;
       line1.style.color = color1;
       line1.style.marginBottom = lineGap;
-      line1.style.textShadow = "-1.2px -1.2px 1px #444, 1.2px -1.2px 1px #444, -1.2px 1.2px 1px #444, 1.2px 1.2px 1px #444";
+      line1.style.textShadow = shadow;
 
       const line2 = document.createElement("div");
       line2.textContent = text2;
       line2.style.color = color2;
-      line2.style.textShadow = "-1.2px -1.2px 1px #444, 1.2px -1.2px 1px #444, -1.2px 1.2px 1px #444, 1.2px 1.2px 1px #444";
+      line2.style.textShadow = shadow;
 
       note.appendChild(line1);
       note.appendChild(line2);
@@ -197,12 +191,3 @@ function randomTextsOn() {
 
 function randomImagesOff() { clearRandomImages(); }
 function randomTextsOff() { clearRandomTexts(); }
-
-// ▼ 向き変更時に再表示
-window.addEventListener("resize", () => {
-  const orientation = getOrientation();
-  if (orientation !== lastOrientation) {
-    if (randomImageElements.length > 0) randomImagesOn();
-    if (randomTextElements.length > 0) randomTextsOn();
-  }
-});
