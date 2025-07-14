@@ -1,4 +1,4 @@
-// script.js - v033-02（randomTextsOn 対応）
+// script.js - v033-02（ランダム対応＋最終話クリックでリスタート）
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
@@ -13,6 +13,7 @@ let currentSpeed = 40;
 let defaultSpeed = 40;
 let defaultFontSize = "1em";
 let textAreaVisible = true;
+let isEndOfStory = false; // ★ 終了フラグ
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -76,11 +77,7 @@ function updateCharacterDisplay() {
   for (const pos in charSlots) {
     const slot = charSlots[pos];
     const hasCharacter = slot.children.length > 0;
-    if (isPortrait) {
-      slot.classList.toggle("active", pos === lastActiveSide && hasCharacter);
-    } else {
-      slot.classList.toggle("active", hasCharacter);
-    }
+    slot.classList.toggle("active", isPortrait ? pos === lastActiveSide && hasCharacter : hasCharacter);
   }
 }
 
@@ -105,27 +102,15 @@ async function showScene(scene) {
   nameEl.textContent = "";
   evLayer.innerHTML = "";
   choicesEl.innerHTML = "";
+  isEndOfStory = false;
 
-  if (scene.textareashow !== undefined) {
-    updateTextAreaVisibility(scene.textareashow);
+  if (scene.textareashow !== undefined) updateTextAreaVisibility(scene.textareashow);
+  if (scene.randomimageson === false && typeof randomImagesOff === "function") randomImagesOff();
+  else if (scene.randomimageson === true && typeof randomImagesOn === "function") randomImagesOn();
+  if (scene.randomtexts !== undefined) {
+    if (scene.randomtexts && typeof randomTextsOn === "function") randomTextsOn();
+    else if (!scene.randomtexts && typeof randomTextsOff === "function") randomTextsOff();
   }
-
-  // ランダム画像表示のon/off
-  if (scene.randomimageson === false && typeof randomImagesOff === "function") {
-    randomImagesOff();
-  } else if (scene.randomimageson === true && typeof randomImagesOn === "function") {
-    randomImagesOn();
-  }
-
-  // ランダムテキストのon/off
-// ▼ この下に追加
-if (scene.randomtexts !== undefined) {
-  if (scene.randomtexts) {
-    if (typeof randomTextsOn === "function") randomTextsOn();
-  } else {
-    if (typeof randomTextsOff === "function") randomTextsOff();
-  }
-}
 
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
@@ -153,12 +138,9 @@ if (scene.randomtexts !== undefined) {
   }
 
   if (scene.bgm !== undefined) {
+    if (bgm) bgm.pause();
+    bgm = scene.bgm ? new Audio(config.bgmPath + scene.bgm) : null;
     if (bgm) {
-      bgm.pause();
-      bgm = null;
-    }
-    if (scene.bgm) {
-      bgm = new Audio(config.bgmPath + scene.bgm);
       bgm.loop = true;
       bgm.muted = isMuted;
       bgm.play();
@@ -196,7 +178,6 @@ if (scene.randomtexts !== undefined) {
     voice.muted = isMuted;
     voice.play();
   }
-
   if (scene.se) {
     const se = new Audio(config.sePath + scene.se);
     se.muted = isMuted;
@@ -212,11 +193,8 @@ if (scene.randomtexts !== undefined) {
         textEl.innerHTML = "";
         nameEl.textContent = "";
         evLayer.innerHTML = "";
-        if (choice.jump) {
-          loadScenario(choice.jump);
-        } else if (choice.url) {
-          location.href = choice.url;
-        }
+        if (choice.jump) loadScenario(choice.jump);
+        else if (choice.url) location.href = choice.url;
       };
       choicesEl.appendChild(btn);
     });
@@ -231,6 +209,7 @@ if (scene.randomtexts !== undefined) {
     }, autoWaitTime);
   }
 }
+
 function next() {
   fetch(config.scenarioPath + currentScenario + "?t=" + Date.now())
     .then((res) => res.json())
@@ -242,7 +221,8 @@ function next() {
       } else {
         if (textAreaVisible) {
           nameEl.textContent = "";
-          textEl.innerHTML = "（物語は つづく・・・）";
+          textEl.innerHTML = "（物語は つづく・・・クリックで最初に戻る）";
+          isEndOfStory = true;
         }
         isAutoMode = false;
       }
@@ -250,7 +230,6 @@ function next() {
 }
 
 function loadScenario(filename) {
-  // ランダム表示類はリセット
   if (typeof randomImagesOff === "function") randomImagesOff();
   if (typeof randomTextsOff === "function") randomTextsOff();
 
@@ -273,134 +252,24 @@ function loadScenario(filename) {
     });
 }
 
-function setVhVariable() {
-  let vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty("--vh", `${vh}px`);
-}
-
 window.addEventListener("resize", () => {
-  setVhVariable();
+  document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
   updateCharacterDisplay();
 });
 
 window.addEventListener("load", () => {
-  setVhVariable();
+  document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
   loadScenario(currentScenario);
-});
-
-// === メニュー関連 ===
-function handleMenuAction(item) {
-  if (item.action === "jump" && item.jump) {
-    loadScenario(item.jump);
-  } else if (item.action === "menu" && item.menu) {
-    loadMenu(item.menu);
-  } else if (item.action === "list" && item.list) {
-    loadList(item.list); // ← ★これを追加！
-  } else if (item.action === "url" && item.url) {
-    location.href = item.url;
-  }
-}
-
-async function loadMenu(filename = "menu01.json") {
-  const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
-  const data = await res.json();
-  showMenu(data);
-}
-
-function showMenu(menuData) {
-  menuPanel.innerHTML = "";
-  menuPanel.classList.remove("hidden");
-
-  const audioBtn = document.createElement("button");
-  audioBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
-  audioBtn.onclick = () => {
-    isMuted = !isMuted;
-    if (bgm) bgm.muted = isMuted;
-    document.querySelectorAll("audio").forEach(a => a.muted = isMuted);
-    menuPanel.classList.add("hidden");
-  };
-  menuPanel.appendChild(audioBtn);
-
-  const autoBtn = document.createElement("button");
-  autoBtn.textContent = isAutoMode ? "オートモードOFF" : "オートモードON";
-  autoBtn.onclick = () => {
-    isAutoMode = !isAutoMode;
-    if (isAutoMode) {
-      textEl.innerHTML = "(AutoMode On 3秒後開始)";
-      setTimeout(() => {
-        textEl.innerHTML = "";
-        setTimeout(() => {
-          if (!isPlaying && choicesEl.children.length === 0) next();
-        }, autoWaitTime);
-      }, 1000);
-    } else {
-      textEl.innerHTML = "(AutoMode Off)";
-      setTimeout(() => { textEl.innerHTML = ""; }, 1000);
-    }
-    menuPanel.classList.add("hidden");
-  };
-  menuPanel.appendChild(autoBtn);
-
-  const fullscreenBtn = document.createElement("button");
-  fullscreenBtn.textContent = document.fullscreenElement ? "全画面OFF" : "全画面ON";
-  fullscreenBtn.onclick = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen?.();
-    } else {
-      document.exitFullscreen?.();
-    }
-    menuPanel.classList.add("hidden");
-  };
-  menuPanel.appendChild(fullscreenBtn);
-
-  menuData.items.forEach(item => {
-    const btn = document.createElement("button");
-    btn.textContent = item.text;
-    btn.onclick = () => {
-      menuPanel.classList.add("hidden");
-      handleMenuAction(item);
-    };
-    menuPanel.appendChild(btn);
-  });
-}
-
-// === リスト関連 ===
-async function loadList(filename = "list01.json") {
-  const res = await fetch(config.listPath + filename + "?t=" + Date.now());
-  const data = await res.json();
-  showList(data);
-}
-
-function showList(listData) {
-  listPanel.innerHTML = "";
-  listPanel.classList.remove("hidden");
-
-  listData.items.slice(0, 7).forEach(item => {
-    const btn = document.createElement("button");
-    btn.textContent = item.text;
-    btn.onclick = () => {
-      listPanel.classList.add("hidden");
-      handleMenuAction(item);
-    };
-    listPanel.appendChild(btn);
-  });
-}
-
-// === 操作レイヤー：クリック・タッチ対応 ===
-clickLayer.addEventListener("dblclick", () => {
-  loadMenu("menu01.json");
-});
-
-let lastTouch = 0;
-clickLayer.addEventListener("touchend", () => {
-  const now = Date.now();
-  if (now - lastTouch < 200) loadMenu("menu01.json");
-  lastTouch = now;
 });
 
 clickLayer.addEventListener("click", () => {
   if (!menuPanel.classList.contains("hidden")) {
     menuPanel.classList.add("hidden");
+    return;
+  }
+  if (isEndOfStory) {
+    isEndOfStory = false;
+    loadScenario("000start.json");
     return;
   }
   if (!isPlaying && choicesEl.children.length === 0) {
