@@ -1,4 +1,13 @@
-// script.js - v033-03（menulist.js対応・メニュー表示修正・ダブル操作対応）
+// script.js - v033-02（ランダム対応＋最終話クリックでリスタート＋dblclick＆touch対応＋ESM menulist対応）
+
+import {
+  showMenuPanel,
+  hideMenuPanel,
+  menuPanelVisible,
+  showListPanel,
+  hideListPanel,
+  listPanelVisible
+} from "./menulist.js";
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
@@ -252,59 +261,16 @@ function loadScenario(filename) {
     });
 }
 
-// === メニュー・リスト関連 ===
-async function loadMenu(filename = "menu01.json") {
-  const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
-  const data = await res.json();
-  showMenu(data);
-}
+window.addEventListener("resize", () => {
+  document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
+  updateCharacterDisplay();
+});
 
-function showMenu(menuData) {
-  if (!menuData || !Array.isArray(menuData.items)) return;
-  menuPanel.innerHTML = "";
-  showMenuPanel();
+window.addEventListener("load", () => {
+  document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
+  loadScenario(currentScenario);
+});
 
-  menuData.items.forEach(item => {
-    const btn = document.createElement("button");
-    btn.textContent = item.text;
-    btn.onclick = () => {
-      hideMenuPanel();
-      handleMenuAction(item);
-    };
-    menuPanel.appendChild(btn);
-  });
-}
-
-async function loadList(filename = "list01.json") {
-  const res = await fetch(config.listPath + filename + "?t=" + Date.now());
-  const data = await res.json();
-  showList(data);
-}
-
-function showList(listData) {
-  if (!listData || !Array.isArray(listData.items)) return;
-  listPanel.innerHTML = "";
-  showListPanel();
-
-  listData.items.slice(0, 7).forEach(item => {
-    const btn = document.createElement("button");
-    btn.textContent = item.text;
-    btn.onclick = () => {
-      hideListPanel();
-      handleMenuAction(item);
-    };
-    listPanel.appendChild(btn);
-  });
-}
-
-function handleMenuAction(item) {
-  if (item.action === "jump" && item.jump) loadScenario(item.jump);
-  else if (item.action === "menu" && item.menu) loadMenu(item.menu);
-  else if (item.action === "list" && item.list) loadList(item.list);
-  else if (item.action === "url" && item.url) location.href = item.url;
-}
-
-// === ユーザー操作 ===
 clickLayer.addEventListener("click", () => {
   if (menuPanelVisible()) {
     hideMenuPanel();
@@ -328,24 +294,17 @@ clickLayer.addEventListener("dblclick", () => {
   }
 });
 
-// スマホのダブルタップ対応（250ms）
+// ▼ スマホのダブルタップ対応（250ms）
 let lastTapTime = 0;
 clickLayer.addEventListener("touchend", (e) => {
   const now = Date.now();
   if (now - lastTapTime < 250) {
-    if (menuPanelVisible()) hideMenuPanel();
-    else showMenuPanel();
+    if (menuPanelVisible()) {
+      hideMenuPanel();
+    } else {
+      showMenuPanel();
+    }
     e.preventDefault();
   }
   lastTapTime = now;
-});
-
-window.addEventListener("resize", () => {
-  document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
-  updateCharacterDisplay();
-});
-
-window.addEventListener("load", () => {
-  document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
-  loadScenario(currentScenario);
 });
