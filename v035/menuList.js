@@ -1,4 +1,4 @@
-// menulist.js（モジュール対応版）
+// menulist.js - ESモジュール対応
 
 const menuPanelElement = document.getElementById("menu-panel");
 const listPanelElement = document.getElementById("list-panel");
