@@ -1,4 +1,5 @@
 // script.js - v033-03（menulist.js対応・メニュー表示修正・ダブル操作対応・ESM対応）
+import { config } from "./config.js";
 
 import {
   showMenuPanel,
