@@ -1,4 +1,4 @@
-// script.js - v035-01（ランダム画像キャッシュ削除・再抽選対応）
+// script.js - v035-06（初期シナリオ自動スタート）
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
@@ -13,6 +13,7 @@ let currentSpeed = 40;
 let defaultSpeed = 40;
 let defaultFontSize = "1em";
 let textAreaVisible = true;
+let isEndReached = false;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -229,43 +230,53 @@ async function showScene(scene) {
   }
 }
 
-// script.js - v035-03（"物語はつづく…"後にクリックでタイトルに戻る）
-
-// （略）
-// 222行目以降の next() 関数の一部を以下のように更新
-
 function next() {
   fetch(config.scenarioPath + currentScenario + "?t=" + Date.now())
     .then((res) => res.json())
     .then((data) => {
-      currentIndex++;
       const scenes = Array.isArray(data) ? data : data.scenes;
+      if (isEndReached) {
+        isEndReached = false;
+        loadScenario("000start.json");
+        return;
+      }
+
+      currentIndex++;
       if (currentIndex < scenes.length) {
         showScene(scenes[currentIndex]);
       } else {
         if (textAreaVisible) {
           nameEl.textContent = "";
-          textEl.innerHTML = "（物語は つづく・・・クリックでタイトルに戻ります）";
+          textEl.innerHTML = "（物語は つづく・・・（クリックでタイトルに戻ります））";
         }
         isAutoMode = false;
-
-        // クリックで初期シナリオに戻るように一時リスナー登録
-        const returnToTitle = () => {
-          clickLayer.removeEventListener("click", returnToTitle);
-          loadScenario("000start.json");
-        };
-        clickLayer.addEventListener("click", returnToTitle);
+        isEndReached = true;
       }
     });
 }
 
+// 初回自動スタート（DOMContentLoaded）
+document.addEventListener("DOMContentLoaded", () => {
+  loadScenario("000start.json");
+});
+
+// （以下略）
 
 function loadScenario(filename) {
   if (typeof randomImagesOff === "function") randomImagesOff();
   if (typeof randomTextsOff === "function") randomTextsOff();
-  // ▼ v035: キャッシュもクリア（再抽選させる）
+
+  // キャッシュリセット
   if (typeof randomImagesDataCache !== "undefined") randomImagesDataCache = null;
   if (typeof imagePathsCache !== "undefined") imagePathsCache = null;
+  if (typeof preloadedImages !== "undefined") {
+    Object.values(preloadedImages).forEach(img => {
+      if (img.parentElement) {
+        img.parentElement.removeChild(img);
+      }
+    });
+    preloadedImages = {};
+  }
 
   currentScenario = filename;
   currentIndex = 0;
@@ -296,10 +307,6 @@ window.addEventListener("resize", () => {
   updateCharacterDisplay();
 });
 
-window.addEventListener("load", () => {
-  setVhVariable();
-  loadScenario(currentScenario);
-});
 
 // === メニュー関連 ===
 function handleMenuAction(item) {
@@ -308,7 +315,7 @@ function handleMenuAction(item) {
   } else if (item.action === "menu" && item.menu) {
     loadMenu(item.menu);
   } else if (item.action === "list" && item.list) {
-    loadList(item.list); // ← ★これを追加！
+    loadList(item.list);
   } else if (item.action === "url" && item.url) {
     location.href = item.url;
   }
