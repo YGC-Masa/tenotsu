@@ -1,4 +1,4 @@
-// script.js - v035-01（ランダム画像キャッシュ削除・再抽選対応）
+// script.js - v035-03（"物語はつづく…"後にクリックでタイトルに戻る／テキスト非表示時は戻らない）
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
@@ -229,11 +229,6 @@ async function showScene(scene) {
   }
 }
 
-// script.js - v035-03（"物語はつづく…"後にクリックでタイトルに戻る）
-
-// （略）
-// 222行目以降の next() 関数の一部を以下のように更新
-
 function next() {
   fetch(config.scenarioPath + currentScenario + "?t=" + Date.now())
     .then((res) => res.json())
@@ -249,21 +244,20 @@ function next() {
         }
         isAutoMode = false;
 
-        // クリックで初期シナリオに戻るように一時リスナー登録
-        const returnToTitle = () => {
-          clickLayer.removeEventListener("click", returnToTitle);
-          loadScenario("000start.json");
-        };
-        clickLayer.addEventListener("click", returnToTitle);
+        if (textAreaVisible) {
+          const returnToTitle = () => {
+            clickLayer.removeEventListener("click", returnToTitle);
+            loadScenario("000start.json");
+          };
+          clickLayer.addEventListener("click", returnToTitle);
+        }
       }
     });
 }
 
-
 function loadScenario(filename) {
   if (typeof randomImagesOff === "function") randomImagesOff();
   if (typeof randomTextsOff === "function") randomTextsOff();
-  // ▼ v035: キャッシュもクリア（再抽選させる）
   if (typeof randomImagesDataCache !== "undefined") randomImagesDataCache = null;
   if (typeof imagePathsCache !== "undefined") imagePathsCache = null;
 
@@ -308,7 +302,7 @@ function handleMenuAction(item) {
   } else if (item.action === "menu" && item.menu) {
     loadMenu(item.menu);
   } else if (item.action === "list" && item.list) {
-    loadList(item.list); // ← ★これを追加！
+    loadList(item.list);
   } else if (item.action === "url" && item.url) {
     location.href = item.url;
   }
