@@ -1,14 +1,4 @@
-// script.js - v035 完全修正版（ランダム＆メニュー対応、ESM＆関数登録）
-
-import { config } from "./config.js";
-import {
-  showMenuPanel,
-  hideMenuPanel,
-  menuPanelVisible,
-  showListPanel,
-  hideListPanel,
-  listPanelVisible
-} from "./menuList.js";
+// script.js - v033-02（randomTextsOn 対応）
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
@@ -23,12 +13,13 @@ let currentSpeed = 40;
 let defaultSpeed = 40;
 let defaultFontSize = "1em";
 let textAreaVisible = true;
-let isEndOfStory = false;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
 const textEl = document.getElementById("text");
 const choicesEl = document.getElementById("choices");
+const menuPanel = document.getElementById("menu-panel");
+const listPanel = document.getElementById("list-panel");
 const evLayer = document.getElementById("ev-layer");
 const clickLayer = document.getElementById("click-layer");
 const dialogueBox = document.getElementById("dialogue-box");
@@ -85,7 +76,11 @@ function updateCharacterDisplay() {
   for (const pos in charSlots) {
     const slot = charSlots[pos];
     const hasCharacter = slot.children.length > 0;
-    slot.classList.toggle("active", isPortrait ? pos === lastActiveSide && hasCharacter : hasCharacter);
+    if (isPortrait) {
+      slot.classList.toggle("active", pos === lastActiveSide && hasCharacter);
+    } else {
+      slot.classList.toggle("active", hasCharacter);
+    }
   }
 }
 
@@ -102,89 +97,6 @@ function updateTextAreaVisibility(show) {
   dialogueBox.classList.toggle("hidden", !show);
 }
 
-function next() {
-  fetch(config.scenarioPath + currentScenario + "?t=" + Date.now())
-    .then((res) => res.json())
-    .then((data) => {
-      currentIndex++;
-      const scenes = Array.isArray(data) ? data : data.scenes;
-      if (currentIndex < scenes.length) {
-        showScene(scenes[currentIndex]);
-      } else {
-        if (textAreaVisible) {
-          nameEl.textContent = "";
-          textEl.innerHTML = "（物語は つづく・・・クリックで最初に戻る）";
-          isEndOfStory = true;
-        }
-        isAutoMode = false;
-      }
-    });
-}
-
-function loadScenario(filename) {
-  if (typeof window.randomImagesOff === "function") window.randomImagesOff();
-  if (typeof window.randomTextsOff === "function") window.randomTextsOff();
-
-  currentScenario = filename;
-  currentIndex = 0;
-  clearCharacters();
-  textEl.innerHTML = "";
-  nameEl.textContent = "";
-  evLayer.innerHTML = "";
-  hideListPanel();
-  hideMenuPanel();
-  if (typingInterval) clearInterval(typingInterval);
-  updateTextAreaVisibility(true);
-
-  fetch(config.scenarioPath + filename + "?t=" + Date.now())
-    .then((res) => res.json())
-    .then((data) => {
-      const scenes = Array.isArray(data) ? data : data.scenes;
-      showScene(scenes[0]);
-    });
-}
-
-// メニュー表示中の操作
-clickLayer.addEventListener("click", () => {
-  if (menuPanelVisible()) {
-    hideMenuPanel();
-    return;
-  }
-  if (isEndOfStory) {
-    isEndOfStory = false;
-    loadScenario("000start.json");
-    return;
-  }
-  if (!isPlaying && choicesEl.children.length === 0) {
-    next();
-  }
-});
-
-clickLayer.addEventListener("dblclick", () => {
-  if (menuPanelVisible()) hideMenuPanel();
-  else showMenuPanel();
-});
-
-clickLayer.addEventListener("touchend", (e) => {
-  const now = Date.now();
-  if (now - lastTapTime < 250) {
-    if (menuPanelVisible()) hideMenuPanel();
-    else showMenuPanel();
-    e.preventDefault();
-  }
-  lastTapTime = now;
-});
-
-window.addEventListener("resize", () => {
-  document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
-  updateCharacterDisplay();
-});
-
-window.addEventListener("load", () => {
-  document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
-  loadScenario(currentScenario);
-});
-
 async function showScene(scene) {
   if (!scene) return;
   if (typingInterval) clearInterval(typingInterval);
@@ -193,13 +105,27 @@ async function showScene(scene) {
   nameEl.textContent = "";
   evLayer.innerHTML = "";
   choicesEl.innerHTML = "";
-  isEndOfStory = false;
 
-  if (scene.textareashow !== undefined) updateTextAreaVisibility(scene.textareashow);
-  if (scene.randomimageson && typeof window.randomImagesOn === "function") window.randomImagesOn();
-  else if (scene.randomimageson === false && typeof window.randomImagesOff === "function") window.randomImagesOff();
-  if (scene.randomtexts && typeof window.randomTextsOn === "function") window.randomTextsOn();
-  else if (scene.randomtexts === false && typeof window.randomTextsOff === "function") window.randomTextsOff();
+  if (scene.textareashow !== undefined) {
+    updateTextAreaVisibility(scene.textareashow);
+  }
+
+  // ランダム画像表示のon/off
+  if (scene.randomimageson === false && typeof randomImagesOff === "function") {
+    randomImagesOff();
+  } else if (scene.randomimageson === true && typeof randomImagesOn === "function") {
+    randomImagesOn();
+  }
+
+  // ランダムテキストのon/off
+// ▼ この下に追加
+if (scene.randomtexts !== undefined) {
+  if (scene.randomtexts) {
+    if (typeof randomTextsOn === "function") randomTextsOn();
+  } else {
+    if (typeof randomTextsOff === "function") randomTextsOff();
+  }
+}
 
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
@@ -210,8 +136,34 @@ async function showScene(scene) {
     await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
-  if (scene.showmenu) loadMenu(scene.showmenu);
-  if (scene.showlist) loadList(scene.showlist);
+  if (scene.showev) {
+    const evImg = document.createElement("img");
+    evImg.src = config.evPath + scene.showev;
+    evImg.classList.add("ev-image");
+    evImg.onload = () => applyEffect(evImg, scene.evEffect || "fadein");
+    evLayer.appendChild(evImg);
+  }
+
+  if (scene.showcg) {
+    const cgImg = document.createElement("img");
+    cgImg.src = config.cgPath + scene.showcg;
+    cgImg.classList.add("cg-image");
+    cgImg.onload = () => applyEffect(cgImg, scene.cgEffect || "fadein");
+    evLayer.appendChild(cgImg);
+  }
+
+  if (scene.bgm !== undefined) {
+    if (bgm) {
+      bgm.pause();
+      bgm = null;
+    }
+    if (scene.bgm) {
+      bgm = new Audio(config.bgmPath + scene.bgm);
+      bgm.loop = true;
+      bgm.muted = isMuted;
+      bgm.play();
+    }
+  }
 
   if (scene.characters) {
     lastActiveSide = scene.characters[scene.characters.length - 1]?.side || null;
@@ -260,63 +212,198 @@ async function showScene(scene) {
         textEl.innerHTML = "";
         nameEl.textContent = "";
         evLayer.innerHTML = "";
-        if (choice.jump) loadScenario(choice.jump);
-        else if (choice.url) location.href = choice.url;
+        if (choice.jump) {
+          loadScenario(choice.jump);
+        } else if (choice.url) {
+          location.href = choice.url;
+        }
       };
       choicesEl.appendChild(btn);
     });
   }
+
+  if (scene.showmenu) loadMenu(scene.showmenu);
+  if (scene.showlist) loadList(scene.showlist);
+
+  if (scene.auto && scene.choices === undefined && scene.text === undefined) {
+    setTimeout(() => {
+      if (!isPlaying) next();
+    }, autoWaitTime);
+  }
+}
+function next() {
+  fetch(config.scenarioPath + currentScenario + "?t=" + Date.now())
+    .then((res) => res.json())
+    .then((data) => {
+      currentIndex++;
+      const scenes = Array.isArray(data) ? data : data.scenes;
+      if (currentIndex < scenes.length) {
+        showScene(scenes[currentIndex]);
+      } else {
+        if (textAreaVisible) {
+          nameEl.textContent = "";
+          textEl.innerHTML = "（物語は つづく・・・）";
+        }
+        isAutoMode = false;
+      }
+    });
+}
+
+function loadScenario(filename) {
+  // ランダム表示類はリセット
+  if (typeof randomImagesOff === "function") randomImagesOff();
+  if (typeof randomTextsOff === "function") randomTextsOff();
+
+  currentScenario = filename;
+  currentIndex = 0;
+  clearCharacters();
+  textEl.innerHTML = "";
+  nameEl.textContent = "";
+  evLayer.innerHTML = "";
+  listPanel.classList.add("hidden");
+  menuPanel.classList.add("hidden");
+  if (typingInterval) clearInterval(typingInterval);
+  updateTextAreaVisibility(true);
+
+  fetch(config.scenarioPath + filename + "?t=" + Date.now())
+    .then((res) => res.json())
+    .then((data) => {
+      const scenes = Array.isArray(data) ? data : data.scenes;
+      showScene(scenes[0]);
+    });
+}
+
+function setVhVariable() {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
+}
+
+window.addEventListener("resize", () => {
+  setVhVariable();
+  updateCharacterDisplay();
+});
+
+window.addEventListener("load", () => {
+  setVhVariable();
+  loadScenario(currentScenario);
+});
+
+// === メニュー関連 ===
+function handleMenuAction(item) {
+  if (item.action === "jump" && item.jump) {
+    loadScenario(item.jump);
+  } else if (item.action === "menu" && item.menu) {
+    loadMenu(item.menu);
+  } else if (item.action === "list" && item.list) {
+    loadList(item.list); // ← ★これを追加！
+  } else if (item.action === "url" && item.url) {
+    location.href = item.url;
+  }
 }
 
 async function loadMenu(filename = "menu01.json") {
-  const res = await fetch(config.menuPath + filename + `?t=${Date.now()}`);
+  const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
   const data = await res.json();
   showMenu(data);
 }
 
 function showMenu(menuData) {
-  const menuPanel = document.getElementById("menu-panel");
-  if (!menuData || !Array.isArray(menuData.items)) return;
   menuPanel.innerHTML = "";
-  showMenuPanel();
+  menuPanel.classList.remove("hidden");
+
+  const audioBtn = document.createElement("button");
+  audioBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
+  audioBtn.onclick = () => {
+    isMuted = !isMuted;
+    if (bgm) bgm.muted = isMuted;
+    document.querySelectorAll("audio").forEach(a => a.muted = isMuted);
+    menuPanel.classList.add("hidden");
+  };
+  menuPanel.appendChild(audioBtn);
+
+  const autoBtn = document.createElement("button");
+  autoBtn.textContent = isAutoMode ? "オートモードOFF" : "オートモードON";
+  autoBtn.onclick = () => {
+    isAutoMode = !isAutoMode;
+    if (isAutoMode) {
+      textEl.innerHTML = "(AutoMode On 3秒後開始)";
+      setTimeout(() => {
+        textEl.innerHTML = "";
+        setTimeout(() => {
+          if (!isPlaying && choicesEl.children.length === 0) next();
+        }, autoWaitTime);
+      }, 1000);
+    } else {
+      textEl.innerHTML = "(AutoMode Off)";
+      setTimeout(() => { textEl.innerHTML = ""; }, 1000);
+    }
+    menuPanel.classList.add("hidden");
+  };
+  menuPanel.appendChild(autoBtn);
+
+  const fullscreenBtn = document.createElement("button");
+  fullscreenBtn.textContent = document.fullscreenElement ? "全画面OFF" : "全画面ON";
+  fullscreenBtn.onclick = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen?.();
+    } else {
+      document.exitFullscreen?.();
+    }
+    menuPanel.classList.add("hidden");
+  };
+  menuPanel.appendChild(fullscreenBtn);
+
   menuData.items.forEach(item => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
     btn.onclick = () => {
-      hideMenuPanel();
+      menuPanel.classList.add("hidden");
       handleMenuAction(item);
     };
     menuPanel.appendChild(btn);
   });
 }
 
+// === リスト関連 ===
 async function loadList(filename = "list01.json") {
-  const res = await fetch(config.listPath + filename + `?t=${Date.now()}`);
+  const res = await fetch(config.listPath + filename + "?t=" + Date.now());
   const data = await res.json();
   showList(data);
 }
 
 function showList(listData) {
-  const listPanel = document.getElementById("list-panel");
-  if (!listData || !Array.isArray(listData.items)) return;
   listPanel.innerHTML = "";
-  showListPanel();
+  listPanel.classList.remove("hidden");
+
   listData.items.slice(0, 7).forEach(item => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
     btn.onclick = () => {
-      hideListPanel();
+      listPanel.classList.add("hidden");
       handleMenuAction(item);
     };
     listPanel.appendChild(btn);
   });
 }
 
-function handleMenuAction(item) {
-  if (item.action === "jump" && item.jump) loadScenario(item.jump);
-  else if (item.action === "menu" && item.menu) loadMenu(item.menu);
-  else if (item.action === "list" && item.list) loadList(item.list);
-  else if (item.action === "url" && item.url) location.href = item.url;
-}
+// === 操作レイヤー：クリック・タッチ対応 ===
+clickLayer.addEventListener("dblclick", () => {
+  loadMenu("menu01.json");
+});
 
-let lastTapTime = 0;
+let lastTouch = 0;
+clickLayer.addEventListener("touchend", () => {
+  const now = Date.now();
+  if (now - lastTouch < 300) loadMenu("menu01.json");
+  lastTouch = now;
+});
+
+clickLayer.addEventListener("click", () => {
+  if (!menuPanel.classList.contains("hidden")) {
+    menuPanel.classList.add("hidden");
+    return;
+  }
+  if (!isPlaying && choicesEl.children.length === 0) {
+    next();
+  }
+});
