@@ -137,8 +137,6 @@ function buildRandomImages(data) {
       img.style.objectFit = "contain";
       document.body.appendChild(img);
       preloadedImages[src] = img;
-
-      // まだロード中の場合はonload待つのもありだが省略（先に表示しても大丈夫）
     }
 
     // 使うときは再配置＆スタイル調整
@@ -160,6 +158,32 @@ function buildRandomImages(data) {
     });
 
     randomImageElements.push(img);
+  });
+}
+
+// ▼ 位置だけ再計算・再設定（リサイズ時用）
+function updateRandomImagesPosition() {
+  if (!randomImagesLayer || !randomImagesDataCache || !imagePathsCache) return;
+
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  const isPortrait = w <= 768 && h > w;
+  let cols = 3, rows = 2;
+  if (isPortrait) { cols = 2; rows = 4; }
+
+  const safeArea = { x: w * 0.1, y: h * 0.1, width: w * 0.8, height: h * 0.8 };
+  const cellW = safeArea.width / cols;
+  const cellH = safeArea.height / rows;
+
+  randomImageElements.forEach((img, i) => {
+    const x = i % cols;
+    const y = Math.floor(i / cols);
+    Object.assign(img.style, {
+      left: `${safeArea.x + cellW * x}px`,
+      top: `${safeArea.y + cellH * y}px`,
+      width: `${cellW}px`,
+      height: `${cellH}px`
+    });
   });
 }
 
@@ -274,8 +298,5 @@ function randomTextsOff() {
 
 // ▼ リサイズ対応
 window.addEventListener("resize", () => {
-  if (randomImagesLayer && randomImagesDataCache) {
-    clearRandomImages();
-    buildRandomImages(randomImagesDataCache);
-  }
+  updateRandomImagesPosition();
 });
