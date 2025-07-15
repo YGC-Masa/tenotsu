@@ -1,4 +1,4 @@
-// script.js - v035-05（物語終了後クリックでタイトルに戻る・背景onload修正）
+// script.js - v035-06（初期シナリオ自動スタート）
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
@@ -127,14 +127,9 @@ async function showScene(scene) {
 
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
-    const newSrc = config.bgPath + scene.bg;
     await new Promise((resolve) => {
-      if (bgEl.src.endsWith(newSrc) && bgEl.complete) {
-        resolve();
-      } else {
-        bgEl.onload = () => resolve();
-        bgEl.src = newSrc;
-      }
+      bgEl.onload = resolve;
+      bgEl.src = config.bgPath + scene.bg;
     });
     await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
@@ -259,6 +254,11 @@ function next() {
       }
     });
 }
+
+// 初回自動スタート（DOMContentLoaded）
+document.addEventListener("DOMContentLoaded", () => {
+  loadScenario("000start.json");
+});
 
 // （以下略）
 
