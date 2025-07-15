@@ -1,4 +1,13 @@
-// script.js - v033-03（menulist.js対応・メニュー表示修正・ダブル操作対応）
+// script.js - v033-03（menulist.js対応・メニュー表示修正・ダブル操作対応・ESM対応）
+
+import {
+  showMenuPanel,
+  hideMenuPanel,
+  menuPanelVisible,
+  showListPanel,
+  hideListPanel,
+  listPanelVisible
+} from "./menuList.js";
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
@@ -252,7 +261,6 @@ function loadScenario(filename) {
     });
 }
 
-// === メニュー・リスト関連 ===
 async function loadMenu(filename = "menu01.json") {
   const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
   const data = await res.json();
@@ -304,7 +312,6 @@ function handleMenuAction(item) {
   else if (item.action === "url" && item.url) location.href = item.url;
 }
 
-// === ユーザー操作 ===
 clickLayer.addEventListener("click", () => {
   if (menuPanelVisible()) {
     hideMenuPanel();
@@ -328,7 +335,6 @@ clickLayer.addEventListener("dblclick", () => {
   }
 });
 
-// スマホのダブルタップ対応（250ms）
 let lastTapTime = 0;
 clickLayer.addEventListener("touchend", (e) => {
   const now = Date.now();
