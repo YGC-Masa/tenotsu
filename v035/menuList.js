@@ -1,30 +1,42 @@
-// menuList.js - 修正版（必ずこのように）
+// menuList.js - メニューとリストの表示制御用モジュール
+
+const menuPanelElement = document.getElementById("menu-panel");
+const listPanelElement = document.getElementById("list-panel");
+
+// メニュー表示
 export function showMenuPanel() {
-  const menuPanelElement = document.getElementById("menu-panel");
-  if (menuPanelElement) menuPanelElement.classList.remove("hidden");
+  if (menuPanelElement) {
+    menuPanelElement.classList.remove("hidden");
+  }
 }
 
+// メニュー非表示
 export function hideMenuPanel() {
-  const menuPanelElement = document.getElementById("menu-panel");
-  if (menuPanelElement) menuPanelElement.classList.add("hidden");
+  if (menuPanelElement) {
+    menuPanelElement.classList.add("hidden");
+  }
 }
 
+// メニュー表示中かどうか
 export function menuPanelVisible() {
-  const menuPanelElement = document.getElementById("menu-panel");
   return menuPanelElement && !menuPanelElement.classList.contains("hidden");
 }
 
+// リスト表示
 export function showListPanel() {
-  const listPanelElement = document.getElementById("list-panel");
-  if (listPanelElement) listPanelElement.classList.remove("hidden");
+  if (listPanelElement) {
+    listPanelElement.classList.remove("hidden");
+  }
 }
 
+// リスト非表示
 export function hideListPanel() {
-  const listPanelElement = document.getElementById("list-panel");
-  if (listPanelElement) listPanelElement.classList.add("hidden");
+  if (listPanelElement) {
+    listPanelElement.classList.add("hidden");
+  }
 }
 
+// リスト表示中かどうか
 export function listPanelVisible() {
-  const listPanelElement = document.getElementById("list-panel");
   return listPanelElement && !listPanelElement.classList.contains("hidden");
 }
