@@ -1,4 +1,4 @@
-// script.js - v033-02（randomTextsOn 対応）
+// script.js - v035-01（ランダム画像キャッシュ削除・再抽選対応）
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
@@ -110,22 +110,19 @@ async function showScene(scene) {
     updateTextAreaVisibility(scene.textareashow);
   }
 
-  // ランダム画像表示のon/off
   if (scene.randomimageson === false && typeof randomImagesOff === "function") {
     randomImagesOff();
   } else if (scene.randomimageson === true && typeof randomImagesOn === "function") {
     randomImagesOn();
   }
 
-  // ランダムテキストのon/off
-// ▼ この下に追加
-if (scene.randomtexts !== undefined) {
-  if (scene.randomtexts) {
-    if (typeof randomTextsOn === "function") randomTextsOn();
-  } else {
-    if (typeof randomTextsOff === "function") randomTextsOff();
+  if (scene.randomtexts !== undefined) {
+    if (scene.randomtexts) {
+      if (typeof randomTextsOn === "function") randomTextsOn();
+    } else {
+      if (typeof randomTextsOff === "function") randomTextsOff();
+    }
   }
-}
 
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
@@ -231,6 +228,7 @@ if (scene.randomtexts !== undefined) {
     }, autoWaitTime);
   }
 }
+
 function next() {
   fetch(config.scenarioPath + currentScenario + "?t=" + Date.now())
     .then((res) => res.json())
@@ -250,9 +248,11 @@ function next() {
 }
 
 function loadScenario(filename) {
-  // ランダム表示類はリセット
   if (typeof randomImagesOff === "function") randomImagesOff();
   if (typeof randomTextsOff === "function") randomTextsOff();
+  // ▼ v035: キャッシュもクリア（再抽選させる）
+  if (typeof randomImagesDataCache !== "undefined") randomImagesDataCache = null;
+  if (typeof imagePathsCache !== "undefined") imagePathsCache = null;
 
   currentScenario = filename;
   currentIndex = 0;
