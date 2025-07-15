@@ -1,5 +1,3 @@
-// randomShows.js - ランダム画像・テキスト表示（キャッシュ重視リサイズ対応版）
-
 let randomImagesLayer = null;
 let randomImageElements = [];
 let randomTextElements = [];
@@ -7,8 +5,7 @@ let randomTextLayer = null;
 
 let randomImagesDataCache = null;
 let imagePathsCache = null;
-let preloadedImages = {}; // 画像プリロードキャッシュ
-let currentImageList = null; // 抽選済み画像URLリストキャッシュ
+let preloadedImages = {}; // src => <img>（非表示で保持）
 
 // ▼ レイヤー作成
 function createRandomImagesLayer() {
@@ -44,7 +41,22 @@ function createRandomTextLayer() {
 
 // ▼ クリア
 function clearRandomImages() {
-  if (randomImagesLayer) randomImagesLayer.innerHTML = "";
+  if (randomImagesLayer) {
+    // 子をすべて一旦 body（非表示保持領域）に戻す
+    randomImageElements.forEach(img => {
+      if (img.parentElement === randomImagesLayer) {
+        randomImagesLayer.removeChild(img);
+        // bodyに戻すときは非表示に
+        img.style.position = "fixed";
+        img.style.left = "-9999px";
+        img.style.top = "-9999px";
+        img.style.width = "auto";
+        img.style.height = "auto";
+        img.style.objectFit = "contain";
+        document.body.appendChild(img);
+      }
+    });
+  }
   randomImageElements = [];
 }
 
@@ -53,7 +65,7 @@ function clearRandomTexts() {
   randomTextElements = [];
 }
 
-// ▼ 配列シャッフル
+// ▼ シャッフル
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -61,40 +73,24 @@ function shuffleArray(array) {
   }
 }
 
-// ▼ ランダム画像表示開始
+// ▼ ランダム画像表示
 function randomImagesOn() {
   if (!window.config || !config.randomPath) return;
 
   if (randomImagesDataCache) {
-    if (!currentImageList) {
-      currentImageList = selectImageList(randomImagesDataCache);
-    }
-    buildRandomImagesWithList(currentImageList);
+    buildRandomImages(randomImagesDataCache);
   } else {
     fetch(`${config.randomPath}imageset01.json`)
       .then(res => res.json())
       .then(data => {
         randomImagesDataCache = data;
-        currentImageList = selectImageList(data);
-        buildRandomImagesWithList(currentImageList);
+        buildRandomImages(data);
       })
       .catch(err => console.error("画像JSON読み込み失敗", err));
   }
 }
 
-// ▼ 画像リスト抽選（シャッフル＋固定画像含む）
-function selectImageList(data) {
-  const base = data.picpath || config.randomPath;
-  const list = [];
-  if (data.fixed) list.push(base + data.fixed);
-  const rand = [...data.random];
-  shuffleArray(rand);
-  while (list.length < 8 && rand.length) list.push(base + rand.shift());
-  return list;
-}
-
-// ▼ 画像リストを元に描画（cloneNodeでプリロード画像を再利用）
-function buildRandomImagesWithList(list) {
+function buildRandomImages(data) {
   createRandomImagesLayer();
   clearRandomImages();
 
@@ -115,37 +111,42 @@ function buildRandomImagesWithList(list) {
     }
   }
 
-  // 画像URL変化検知＋プリロード
-  let needReload = false;
-  if (!imagePathsCache || imagePathsCache.length !== list.length) {
-    needReload = true;
-  } else {
-    for (let i = 0; i < list.length; i++) {
-      if (imagePathsCache[i] !== list[i]) {
-        needReload = true;
-        break;
-      }
-    }
-  }
-
-  if (needReload) {
-    imagePathsCache = list;
-    imagePathsCache.forEach(src => {
-      if (!preloadedImages[src]) {
-        const preload = new Image();
-        preload.src = src;
-        preloadedImages[src] = preload;
-      }
-    });
-  }
+  const base = data.picpath || config.randomPath;
+  const list = [];
+  if (data.fixed) list.push(base + data.fixed);
+  const rand = [...data.random];
+  shuffleArray(rand);
+  while (list.length < 8 && rand.length) list.push(base + rand.shift());
+  imagePathsCache = list;
 
   const selected = imagePathsCache.slice(0, positions.length);
+
   selected.forEach((src, i) => {
     const { x, y } = positions[i];
-    let img = preloadedImages[src]?.cloneNode();
-    if (!img) {
-      img = new Image();
+
+    // 画像がプリロード済みなら reuse、なければ preload & reuse
+    if (!preloadedImages[src]) {
+      const img = new Image();
       img.src = src;
+      // 非表示領域に置いておく
+      img.style.position = "fixed";
+      img.style.left = "-9999px";
+      img.style.top = "-9999px";
+      img.style.width = "auto";
+      img.style.height = "auto";
+      img.style.objectFit = "contain";
+      document.body.appendChild(img);
+      preloadedImages[src] = img;
+
+      // まだロード中の場合はonload待つのもありだが省略（先に表示しても大丈夫）
+    }
+
+    // 使うときは再配置＆スタイル調整
+    const img = preloadedImages[src];
+    if (img.parentElement !== randomImagesLayer) {
+      // 親を移動
+      if (img.parentElement) img.parentElement.removeChild(img);
+      randomImagesLayer.appendChild(img);
     }
     Object.assign(img.style, {
       position: "absolute",
@@ -154,9 +155,10 @@ function buildRandomImagesWithList(list) {
       width: `${cellW}px`,
       height: `${cellH}px`,
       objectFit: "contain",
-      pointerEvents: "none"
+      pointerEvents: "none",
+      display: "block"
     });
-    randomImagesLayer.appendChild(img);
+
     randomImageElements.push(img);
   });
 }
@@ -250,8 +252,20 @@ function randomImagesOff() {
   clearRandomImages();
   randomImagesDataCache = null;
   imagePathsCache = null;
-  preloadedImages = {};
-  currentImageList = null;
+
+  // 非表示にしてbodyに戻すだけ。破棄しない。
+  Object.values(preloadedImages).forEach(img => {
+    if (img.parentElement !== document.body) {
+      if (img.parentElement) img.parentElement.removeChild(img);
+      img.style.position = "fixed";
+      img.style.left = "-9999px";
+      img.style.top = "-9999px";
+      img.style.width = "auto";
+      img.style.height = "auto";
+      img.style.objectFit = "contain";
+      document.body.appendChild(img);
+    }
+  });
 }
 
 function randomTextsOff() {
@@ -260,8 +274,8 @@ function randomTextsOff() {
 
 // ▼ リサイズ対応
 window.addEventListener("resize", () => {
-  if (randomImagesLayer && randomImagesDataCache && currentImageList) {
+  if (randomImagesLayer && randomImagesDataCache) {
     clearRandomImages();
-    buildRandomImagesWithList(currentImageList);
+    buildRandomImages(randomImagesDataCache);
   }
 });
