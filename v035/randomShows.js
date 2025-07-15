@@ -1,3 +1,5 @@
+// randomShows.js - ランダム画像・テキスト表示（キャッシュ重視リサイズ対応版）
+
 let randomImagesLayer = null;
 let randomImageElements = [];
 let randomTextElements = [];
@@ -6,6 +8,7 @@ let randomTextLayer = null;
 let randomImagesDataCache = null;
 let imagePathsCache = null;
 let preloadedImages = {}; // 画像プリロードキャッシュ
+let currentImageList = null; // 抽選済み画像URLリストキャッシュ
 
 // ▼ レイヤー作成
 function createRandomImagesLayer() {
@@ -50,7 +53,7 @@ function clearRandomTexts() {
   randomTextElements = [];
 }
 
-// ▼ シャッフル
+// ▼ 配列シャッフル
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -58,24 +61,40 @@ function shuffleArray(array) {
   }
 }
 
-// ▼ ランダム画像表示
+// ▼ ランダム画像表示開始
 function randomImagesOn() {
   if (!window.config || !config.randomPath) return;
 
   if (randomImagesDataCache) {
-    buildRandomImages(randomImagesDataCache);
+    if (!currentImageList) {
+      currentImageList = selectImageList(randomImagesDataCache);
+    }
+    buildRandomImagesWithList(currentImageList);
   } else {
     fetch(`${config.randomPath}imageset01.json`)
       .then(res => res.json())
       .then(data => {
         randomImagesDataCache = data;
-        buildRandomImages(data);
+        currentImageList = selectImageList(data);
+        buildRandomImagesWithList(currentImageList);
       })
       .catch(err => console.error("画像JSON読み込み失敗", err));
   }
 }
 
-function buildRandomImages(data) {
+// ▼ 画像リスト抽選（シャッフル＋固定画像含む）
+function selectImageList(data) {
+  const base = data.picpath || config.randomPath;
+  const list = [];
+  if (data.fixed) list.push(base + data.fixed);
+  const rand = [...data.random];
+  shuffleArray(rand);
+  while (list.length < 8 && rand.length) list.push(base + rand.shift());
+  return list;
+}
+
+// ▼ 画像リストを元に描画（cloneNodeでプリロード画像を再利用）
+function buildRandomImagesWithList(list) {
   createRandomImagesLayer();
   clearRandomImages();
 
@@ -96,29 +115,21 @@ function buildRandomImages(data) {
     }
   }
 
-  const base = data.picpath || config.randomPath;
-  const list = [];
-  if (data.fixed) list.push(base + data.fixed);
-  const rand = [...data.random];
-  shuffleArray(rand);
-  while (list.length < 8 && rand.length) list.push(base + rand.shift());
-
-  // URLの変化チェック
-  const newImagePathsCache = list;
+  // 画像URL変化検知＋プリロード
   let needReload = false;
-  if (!imagePathsCache || imagePathsCache.length !== newImagePathsCache.length) {
+  if (!imagePathsCache || imagePathsCache.length !== list.length) {
     needReload = true;
   } else {
-    for (let i = 0; i < newImagePathsCache.length; i++) {
-      if (imagePathsCache[i] !== newImagePathsCache[i]) {
+    for (let i = 0; i < list.length; i++) {
+      if (imagePathsCache[i] !== list[i]) {
         needReload = true;
         break;
       }
     }
   }
+
   if (needReload) {
-    imagePathsCache = newImagePathsCache;
-    // 新規URLのみプリロード
+    imagePathsCache = list;
     imagePathsCache.forEach(src => {
       if (!preloadedImages[src]) {
         const preload = new Image();
@@ -128,13 +139,11 @@ function buildRandomImages(data) {
     });
   }
 
-  // DOM要素は毎回作成するが画像はcloneNodeで再利用（キャッシュ活用）
   const selected = imagePathsCache.slice(0, positions.length);
   selected.forEach((src, i) => {
     const { x, y } = positions[i];
     let img = preloadedImages[src]?.cloneNode();
     if (!img) {
-      // 保険で新規作成
       img = new Image();
       img.src = src;
     }
@@ -241,7 +250,8 @@ function randomImagesOff() {
   clearRandomImages();
   randomImagesDataCache = null;
   imagePathsCache = null;
-  preloadedImages = {}; // 画像キャッシュクリア
+  preloadedImages = {};
+  currentImageList = null;
 }
 
 function randomTextsOff() {
@@ -250,8 +260,8 @@ function randomTextsOff() {
 
 // ▼ リサイズ対応
 window.addEventListener("resize", () => {
-  if (randomImagesLayer && randomImagesDataCache) {
+  if (randomImagesLayer && randomImagesDataCache && currentImageList) {
     clearRandomImages();
-    buildRandomImages(randomImagesDataCache);
+    buildRandomImagesWithList(currentImageList);
   }
 });
