@@ -5,6 +5,7 @@ let randomTextLayer = null;
 
 let randomImagesDataCache = null;
 let imagePathsCache = null;
+let preloadedImages = {}; // ← ★ 画像の初回読み込みキャッシュ
 
 // ▼ レイヤー作成
 function createRandomImagesLayer() {
@@ -64,7 +65,7 @@ function randomImagesOn() {
   if (randomImagesDataCache) {
     buildRandomImages(randomImagesDataCache);
   } else {
-    fetch(`${config.randomPath}imageset01.json?t=${Date.now()}`)
+    fetch(`${config.randomPath}imageset01.json`)
       .then(res => res.json())
       .then(data => {
         randomImagesDataCache = data;
@@ -89,9 +90,12 @@ function buildRandomImages(data) {
   const cellH = safeArea.height / rows;
 
   const positions = [];
-  for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) positions.push({ x, y });
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      positions.push({ x, y });
+    }
+  }
 
-  // 新しい表示のたびに再選出（キャッシュは再生成）
   const base = data.picpath || config.randomPath;
   const list = [];
   if (data.fixed) list.push(base + data.fixed);
@@ -103,8 +107,16 @@ function buildRandomImages(data) {
   const selected = imagePathsCache.slice(0, positions.length);
   selected.forEach((src, i) => {
     const { x, y } = positions[i];
-    const img = document.createElement("img");
-    img.src = `${src}?t=${Date.now()}`; // キャッシュバイパス
+
+    // 初回 preload
+    if (!preloadedImages[src]) {
+      const preload = new Image();
+      preload.src = src;
+      preloadedImages[src] = preload;
+    }
+
+    // clone して再利用
+    const img = preloadedImages[src].cloneNode();
     Object.assign(img.style, {
       position: "absolute",
       left: `${safeArea.x + cellW * x}px`,
@@ -119,11 +131,11 @@ function buildRandomImages(data) {
   });
 }
 
-// ▼ ランダムテキスト表示
+// ▼ ランダムテキスト表示（変更なし）
 function randomTextsOn() {
   if (!window.config || !config.randomPath) return;
 
-  fetch(`${config.randomPath}textset01.json?t=${Date.now()}`)
+  fetch(`${config.randomPath}textset01.json`)
     .then(res => res.json())
     .then(data => {
       createRandomTextLayer();
@@ -150,7 +162,6 @@ function randomTextsOn() {
 
       const w = window.innerWidth;
       const h = window.innerHeight;
-
       let fontSize = "1em";
       let padding = "0.075em 1em";
       let lineGap = "0.05em";
@@ -204,21 +215,22 @@ function randomTextsOn() {
     .catch(err => console.error("テキストJSON読み込み失敗", err));
 }
 
-// ▼ OFF系（キャッシュ破棄も含む）
+// ▼ OFF系
 function randomImagesOff() {
   clearRandomImages();
   randomImagesDataCache = null;
   imagePathsCache = null;
+  preloadedImages = {}; // ← 画像オブジェクトも破棄
 }
 
 function randomTextsOff() {
   clearRandomTexts();
 }
 
-// ▼ リサイズ対応（レイアウトだけ再描画）
+// ▼ リサイズ対応
 window.addEventListener("resize", () => {
   if (randomImagesLayer && randomImagesDataCache) {
     clearRandomImages();
-    buildRandomImages(randomImagesDataCache);
+    buildRandomImages(randomImagesDataCache); // ← cloneNode により画像読み直しなし
   }
 });
