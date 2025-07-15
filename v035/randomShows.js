@@ -204,3 +204,8 @@ function randomTextsOff() {
 window.addEventListener("resize", () => {
   placeCachedImages();
 });
+
+window.randomImagesOn = randomImagesOn;
+window.randomImagesOff = randomImagesOff;
+window.randomTextsOn = randomTextsOn;
+window.randomTextsOff = randomTextsOff;
