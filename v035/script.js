@@ -1,4 +1,4 @@
-// script.js - v035-04（ランダム表示リセット対応・"物語はつづく…"後クリックでタイトルに戻る）
+// script.js - v035-05（物語終了後クリックでタイトルに戻る・背景onload修正）
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
@@ -13,6 +13,7 @@ let currentSpeed = 40;
 let defaultSpeed = 40;
 let defaultFontSize = "1em";
 let textAreaVisible = true;
+let isEndReached = false;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -126,9 +127,14 @@ async function showScene(scene) {
 
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
+    const newSrc = config.bgPath + scene.bg;
     await new Promise((resolve) => {
-      bgEl.onload = resolve;
-      bgEl.src = config.bgPath + scene.bg;
+      if (bgEl.src.endsWith(newSrc) && bgEl.complete) {
+        resolve();
+      } else {
+        bgEl.onload = () => resolve();
+        bgEl.src = newSrc;
+      }
     });
     await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
@@ -229,50 +235,32 @@ async function showScene(scene) {
   }
 }
 
-function resetRandomDisplayState() {
-  if (typeof randomImagesOff === "function") randomImagesOff();
-  if (typeof randomTextsOff === "function") randomTextsOff();
-
-  // キャッシュ類初期化
-  if (typeof randomImagesDataCache !== "undefined") randomImagesDataCache = null;
-  if (typeof imagePathsCache !== "undefined") imagePathsCache = null;
-  if (typeof preloadedImages !== "undefined") {
-    Object.values(preloadedImages).forEach(img => {
-      if (img.parentElement) {
-        img.parentElement.removeChild(img);
-      }
-    });
-    preloadedImages = {};
-  }
-}
-
 function next() {
   fetch(config.scenarioPath + currentScenario + "?t=" + Date.now())
     .then((res) => res.json())
     .then((data) => {
-      currentIndex++;
       const scenes = Array.isArray(data) ? data : data.scenes;
+      if (isEndReached) {
+        isEndReached = false;
+        loadScenario("000start.json");
+        return;
+      }
+
+      currentIndex++;
       if (currentIndex < scenes.length) {
         showScene(scenes[currentIndex]);
       } else {
         if (textAreaVisible) {
           nameEl.textContent = "";
-          textEl.innerHTML = "（物語は つづく・・・クリックでタイトルに戻ります）";
+          textEl.innerHTML = "（物語は つづく・・・（クリックでタイトルに戻ります））";
         }
         isAutoMode = false;
-
-        const returnToTitle = () => {
-          clickLayer.removeEventListener("click", returnToTitle);
-
-          // ランダム表示状態リセット
-          resetRandomDisplayState();
-
-          loadScenario("000start.json");
-        };
-        clickLayer.addEventListener("click", returnToTitle);
+        isEndReached = true;
       }
     });
 }
+
+// （以下略）
 
 function loadScenario(filename) {
   if (typeof randomImagesOff === "function") randomImagesOff();
