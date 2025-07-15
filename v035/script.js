@@ -257,10 +257,10 @@ async function showScene(scene) {
   if (scene.textareashow !== undefined) updateTextAreaVisibility(scene.textareashow);
   if (scene.randomimageson === false && typeof randomImagesOff === "function") randomImagesOff();
   else if (scene.randomimageson === true && typeof randomImagesOn === "function") randomImagesOn();
-  if (scene.randomtexts !== undefined) {
-    if (scene.randomtexts && typeof randomTextsOn === "function") randomTextsOn();
-    else if (!scene.randomtexts && typeof randomTextsOff === "function") randomTextsOff();
-  }
+if (scene.randomtexts !== undefined) {
+  if (scene.randomtexts && typeof window.randomTextsOn === "function") window.randomTextsOn();
+  else if (!scene.randomtexts && typeof window.randomTextsOff === "function") window.randomTextsOff();
+}
 
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
