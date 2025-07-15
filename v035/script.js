@@ -1,4 +1,4 @@
-// script.js - v035-03（"物語はつづく…"後にクリックでタイトルに戻る／テキスト非表示時は戻らない）
+// script.js - v035-04（ランダム表示リセット対応・"物語はつづく…"後クリックでタイトルに戻る）
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
@@ -229,6 +229,23 @@ async function showScene(scene) {
   }
 }
 
+function resetRandomDisplayState() {
+  if (typeof randomImagesOff === "function") randomImagesOff();
+  if (typeof randomTextsOff === "function") randomTextsOff();
+
+  // キャッシュ類初期化
+  if (typeof randomImagesDataCache !== "undefined") randomImagesDataCache = null;
+  if (typeof imagePathsCache !== "undefined") imagePathsCache = null;
+  if (typeof preloadedImages !== "undefined") {
+    Object.values(preloadedImages).forEach(img => {
+      if (img.parentElement) {
+        img.parentElement.removeChild(img);
+      }
+    });
+    preloadedImages = {};
+  }
+}
+
 function next() {
   fetch(config.scenarioPath + currentScenario + "?t=" + Date.now())
     .then((res) => res.json())
@@ -244,13 +261,15 @@ function next() {
         }
         isAutoMode = false;
 
-        if (textAreaVisible) {
-          const returnToTitle = () => {
-            clickLayer.removeEventListener("click", returnToTitle);
-            loadScenario("000start.json");
-          };
-          clickLayer.addEventListener("click", returnToTitle);
-        }
+        const returnToTitle = () => {
+          clickLayer.removeEventListener("click", returnToTitle);
+
+          // ランダム表示状態リセット
+          resetRandomDisplayState();
+
+          loadScenario("000start.json");
+        };
+        clickLayer.addEventListener("click", returnToTitle);
       }
     });
 }
@@ -258,8 +277,18 @@ function next() {
 function loadScenario(filename) {
   if (typeof randomImagesOff === "function") randomImagesOff();
   if (typeof randomTextsOff === "function") randomTextsOff();
+
+  // キャッシュリセット
   if (typeof randomImagesDataCache !== "undefined") randomImagesDataCache = null;
   if (typeof imagePathsCache !== "undefined") imagePathsCache = null;
+  if (typeof preloadedImages !== "undefined") {
+    Object.values(preloadedImages).forEach(img => {
+      if (img.parentElement) {
+        img.parentElement.removeChild(img);
+      }
+    });
+    preloadedImages = {};
+  }
 
   currentScenario = filename;
   currentIndex = 0;
@@ -290,10 +319,6 @@ window.addEventListener("resize", () => {
   updateCharacterDisplay();
 });
 
-window.addEventListener("load", () => {
-  setVhVariable();
-  loadScenario(currentScenario);
-});
 
 // === メニュー関連 ===
 function handleMenuAction(item) {
