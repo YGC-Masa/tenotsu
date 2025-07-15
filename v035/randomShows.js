@@ -1,3 +1,5 @@
+// randomShows.js - v035-01（ランダム画像キャッシュ削除対応）
+
 let randomImagesLayer = null;
 let randomImageElements = [];
 let randomTextElements = [];
@@ -6,7 +8,6 @@ let randomTextLayer = null;
 let randomImagesDataCache = null;
 let imagePathsCache = null;
 
-// ▼ レイヤー作成
 function createRandomImagesLayer() {
   if (randomImagesLayer) return;
   randomImagesLayer = document.createElement("div");
@@ -38,7 +39,6 @@ function createRandomTextLayer() {
   document.body.appendChild(randomTextLayer);
 }
 
-// ▼ クリア
 function clearRandomImages() {
   if (randomImagesLayer) randomImagesLayer.innerHTML = "";
   randomImageElements = [];
@@ -49,7 +49,6 @@ function clearRandomTexts() {
   randomTextElements = [];
 }
 
-// ▼ シャッフル
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -57,14 +56,13 @@ function shuffleArray(array) {
   }
 }
 
-// ▼ ランダム画像表示
 function randomImagesOn() {
   if (!window.config || !config.randomPath) return;
 
   if (randomImagesDataCache) {
     buildRandomImages(randomImagesDataCache);
   } else {
-    fetch(`${config.randomPath}imageset01.json`)
+    fetch(`${config.randomPath}imageset01.json?t=${Date.now()}`)
       .then(res => res.json())
       .then(data => {
         randomImagesDataCache = data;
@@ -97,7 +95,7 @@ function buildRandomImages(data) {
     if (data.fixed) list.push(base + data.fixed);
     const rand = [...data.random];
     shuffleArray(rand);
-    while (list.length < 8 && rand.length) list.push(base + rand.shift());
+    while (list.length < positions.length && rand.length) list.push(base + rand.shift());
     imagePathsCache = list;
   }
 
@@ -105,7 +103,7 @@ function buildRandomImages(data) {
   selected.forEach((src, i) => {
     const { x, y } = positions[i];
     const img = document.createElement("img");
-    img.src = src;
+    img.src = src + `?t=${Date.now()}`; // キャッシュ無効化
     Object.assign(img.style, {
       position: "absolute",
       left: `${safeArea.x + cellW * x}px`,
@@ -120,11 +118,10 @@ function buildRandomImages(data) {
   });
 }
 
-// ▼ ランダムテキスト表示
 function randomTextsOn() {
   if (!window.config || !config.randomPath) return;
 
-  fetch(`${config.randomPath}textset01.json`)
+  fetch(`${config.randomPath}textset01.json?t=${Date.now()}`)
     .then(res => res.json())
     .then(data => {
       createRandomTextLayer();
@@ -151,25 +148,22 @@ function randomTextsOn() {
 
       const w = window.innerWidth;
       const h = window.innerHeight;
-      
-      // デフォルト
+
       let fontSize = "1em";
       let padding = "0.075em 1em";
       let lineGap = "0.05em";
       let paddingBottom = "0.075em";
 
       if (w <= 768 && h > w) {
-        // モバイル縦
         fontSize = "0.8em";
         padding = "0.05em 0.8em";
         lineGap = "0.05em";
         paddingBottom = "0.2em";
       } else if (w <= 768 && w >= h) {
-        // モバイル横
         fontSize = "0.8em";
         padding = "0.05em 0.6em";
         lineGap = "0.05em";
-        paddingBottom = "0.075em"; // ★ 下余白を抑える
+        paddingBottom = "0.075em";
       }
 
       const note = document.createElement("div");
@@ -208,11 +202,17 @@ function randomTextsOn() {
     .catch(err => console.error("テキストJSON読み込み失敗", err));
 }
 
-// ▼ OFF系
-function randomImagesOff() { clearRandomImages(); }
-function randomTextsOff() { clearRandomTexts(); }
+function randomImagesOff() {
+  clearRandomImages();
+  // ▼ キャッシュクリアを追加（v035）
+  randomImagesDataCache = null;
+  imagePathsCache = null;
+}
 
-// ▼ リサイズ対応
+function randomTextsOff() {
+  clearRandomTexts();
+}
+
 window.addEventListener("resize", () => {
   if (randomImagesLayer && randomImagesDataCache) {
     randomImagesOff();
