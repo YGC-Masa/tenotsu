@@ -5,7 +5,7 @@ let randomTextLayer = null;
 
 let randomImagesDataCache = null;
 let imagePathsCache = null;
-let preloadedImages = {}; // ← ★ 画像の初回読み込みキャッシュ
+let preloadedImages = {}; // 画像プリロードキャッシュ
 
 // ▼ レイヤー作成
 function createRandomImagesLayer() {
@@ -102,21 +102,42 @@ function buildRandomImages(data) {
   const rand = [...data.random];
   shuffleArray(rand);
   while (list.length < 8 && rand.length) list.push(base + rand.shift());
-  imagePathsCache = list;
 
+  // URLの変化チェック
+  const newImagePathsCache = list;
+  let needReload = false;
+  if (!imagePathsCache || imagePathsCache.length !== newImagePathsCache.length) {
+    needReload = true;
+  } else {
+    for (let i = 0; i < newImagePathsCache.length; i++) {
+      if (imagePathsCache[i] !== newImagePathsCache[i]) {
+        needReload = true;
+        break;
+      }
+    }
+  }
+  if (needReload) {
+    imagePathsCache = newImagePathsCache;
+    // 新規URLのみプリロード
+    imagePathsCache.forEach(src => {
+      if (!preloadedImages[src]) {
+        const preload = new Image();
+        preload.src = src;
+        preloadedImages[src] = preload;
+      }
+    });
+  }
+
+  // DOM要素は毎回作成するが画像はcloneNodeで再利用（キャッシュ活用）
   const selected = imagePathsCache.slice(0, positions.length);
   selected.forEach((src, i) => {
     const { x, y } = positions[i];
-
-    // 初回 preload
-    if (!preloadedImages[src]) {
-      const preload = new Image();
-      preload.src = src;
-      preloadedImages[src] = preload;
+    let img = preloadedImages[src]?.cloneNode();
+    if (!img) {
+      // 保険で新規作成
+      img = new Image();
+      img.src = src;
     }
-
-    // clone して再利用
-    const img = preloadedImages[src].cloneNode();
     Object.assign(img.style, {
       position: "absolute",
       left: `${safeArea.x + cellW * x}px`,
@@ -220,7 +241,7 @@ function randomImagesOff() {
   clearRandomImages();
   randomImagesDataCache = null;
   imagePathsCache = null;
-  preloadedImages = {}; // ← 画像オブジェクトも破棄
+  preloadedImages = {}; // 画像キャッシュクリア
 }
 
 function randomTextsOff() {
@@ -231,6 +252,6 @@ function randomTextsOff() {
 window.addEventListener("resize", () => {
   if (randomImagesLayer && randomImagesDataCache) {
     clearRandomImages();
-    buildRandomImages(randomImagesDataCache); // ← cloneNode により画像読み直しなし
+    buildRandomImages(randomImagesDataCache);
   }
 });
