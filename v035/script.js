@@ -1,4 +1,4 @@
-// script.js - v033-03 修正版（menulist.js対応・メニュー表示修正・ダブル操作対応・ESM対応）
+// script.js - v035 完全修正版（ランダム＆メニュー対応、ESM＆関数登録）
 
 import { config } from "./config.js";
 import {
@@ -29,8 +29,6 @@ const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
 const textEl = document.getElementById("text");
 const choicesEl = document.getElementById("choices");
-const menuPanel = document.getElementById("menu-panel");
-const listPanel = document.getElementById("list-panel");
 const evLayer = document.getElementById("ev-layer");
 const clickLayer = document.getElementById("click-layer");
 const dialogueBox = document.getElementById("dialogue-box");
@@ -124,8 +122,8 @@ function next() {
 }
 
 function loadScenario(filename) {
-  if (typeof randomImagesOff === "function") randomImagesOff();
-  if (typeof randomTextsOff === "function") randomTextsOff();
+  if (typeof window.randomImagesOff === "function") window.randomImagesOff();
+  if (typeof window.randomTextsOff === "function") window.randomTextsOff();
 
   currentScenario = filename;
   currentIndex = 0;
@@ -146,59 +144,7 @@ function loadScenario(filename) {
     });
 }
 
-// === メニュー・リスト関連 ===
-async function loadMenu(filename = "menu01.json") {
-  const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
-  const data = await res.json();
-  showMenu(data);
-}
-
-function showMenu(menuData) {
-  if (!menuData || !Array.isArray(menuData.items)) return;
-  menuPanel.innerHTML = "";
-  showMenuPanel();
-
-  menuData.items.forEach(item => {
-    const btn = document.createElement("button");
-    btn.textContent = item.text;
-    btn.onclick = () => {
-      hideMenuPanel();
-      handleMenuAction(item);
-    };
-    menuPanel.appendChild(btn);
-  });
-}
-
-async function loadList(filename = "list01.json") {
-  const res = await fetch(config.listPath + filename + "?t=" + Date.now());
-  const data = await res.json();
-  showList(data);
-}
-
-function showList(listData) {
-  if (!listData || !Array.isArray(listData.items)) return;
-  listPanel.innerHTML = "";
-  showListPanel();
-
-  listData.items.slice(0, 7).forEach(item => {
-    const btn = document.createElement("button");
-    btn.textContent = item.text;
-    btn.onclick = () => {
-      hideListPanel();
-      handleMenuAction(item);
-    };
-    listPanel.appendChild(btn);
-  });
-}
-
-function handleMenuAction(item) {
-  if (item.action === "jump" && item.jump) loadScenario(item.jump);
-  else if (item.action === "menu" && item.menu) loadMenu(item.menu);
-  else if (item.action === "list" && item.list) loadList(item.list);
-  else if (item.action === "url" && item.url) location.href = item.url;
-}
-
-// === ユーザー操作 ===
+// メニュー表示中の操作
 clickLayer.addEventListener("click", () => {
   if (menuPanelVisible()) {
     hideMenuPanel();
@@ -215,15 +161,10 @@ clickLayer.addEventListener("click", () => {
 });
 
 clickLayer.addEventListener("dblclick", () => {
-  if (menuPanelVisible()) {
-    hideMenuPanel();
-  } else {
-    showMenuPanel();
-  }
+  if (menuPanelVisible()) hideMenuPanel();
+  else showMenuPanel();
 });
 
-// スマホのダブルタップ対応（250ms）
-let lastTapTime = 0;
 clickLayer.addEventListener("touchend", (e) => {
   const now = Date.now();
   if (now - lastTapTime < 250) {
@@ -255,12 +196,10 @@ async function showScene(scene) {
   isEndOfStory = false;
 
   if (scene.textareashow !== undefined) updateTextAreaVisibility(scene.textareashow);
-  if (scene.randomimageson === false && typeof randomImagesOff === "function") randomImagesOff();
-  else if (scene.randomimageson === true && typeof randomImagesOn === "function") randomImagesOn();
-if (scene.randomtexts !== undefined) {
+  if (scene.randomimageson && typeof window.randomImagesOn === "function") window.randomImagesOn();
+  else if (scene.randomimageson === false && typeof window.randomImagesOff === "function") window.randomImagesOff();
   if (scene.randomtexts && typeof window.randomTextsOn === "function") window.randomTextsOn();
-  else if (!scene.randomtexts && typeof window.randomTextsOff === "function") window.randomTextsOff();
-}
+  else if (scene.randomtexts === false && typeof window.randomTextsOff === "function") window.randomTextsOff();
 
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
@@ -271,31 +210,8 @@ if (scene.randomtexts !== undefined) {
     await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
-  if (scene.showev) {
-    const evImg = document.createElement("img");
-    evImg.src = config.evPath + scene.showev;
-    evImg.classList.add("ev-image");
-    evImg.onload = () => applyEffect(evImg, scene.evEffect || "fadein");
-    evLayer.appendChild(evImg);
-  }
-
-  if (scene.showcg) {
-    const cgImg = document.createElement("img");
-    cgImg.src = config.cgPath + scene.showcg;
-    cgImg.classList.add("cg-image");
-    cgImg.onload = () => applyEffect(cgImg, scene.cgEffect || "fadein");
-    evLayer.appendChild(cgImg);
-  }
-
-  if (scene.bgm !== undefined) {
-    if (bgm) bgm.pause();
-    bgm = scene.bgm ? new Audio(config.bgmPath + scene.bgm) : null;
-    if (bgm) {
-      bgm.loop = true;
-      bgm.muted = isMuted;
-      bgm.play();
-    }
-  }
+  if (scene.showmenu) loadMenu(scene.showmenu);
+  if (scene.showlist) loadList(scene.showlist);
 
   if (scene.characters) {
     lastActiveSide = scene.characters[scene.characters.length - 1]?.side || null;
@@ -350,13 +266,57 @@ if (scene.randomtexts !== undefined) {
       choicesEl.appendChild(btn);
     });
   }
-
-  if (scene.showmenu) loadMenu(scene.showmenu);
-  if (scene.showlist) loadList(scene.showlist);
-
-  if (scene.auto && scene.choices === undefined && scene.text === undefined) {
-    setTimeout(() => {
-      if (!isPlaying) next();
-    }, autoWaitTime);
-  }
 }
+
+async function loadMenu(filename = "menu01.json") {
+  const res = await fetch(config.menuPath + filename + `?t=${Date.now()}`);
+  const data = await res.json();
+  showMenu(data);
+}
+
+function showMenu(menuData) {
+  const menuPanel = document.getElementById("menu-panel");
+  if (!menuData || !Array.isArray(menuData.items)) return;
+  menuPanel.innerHTML = "";
+  showMenuPanel();
+  menuData.items.forEach(item => {
+    const btn = document.createElement("button");
+    btn.textContent = item.text;
+    btn.onclick = () => {
+      hideMenuPanel();
+      handleMenuAction(item);
+    };
+    menuPanel.appendChild(btn);
+  });
+}
+
+async function loadList(filename = "list01.json") {
+  const res = await fetch(config.listPath + filename + `?t=${Date.now()}`);
+  const data = await res.json();
+  showList(data);
+}
+
+function showList(listData) {
+  const listPanel = document.getElementById("list-panel");
+  if (!listData || !Array.isArray(listData.items)) return;
+  listPanel.innerHTML = "";
+  showListPanel();
+  listData.items.slice(0, 7).forEach(item => {
+    const btn = document.createElement("button");
+    btn.textContent = item.text;
+    btn.onclick = () => {
+      hideListPanel();
+      handleMenuAction(item);
+    };
+    listPanel.appendChild(btn);
+  });
+}
+
+function handleMenuAction(item) {
+  if (item.action === "jump" && item.jump) loadScenario(item.jump);
+  else if (item.action === "menu" && item.menu) loadMenu(item.menu);
+  else if (item.action === "list" && item.list) loadList(item.list);
+  else if (item.action === "url" && item.url) location.href = item.url;
+}
+
+let lastTapTime = 0;
