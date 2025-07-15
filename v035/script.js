@@ -229,6 +229,11 @@ async function showScene(scene) {
   }
 }
 
+// script.js - v035-03（"物語はつづく…"後にクリックでタイトルに戻る）
+
+// （略）
+// 222行目以降の next() 関数の一部を以下のように更新
+
 function next() {
   fetch(config.scenarioPath + currentScenario + "?t=" + Date.now())
     .then((res) => res.json())
@@ -240,12 +245,20 @@ function next() {
       } else {
         if (textAreaVisible) {
           nameEl.textContent = "";
-          textEl.innerHTML = "（物語は つづく・・・）";
+          textEl.innerHTML = "（物語は つづく・・・クリックでタイトルに戻ります）";
         }
         isAutoMode = false;
+
+        // クリックで初期シナリオに戻るように一時リスナー登録
+        const returnToTitle = () => {
+          clickLayer.removeEventListener("click", returnToTitle);
+          loadScenario("000start.json");
+        };
+        clickLayer.addEventListener("click", returnToTitle);
       }
     });
 }
+
 
 function loadScenario(filename) {
   if (typeof randomImagesOff === "function") randomImagesOff();
