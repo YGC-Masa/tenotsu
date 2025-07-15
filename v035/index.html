@@ -10,7 +10,57 @@
   <!-- キャラ表示位置・サイズ -->
   <link rel="stylesheet" href="chardispsetting.css" />
   
+  <!-- 通常ブラウザ向け --><!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>ノベルゲーム v035</title>
+
+  <!-- メインスタイル -->
+  <link rel="stylesheet" href="style.css" />
+  <!-- キャラ表示位置・サイズ -->
+  <link rel="stylesheet" href="chardispsetting.css" />
+
   <!-- 通常ブラウザ向け -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+</head>
+<body>
+  <div id="game-container">
+    <img id="background" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=" alt="背景画像" /> 
+
+    <div id="char-layer">
+      <div id="char-left" class="char-slot"></div>
+      <div id="char-center" class="char-slot"></div>
+      <div id="char-right" class="char-slot"></div>
+    </div>
+
+    <div id="ev-layer"></div>
+    <div id="random-images-layer"></div>
+    <div id="random-text-layer"></div>
+    <div id="click-layer"></div>
+
+    <div id="dialogue-box">
+      <div id="name" class="name-area"></div>
+      <div id="text" class="text-area"></div>
+    </div>
+
+    <div id="choices" class="choices-area"></div>
+    <div id="list-panel" class="list-panel hidden"></div>
+    <div id="menu-panel" class="menu-panel hidden"></div>
+  </div>
+
+  <!-- スクリプト群 -->
+  <script src="config.js"></script>
+  <script src="characterStyles.js"></script>
+  <script src="effect.js"></script>
+  <script src="randomShows.js"></script>
+  <script src="utils.js"></script>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
+
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 
   <!-- Retina対応（PNG形式を併用する場合） -->
