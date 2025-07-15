@@ -9,6 +9,3 @@ const characterStyles = {
   "琥珀":        { fontSize: "1.3em", speed: 25, color: "#F68B1F" },
   "店長":        { fontSize: "1.1em", speed: 40, color: "#666666" }
 };
-
-export { characterStyles };
-
