@@ -1,4 +1,4 @@
-// script.js - v033-02（randomTextsOn 対応）
+// script.js - v035-07（物語はつづく→クリックで初期シナリオjump対応）
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
@@ -110,22 +110,19 @@ async function showScene(scene) {
     updateTextAreaVisibility(scene.textareashow);
   }
 
-  // ランダム画像表示のon/off
   if (scene.randomimageson === false && typeof randomImagesOff === "function") {
     randomImagesOff();
   } else if (scene.randomimageson === true && typeof randomImagesOn === "function") {
     randomImagesOn();
   }
 
-  // ランダムテキストのon/off
-// ▼ この下に追加
-if (scene.randomtexts !== undefined) {
-  if (scene.randomtexts) {
-    if (typeof randomTextsOn === "function") randomTextsOn();
-  } else {
-    if (typeof randomTextsOff === "function") randomTextsOff();
+  if (scene.randomtexts !== undefined) {
+    if (scene.randomtexts) {
+      if (typeof randomTextsOn === "function") randomTextsOn();
+    } else {
+      if (typeof randomTextsOff === "function") randomTextsOff();
+    }
   }
-}
 
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
@@ -230,7 +227,15 @@ if (scene.randomtexts !== undefined) {
       if (!isPlaying) next();
     }, autoWaitTime);
   }
+
+  // --- 物語はつづく 対応：クリックで再ジャンプ ---
+  if (scene.text === "（物語は つづく・・・）") {
+    clickLayer.addEventListener("click", () => {
+      loadScenario("000start.json");
+    }, { once: true });
+  }
 }
+
 function next() {
   fetch(config.scenarioPath + currentScenario + "?t=" + Date.now())
     .then((res) => res.json())
@@ -248,7 +253,6 @@ function next() {
       }
     });
 }
-
 function loadScenario(filename) {
   // ランダム表示類はリセット
   if (typeof randomImagesOff === "function") randomImagesOff();
