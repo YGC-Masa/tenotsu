@@ -107,3 +107,23 @@ clickLayer.addEventListener("click", () => {
 window.addEventListener("DOMContentLoaded", () => {
   loadScenario(currentScenario);
 });
+
+let clickTimeout = null;
+
+clickLayer.addEventListener("click", () => {
+  if (clickTimeout) return;
+  clickTimeout = setTimeout(() => {
+    if (!isPlaying && choicesEl.children.length === 0) {
+      next();
+    }
+    clickTimeout = null;
+  }, 300);
+});
+
+clickLayer.addEventListener("dblclick", () => {
+  if (clickTimeout) {
+    clearTimeout(clickTimeout);
+    clickTimeout = null;
+  }
+  loadMenu("menu01.json");
+});
