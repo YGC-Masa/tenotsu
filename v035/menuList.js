@@ -1,7 +1,9 @@
+// menuList.js
+
 const menuPanelElement = document.getElementById("menu-panel");
 const listPanelElement = document.getElementById("list-panel");
 
-// 表示・非表示判定
+// 表示・非表示関数
 function showMenuPanel() {
   if (menuPanelElement) menuPanelElement.classList.remove("hidden");
 }
@@ -21,33 +23,44 @@ function listPanelVisible() {
   return listPanelElement && !listPanelElement.classList.contains("hidden");
 }
 
-// メニュー・リストデータ読込と表示
+// メニュー・リスト読み込み
 async function loadMenu(filename = "menu01.json") {
-  const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
-  const data = await res.json();
-  showMenu(data);
+  try {
+    const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
+    const data = await res.json();
+    showMenu(data);
+  } catch(e) {
+    console.error("メニュー読み込み失敗", e);
+  }
 }
 
 async function loadList(filename = "list01.json") {
-  const res = await fetch(config.listPath + filename + "?t=" + Date.now());
-  const data = await res.json();
-  showList(data);
+  try {
+    const res = await fetch(config.listPath + filename + "?t=" + Date.now());
+    const data = await res.json();
+    showList(data);
+  } catch(e) {
+    console.error("リスト読み込み失敗", e);
+  }
 }
 
+// メニュー表示
 function showMenu(menuData) {
   menuPanelElement.innerHTML = "";
   showMenuPanel();
 
+  // 例：音声ON/OFF
   const audioBtn = document.createElement("button");
   audioBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
   audioBtn.onclick = () => {
     isMuted = !isMuted;
     if (bgm) bgm.muted = isMuted;
-    document.querySelectorAll("audio").forEach(a => a.muted = isMuted);
+    document.querySelectorAll("audio").forEach(a => (a.muted = isMuted));
     hideMenuPanel();
   };
   menuPanelElement.appendChild(audioBtn);
 
+  // 例：オートモードON/OFF
   const autoBtn = document.createElement("button");
   autoBtn.textContent = isAutoMode ? "オートモードOFF" : "オートモードON";
   autoBtn.onclick = () => {
@@ -62,12 +75,15 @@ function showMenu(menuData) {
       }, 1000);
     } else {
       textEl.innerHTML = "(AutoMode Off)";
-      setTimeout(() => { textEl.innerHTML = ""; }, 1000);
+      setTimeout(() => {
+        textEl.innerHTML = "";
+      }, 1000);
     }
     hideMenuPanel();
   };
   menuPanelElement.appendChild(autoBtn);
 
+  // 例：全画面ON/OFF
   const fullscreenBtn = document.createElement("button");
   fullscreenBtn.textContent = document.fullscreenElement ? "全画面OFF" : "全画面ON";
   fullscreenBtn.onclick = () => {
@@ -80,6 +96,7 @@ function showMenu(menuData) {
   };
   menuPanelElement.appendChild(fullscreenBtn);
 
+  // メニュー項目ボタン生成
   menuData.items.forEach(item => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
@@ -91,6 +108,7 @@ function showMenu(menuData) {
   });
 }
 
+// リスト表示
 function showList(listData) {
   listPanelElement.innerHTML = "";
   showListPanel();
@@ -106,7 +124,7 @@ function showList(listData) {
   });
 }
 
-// ジャンプ・URLなどの共通処理
+// メニューアクション共通処理
 function handleMenuAction(item) {
   if (item.action === "jump" && item.jump) {
     loadScenario(item.jump);
@@ -119,14 +137,6 @@ function handleMenuAction(item) {
   }
 }
 
-// ▼ ダブルタップ・クリックでもメニューを開く
-clickLayer.addEventListener("dblclick", () => {
-  loadMenu("menu01.json");
-});
+// クリックレイヤーイベント（外部から設定されるため削除可）
+// ここでは設定しません。script.jsで設定。
 
-let lastTouch = 0;
-clickLayer.addEventListener("touchend", () => {
-  const now = Date.now();
-  if (now - lastTouch < 300) loadMenu("menu01.json");
-  lastTouch = now;
-});
