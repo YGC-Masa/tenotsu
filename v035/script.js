@@ -1,6 +1,7 @@
-// script.js - v035-08（シナリオ枯渇時の初期シナリオ再読込抑制付き）
+// script.js - v035-08（初期シナリオ再読み込み抑制付き）
 
-let currentScenario = "000start.json";
+const initialScenario = "000start.json";
+let currentScenario = initialScenario;
 let currentIndex = 0;
 let bgm = null;
 let lastActiveSide = null;
@@ -29,12 +30,10 @@ const charSlots = {
   right: document.getElementById("char-right")
 };
 
-// 画面縦長判定（モバイル縦向きなど）
 function isMobilePortrait() {
   return window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
 }
 
-// 文字を指定速度でテキスト表示する関数
 function setTextWithSpeed(text, speed, callback) {
   if (typingInterval) clearInterval(typingInterval);
   isPlaying = true;
@@ -56,7 +55,6 @@ function setTextWithSpeed(text, speed, callback) {
   }, speed);
 }
 
-// キャラクター名に応じたスタイル適用（色・フォントサイズ・速度など）
 function setCharacterStyle(name, scene = {}) {
   const style = characterStyles[name] || characterStyles[""];
   const fontSize = scene.fontSize || style.fontSize || defaultFontSize;
@@ -65,7 +63,6 @@ function setCharacterStyle(name, scene = {}) {
   document.documentElement.style.setProperty("--fontSize", fontSize);
 }
 
-// キャラクター表示をクリア
 function clearCharacters() {
   for (const pos in charSlots) {
     charSlots[pos].innerHTML = "";
@@ -74,7 +71,6 @@ function clearCharacters() {
   lastActiveSide = null;
 }
 
-// キャラクター表示を画面縦横に応じて調整
 function updateCharacterDisplay() {
   const isPortrait = isMobilePortrait();
   for (const pos in charSlots) {
@@ -84,7 +80,6 @@ function updateCharacterDisplay() {
   }
 }
 
-// エフェクト適用（fadeinなど）
 async function applyEffect(el, effectName) {
   if (window.effects && effectName && window.effects[effectName]) {
     return await window.effects[effectName](el);
@@ -93,13 +88,11 @@ async function applyEffect(el, effectName) {
   }
 }
 
-// テキストエリアの表示・非表示制御
 function updateTextAreaVisibility(show) {
   textAreaVisible = show;
   dialogueBox.classList.toggle("hidden", !show);
 }
 
-// シーン（1行分）を表示する処理の本体
 async function showScene(scene) {
   if (!scene) return;
   if (typingInterval) clearInterval(typingInterval);
@@ -109,17 +102,13 @@ async function showScene(scene) {
   evLayer.innerHTML = "";
   choicesEl.innerHTML = "";
 
-  // テキストエリア表示制御
   if (scene.textareashow !== undefined) updateTextAreaVisibility(scene.textareashow);
-
-  // ランダム画像・テキスト制御（外部関数あれば）
   if (scene.randomimageson === false && typeof randomImagesOff === "function") randomImagesOff();
   if (scene.randomimageson === true && typeof randomImagesOn === "function") randomImagesOn();
   if (scene.randomtexts !== undefined) {
     scene.randomtexts ? randomTextsOn?.() : randomTextsOff?.();
   }
 
-  // 背景画像変更（エフェクト込み）
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
     await new Promise(resolve => {
@@ -129,7 +118,6 @@ async function showScene(scene) {
     await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
-  // EV画像表示
   if (scene.showev) {
     const evImg = document.createElement("img");
     evImg.src = config.evPath + scene.showev;
@@ -138,7 +126,6 @@ async function showScene(scene) {
     evLayer.appendChild(evImg);
   }
 
-  // CG画像表示
   if (scene.showcg) {
     const cgImg = document.createElement("img");
     cgImg.src = config.cgPath + scene.showcg;
@@ -147,7 +134,6 @@ async function showScene(scene) {
     evLayer.appendChild(cgImg);
   }
 
-  // BGM再生・切り替え
   if (scene.bgm !== undefined) {
     if (bgm) bgm.pause();
     if (scene.bgm) {
@@ -158,7 +144,6 @@ async function showScene(scene) {
     }
   }
 
-  // キャラクター表示セットアップ
   if (scene.characters) {
     lastActiveSide = scene.characters[scene.characters.length - 1]?.side || null;
     ["left", "center", "right"].forEach(async (pos) => {
@@ -179,26 +164,24 @@ async function showScene(scene) {
 
   updateCharacterDisplay();
 
-  // セリフ文字表示
   if (scene.name !== undefined && scene.text !== undefined) {
     nameEl.textContent = scene.name;
     setCharacterStyle(scene.name, scene);
     setTextWithSpeed(scene.text, currentSpeed);
   }
 
-  // ボイス・SE再生
   if (scene.voice) {
     const voice = new Audio(config.voicePath + scene.voice);
     voice.muted = isMuted;
     voice.play();
   }
+
   if (scene.se) {
     const se = new Audio(config.sePath + scene.se);
     se.muted = isMuted;
     se.play();
   }
 
-  // 選択肢ボタン生成
   if (scene.choices) {
     scene.choices.forEach((choice) => {
       const btn = document.createElement("button");
@@ -218,11 +201,9 @@ async function showScene(scene) {
     });
   }
 
-  // メニュー・リストの自動表示（あれば）
   if (scene.showmenu) loadMenu(scene.showmenu);
   if (scene.showlist) loadList(scene.showlist);
 
-  // 自動進行条件
   if (scene.auto && !scene.text && !scene.choices) {
     setTimeout(() => {
       if (!isPlaying) next();
@@ -230,38 +211,25 @@ async function showScene(scene) {
   }
 }
 
-// 次のシーンへ進む
 function next() {
   fetch(config.scenarioPath + currentScenario + "?t=" + Date.now())
     .then((res) => res.json())
     .then((data) => {
       currentIndex++;
       const scenes = Array.isArray(data) ? data : data.scenes;
-
       if (currentIndex < scenes.length) {
         showScene(scenes[currentIndex]);
       } else {
-        // シナリオ枯渇時の処理
         if (textAreaVisible) {
           nameEl.textContent = "";
           textEl.innerHTML = "（物語は つづく・・・（クリックでタイトルに戻ります））";
         }
         isAutoMode = false;
         isScenarioEnded = true;
-
-        // 現在が初期シナリオなら再読込しない
-        if (currentScenario !== "000start.json") {
-          const returnToTitleHandler = () => {
-            clickLayer.removeEventListener("click", returnToTitleHandler);
-            loadScenario("000start.json");
-          };
-          clickLayer.addEventListener("click", returnToTitleHandler);
-        }
       }
     });
 }
 
-// シナリオファイルを読み込んで表示開始
 function loadScenario(filename) {
   randomImagesOff?.();
   randomTextsOff?.();
@@ -285,7 +253,6 @@ function loadScenario(filename) {
     });
 }
 
-// CSSカスタム変数 --vh をセット（スマホブラウザ用）
 function setVhVariable() {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
@@ -301,22 +268,26 @@ window.addEventListener("DOMContentLoaded", () => {
   loadScenario(currentScenario);
 });
 
-// クリック処理
+// ▼ 統一クリック処理：メニューが開いていれば閉じる／通常進行／エンドなら初期に戻る
 clickLayer.addEventListener("click", () => {
   if (isScenarioEnded) {
-    loadScenario("000start.json");
+    if (currentScenario !== initialScenario) {
+      loadScenario(initialScenario);
+    }
     return;
   }
-  if (menuPanelVisible?.()) {
+
+  if (typeof menuPanelVisible === "function" && menuPanelVisible()) {
     hideMenuPanel?.();
     return;
   }
+
   if (!isPlaying && choicesEl.children.length === 0) {
     next();
   }
 });
 
-// ダブルクリックでメニュー表示（menuList.js内関数使用）
+// ▼ ダブルクリックでメニュー呼び出し
 clickLayer.addEventListener("dblclick", () => {
   loadMenu("menu01.json");
 });
