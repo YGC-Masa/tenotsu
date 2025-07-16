@@ -1,4 +1,4 @@
-// menuList.js
+// menuList.js - メニュー・リスト表示制御と読み込み
 
 const menuPanelElement = document.getElementById("menu-panel");
 const listPanelElement = document.getElementById("list-panel");
@@ -23,7 +23,7 @@ function listPanelVisible() {
   return listPanelElement && !listPanelElement.classList.contains("hidden");
 }
 
-// メニュー・リスト読み込み
+// メニュー読み込み
 async function loadMenu(filename = "menu01.json") {
   try {
     const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
@@ -34,6 +34,7 @@ async function loadMenu(filename = "menu01.json") {
   }
 }
 
+// リスト読み込み
 async function loadList(filename = "list01.json") {
   try {
     const res = await fetch(config.listPath + filename + "?t=" + Date.now());
@@ -136,3 +137,15 @@ function handleMenuAction(item) {
     location.href = item.url;
   }
 }
+
+// ダブルクリック・連続タッチでメニュー表示
+clickLayer.addEventListener("dblclick", () => {
+  loadMenu("menu01.json");
+});
+
+let lastTouch = 0;
+clickLayer.addEventListener("touchend", () => {
+  const now = Date.now();
+  if (now - lastTouch < 300) loadMenu("menu01.json");
+  lastTouch = now;
+});
