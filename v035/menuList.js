@@ -29,7 +29,7 @@ async function loadMenu(filename = "menu01.json") {
     const res = await fetch(config.menuPath + filename + "?t=" + Date.now());
     const data = await res.json();
     showMenu(data);
-  } catch(e) {
+  } catch (e) {
     console.error("メニュー読み込み失敗", e);
   }
 }
@@ -39,7 +39,7 @@ async function loadList(filename = "list01.json") {
     const res = await fetch(config.listPath + filename + "?t=" + Date.now());
     const data = await res.json();
     showList(data);
-  } catch(e) {
+  } catch (e) {
     console.error("リスト読み込み失敗", e);
   }
 }
@@ -49,7 +49,7 @@ function showMenu(menuData) {
   menuPanelElement.innerHTML = "";
   showMenuPanel();
 
-  // 例：音声ON/OFF
+  // 音声ON/OFF切替ボタン
   const audioBtn = document.createElement("button");
   audioBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
   audioBtn.onclick = () => {
@@ -60,7 +60,7 @@ function showMenu(menuData) {
   };
   menuPanelElement.appendChild(audioBtn);
 
-  // 例：オートモードON/OFF
+  // オートモードON/OFF切替ボタン
   const autoBtn = document.createElement("button");
   autoBtn.textContent = isAutoMode ? "オートモードOFF" : "オートモードON";
   autoBtn.onclick = () => {
@@ -83,7 +83,7 @@ function showMenu(menuData) {
   };
   menuPanelElement.appendChild(autoBtn);
 
-  // 例：全画面ON/OFF
+  // 全画面ON/OFF切替ボタン
   const fullscreenBtn = document.createElement("button");
   fullscreenBtn.textContent = document.fullscreenElement ? "全画面OFF" : "全画面ON";
   fullscreenBtn.onclick = () => {
@@ -136,7 +136,3 @@ function handleMenuAction(item) {
     location.href = item.url;
   }
 }
-
-// クリックレイヤーイベント（外部から設定されるため削除可）
-// ここでは設定しません。script.jsで設定。
-
