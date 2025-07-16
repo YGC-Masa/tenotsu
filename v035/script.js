@@ -1,3 +1,5 @@
+// script.js - v035-07
+
 let currentScenario = "000start.json";
 let currentIndex = 0;
 let isMuted = true;
@@ -97,12 +99,19 @@ function showScene(scene) {
   }
 }
 
-// ▼ イベント設定
+// クリックで進行
 clickLayer.addEventListener("click", () => {
   if (!isPlaying && choicesEl.children.length === 0) {
     next();
   }
 });
+
+// ダブルクリックでメニュー表示（menuList.jsのloadMenuを呼ぶ）
+clickLayer.addEventListener("dblclick", () => {
+  loadMenu("menu01.json");
+});
+
+// モバイル用ダブルタップ対応（menuList.js内に記述してもOK）
 
 window.addEventListener("DOMContentLoaded", () => {
   loadScenario(currentScenario);
