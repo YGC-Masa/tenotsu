@@ -98,11 +98,7 @@ function showScene(scene) {
 }
 
 // ▼ イベント設定
-clickLayer.addEventListener("click", () => {
-  if (!isPlaying && choicesEl.children.length === 0) {
-    next();
-  }
-});
+
 
 window.addEventListener("DOMContentLoaded", () => {
   loadScenario(currentScenario);
