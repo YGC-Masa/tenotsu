@@ -1,4 +1,4 @@
-// script.js - v035-06（初期シナリオ自動スタート）
+// script.js - v033-02（randomTextsOn 対応）
 
 let currentScenario = "000start.json";
 let currentIndex = 0;
@@ -13,7 +13,6 @@ let currentSpeed = 40;
 let defaultSpeed = 40;
 let defaultFontSize = "1em";
 let textAreaVisible = true;
-let isEndReached = false;
 
 const bgEl = document.getElementById("background");
 const nameEl = document.getElementById("name");
@@ -111,19 +110,22 @@ async function showScene(scene) {
     updateTextAreaVisibility(scene.textareashow);
   }
 
+  // ランダム画像表示のon/off
   if (scene.randomimageson === false && typeof randomImagesOff === "function") {
     randomImagesOff();
   } else if (scene.randomimageson === true && typeof randomImagesOn === "function") {
     randomImagesOn();
   }
 
-  if (scene.randomtexts !== undefined) {
-    if (scene.randomtexts) {
-      if (typeof randomTextsOn === "function") randomTextsOn();
-    } else {
-      if (typeof randomTextsOff === "function") randomTextsOff();
-    }
+  // ランダムテキストのon/off
+// ▼ この下に追加
+if (scene.randomtexts !== undefined) {
+  if (scene.randomtexts) {
+    if (typeof randomTextsOn === "function") randomTextsOn();
+  } else {
+    if (typeof randomTextsOff === "function") randomTextsOff();
   }
+}
 
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
@@ -229,54 +231,28 @@ async function showScene(scene) {
     }, autoWaitTime);
   }
 }
-
 function next() {
   fetch(config.scenarioPath + currentScenario + "?t=" + Date.now())
     .then((res) => res.json())
     .then((data) => {
-      const scenes = Array.isArray(data) ? data : data.scenes;
-      if (isEndReached) {
-        isEndReached = false;
-        loadScenario("000start.json");
-        return;
-      }
-
       currentIndex++;
+      const scenes = Array.isArray(data) ? data : data.scenes;
       if (currentIndex < scenes.length) {
         showScene(scenes[currentIndex]);
       } else {
         if (textAreaVisible) {
           nameEl.textContent = "";
-          textEl.innerHTML = "（物語は つづく・・・（クリックでタイトルに戻ります））";
+          textEl.innerHTML = "（物語は つづく・・・）";
         }
         isAutoMode = false;
-        isEndReached = true;
       }
     });
 }
 
-// 初回自動スタート（DOMContentLoaded）
-document.addEventListener("DOMContentLoaded", () => {
-  loadScenario("000start.json");
-});
-
-// （以下略）
-
 function loadScenario(filename) {
+  // ランダム表示類はリセット
   if (typeof randomImagesOff === "function") randomImagesOff();
   if (typeof randomTextsOff === "function") randomTextsOff();
-
-  // キャッシュリセット
-  if (typeof randomImagesDataCache !== "undefined") randomImagesDataCache = null;
-  if (typeof imagePathsCache !== "undefined") imagePathsCache = null;
-  if (typeof preloadedImages !== "undefined") {
-    Object.values(preloadedImages).forEach(img => {
-      if (img.parentElement) {
-        img.parentElement.removeChild(img);
-      }
-    });
-    preloadedImages = {};
-  }
 
   currentScenario = filename;
   currentIndex = 0;
@@ -307,6 +283,10 @@ window.addEventListener("resize", () => {
   updateCharacterDisplay();
 });
 
+window.addEventListener("load", () => {
+  setVhVariable();
+  loadScenario(currentScenario);
+});
 
 // === メニュー関連 ===
 function handleMenuAction(item) {
@@ -315,7 +295,7 @@ function handleMenuAction(item) {
   } else if (item.action === "menu" && item.menu) {
     loadMenu(item.menu);
   } else if (item.action === "list" && item.list) {
-    loadList(item.list);
+    loadList(item.list); // ← ★これを追加！
   } else if (item.action === "url" && item.url) {
     location.href = item.url;
   }
