@@ -1,0 +1,19 @@
+[
+  {
+    "auto": true,
+    "bg": "title.jpg",
+    "effect": "whitein",
+    "textareashow": false
+  },
+  {
+    "auto": true,
+    "randomimageson": true,
+    "randomtexts": true,
+    "wait": 1750
+  },
+  {
+    "auto": false,
+    "showlist": "title.json",
+    "textareashow": false
+  }
+]
