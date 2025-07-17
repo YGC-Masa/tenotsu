@@ -1,0 +1,19 @@
+[
+  {
+    "bg": "bg_library.jpg",
+    "bgm": "library_ambience.mp3",
+    "name": "藍",
+    "text": "……ここなら静かに考え事ができそうですね。",
+    "characters": [
+      { "side": "center", "src": "a02002.png" }
+    ]
+  },
+  {
+    "name": "藍",
+    "text": "ふふ、あの子……来てくれるかな。",
+    "voice": "b01002.mp3"
+  },
+  {
+    "text": "しばらくここで待ってみよう。"
+  }
+]

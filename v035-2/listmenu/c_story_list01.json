@@ -1,0 +1,6 @@
+{
+  "items": [
+    { "text": "店長をからかおうと・・", "action": "jump", "jump": "c10001.json" },
+    { "text": "前のメニュー", "action": "list", "list": "title.json" }
+  ]
+}
