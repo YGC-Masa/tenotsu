@@ -1,302 +1,294 @@
+// randomShows.js - 最新完全版
+
 let randomImagesLayer = null;
-let randomImageElements = [];
-let randomTextElements = [];
 let randomTextLayer = null;
-
 let randomImagesDataCache = null;
-let imagePathsCache = null;
-let preloadedImages = {}; // src => <img>（非表示で保持）
+let preloadedImages = {};
+let imagePathsCache = [];
+let currentOrientation = '';
 
-// ▼ レイヤー作成
+// ■ ランダム画像レイヤー作成
 function createRandomImagesLayer() {
-  if (randomImagesLayer) return;
+  if (randomImagesLayer) return; // 既にあれば無視
   randomImagesLayer = document.createElement("div");
   randomImagesLayer.id = "random-images-layer";
   Object.assign(randomImagesLayer.style, {
-    position: "absolute",
+    position: "fixed",
     top: "0",
     left: "0",
-    width: "100%",
-    height: "100%",
-    zIndex: "2.5",
-    pointerEvents: "none"
+    width: "100vw",
+    height: "100vh",
+    zIndex: "9",
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: "env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)",
+    background: "transparent",
+    pointerEvents: "none",
+    userSelect: "none",
   });
   document.body.appendChild(randomImagesLayer);
 }
 
+// ■ ランダムテキストレイヤー作成
 function createRandomTextLayer() {
-  if (randomTextLayer) return;
+  if (randomTextLayer) return; // 既にあれば無視
   randomTextLayer = document.createElement("div");
   randomTextLayer.id = "random-text-layer";
   Object.assign(randomTextLayer.style, {
-    position: "absolute",
-    bottom: "0",
-    left: "0",
-    width: "100%",
-    zIndex: "3",
-    pointerEvents: "none"
+    position: "fixed",
+    bottom: "10%",
+    left: "5%",
+    width: "90%",
+    zIndex: "10",
+    pointerEvents: "none",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    userSelect: "none",
   });
   document.body.appendChild(randomTextLayer);
 }
 
-// ▼ クリア
-function clearRandomImages() {
-  if (randomImagesLayer) {
-    // 子をすべて一旦 body（非表示保持領域）に戻す
-    randomImageElements.forEach(img => {
-      if (img.parentElement === randomImagesLayer) {
-        randomImagesLayer.removeChild(img);
-        // bodyに戻すときは非表示に
-        img.style.position = "fixed";
-        img.style.left = "-9999px";
-        img.style.top = "-9999px";
-        img.style.width = "auto";
-        img.style.height = "auto";
-        img.style.objectFit = "contain";
-        document.body.appendChild(img);
-      }
-    });
-  }
-  randomImageElements = [];
-}
-
-function clearRandomTexts() {
-  if (randomTextLayer) randomTextLayer.innerHTML = "";
-  randomTextElements = [];
-}
-
-// ▼ シャッフル
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
-
-// ▼ ランダム画像表示
-function randomImagesOn() {
-  if (!window.config || !config.randomPath) return;
-
-  if (randomImagesDataCache) {
-    buildRandomImages(randomImagesDataCache);
-  } else {
-    fetch(`${config.randomPath}imageset01.json`)
-      .then(res => res.json())
-      .then(data => {
-        randomImagesDataCache = data;
-        buildRandomImages(data);
-      })
-      .catch(err => console.error("画像JSON読み込み失敗", err));
-  }
-}
-
-function buildRandomImages(data) {
-  createRandomImagesLayer();
-  clearRandomImages();
-
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-  const isPortrait = w <= 768 && h > w;
-  let cols = 3, rows = 2;
-  if (isPortrait) { cols = 2; rows = 4; }
-
-  const safeArea = { x: w * 0.1, y: h * 0.1, width: w * 0.8, height: h * 0.8 };
-  const cellW = safeArea.width / cols;
-  const cellH = safeArea.height / rows;
-
-  const positions = [];
-  for (let y = 0; y < rows; y++) {
-    for (let x = 0; x < cols; x++) {
-      positions.push({ x, y });
-    }
-  }
-
-  const base = data.picpath || config.randomPath;
-  const list = [];
-  if (data.fixed) list.push(base + data.fixed);
-  const rand = [...data.random];
-  shuffleArray(rand);
-  while (list.length < 8 && rand.length) list.push(base + rand.shift());
-  imagePathsCache = list;
-
-  const selected = imagePathsCache.slice(0, positions.length);
-
-  selected.forEach((src, i) => {
-    const { x, y } = positions[i];
-
-    // 画像がプリロード済みなら reuse、なければ preload & reuse
-    if (!preloadedImages[src]) {
-      const img = new Image();
-      img.src = src;
-      // 非表示領域に置いておく
-      img.style.position = "fixed";
-      img.style.left = "-9999px";
-      img.style.top = "-9999px";
-      img.style.width = "auto";
-      img.style.height = "auto";
-      img.style.objectFit = "contain";
-      document.body.appendChild(img);
-      preloadedImages[src] = img;
-    }
-
-    // 使うときは再配置＆スタイル調整
-    const img = preloadedImages[src];
-    if (img.parentElement !== randomImagesLayer) {
-      // 親を移動
-      if (img.parentElement) img.parentElement.removeChild(img);
-      randomImagesLayer.appendChild(img);
-    }
+// ■ 画像プリロード（非表示保持）
+function preloadImage(path) {
+  if (!preloadedImages[path]) {
+    const img = new Image();
+    img.src = path;
     Object.assign(img.style, {
       position: "absolute",
-      left: `${safeArea.x + cellW * x}px`,
-      top: `${safeArea.y + cellH * y}px`,
-      width: `${cellW}px`,
-      height: `${cellH}px`,
+      left: "-9999px",
+      top: "-9999px",
+      width: "auto",
+      height: "auto",
       objectFit: "contain",
       pointerEvents: "none",
-      display: "block"
+      userSelect: "none",
     });
-
-    randomImageElements.push(img);
-  });
+    document.body.appendChild(img);
+    preloadedImages[path] = img;
+  }
 }
 
-// ▼ 位置だけ再計算・再設定（リサイズ時用）
-function updateRandomImagesPosition() {
-  if (!randomImagesLayer || !randomImagesDataCache || !imagePathsCache) return;
-
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-  const isPortrait = w <= 768 && h > w;
-  let cols = 3, rows = 2;
-  if (isPortrait) { cols = 2; rows = 4; }
-
-  const safeArea = { x: w * 0.1, y: h * 0.1, width: w * 0.8, height: h * 0.8 };
-  const cellW = safeArea.width / cols;
-  const cellH = safeArea.height / rows;
-
-  randomImageElements.forEach((img, i) => {
-    const x = i % cols;
-    const y = Math.floor(i / cols);
-    Object.assign(img.style, {
-      left: `${safeArea.x + cellW * x}px`,
-      top: `${safeArea.y + cellH * y}px`,
-      width: `${cellW}px`,
-      height: `${cellH}px`
-    });
-  });
+// ■ 配列シャッフル（破壊せずコピーで）
+function shuffleArray(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
 }
 
-// ▼ ランダムテキスト表示（変更なし）
-function randomTextsOn() {
-  if (!window.config || !config.randomPath) return;
+// ■ ランダム画像表示ON
+async function randomImagesOn() {
+  createRandomImagesLayer();
 
-  fetch(`${config.randomPath}textset01.json`)
-    .then(res => res.json())
-    .then(data => {
-      createRandomTextLayer();
-      clearRandomTexts();
+  if (!randomImagesDataCache) {
+    try {
+      const res = await fetch(config.randomPath + "imageset01.json?t=" + Date.now());
+      randomImagesDataCache = await res.json();
+    } catch (e) {
+      console.error("ランダム画像JSON読み込み失敗", e);
+      return;
+    }
+  }
 
-      if (data.length < 4) return;
+  const basePath = randomImagesDataCache.picpath || config.randomPath;
+  const fixedImg = randomImagesDataCache.fixed ? [basePath + randomImagesDataCache.fixed] : [];
+  const randomImgs = shuffleArray(randomImagesDataCache.random.map(p => basePath + p));
 
-      const selected = [];
-      const pairs = data.length / 2;
-      while (selected.length < 2) {
-        const i = Math.floor(Math.random() * pairs);
-        if (!selected.includes(i)) selected.push(i);
-      }
+  // 最大8枚に収める（固定画像1枚+ランダム画像7枚まで）
+  imagePathsCache = fixedImg.concat(randomImgs).slice(0, 8);
 
-      const name1 = data[selected[0] * 2];
-      const text1 = data[selected[0] * 2 + 1];
-      const name2 = data[selected[1] * 2];
-      const text2 = data[selected[1] * 2 + 1];
+  // プリロード
+  imagePathsCache.forEach(preloadImage);
 
-      const s1 = characterStyles[name1] || characterStyles[""];
-      const s2 = characterStyles[name2] || characterStyles[""];
-      const c1 = s1.color || "#C0C0C0";
-      const c2 = s2.color || "#C0C0C0";
-
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      let fontSize = "1em";
-      let padding = "0.075em 1em";
-      let lineGap = "0.05em";
-      let paddingBottom = "0.075em";
-
-      if (w <= 768 && h > w) {
-        fontSize = "0.8em";
-        padding = "0.05em 0.8em";
-        lineGap = "0.05em";
-        paddingBottom = "0.2em";
-      } else if (w <= 768 && w >= h) {
-        fontSize = "0.8em";
-        padding = "0.05em 0.6em";
-        lineGap = "0.05em";
-        paddingBottom = "0.075em";
-      }
-
-      const note = document.createElement("div");
-      Object.assign(note.style, {
-        position: "absolute",
-        left: "5%",
-        width: "90%",
-        bottom: "0",
-        backgroundColor: "#fff",
-        borderLeft: `10px solid ${c1}`,
-        fontSize,
-        fontWeight: "bold",
-        padding,
-        paddingBottom: `calc(env(safe-area-inset-bottom, 0px) + ${paddingBottom})`,
-        borderRadius: "0.5em",
-        boxSizing: "border-box",
-        zIndex: 3
-      });
-
-      const line1 = document.createElement("div");
-      line1.textContent = text1;
-      line1.style.color = c1;
-      line1.style.marginBottom = lineGap;
-      line1.style.textShadow = "-1px -1px 1px #444, 1px -1px 1px #444, -1px 1px 1px #444, 1px 1px 1px #444";
-
-      const line2 = document.createElement("div");
-      line2.textContent = text2;
-      line2.style.color = c2;
-      line2.style.textShadow = "-1px -1px 1px #444, 1px -1px 1px #444, -1px 1px 1px #444, 1px 1px 1px #444";
-
-      note.appendChild(line1);
-      note.appendChild(line2);
-      randomTextLayer.appendChild(note);
-      randomTextElements.push(note);
-    })
-    .catch(err => console.error("テキストJSON読み込み失敗", err));
+  updateRandomImagesPosition();
 }
 
-// ▼ OFF系
+// ■ ランダム画像表示OFF
 function randomImagesOff() {
-  clearRandomImages();
-  randomImagesDataCache = null;
-  imagePathsCache = null;
+  if (!randomImagesLayer) return;
+  while (randomImagesLayer.firstChild) {
+    randomImagesLayer.removeChild(randomImagesLayer.firstChild);
+  }
+  randomImagesLayer.remove();
+  randomImagesLayer = null;
+  imagePathsCache = [];
 
-  // 非表示にしてbodyに戻すだけ。破棄しない。
+  // プリロード画像はDOMからは消さず非表示保持（再利用のため）
   Object.values(preloadedImages).forEach(img => {
     if (img.parentElement !== document.body) {
       if (img.parentElement) img.parentElement.removeChild(img);
-      img.style.position = "fixed";
-      img.style.left = "-9999px";
-      img.style.top = "-9999px";
-      img.style.width = "auto";
-      img.style.height = "auto";
-      img.style.objectFit = "contain";
+      Object.assign(img.style, {
+        position: "absolute",
+        left: "-9999px",
+        top: "-9999px",
+        width: "auto",
+        height: "auto",
+        objectFit: "contain",
+        pointerEvents: "none",
+        userSelect: "none",
+      });
       document.body.appendChild(img);
     }
   });
 }
 
-function randomTextsOff() {
-  clearRandomTexts();
+// ■ 画面サイズ・向きに応じて画像配置更新（リサイズ対応）
+function updateRandomImagesPosition() {
+  if (!randomImagesLayer || imagePathsCache.length === 0) return;
+
+  // まずレイヤー内クリア
+  while (randomImagesLayer.firstChild) {
+    randomImagesLayer.removeChild(randomImagesLayer.firstChild);
+  }
+
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  const isPortrait = h > w;
+
+  const cols = isPortrait ? 2 : 3;
+  const rows = isPortrait ? 4 : 2;
+
+  const boxWidthVW = 100 / cols;
+  const boxHeightVH = 100 / rows;
+
+  imagePathsCache.forEach((src, i) => {
+    const container = document.createElement("div");
+    Object.assign(container.style, {
+      width: `${boxWidthVW}vw`,
+      height: `${boxHeightVH}vh`,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      boxSizing: "border-box",
+      padding: "0.2em",
+      userSelect: "none",
+    });
+
+    const img = preloadedImages[src] ? preloadedImages[src].cloneNode(true) : new Image();
+    img.src = src;
+    Object.assign(img.style, {
+      maxWidth: "100%",
+      maxHeight: "100%",
+      objectFit: "contain",
+      pointerEvents: "none",
+      userSelect: "none",
+      imageRendering: "auto",
+    });
+
+    container.appendChild(img);
+    randomImagesLayer.appendChild(container);
+  });
 }
 
-// ▼ リサイズ対応
+// ■ ランダムテキスト表示ON
+async function randomTextsOn() {
+  createRandomTextLayer();
+
+  let textData;
+  try {
+    const res = await fetch(config.randomPath + "textset01.json?t=" + Date.now());
+    textData = await res.json();
+  } catch (e) {
+    console.error("ランダムテキストJSON読み込み失敗", e);
+    return;
+  }
+
+  if (!Array.isArray(textData) || textData.length < 4) return;
+
+  // 2ペア（4要素）をランダムに選択（重複なし）
+  const pairCount = Math.floor(textData.length / 2);
+  let selectedIndexes = [];
+  while (selectedIndexes.length < 2) {
+    const idx = Math.floor(Math.random() * pairCount);
+    if (!selectedIndexes.includes(idx)) selectedIndexes.push(idx);
+  }
+
+  // 選ばれた2ペアのキャラ名＆テキスト
+  const pairs = selectedIndexes.map(i => ({
+    name: textData[i * 2],
+    text: textData[i * 2 + 1]
+  }));
+
+  // クリアレイヤー
+  randomTextLayer.innerHTML = "";
+
+  // コンテナ（付箋風デザイン）
+  const container = document.createElement("div");
+  Object.assign(container.style, {
+    backgroundColor: "white",
+    borderRadius: "0.5em",
+    border: "3px solid #444",
+    boxShadow: "2px 2px 8px rgba(0,0,0,0.2)",
+    padding: "1em 1.2em",
+    width: "100%",
+    maxWidth: "600px",
+    boxSizing: "border-box",
+    fontWeight: "bold",
+    fontSize: window.innerWidth <= 768 && window.innerWidth > window.innerHeight ? "0.8em" : "1em",
+    userSelect: "none",
+    position: "relative",
+  });
+
+  // 左帯用色とテキスト色をキャラカラーから決定
+  pairs.forEach(({ name, text }, idx) => {
+    const style = characterStyles[name] || characterStyles[""];
+    const charColor = style.color || "#000";
+
+    const line = document.createElement("div");
+    line.textContent = text;
+    line.style.color = charColor;
+    line.style.textShadow = "-1px -1px 0 #444,1px -1px 0 #444,-1px 1px 0 #444,1px 1px 0 #444";
+    line.style.margin = idx === 0 ? "0 0 0.3em 0" : "0";
+    container.appendChild(line);
+  });
+
+  // 左側に色帯をつけるための擬似要素を作るための親ラッパー
+  const wrapper = document.createElement("div");
+  wrapper.style.position = "relative";
+  wrapper.style.width = "100%";
+
+  // 左側帯（キャラカラー濃い目）を複数表示
+  pairs.forEach(({ name }, idx) => {
+    const style = characterStyles[name] || characterStyles[""];
+    const charColor = style.color || "#000";
+
+    const band = document.createElement("div");
+    Object.assign(band.style, {
+      position: "absolute",
+      left: "0",
+      top: idx === 0 ? "0" : "50%",
+      width: "10px",
+      height: "50%",
+      backgroundColor: charColor,
+      borderRadius: "0.3em 0 0 0.3em",
+      pointerEvents: "none",
+      userSelect: "none",
+    });
+    wrapper.appendChild(band);
+  });
+
+  wrapper.appendChild(container);
+  randomTextLayer.appendChild(wrapper);
+}
+
+// ■ ランダムテキスト表示OFF
+function randomTextsOff() {
+  if (!randomTextLayer) return;
+  randomTextLayer.remove();
+  randomTextLayer = null;
+}
+
+// ■ ウィンドウリサイズ時の処理
 window.addEventListener("resize", () => {
-  updateRandomImagesPosition();
+  const newOrientation = window.innerWidth > window.innerHeight ? "landscape" : "portrait";
+  if (newOrientation !== currentOrientation) {
+    currentOrientation = newOrientation;
+    updateRandomImagesPosition();
+  }
 });
+
