@@ -1,7 +1,7 @@
-// menuList.js - v035-08
-
+// menuList.js - v035-09
 const menuPanelElement = document.getElementById("menu-panel");
 const listPanelElement = document.getElementById("list-panel");
+const clickLayer = document.getElementById("click-layer");
 
 // 表示・非表示関数
 function showMenuPanel() {
@@ -49,7 +49,6 @@ function showMenu(menuData) {
   menuPanelElement.innerHTML = "";
   showMenuPanel();
 
-  // 音声ON/OFF切替ボタン
   const audioBtn = document.createElement("button");
   audioBtn.textContent = isMuted ? "音声ONへ" : "音声OFFへ";
   audioBtn.onclick = () => {
@@ -60,7 +59,6 @@ function showMenu(menuData) {
   };
   menuPanelElement.appendChild(audioBtn);
 
-  // オートモードON/OFF切替ボタン
   const autoBtn = document.createElement("button");
   autoBtn.textContent = isAutoMode ? "オートモードOFF" : "オートモードON";
   autoBtn.onclick = () => {
@@ -83,7 +81,6 @@ function showMenu(menuData) {
   };
   menuPanelElement.appendChild(autoBtn);
 
-  // 全画面ON/OFF切替ボタン
   const fullscreenBtn = document.createElement("button");
   fullscreenBtn.textContent = document.fullscreenElement ? "全画面OFF" : "全画面ON";
   fullscreenBtn.onclick = () => {
@@ -96,7 +93,6 @@ function showMenu(menuData) {
   };
   menuPanelElement.appendChild(fullscreenBtn);
 
-  // メニュー項目ボタン生成
   menuData.items.forEach(item => {
     const btn = document.createElement("button");
     btn.textContent = item.text;
@@ -124,7 +120,7 @@ function showList(listData) {
   });
 }
 
-// メニューアクション共通処理
+// アクション処理
 function handleMenuAction(item) {
   if (item.action === "jump" && item.jump) {
     loadScenario(item.jump);
@@ -137,15 +133,19 @@ function handleMenuAction(item) {
   }
 }
 
-// ダブルクリック・ダブルタップでメニュー表示
-let lastTouchTime = 0;
-clickLayer.addEventListener("dblclick", () => {
-  loadMenu("menu01.json");
-});
-clickLayer.addEventListener("touchend", () => {
-  const now = Date.now();
-  if (now - lastTouchTime < 300) {
-    loadMenu("menu01.json");
+// ダブルクリックでメニュー開く処理（安全な実行）
+document.addEventListener("DOMContentLoaded", () => {
+  if (clickLayer) {
+    let lastTouchTime = 0;
+    clickLayer.addEventListener("dblclick", () => {
+      loadMenu("menu01.json");
+    });
+    clickLayer.addEventListener("touchend", () => {
+      const now = Date.now();
+      if (now - lastTouchTime < 300) {
+        loadMenu("menu01.json");
+      }
+      lastTouchTime = now;
+    });
   }
-  lastTouchTime = now;
 });
