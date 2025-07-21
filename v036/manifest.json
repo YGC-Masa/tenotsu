@@ -1,19 +1,19 @@
 {
-  "name": "Ten-Otsu",
-  "short_name": "TenOtsu",
+  "name": "Ten-Otsu Novel Game",
+  "short_name": "Ten-Otsu",
   "start_url": "./index.html",
-  "display": "fullscreen",
-  "orientation": "landscape",
+  "display": "standalone",
   "background_color": "#000000",
-  "theme_color": "#000000",
+  "theme_color": "#222222",
+  "description": "ノベルゲーム「てんおつ」PWA版",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "./icon/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "icon-512.png",
+      "src": "./icon/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
