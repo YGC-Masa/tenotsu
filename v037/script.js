@@ -157,21 +157,24 @@ if (scene.showev !== undefined) {
 }
 
 
-if (scene.showcg) {
-  const cgImg = document.createElement("img");
-  cgImg.src = config.cgPath + scene.showcg;
-  cgImg.classList.add("cg-image");
-  cgImg.onload = () => {
-    applyEffect(cgImg, scene.cgEffect || "fadein");
+if (scene.showcg !== undefined) {
+  if (scene.showcg === "NULL") {
+    evLayer.innerHTML = ""; // CG画像もEVレイヤーなので同じ場所を消す
+  } else {
+    const cgImg = document.createElement("img");
+    cgImg.src = config.cgPath + scene.showcg;
+    cgImg.classList.add("cg-image");
+    cgImg.onload = () => {
+      applyEffect(cgImg, scene.cgEffect || "fadein");
 
-    // AUTOモード中にテキストも選択肢もないなら進める
-    if (isAutoMode && scene.name === undefined && scene.text === undefined && !scene.choices) {
-      setTimeout(() => {
-        if (!isPlaying) next();
-      }, autoWaitTime);
-    }
-  };
-  evLayer.appendChild(cgImg);
+      if (isAutoMode && scene.name === undefined && scene.text === undefined && !scene.choices) {
+        setTimeout(() => {
+          if (!isPlaying) next();
+        }, autoWaitTime);
+      }
+    };
+    evLayer.appendChild(cgImg);
+  }
 }
 
 
