@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0" />
+  <title>ノベルゲーム v036</title>
+
+  <!-- メインスタイル -->
+  <link rel="stylesheet" href="style.css" />
+  <!-- キャラ表示位置・サイズ -->
+  <link rel="stylesheet" href="chardispsetting.css" />
+
+  <!-- 通常ブラウザ向け -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <!-- Retina対応 -->
+  <link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+
+  <!-- ✅ PWA関連 -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#000000" />
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <style>
+    #rotate-warning {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      color: #fff;
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-size: 1.2em;
+      padding: 2em;
+    }
+    @media screen and (orientation: portrait) {
+      #rotate-warning {
+        display: flex;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 横画面警告 -->
+  <div id="rotate-warning">このゲームは横画面でお楽しみください。<br>端末を回転してください。</div>
+
+
+  
+  <div id="game-container">
+    <!-- 背景画像 -->
+    <img id="background" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=" alt="背景画像" /> 
+    <!-- キャラ -->
+    <div id="char-layer">
+      <div id="char-left" class="char-slot"></div>
+      <div id="char-center" class="char-slot"></div>
+      <div id="char-right" class="char-slot"></div>
+    </div>
+
+    <!-- EV/CG層 -->
+    <div id="ev-layer"></div>
+
+    <!-- ランダム画像層 -->
+    <div id="random-images-layer"></div>
+
+    <!-- クリックレイヤー -->
+    <div id="click-layer"></div>
+
+    <!-- セリフ -->
+    <div id="dialogue-box">
+      <div id="name" class="name-area"></div>
+      <div id="text" class="text-area"></div>
+    </div>
+
+    <!-- 選択肢 -->
+    <div id="choices" class="choices-area"></div>
+
+    <!-- リスト・メニュー -->
+    <div id="list-panel" class="list-panel hidden"></div>
+    <div id="menu-panel" class="menu-panel hidden"></div>
+  </div>
+
+  <!-- スクリプト群 -->
+  <script src="config.js"></script>
+  <script src="characterStyles.js"></script>
+  <script src="effect.js"></script>
+  <script src="menuList.js"></script>
+  <script src="randomShows.js"></script>
+  <script src="utils.js"></script>
+  <script src="script.js"></script>
+
+  <!-- ✅ フルスクリーン・PWA対応 -->
+  <script>
+    // 初回操作で全画面化
+    document.addEventListener("click", () => {
+      const el = document.documentElement;
+      if (el.requestFullscreen) el.requestFullscreen();
+      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    }, { once: true });
+
+    // serviceWorker登録
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./serviceWorker.js')
+        .then(() => console.log('Service Worker registered'))
+        .catch((err) => console.error('SW registration failed:', err));
+    }
+  </script>
+</body>
+</html>

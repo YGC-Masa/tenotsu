@@ -1,0 +1,10 @@
+{
+  "items": [
+    { "text": "⑥Pink？と遊ぶ", "action": "jump", "jump": "pink.json" },
+    { "text": "⑦Aqua？と遊ぶ", "action": "jump", "jump": "aqua.json" },
+    { "text": "⑧Purple？と遊ぶ", "action": "jump", "jump": "purple.json" },
+    { "text": "⑨White・Black？Twinsと遊ぶ", "action": "jump", "jump": "twins.json" },
+    { "text": "みんなで遊ぶ", "action": "jump", "jump": "allstart.json" },
+    { "text": "⑪前のメニュー", "action": "list", "list": "title.json" }
+  ]
+}
