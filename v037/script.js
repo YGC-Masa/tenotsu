@@ -136,21 +136,41 @@ if (scene.randomtexts !== undefined) {
     await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
-  if (scene.showev) {
-    const evImg = document.createElement("img");
-    evImg.src = config.evPath + scene.showev;
-    evImg.classList.add("ev-image");
-    evImg.onload = () => applyEffect(evImg, scene.evEffect || "fadein");
-    evLayer.appendChild(evImg);
-  }
+if (scene.showev) {
+  const evImg = document.createElement("img");
+  evImg.src = config.evPath + scene.showev;
+  evImg.classList.add("ev-image");
+  evImg.onload = () => {
+    applyEffect(evImg, scene.evEffect || "fadein");
 
-  if (scene.showcg) {
-    const cgImg = document.createElement("img");
-    cgImg.src = config.cgPath + scene.showcg;
-    cgImg.classList.add("cg-image");
-    cgImg.onload = () => applyEffect(cgImg, scene.cgEffect || "fadein");
-    evLayer.appendChild(cgImg);
-  }
+    // AUTOモード中にテキストも選択肢もないなら進める
+    if (isAutoMode && scene.name === undefined && scene.text === undefined && !scene.choices) {
+      setTimeout(() => {
+        if (!isPlaying) next();
+      }, autoWaitTime);
+    }
+  };
+  evLayer.appendChild(evImg);
+}
+
+
+if (scene.showcg) {
+  const cgImg = document.createElement("img");
+  cgImg.src = config.cgPath + scene.showcg;
+  cgImg.classList.add("cg-image");
+  cgImg.onload = () => {
+    applyEffect(cgImg, scene.cgEffect || "fadein");
+
+    // AUTOモード中にテキストも選択肢もないなら進める
+    if (isAutoMode && scene.name === undefined && scene.text === undefined && !scene.choices) {
+      setTimeout(() => {
+        if (!isPlaying) next();
+      }, autoWaitTime);
+    }
+  };
+  evLayer.appendChild(cgImg);
+}
+
 
   if (scene.bgm !== undefined) {
     if (bgm) {
