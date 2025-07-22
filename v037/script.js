@@ -394,7 +394,7 @@ clickLayer.addEventListener("dblclick", () => {
 let lastTouch = 0;
 clickLayer.addEventListener("touchend", () => {
   const now = Date.now();
-  if (now - lastTouch < 300) loadMenu("menu01.json");
+  if (now - lastTouch < 250) loadMenu("menu01.json");
   lastTouch = now;
 });
 
