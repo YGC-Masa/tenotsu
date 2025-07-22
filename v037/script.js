@@ -136,21 +136,24 @@ if (scene.randomtexts !== undefined) {
     await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
-if (scene.showev) {
-  const evImg = document.createElement("img");
-  evImg.src = config.evPath + scene.showev;
-  evImg.classList.add("ev-image");
-  evImg.onload = () => {
-    applyEffect(evImg, scene.evEffect || "fadein");
+if (scene.showev !== undefined) {
+  if (scene.showev === "NULL") {
+    evLayer.innerHTML = ""; // EV画像を非表示にする
+  } else {
+    const evImg = document.createElement("img");
+    evImg.src = config.evPath + scene.showev;
+    evImg.classList.add("ev-image");
+    evImg.onload = () => {
+      applyEffect(evImg, scene.evEffect || "fadein");
 
-    // AUTOモード中にテキストも選択肢もないなら進める
-    if (isAutoMode && scene.name === undefined && scene.text === undefined && !scene.choices) {
-      setTimeout(() => {
-        if (!isPlaying) next();
-      }, autoWaitTime);
-    }
-  };
-  evLayer.appendChild(evImg);
+      if (isAutoMode && scene.name === undefined && scene.text === undefined && !scene.choices) {
+        setTimeout(() => {
+          if (!isPlaying) next();
+        }, autoWaitTime);
+      }
+    };
+    evLayer.appendChild(evImg);
+  }
 }
 
 
