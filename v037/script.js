@@ -118,14 +118,13 @@ async function showScene(scene) {
   }
 
   // ランダムテキストのon/off
-// ▼ この下に追加
-if (scene.randomtexts !== undefined) {
-  if (scene.randomtexts) {
-    if (typeof randomTextsOn === "function") randomTextsOn();
-  } else {
-    if (typeof randomTextsOff === "function") randomTextsOff();
+  if (scene.randomtexts !== undefined) {
+    if (scene.randomtexts) {
+      if (typeof randomTextsOn === "function") randomTextsOn();
+    } else {
+      if (typeof randomTextsOff === "function") randomTextsOff();
+    }
   }
-}
 
   if (scene.bg) {
     await applyEffect(bgEl, scene.bgEffect || "fadeout");
@@ -136,53 +135,42 @@ if (scene.randomtexts !== undefined) {
     await applyEffect(bgEl, scene.bgEffect || "fadein");
   }
 
-if (scene.showev !== undefined) {
-  if (scene.showev === "NULL") {
-    evLayer.innerHTML = ""; // EV画像を非表示にする
-  } else {
-    const evImg = document.createElement("img");
-    evImg.src = config.evPath + scene.showev;
-    evImg.classList.add("ev-image");
-    evImg.onload = () => {
-      applyEffect(evImg, scene.evEffect || "fadein");
-
-      if (isAutoMode && scene.name === undefined && scene.text === undefined && !scene.choices) {
-        setTimeout(() => {
-          if (!isPlaying) next();
-        }, autoWaitTime);
-      }
-    };
-    evLayer.appendChild(evImg);
+  if (scene.showev !== undefined) {
+    if (scene.showev === "NULL") {
+      evLayer.innerHTML = "";
+    } else {
+      const evImg = document.createElement("img");
+      evImg.src = config.evPath + scene.showev;
+      evImg.classList.add("ev-image");
+      evImg.onload = () => {
+        applyEffect(evImg, scene.evEffect || "fadein");
+        if (isAutoMode && !scene.name && !scene.text && !scene.choices) {
+          setTimeout(() => { if (!isPlaying) next(); }, autoWaitTime);
+        }
+      };
+      evLayer.appendChild(evImg);
+    }
   }
-}
 
-
-if (scene.showcg !== undefined) {
-  if (scene.showcg === "NULL") {
-    evLayer.innerHTML = ""; // CG画像もEVレイヤーなので同じ場所を消す
-  } else {
-    const cgImg = document.createElement("img");
-    cgImg.src = config.cgPath + scene.showcg;
-    cgImg.classList.add("cg-image");
-    cgImg.onload = () => {
-      applyEffect(cgImg, scene.cgEffect || "fadein");
-
-      if (isAutoMode && scene.name === undefined && scene.text === undefined && !scene.choices) {
-        setTimeout(() => {
-          if (!isPlaying) next();
-        }, autoWaitTime);
-      }
-    };
-    evLayer.appendChild(cgImg);
+  if (scene.showcg !== undefined) {
+    if (scene.showcg === "NULL") {
+      evLayer.innerHTML = "";
+    } else {
+      const cgImg = document.createElement("img");
+      cgImg.src = config.cgPath + scene.showcg;
+      cgImg.classList.add("cg-image");
+      cgImg.onload = () => {
+        applyEffect(cgImg, scene.cgEffect || "fadein");
+        if (isAutoMode && !scene.name && !scene.text && !scene.choices) {
+          setTimeout(() => { if (!isPlaying) next(); }, autoWaitTime);
+        }
+      };
+      evLayer.appendChild(cgImg);
+    }
   }
-}
-
 
   if (scene.bgm !== undefined) {
-    if (bgm) {
-      bgm.pause();
-      bgm = null;
-    }
+    if (bgm) { bgm.pause(); bgm = null; }
     if (scene.bgm) {
       bgm = new Audio(config.bgmPath + scene.bgm);
       bgm.loop = true;
@@ -251,12 +239,29 @@ if (scene.showcg !== undefined) {
   if (scene.showmenu) loadMenu(scene.showmenu);
   if (scene.showlist) loadList(scene.showlist);
 
-  if (scene.auto && scene.choices === undefined && scene.text === undefined) {
+  if (scene.auto && !scene.choices && !scene.text) {
+    setTimeout(() => { if (!isPlaying) next(); }, autoWaitTime);
+  }
+
+  // === AUTO進行継続用の追加条件 ===
+  if (
+    isAutoMode &&
+    !scene.name &&
+    !scene.text &&
+    !scene.choices &&
+    !scene.voice &&
+    !scene.se &&
+    !scene.showev &&
+    !scene.showcg
+  ) {
     setTimeout(() => {
       if (!isPlaying) next();
     }, autoWaitTime);
   }
 }
+
+
+
 function next() {
   fetch(config.scenarioPath + currentScenario + "?t=" + Date.now())
     .then((res) => res.json())
@@ -420,7 +425,7 @@ clickLayer.addEventListener("dblclick", () => {
 let lastTouch = 0;
 clickLayer.addEventListener("touchend", () => {
   const now = Date.now();
-  if (now - lastTouch < 250) loadMenu("menu01.json");
+  if (now - lastTouch < 300) loadMenu("menu01.json");
   lastTouch = now;
 });
 
